@@ -1,4 +1,4 @@
-import React,{useState} from 'react';
+import React,{useState,useEffect} from 'react';
 import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 // import styles from '../../components/Distributor/distributor.module.css';
@@ -9,7 +9,6 @@ import Panel from '../../components/Panel';
 import Feeder from '../../components/Feeder';
 import Distributor from '../../components/Distributor';
 import ethStyles from '../../components/Eth/eth.module.css';
-import { useEffect } from 'react/cjs/react.development';
 
 const data = [
     {
@@ -269,7 +268,7 @@ function Odc({data}) {
     const [distributeState,setDistributeState] = useState({inUsed:{ids:[]},isActive:{ids:[]}});
     const [splitterState,setSplitterState] = useState({inUsed:{ids:[]},isActive:{ids:[]}});
     console.log("feed",data)
-    const dist = data.filter(item=>item?.odc?.id===odcId)
+    const dist = data?.filter(item=>item?.odc?.id===odcId)
     useEffect(()=>{
         console.log("feederState",feederState)
         if(feederState?.elm || false){
@@ -307,7 +306,7 @@ function Odc({data}) {
   return <div className='wrapper'><h1>Distribute</h1>
   {/* {data.map(item=><Splitter key={item.id} >
   {arr.map(item1=><Eth key={item1.id} id={item1.id} columns={item?.splitter?.capacity}/>)}</Splitter>)} */}
-  {dist.map(
+  {dist?.map(
       item=>{
         const splitter = new Array(item?.splitter?.capacity);
         const feeder = new Array(item?.odc?.feeder?.capacity);
@@ -322,7 +321,7 @@ function Odc({data}) {
             distributor[index] = {id:(index+1)}
         }
         // const inUsed = {ids:item?.odc?.odp.filter(item1=>item1.distribution || false)};
-        const inUsed = {ids:item?.odc?.odp.filter(item1=>item1.distribution || false).map(item1=>item1.id)};
+        const inUsed = {ids:item?.odc?.odp?.filter(item1=>item1.distribution || false).map(item1=>item1.id)};
         console.log(inUsed)
         const feederClickHandler = (ev) =>{
             // setFeederState(ids:item?.odc?.odp)
