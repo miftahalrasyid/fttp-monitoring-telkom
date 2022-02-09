@@ -1,0 +1,6 @@
+.feederWrapper{
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0 0 1rem;
+}

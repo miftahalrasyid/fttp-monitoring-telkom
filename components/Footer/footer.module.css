@@ -1,0 +1,6 @@
+.footerContainer{
+    box-shadow: 0px 2px 3px 1px black;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}

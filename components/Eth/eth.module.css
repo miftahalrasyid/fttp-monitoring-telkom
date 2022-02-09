@@ -1,0 +1,35 @@
+.ethWrapper{
+    position: relative;
+    flex-wrap: wrap;
+    column-count: 9;
+}
+.ethContainer{
+    display: inline-flex;
+    justify-content: space-around;
+    /* align-items: center; */
+    /* margin:auto */
+}
+.ethContainer svg{
+    color: gray;
+    font-size: 2.3rem;
+    transform: rotate(90deg);
+}
+.ethContainer p{
+    position: absolute;
+    margin:auto;
+    line-height: 2rem;
+}
+.ethHotspot{
+    width:2.3rem;
+    height:100%;
+    position:absolute;
+    background:yellow;
+}
+@media (min-width:567px){
+    .ethContainer p{
+        line-height: 3rem;
+    }
+    .ethContainer svg{
+        font-size: 3.3rem;
+    }
+}

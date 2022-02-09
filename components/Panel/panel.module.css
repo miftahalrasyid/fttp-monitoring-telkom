@@ -1,0 +1,22 @@
+.panelWrapper{
+    border-radius: 3px;
+    position:relative;
+    max-width:100%;
+    padding: 1rem;
+}
+.panelContainer{
+    position: relative;
+    display:flex;
+    flex-wrap: wrap;
+    /* column-count: 9; */
+}
+@media (min-width:728px) {
+    .panelWrapper{
+        border-radius: 7px;
+        border: 3px solid gray;
+        max-width:700px;
+    }
+    .panelContainer{
+        
+    }
+}
