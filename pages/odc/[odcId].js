@@ -1,5 +1,8 @@
-import React,{useState,useEffect} from 'react';
+import React,{useState,useEffect, useCallback} from 'react';
 import { useRouter } from 'next/router';
+import {END} from 'redux-saga';
+import { connect } from 'react-redux'
+
 import Layout from '../../components/Layout';
 // import styles from '../../components/Distributor/distributor.module.css';
 import style from '../../styles/Odc.module.css';
@@ -9,6 +12,13 @@ import Panel from '../../components/Panel';
 // import panelStyles from '../../components/panel.module.css';
 import Feeder from '../../components/Feeder';
 import Distributor from '../../components/Distributor';
+import {
+    getCoreFeederInfo,
+    updateCoreFeederInfo
+} from '../../components/store/odcs/actions';
+import { wrapper } from "../../components/store";
+import Modal from '../../components/Modal';
+
 
 const data = [
     {
@@ -261,16 +271,29 @@ const distri = [
     },
 ]
 
-function Odc({data}) {
+function Odc({data,loading,coreFeederData,updateCoreFeederInfo}) {
+    // console.log("loading",loading)
+    // console.log("coreFeederData",coreFeederData)
+    // console.log("coreFeederData",updateCoreFeederInfo)
     const router = useRouter();
     const { odcId } = router.query
     const [feederState,setFeederState] = useState({inUsed:{ids:[]},isActive:{ids:[],elm:""}});
     const [distributeState,setDistributeState] = useState({inUsed:{ids:[]},isActive:{ids:[]}});
     const [splitterState,setSplitterState] = useState({inUsed:{ids:[]},isActive:{ids:[]}});
+    const showModal = useState(false);
     // console.log("feed",data)
     const dist = data?.filter(item=>item?.odc?.id===odcId)
     useEffect(()=>{
-        console.log("isactive",feederState.isActive)
+        getCoreFeederInfo();
+    },[])
+    const onFeederUpdate = async(values) => {
+        
+        const data = await values
+        // console.log("on submit",data)
+        updateCoreFeederInfo(data)
+    }
+    useEffect(()=>{
+        // console.log("isactive",feederState.isActive)
         // setFeederState(prev=>({...prev,isActive:{...prev.isActive,elm:""}}))
         // feederState.isActive.elm.setAttribute("isActive",false)
     },[feederState])
@@ -339,6 +362,9 @@ function Odc({data}) {
                     
                 }
             }
+            console.log("feeder state",feederState?.isActive?.ids[0])
+            if(ev.target.parentNode === feederState.isActive.elm)
+            showModal[1](true);
         }
         const distributorClickHandler = (ev) => {
             if(ev.target.parentNode.getAttribute("data-id")){
@@ -368,7 +394,8 @@ function Odc({data}) {
         </Panel>
         </div>
       }
-  )}
+      )}
+      <Modal onSubmit={onFeederUpdate} modalTitle={feederState?.isActive?.ids[0]} {...coreFeederData[feederState?.isActive?.ids[0]]} visible={showModal}/>
   </div>;
 }
 
@@ -380,12 +407,31 @@ export async function getStaticPaths() {
         fallback:true,
     }
 }
+export const getStaticProps = async (props) =>wrapper.getStaticProps(store => async ({req, res, ...etc}) => {
+        console.log("store",props)
+        // const { token } = /authUserToken=(?<token>\S+)/g.exec(req.headers.cookie)?.groups || {token: ""} ;
+    
+            store.dispatch(getCoreFeederInfo())
+            store.dispatch(END)
+        await store.sagaTask.toPromise();
+        return {
+            props:{ data: data.filter(item=>item?.odc?.id == props?.params?.odcId)},
+            revalidate:1,
+        } 
+      })(props);
 
-export async function getStaticProps({params}) {
-    return {
-        props:{ data: data.filter(item=>item?.odc?.id == params?.odcId)},
-        revalidate:1,
-    }
+// export async function getStaticProps({params}) {
+//     return {
+//         props:{ data: data.filter(item=>item?.odc?.id == params?.odcId)},
+//         revalidate:1,
+//     }
+// }
+const mapStateToProps = state => ({
+    loading: state.ODCs.loading.get,
+    coreFeederData: state.ODCs.coreFeederData
+});
+const mapFunctionToProps = {
+    getCoreFeederInfo,
+    updateCoreFeederInfo,
 }
-
-export default Layout(Odc);
+export default connect(mapStateToProps,{getCoreFeederInfo,updateCoreFeederInfo})(Layout(Odc));

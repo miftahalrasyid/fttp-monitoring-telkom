@@ -1,0 +1,61 @@
+.modalWrapper{
+    width: calc(100vw + 1rem);
+    height: 100vh;
+    position: absolute;
+    z-index: 13298989;
+    top: -60px;
+    left: -1rem;
+    margin-right: -3rem;
+    background: rgba(0,0,0,0.3);
+    padding: 1rem 1rem 1rem 2rem;
+}
+.modalContainer{
+    background: white;
+    max-width: 500px;
+    margin: 2rem auto;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center
+}
+.modalContainer svg{
+    position: absolute;
+    right: 1rem;
+}
+.form{
+    flex-direction: row;
+    padding-bottom: 1rem;
+}
+.field{
+    display:flex;
+    gap:1.5rem;
+    justify-content: space-between;
+    margin:1rem 0;
+    align-items: center;
+}
+.edit{
+    justify-content: right;
+    color:cornflowerblue;
+    cursor: pointer;
+}
+.submitBtn{
+    justify-content: center;
+}
+.form input{
+    text-indent: 0.5rem;
+    line-height: 1.5rem;
+    border: 1px solid gray;
+    border-radius: 0.3rem;
+}
+.form button{
+    line-height: 1.7rem;
+    padding: 0 1rem;
+    border: 1px solid gray;
+    border-radius: 0.3rem;
+    background: #1664f9;
+    color: white;
+    font-weight: 500;
+}
