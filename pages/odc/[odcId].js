@@ -264,44 +264,32 @@ const distri = [
 function Odc({data}) {
     const router = useRouter();
     const { odcId } = router.query
-    const [feederState,setFeederState] = useState({elm:"",odp:""});
+    const [feederState,setFeederState] = useState({inUsed:{ids:[]},isActive:{ids:[],elm:""}});
     const [distributeState,setDistributeState] = useState({inUsed:{ids:[]},isActive:{ids:[]}});
     const [splitterState,setSplitterState] = useState({inUsed:{ids:[]},isActive:{ids:[]}});
-    console.log("feed",data)
+    // console.log("feed",data)
     const dist = data?.filter(item=>item?.odc?.id===odcId)
     useEffect(()=>{
-        console.log("feederState",feederState)
-        if(feederState?.elm || false){
-            // feederState.elm.style.background = "yellow"
-            feederState.elm.querySelector("svg").setAttribute("fill","yellow");
-            // console.log("rig",feederState.elm.querySelector("svg"));
-        }
-    },[feederState,distributeState,splitterState])
+        console.log("isactive",feederState.isActive)
+        // setFeederState(prev=>({...prev,isActive:{...prev.isActive,elm:""}}))
+        // feederState.isActive.elm.setAttribute("isActive",false)
+    },[feederState])
     useEffect(()=>{
+        setFeederState((prev)=>({...prev,inUsed:{ids:dist[0]?.odc?.odp?.filter(item=>item.distribution || false).map(item=>{
+            
+            return item.id
+        })}}))
         setSplitterState((prev)=>({...prev,inUsed:{ids:dist[0]?.odc?.odp?.filter(item=>item.splitter || false).map(item=>{
             
-            // })))
             return item.splitter
         })}}))
         setDistributeState((prev)=>({...prev,inUsed:{ids:dist[0]?.odc?.odp?.filter(item=>item.splitter || false).map(item=>item.distribution.reduce((newDistri,currDistri)=>{
-            // setDistributeState(item.distribution.map((item=>{
-                console.log("setDistributeState",currDistri)
-            //     return item.connectedTo.reduce((newConnectedTo,currConnectedTo)=>{
-            //         return [...newConnectedTo,...item.connectedTo]
-            //     },[])
+
                 return [...newDistri,...currDistri.connectedTo.map(port=>24*(currDistri.id-1)+port)]
-                // return [...newDistri,...currDistri.connectedTo.map(item=>{
-                // return [...newDistri,...currDistri.connectedTo.reduce((newConnectedTo,currConnectedTo)=>{
-                // console.log("currConnectedTo is not a function",item)
-                    // return [...newDistri,item]
-                    // return [...newConnectedTo,currConnectedTo]
-                    // return item.connectedTo
-                // },[])]
+
             },[])).flat()}}))
     },[])
   return <div className='wrapper'><h1>Distribute</h1>
-  {/* {data.map(item=><Splitter key={item.id} >
-  {arr.map(item1=><Eth key={item1.id} id={item1.id} columns={item?.splitter?.capacity}/>)}</Splitter>)} */}
   {dist?.map(
       item=>{
         const splitter = new Array(item?.splitter?.capacity);
@@ -310,7 +298,6 @@ function Odc({data}) {
         const distributor = new Array(item?.odc?.capacity?.distributor);
         for (let index = 0; index < splitter.length; index++) {
             splitter[index] = {id:(index+1)}
-            console.log("splitter odcid",splitter)
         }
         for (let index = 0; index < feeder.length; index++) {
             feeder[index] = {id:(index+1)}
@@ -318,24 +305,26 @@ function Odc({data}) {
         for (let index = 0; index < feederlabel.length; index++) {
             feederlabel[index] = {id:(index+1)}
         }
+        const arr = [];
+        item?.odc?.odp?.forEach(item=>item?.distribution?.map(item2=>{
+            if(arr.indexOf(item2.id)==-1){
+                arr.push(item2.id)
+                return arr
+            }
+            return false
+        }))
         for (let index = 0; index < distributor.length; index++) {
-            distributor[index] = {id:(index+1)}
+            distributor[index] = {id:(index+1), arr}
         }
-        // const inUsed = {ids:item?.odc?.odp.filter(item1=>item1.distribution || false)};
-        const inUsed = {ids:item?.odc?.odp?.filter(item1=>item1.distribution || false).map(item1=>item1.id)};
-        console.log(inUsed)
+        // console.log("distributor",distributor)
         const feederClickHandler = (ev) =>{
-            // setFeederState(ids:item?.odc?.odp)
             // console.log("click",feederRef.current,ev.target.parentNode.getAttribute("data-id"))
-            if(ev.target.parentNode.getAttribute("data-id")){
+            if(ev.target.parentNode.getAttribute("data-id") && ev.target.parentNode != feederState.isActive.elm){
                 // console.log("match",item?.odc?.odp.find(item1=>item1.id==ev.target.parentNode.getAttribute("data-id") && (item1.distribution || false)))
                 if(item?.odc?.odp.find(item1=>{
                     if(item1.id==ev.target.parentNode.getAttribute("data-id") && (item1.distribution || false)){
-                        if(feederState?.elm || false){
-                            feederState.elm.style.background = "#6abd7c";
-                            feederState.elm.querySelector("svg").setAttribute("fill","blue");
-                        }
-                        setFeederState({elm:ev.target.parentNode,odp:{id:item1.id,connectedTo:item1.distribution}});
+                        // ev.target.parentNode.setAttribute("isActive",true);
+                        setFeederState((prev)=>({...prev,isActive:{ids:[item1.id],elm:ev.target.parentNode}}))
                         setDistributeState((prev)=>({...prev,isActive:{ids:item1.distribution.reduce((newElm,elm) => {
                             // console.log(element,newaja)
                             // console.log("d"+element.id,element.connectedTo.map(port=>24*(element.id-1)+port))
@@ -363,23 +352,17 @@ function Odc({data}) {
         }
 
         // console.log("feeder",feederRef)
-        // feederRef?.current?.addEventListener("click",function(){
-        //     console.log("click",feederRef.current)
-        // })
+
       return <div key={"dist"+item.id}>
         <Splitter key={"s"+item.id} x={0} y={0}>
             {splitter.map(item1=><Eth from="splitter" inUsed={splitterState.inUsed} isActive={splitterState.isActive} key={"splitter"+item1.id} id={item1.id} columns={item?.splitter?.capacity}/>)}
         </Splitter>
         <Panel key={"p",item.id} x={48} y={-11}>
-            {/* <div className={`${panelStyles.panelDivider}`}> */}
                 <Feeder clickhandler={feederClickHandler} columns={item?.odc?.feeder?.capacity}>
-                    {feeder.map(item1=><Eth from={"feeder"} inUsed={inUsed} key={"feeder"+item1.id} id={item1.id} columns={item?.odc?.feeder?.capacity}/>)}
+                    {feeder.map(item1=><Eth from={"feeder"} inUsed={feederState.inUsed} isActive={feederState.isActive} key={"feeder"+item1.id} id={item1.id} columns={item?.odc?.feeder?.capacity}/>)}
                 </Feeder>
-                {/* <div>
-                    {feederlabel.map(item1=><Eth inUsed={inUsed} key={"feeder"+item1.id} id={item1.id} columns={item?.odc?.feeder?.capacity}/>)}
-                </div>
-            </div> */}
-                <Distributor clickhandler={distributorClickHandler} columns={distributor.length}>
+
+                <Distributor clickhandler={distributorClickHandler} columns={distributor.length} trayName={arr}>
                     {distributor.map(item1=><Eth from="distributor" inUsed={distributeState.inUsed} isActive={distributeState.isActive} key={"distributor"+item1.id} id={item1.id} columns={24}/>)}
                 </Distributor>
         </Panel>
