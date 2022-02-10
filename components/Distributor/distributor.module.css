@@ -54,3 +54,10 @@
     flex-wrap: wrap;
     padding: 0 0 1rem;
 }
+.distributorDivider{
+    display:flex;
+}
+.distributorLabel{
+    display:flex;
+    flex-direction: column;
+}

@@ -1,0 +1,29 @@
+.labelWrapper{
+    display: inline-flex;
+    justify-content: space-around;
+    background:blue;
+    align-items: center;
+}
+.labelWrapper svg{
+    color: white;
+    font-size: 2.3rem;
+    /* transform: rotate(90deg); */
+}
+.labelWrapper p{
+    color: white;
+    position: absolute;
+    margin:auto;
+    /* line-height: 2rem; */
+}
+.backdrop{
+    position:absolute;
+    transform: rotate(90deg);
+}
+@media (min-width:567px){
+    /* .labelWrapper p{
+        line-height: 3rem;
+    } */
+    .labelWrapper svg{
+        font-size: 3.3rem;
+    }
+}

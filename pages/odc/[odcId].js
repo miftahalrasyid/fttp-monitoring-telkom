@@ -6,9 +6,9 @@ import style from '../../styles/Odc.module.css';
 import Splitter from '../../components/Splitter';
 import Eth from '../../components/Eth';
 import Panel from '../../components/Panel';
+// import panelStyles from '../../components/panel.module.css';
 import Feeder from '../../components/Feeder';
 import Distributor from '../../components/Distributor';
-import ethStyles from '../../components/Eth/eth.module.css';
 
 const data = [
     {
@@ -274,9 +274,9 @@ function Odc({data}) {
         if(feederState?.elm || false){
             // feederState.elm.style.background = "yellow"
             feederState.elm.querySelector("svg").setAttribute("fill","yellow");
-            console.log("rig",feederState.elm.querySelector("svg"));
+            // console.log("rig",feederState.elm.querySelector("svg"));
         }
-    },[feederState])
+    },[feederState,distributeState,splitterState])
     useEffect(()=>{
         setSplitterState((prev)=>({...prev,inUsed:{ids:dist[0]?.odc?.odp?.filter(item=>item.splitter || false).map(item=>{
             
@@ -299,10 +299,6 @@ function Odc({data}) {
                 // },[])]
             },[])).flat()}}))
     },[])
-    useEffect(()=>{
-        console.log("splitter state",splitterState)
-        console.log("distribute state",distributeState)
-    },[distributeState,splitterState])
   return <div className='wrapper'><h1>Distribute</h1>
   {/* {data.map(item=><Splitter key={item.id} >
   {arr.map(item1=><Eth key={item1.id} id={item1.id} columns={item?.splitter?.capacity}/>)}</Splitter>)} */}
@@ -310,12 +306,17 @@ function Odc({data}) {
       item=>{
         const splitter = new Array(item?.splitter?.capacity);
         const feeder = new Array(item?.odc?.feeder?.capacity);
+        const feederlabel = new Array(parseInt(item?.odc?.feeder?.capacity)/12)
         const distributor = new Array(item?.odc?.capacity?.distributor);
         for (let index = 0; index < splitter.length; index++) {
             splitter[index] = {id:(index+1)}
+            console.log("splitter odcid",splitter)
         }
         for (let index = 0; index < feeder.length; index++) {
             feeder[index] = {id:(index+1)}
+        }
+        for (let index = 0; index < feederlabel.length; index++) {
+            feederlabel[index] = {id:(index+1)}
         }
         for (let index = 0; index < distributor.length; index++) {
             distributor[index] = {id:(index+1)}
@@ -330,11 +331,9 @@ function Odc({data}) {
                 // console.log("match",item?.odc?.odp.find(item1=>item1.id==ev.target.parentNode.getAttribute("data-id") && (item1.distribution || false)))
                 if(item?.odc?.odp.find(item1=>{
                     if(item1.id==ev.target.parentNode.getAttribute("data-id") && (item1.distribution || false)){
-                        console.log("item1",item1.distribution)
                         if(feederState?.elm || false){
                             feederState.elm.style.background = "#6abd7c";
                             feederState.elm.querySelector("svg").setAttribute("fill","blue");
-                            console.log("rig",feederState.elm.querySelector("svg"));
                         }
                         setFeederState({elm:ev.target.parentNode,odp:{id:item1.id,connectedTo:item1.distribution}});
                         setDistributeState((prev)=>({...prev,isActive:{ids:item1.distribution.reduce((newElm,elm) => {
@@ -356,8 +355,7 @@ function Odc({data}) {
             if(ev.target.parentNode.getAttribute("data-id")){
                 const id = parseInt(ev.target.parentNode.getAttribute("data-id"))
                 // console.log("translate",ev.target.parentNode.getAttribute("data-id"))
-                const {name,splitter,passive_out} = distri?.filter(item=>item.id==id && item.ds==Math.ceil(id/24))[0] || {name:"",splitter:"",passive_out:""}
-                console.log(distri.filter(item=>item.id==id && item.ds==Math.ceil(id/24)))
+                const {name,splitter,passive_out} = distri?.filter(item=>item.id==id%24 && item.ds==Math.ceil(id/24))[0] || {name:"",splitter:"",passive_out:""}
                 if(name && splitter && passive_out)
                 alert(`ODP : ${name} \nSPLITTER : ${splitter} \nPASSIF OUT : ${passive_out}`)
                 
@@ -373,12 +371,17 @@ function Odc({data}) {
             {splitter.map(item1=><Eth from="splitter" inUsed={splitterState.inUsed} isActive={splitterState.isActive} key={"splitter"+item1.id} id={item1.id} columns={item?.splitter?.capacity}/>)}
         </Splitter>
         <Panel key={"p",item.id} x={48} y={-11}>
-            <Feeder clickhandler={feederClickHandler} >
-                {feeder.map(item1=><Eth inUsed={inUsed} key={"feeder"+item1.id} id={item1.id} columns={item?.odc?.feeder?.capacity}/>)}
-            </Feeder>
-            <Distributor clickhandler={distributorClickHandler}>
-                {distributor.map(item1=><Eth from="distributor" inUsed={distributeState.inUsed} isActive={distributeState.isActive} key={"distributor"+item1.id} id={item1.id} columns={24}/>)}
-            </Distributor>
+            {/* <div className={`${panelStyles.panelDivider}`}> */}
+                <Feeder clickhandler={feederClickHandler} columns={item?.odc?.feeder?.capacity}>
+                    {feeder.map(item1=><Eth from={"feeder"} inUsed={inUsed} key={"feeder"+item1.id} id={item1.id} columns={item?.odc?.feeder?.capacity}/>)}
+                </Feeder>
+                {/* <div>
+                    {feederlabel.map(item1=><Eth inUsed={inUsed} key={"feeder"+item1.id} id={item1.id} columns={item?.odc?.feeder?.capacity}/>)}
+                </div>
+            </div> */}
+                <Distributor clickhandler={distributorClickHandler} columns={distributor.length}>
+                    {distributor.map(item1=><Eth from="distributor" inUsed={distributeState.inUsed} isActive={distributeState.isActive} key={"distributor"+item1.id} id={item1.id} columns={24}/>)}
+                </Distributor>
         </Panel>
         </div>
       }

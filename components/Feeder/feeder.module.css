@@ -4,3 +4,10 @@
     flex-wrap: wrap;
     padding: 0 0 1rem;
 }
+.feederDivider{
+    display:flex;
+}
+.feederLabel{
+    display:flex;
+    flex-direction: column;
+}
