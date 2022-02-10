@@ -1,9 +1,9 @@
 .modalWrapper{
     width: calc(100vw + 1rem);
     height: 100vh;
-    position: absolute;
+    position: fixed;
     z-index: 13298989;
-    top: -60px;
+    top: 0px;
     left: -1rem;
     margin-right: -3rem;
     background: rgba(0,0,0,0.3);
