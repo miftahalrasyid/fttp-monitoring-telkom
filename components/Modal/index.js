@@ -23,8 +23,8 @@ function Modal({modalTitle="Feeder",title="172.29.237.121/FIBERHOME",onSubmit,vi
     useEffect(()=>{
         setUpdateField({gpon,modul,port,core})
     },[gpon,modul,port,core])
-  return <div className={`${styles.modalWrapper}`} style={{display:visible[0]?"block":"none"}} onClick={exitClick}>
-      <div className={`${styles.modalContainer}`} onClick={propagation}>
+  return <div className={`${styles.modalWrapper}`} style={{visibility:visible[0]?"visible":"hidden",opacity:visible[0]?"1":"0"}} onClick={exitClick}>
+      <div className={`${styles.modalContainer}`} style={{transform:"translateY("+(visible[0]?"0px":"-11px")+")"}} onClick={propagation}>
           <MdClose onClick={exitClick} fontSize={"1.3rem"}/>
           <h4>{"Feeder "+modalTitle}</h4>
           <h3>{title}</h3>

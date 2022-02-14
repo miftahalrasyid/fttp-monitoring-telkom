@@ -1,0 +1,172 @@
+[
+    {
+      "splitter": {
+        "id": 1,
+        "capacity": 18
+      },
+      "odc": {
+        "id": "odc-ktm-fs",
+        "capacity": {
+          "feeder": 24,
+          "distributor": 120
+        },
+        "feeder": {
+          "capacity": 24
+        },
+        "odp": [
+          {
+            "id": 1,
+            "capacity": 24
+          },
+          {
+            "id": 2,
+            "splitter": 1,
+            "distribution": [
+              {
+                "id": 1,
+                "connectedTo": [
+                  1,
+                  2
+                ]
+              }
+            ],
+            "capacity": 24
+          },
+          {
+            "id": 3,
+            "splitter": 2,
+            "distribution": [
+              {
+                "id": 1,
+                "connectedTo": [
+                  3,
+                  4,
+                  5,
+                  6
+                ]
+              }
+            ],
+            "capacity": 24
+          },
+          {
+            "id": 4,
+            "splitter": 3,
+            "distribution": [
+              {
+                "id": 1,
+                "connectedTo": [
+                  7,
+                  8,
+                  9
+                ]
+              },
+              {
+                "id": 2,
+                "connectedTo": [
+                  1
+                ]
+              }
+            ],
+            "capacity": 24
+          },
+          {
+            "id": 5,
+            "splitter": 4,
+            "distribution": [
+              {
+                "id": 1,
+                "connectedTo": [
+                  10,
+                  11,
+                  12
+                ]
+              },
+              {
+                "id": 2,
+                "connectedTo": [
+                  2
+                ]
+              }
+            ],
+            "capacity": 24
+          },
+          {
+            "id": 6,
+            "capacity": 24
+          },
+          {
+            "id": 7,
+            "capacity": 24
+          },
+          {
+            "id": 8,
+            "capacity": 24
+          },
+          {
+            "id": 9,
+            "capacity": 24
+          },
+          {
+            "id": 10,
+            "capacity": 24
+          },
+          {
+            "id": 11,
+            "capacity": 24
+          },
+          {
+            "id": 12,
+            "capacity": 24
+          },
+          {
+            "id": 13,
+            "capacity": 24
+          },
+          {
+            "id": 14,
+            "capacity": 24
+          },
+          {
+            "id": 15,
+            "capacity": 24
+          },
+          {
+            "id": 16,
+            "capacity": 24
+          },
+          {
+            "id": 17,
+            "capacity": 24
+          },
+          {
+            "id": 18,
+            "capacity": 24
+          },
+          {
+            "id": 19,
+            "capacity": 24
+          },
+          {
+            "id": 20,
+            "capacity": 24
+          },
+          {
+            "id": 21,
+            "capacity": 24
+          },
+          {
+            "id": 22,
+            "capacity": 24
+          },
+          {
+            "id": 23,
+            "capacity": 24
+          },
+          {
+            "id": 24,
+            "capacity": 24
+          }
+        ]
+      }
+    }
+  ]

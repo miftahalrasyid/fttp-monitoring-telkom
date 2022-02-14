@@ -4,10 +4,12 @@
     position: fixed;
     z-index: 13298989;
     top: 0px;
+    
     left: -1rem;
     margin-right: -3rem;
     background: rgba(0,0,0,0.3);
     padding: 1rem 1rem 1rem 2rem;
+    
 }
 .modalContainer{
     background: white;
@@ -19,7 +21,9 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    align-items: center
+    align-items: center;
+    transform: translateY(-11px);
+transition: all .3s ease;
 }
 .modalContainer svg{
     position: absolute;

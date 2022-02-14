@@ -14,7 +14,7 @@ const odcs = (state=INIT_STATE,action) => {
         console.log("HYDRATE LOGIN",action.payload)
         return {
             ...state,
-            ...action.payload.ODCs,
+            ...action.payload,
             // token: action.payload.Login.token
             // state:{
             //     ...state,
@@ -43,7 +43,7 @@ const odcs = (state=INIT_STATE,action) => {
             }
         };
       case GET_CORE_FEEDER_INFO_SUCCESSFUL:
-          console.log("reducer",action.payload)
+          // console.log("reducer",action.payload)
         return {
             ...state,
             coreFeederData: action.payload,

@@ -8,10 +8,18 @@ import {
 function* getCoreFeeder(){
     try {
         const res = yield fetch("https://my-project-1550730936778.firebaseio.com/coreFeeder.json").then(res=>res.json());
-        console.log("test",res)
+        // console.log("test",res)
         yield put({type:GET_CORE_FEEDER_INFO_SUCCESSFUL,payload:res})
     } catch (error) {
-        console.log(error)
+        console.error(error)
+    }
+}
+function* getODCsBox(){
+    try {
+        const res = yield fetch("https://my-project-1550730936778.firebaseio.com/odcBox.json").then(res=>res.json);
+        yield put()
+    } catch (error) {
+        console.error(error)
     }
 }
 function* updateCoreFeeder({payload:{data}}){

@@ -1,7 +1,8 @@
 import React,{useState,useEffect, useCallback} from 'react';
 import { useRouter } from 'next/router';
 import {END} from 'redux-saga';
-import { connect } from 'react-redux'
+import { connect, useDispatch } from 'react-redux';
+import { useSWR } from 'swr';
 
 import Layout from '../../components/Layout';
 // import styles from '../../components/Distributor/distributor.module.css';
@@ -272,11 +273,13 @@ const distri = [
 ]
 
 function Odc({data,loading,coreFeederData,updateCoreFeederInfo}) {
+    const Redux = useDispatch()
+   
     // console.log("loading",loading)
     // console.log("coreFeederData",coreFeederData)
     // console.log("coreFeederData",updateCoreFeederInfo)
     const router = useRouter();
-    const { odcId } = router.query
+    const { odcId } = router.query;
     const [feederState,setFeederState] = useState({inUsed:{ids:[]},isActive:{ids:[],elm:""}});
     const [distributeState,setDistributeState] = useState({inUsed:{ids:[]},isActive:{ids:[]}});
     const [splitterState,setSplitterState] = useState({inUsed:{ids:[]},isActive:{ids:[]}});
@@ -284,7 +287,9 @@ function Odc({data,loading,coreFeederData,updateCoreFeederInfo}) {
     // console.log("feed",data)
     const dist = data?.filter(item=>item?.odc?.id===odcId)
     useEffect(()=>{
-        getCoreFeederInfo();
+        // getCoreFeederInfo();
+        // if(window!==undefined)
+        Redux(getCoreFeederInfo())
     },[])
     const onFeederUpdate = async(values) => {
         
@@ -407,8 +412,8 @@ export async function getStaticPaths() {
         fallback:true,
     }
 }
-export const getStaticProps = async (props) =>wrapper.getStaticProps(store => async ({req, res, ...etc}) => {
-        console.log("store",props)
+export const getStaticProps = async (props) =>wrapper.getServerSideProps(store => async ({req, res, ...etc}) => {
+        // console.log("store",props)
         // const { token } = /authUserToken=(?<token>\S+)/g.exec(req.headers.cookie)?.groups || {token: ""} ;
     
             store.dispatch(getCoreFeederInfo())
