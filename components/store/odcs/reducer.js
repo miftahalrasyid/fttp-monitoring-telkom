@@ -1,11 +1,18 @@
-import { GET_CORE_FEEDER, UPDATE_CORE_FEEDER, GET_CORE_FEEDER_INFO_SUCCESSFUL } from "./actionTypes";
+import { GET_SPLITTER_DATA,GET_CORE_FEEDER, UPDATE_CORE_FEEDER,GET_ODCs, GET_SPLITTER_DATA_SUCCESSFUL,GET_CORE_FEEDER_INFO_SUCCESSFUL,GET_ODCs_SUCCESSFUL } from "./actionTypes";
 import { HYDRATE } from 'next-redux-wrapper';
 const INIT_STATE = {
     loading:{
         get: false,
-        update:false
+        getOdc:false,
+        update:false,
+        getSplitter:false,
     },
-    coreFeederData:""
+    coreFeederData:"",
+    odcsBox:[],
+    splitterData:"",
+    client: {
+      coreFeederData:''
+    }
 }
 
 const odcs = (state=INIT_STATE,action) => {
@@ -24,6 +31,24 @@ const odcs = (state=INIT_STATE,action) => {
             //     }
             // }
         }
+      case GET_ODCs:
+          
+        return {
+            ...state,
+            loading:{
+                ...state.loading,
+                getOdc: true
+            }
+        };
+      case GET_SPLITTER_DATA:
+          
+        return {
+            ...state,
+            loading:{
+                ...state.loading,
+                getSplitter: true
+            }
+        };
       case GET_CORE_FEEDER:
           
         return {
@@ -42,11 +67,38 @@ const odcs = (state=INIT_STATE,action) => {
                 update: true
             }
         };
+      case GET_SPLITTER_DATA_SUCCESSFUL:
+          // console.log("reducer",action.payload)
+        return {
+            ...state,
+            splitterData: action.payload,
+            loading:{
+              ...state.loading,
+              getSplitter: false
+          }
+        };
       case GET_CORE_FEEDER_INFO_SUCCESSFUL:
           // console.log("reducer",action.payload)
         return {
             ...state,
             coreFeederData: action.payload,
+            client:{
+              coreFeederData: action.payload
+            },
+            loading:{
+              ...state.loading,
+              get: false
+          }
+        };
+      case GET_ODCs_SUCCESSFUL:
+          console.log("reducer",action.payload)
+        return {
+            ...state,
+            odcsBox: action.payload,
+            loading:{
+              ...state.loading,
+              getOdc: false
+          }
         };
   
       default:

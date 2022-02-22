@@ -7,7 +7,7 @@ function Modal({modalTitle="Feeder",title="172.29.237.121/FIBERHOME",onSubmit,vi
     // console.log("data modal ",gpon)
     // const modalTitle = "feeder 2";
     // const title = "";
-    const [updateField,setUpdateField] = useState();
+    const [updateField,setUpdateField] = useState({gpon:"",modul:"",port:"",core:""});
     const [editState, setEditState] = useState(true);
     const editToggle = useCallback(()=>{
         // console.log("click",editState)
