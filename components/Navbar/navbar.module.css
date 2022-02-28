@@ -18,6 +18,9 @@
     display:flex;
     gap:0.5rem;
 }
+.logoWrapper h3{
+    line-height: 3.5rem;
+}
 .navContainer{
     padding: 0 1rem;
     position:relative;

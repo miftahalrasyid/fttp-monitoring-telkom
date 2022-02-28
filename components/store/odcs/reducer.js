@@ -1,4 +1,12 @@
-import { GET_SPLITTER_DATA,GET_CORE_FEEDER, UPDATE_CORE_FEEDER,GET_ODCs, GET_SPLITTER_DATA_SUCCESSFUL,GET_CORE_FEEDER_INFO_SUCCESSFUL,GET_ODCs_SUCCESSFUL } from "./actionTypes";
+import { GET_SPLITTER_DATA,
+  GET_CORE_FEEDER, 
+  UPDATE_CORE_FEEDER,
+  GET_ODCs, 
+  GET_SPLITTER_DATA_SUCCESSFUL,
+  GET_CORE_FEEDER_INFO_SUCCESSFUL,
+  GET_ODCs_SUCCESSFUL,
+  GET_SELECTED_CORE_FEEDER
+} from "./actionTypes";
 import { HYDRATE } from 'next-redux-wrapper';
 const INIT_STATE = {
     loading:{
@@ -11,7 +19,9 @@ const INIT_STATE = {
     odcsBox:[],
     splitterData:"",
     client: {
-      coreFeederData:''
+      coreFeederData:'',
+      odcsBoxClient:'',
+      selectedCoreFeeder:'',
     }
 }
 
@@ -91,7 +101,7 @@ const odcs = (state=INIT_STATE,action) => {
           }
         };
       case GET_ODCs_SUCCESSFUL:
-          console.log("reducer",action.payload)
+          // console.log("reducer",action.payload)
         return {
             ...state,
             odcsBox: action.payload,
@@ -100,6 +110,15 @@ const odcs = (state=INIT_STATE,action) => {
               getOdc: false
           }
         };
+      case GET_SELECTED_CORE_FEEDER:
+
+        return {
+          ...state,
+          client:{
+            ...state.client,
+            selectedCoreFeeder: action.payload
+          }
+        }
   
       default:
           return state;

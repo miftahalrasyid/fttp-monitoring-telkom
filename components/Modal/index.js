@@ -3,12 +3,19 @@ import React,{useState,useCallback,useEffect} from 'react';
 import {MdClose} from 'react-icons/md'
 import styles from './modal.module.css';
 
-function Modal({modalTitle="Feeder",title="172.29.237.121/FIBERHOME",onSubmit,visible,gpon="",modul="",port="",core=""}) {
-    // console.log("data modal ",gpon)
+function Modal({modalTitle="Feeder",title="172.29.237.121/FIBERHOME",onSubmit,capacity,visible,fields,inputOrder=fields ? Object.keys(fields):[],gpon="",modul="",port="",core=""}) {
+    // console.log("data modal ",fields)
+
+    // console.log("modal order ",inputOrder)
+
     // const modalTitle = "feeder 2";
     // const title = "";
-    const [updateField,setUpdateField] = useState({gpon:"",modul:"",port:"",core:""});
+    const [updateField,setUpdateField] = useState(inputOrder?.reduce((newarr,currArr)=>({...newarr,[currArr]:""}),{}));
     const [editState, setEditState] = useState(true);
+    const unusedPort = new Array(capacity);
+    for (let index = 0; index < unusedPort.length; index++) {
+        unusedPort[index] = (index+1);
+    }
     const editToggle = useCallback(()=>{
         // console.log("click",editState)
         setEditState(state=>!state)
@@ -20,17 +27,59 @@ function Modal({modalTitle="Feeder",title="172.29.237.121/FIBERHOME",onSubmit,vi
     const propagation = (ev) =>{
         ev.stopPropagation();
     }
+    // console.log("unused",fields?.splitter?.default,unusedPort.filter(unused=>(unused==fields.default || (fields?.splitter?.options?.findIndex(exist=>exist==unused)==-1))))
     useEffect(()=>{
-        setUpdateField({gpon,modul,port,core})
-    },[gpon,modul,port,core])
+        if(fields || false){
+            setUpdateField(Object.entries(fields).reduce((newarr,...idx)=>{
+                // console.log("modal order",Object.entries(fields).find((item)=>item[0]==inputOrder[idx[1]]))
+                const [newKey,newVal] = Object.entries(fields).find((item)=>item[0]==inputOrder[idx[1]]) || ["",""]
+                if(typeof newVal == 'object')
+                return {...newarr,[newKey+"-select"]:newVal.default}
+                if(newKey)
+                // if(newKey && newVal)
+                return {...newarr,[newKey]:newVal}
+                return newarr
+            },{}))
+        }
+        // setUpdateField({gpon,modul,port,core})
+    },[fields,inputOrder])
   return <div className={`${styles.modalWrapper}`} style={{visibility:visible[0]?"visible":"hidden",opacity:visible[0]?"1":"0"}} onClick={exitClick}>
       <div className={`${styles.modalContainer}`} style={{transform:"translateY("+(visible[0]?"0px":"-11px")+")"}} onClick={propagation}>
           <MdClose onClick={exitClick} fontSize={"1.3rem"}/>
-          <h4>{"Feeder "+modalTitle}</h4>
+          <h4>{("Feeder "+modalTitle).replace(/\w+ (\d) \/ (\w+ \d+) \d+/,"Distributor $1 $2")}</h4>
           <h3>{title}</h3>
-          <Formik enableReinitialize initialValues={updateField} onSubmit={(state)=>onSubmit({...state,id:modalTitle})}>
+          <Formik enableReinitialize initialValues={updateField} onSubmit={(state)=>onSubmit({...state,id:parseInt(modalTitle.replace(/(\d) \/ (\w+ \d+) (\d+)/,"$3"))})}>
               <Form className={`${styles.form}`}>
-                  <div className={`${styles.field}`}>
+                  {(updateField || false) && Object.entries(updateField).map(([key,value])=>{
+                        // console.log("fields",fields,key.replace(/(\w+)-select/,"$1"),fields[key.replace(/(\w+)-select/,"$1")])
+                        if(/(\w+)-select/.test(key))
+                            return <div key={key} className={`${styles.field}`}>
+                            <label htmlFor={key}>{key.replace(/(\w+)-select/,"$1").toUpperCase()}</label>
+                            <Field name={key} disabled={editState}  as="select" >
+                                {unusedPort.filter(unused=>(unused==fields[key.replace(/(\w+)-select/,"$1")]?.default || (fields[key.replace(/(\w+)-select/,"$1")]?.options?.findIndex(exist=>exist==unused)==-1))).map(option=>{
+                                    // console.log(option,option==value.default)
+                                    if(option===3){
+                                        return (option)?<option key={key+"_"+option} selected value={option}>{option}</option>:null
+                                    }
+                                    return (option)?<option key={key+"_"+option} value={option}>{option}</option>:null
+                                })}
+                                {/* {fields[key.replace(/(\w+)-select/,"$1")].options.map(option=>{
+                                    console.log(option,option==value.default)
+                                    if(option===3){
+                                        return (option)?<option key={key+"_"+option} selected value={option}>{option}</option>:null
+                                    }
+                                    return (option)?<option key={key+"_"+option} value={option}>{option}</option>:null
+                                })} */}
+                            </Field>
+      
+                        </div>
+                        return <div key={key} className={`${styles.field}`}>
+                        <label htmlFor={key}>{key.toUpperCase()}</label>
+                        <Field id={key} name={key} placeholder={"-"} disabled={editState} style={{pointerEvents:(editState)?"none":"all"}} />
+  
+                    </div>
+                    })}
+                  {/* <div className={`${styles.field}`}>
                       <label htmlFor="gpon">GPON :</label>
                       <Field id="gpon" name="gpon" placeholder="Jane"  disabled={editState} />
 
@@ -49,7 +98,7 @@ function Modal({modalTitle="Feeder",title="172.29.237.121/FIBERHOME",onSubmit,vi
 
                       <label htmlFor="core">Core :</label>
                       <Field id="core" name="core" placeholder="jane@acme.com"  disabled={editState} />
-                  </div>
+                  </div> */}
                   <div className={`${styles.field} ${styles.edit}`} onClick={editToggle}>
                       {editState?"edit":"cancel"}
                   </div>

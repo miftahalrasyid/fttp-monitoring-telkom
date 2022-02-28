@@ -7,7 +7,7 @@ function Navbar() {
   return <div className={`${styles.navWrapper}`}>
     <div className={`${styles.navContainer}`}>
       <div className={`${styles.logoWrapper}`}>
-        <h3>FTTP </h3>
+        <h3>Telkom Indonesia </h3>
         <div className={`${styles.logoContainer}`}>
           <Image src='/img/telkom logo.png' width={45} height={40} alt='logo'/>
         </div>
