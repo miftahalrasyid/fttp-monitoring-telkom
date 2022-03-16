@@ -1,0 +1,32 @@
+.topGap{
+    position: relative;
+    float: right;
+    height: 100vh;
+    z-index: 1;
+    background-color:var(--secondary);
+    width: calc(100% - 250px);
+    transition: .33s,cubic-bezier(.685,.0473,.346,1);
+}
+.overlay{
+    display:none;
+}
+@media screen and (max-width: 1080px) {
+    .topGap{
+        width: 100%;
+        height:auto;
+        transition: all .33s cubic-bezier(.685,.0473,.346,1);
+    }
+    .overlay{
+        height: calc(100% + 57px);
+        width: 100%;
+        position: absolute;
+        opacity: 0;
+        top: 0;
+        left: auto;
+        background: rgba(0,0,0,.35);
+        content: "";
+        z-index: 999;
+        overflow-x: hidden;
+        transition: all 370ms ease-in;
+    }
+}

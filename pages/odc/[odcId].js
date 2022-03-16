@@ -45,7 +45,8 @@ function Odc({
     // trigger rerender when previous odc data in string doesn't match current odc data
     let onDataUpdate = JSON.stringify(selectedODC[0]?.feeder?.data || []);
 
-    const [{feeder:getfeeder,distributor:getdistributor}={feeder:{},distributor:{}}] = selectedODC|| {getfeeder:[],getdistributor:[]};
+    const [{feeder:getfeeder,distributor:getdistributor,splitter:getsplitter}={feeder:{},distributor:{},splitter:{}}] = selectedODC|| {getfeeder:[],getdistributor:[]};
+    const wholeCapacity = {feeder:getfeeder?.capacity,distributor:getdistributor?.capacity,splitter:getsplitter?.capacity}
     // console.log([...data.filter(dt=>dt.id==odcId)],odcId,getdistributor.data)
     const [feederState,setFeederState] = useState({inUsed:{ids:[]},isActive:{ids:[],elm:""}});
     const [parkinglot, setParkinglot] = useState()
@@ -182,14 +183,14 @@ function Odc({
                         element["passive_out_"+(2+index)]="";
                         // console.log("element",element)
                     }
-                    return {...newarr,splitter:{default:curarr.splitter,options:splitterState?.inUsed?.ids},["passive_out_"+curarr.passive_out]:curarr.name,...element}
+                    return {...newarr,splitter:{type:"select",default:curarr.splitter,options:splitterState?.inUsed?.ids},["passive_out_"+curarr.passive_out]:{type:"text",nested:true,name:curarr.name,ds:{type:"select",default:curarr.passive_out,options:distributeState?.inUsed?.ids,dsId:curarr.id,capacity:getdistributor?.capacity}},...element}
                 }
                 // console.log(idx,curarr.passive_out,getfeeder?.splitTo,distributorObj)
-                return {...newarr,splitter:{default:curarr.splitter,options:splitterState?.inUsed?.ids},["passive_out_"+curarr.passive_out]:curarr.name}
+                return {...newarr,splitter:{default:curarr.splitter,options:splitterState?.inUsed?.ids},["passive_out_"+curarr.passive_out]:{type:"text",nested:true,name:curarr.name,ds:{type:"select",default:curarr.passive_out,options:distributeState?.inUsed?.ids,dsId:curarr.id}}}
             },{});
             // set onClick feederdetails
             setFeederDetail(feederDataTemp)
-            // console.log("feeder data temp",feederDataTemp)
+            console.log("feeder data temp",feederDataTemp)
             // console.log("feeder state",feederState?.isActive?.ids[0])
             if(ev.target.parentNode === feederState.isActive.elm){
                 showFeederModal[1](true);
@@ -221,7 +222,7 @@ function Odc({
         <Splitter key={"s"+item.id} x={0} y={0}>
             {splitter.map(item1=><Eth from="splitter" inUsed={splitterState.inUsed} isActive={splitterState.isActive} key={"splitter"+item1.id} id={item1.id} columns={item?.splitter?.capacity}/>)}
         </Splitter>
-        <Panel key={"p",item.id} x={48} y={-11}>
+        <Panel key={"p"+item.id} x={48} y={-11}>
                 <Feeder clickhandler={feederClickHandler} columns={item?.odc?.feeder?.capacity}>
                     {feeder.map(item1=><Eth from={"feeder"} inUsed={feederState.inUsed} isActive={feederState.isActive} key={"feeder"+item1.id} id={item1.id} columns={item?.odc?.feeder?.capacity}/>)}
                 </Feeder>
@@ -233,7 +234,7 @@ function Odc({
         </div>
       }
       )}
-      <Modal onSubmit={onFeederUpdate} modalTitle={feederState?.isActive?.ids[0]?.toString()} capacity={getfeeder?.capacity} fields={feederDetail} inputOrder={["splitter","passive_out_1","passive_out_2","passive_out_3","passive_out_4"]} visible={showFeederModal}/>
+      <Modal onSubmit={onFeederUpdate} modalTitle={feederState?.isActive?.ids[0]?.toString()} capacity={wholeCapacity} fields={feederDetail} inputOrder={["splitter","passive_out_1","passive_out_2","passive_out_3","passive_out_4"]} visible={showFeederModal}/>
       {/* <Modal onSubmit={onFeederUpdate} modalTitle={feederState?.isActive?.ids[0]} fields={(JSON.stringify(coreFeederData)!==JSON.stringify(coreFeederDataClient))? coreFeederDataClient[feederState?.isActive?.ids[0]]:coreFeederData[feederState?.isActive?.ids[0]]} inputOrder={["gpon","modul","port","core"]} visible={showFeederModal}/> */}
       {/* <Modal onSubmit={onDistributorUpdate} modalTitle={Math.ceil(distributeState?.isOnClick?.ids[0]/24)+" / Port "+distributeState?.isOnClick?.ids[0]%24+" "+distributeState?.isOnClick?.index} fields={splitterData.filter(item=>item.id==distributeState?.isOnClick?.ids[0]%24 && item.ds==Math.ceil(distributeState?.isOnClick?.ids[0]/24))[0]} inputOrder={["name","splitter","passive_out"]} visible={showDistributorModal}/> */}
   </div>;
@@ -329,4 +330,4 @@ const mapFunctionToProps = {
     getODCsBox,
     setSelectedCoreFeeder
 }
-export default connect(mapStateToProps,mapFunctionToProps)(Layout(Odc));
+export default connect(mapStateToProps,mapFunctionToProps)(Odc);

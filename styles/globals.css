@@ -1,3 +1,13 @@
+:root{
+  --primary: #ee2d24;
+ --secondary: #eeeeee;
+ --warning: #FFC260;
+ --success: #3CD4A0;
+ --info: #9013FE;
+}
+span,h1,h2,h3,h4,div{
+  font-family: Roboto,Helvetica,Arial,sans-serif;
+}
 html,
 body {
   padding: 0;

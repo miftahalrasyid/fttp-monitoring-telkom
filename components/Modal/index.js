@@ -12,6 +12,7 @@ function Modal({modalTitle="Feeder",title="172.29.237.121/FIBERHOME",onSubmit,ca
     // const title = "";
     const [updateField,setUpdateField] = useState(inputOrder?.reduce((newarr,currArr)=>({...newarr,[currArr]:""}),{}));
     const [editState, setEditState] = useState(true);
+    const [availablePort,setAvailablePort] = useState(capacity)
     const unusedPort = new Array(capacity);
     for (let index = 0; index < unusedPort.length; index++) {
         unusedPort[index] = (index+1);
@@ -28,16 +29,44 @@ function Modal({modalTitle="Feeder",title="172.29.237.121/FIBERHOME",onSubmit,ca
         ev.stopPropagation();
     }
     // console.log("unused",fields?.splitter?.default,unusedPort.filter(unused=>(unused==fields.default || (fields?.splitter?.options?.findIndex(exist=>exist==unused)==-1))))
+    const checkNested = () =>{
+
+    };
+    console.log("available port",availablePort)
+    useEffect(()=>{
+        setAvailablePort(Object.entries(capacity).reduce((prev,[key,value])=>{
+            const unusedPort = new Array(value);
+            for (let index = 0; index < unusedPort.length; index++) {
+                unusedPort[index] = (index+1);
+            }
+            return {...prev,[key]:unusedPort}
+        },{}))
+    },[])
     useEffect(()=>{
         if(fields || false){
             setUpdateField(Object.entries(fields).reduce((newarr,...idx)=>{
                 // console.log("modal order",Object.entries(fields).find((item)=>item[0]==inputOrder[idx[1]]))
-                const [newKey,newVal] = Object.entries(fields).find((item)=>item[0]==inputOrder[idx[1]]) || ["",""]
-                if(typeof newVal == 'object')
+                const [newKey,newVal] = Object.entries(fields).find((item)=>item[0]==inputOrder[idx[1]]) || ["",""];
+                const {type=""} = newVal;
+                if(type == 'select')
                 return {...newarr,[newKey+"-select"]:newVal.default}
-                if(newKey)
+                if(newVal.nested){
+                    const {id} = newVal;
+                    // Object.entries(newVal).forEach(([key, value]) => );
+                    console.log("entries", newKey,newVal,Object.entries(newVal),id)
+                    const [newtype,nested,odpName,passiveId,dsId] =  Object.entries(newVal);
+                    console.log("passive id",passiveId)
+                    
+                    if(passiveId[1].type == "select")
+                    return {...newarr,[newKey]:newVal.name,["passive_out"+"_"+passiveId[1].default+"-select"]:passiveId[1].default}
+                    // return {...newarr}
+                }
+                if(newKey){
+                    return {...newarr,[newKey]:newVal.name}
+                }
                 // if(newKey && newVal)
-                return {...newarr,[newKey]:newVal}
+                
+
                 return newarr
             },{}))
         }
@@ -52,24 +81,18 @@ function Modal({modalTitle="Feeder",title="172.29.237.121/FIBERHOME",onSubmit,ca
               <Form className={`${styles.form}`}>
                   {(updateField || false) && Object.entries(updateField).map(([key,value])=>{
                         // console.log("fields",fields,key.replace(/(\w+)-select/,"$1"),fields[key.replace(/(\w+)-select/,"$1")])
+                        console.log("fielsd",key.replace(/(\w+)(-)?(\w+)?-select/,"$1"),fields[key.replace(/(\w+)(-)?(\w+)?-select/,"$1")]?.ds,key)
                         if(/(\w+)-select/.test(key))
                             return <div key={key} className={`${styles.field}`}>
                             <label htmlFor={key}>{key.replace(/(\w+)-select/,"$1").toUpperCase()}</label>
                             <Field name={key} disabled={editState}  as="select" >
-                                {unusedPort.filter(unused=>(unused==fields[key.replace(/(\w+)-select/,"$1")]?.default || (fields[key.replace(/(\w+)-select/,"$1")]?.options?.findIndex(exist=>exist==unused)==-1))).map(option=>{
+                                {availablePort.splitter.filter(unused=>(unused==fields[key.replace(/(\w+)-select/,"$1")]?.default || (fields[key.replace(/(\w+)(-)?(\w+)?-select/,"$1")]?.options?.findIndex(exist=>exist==unused)==-1 || fields[key.replace(/(\w+)(-)?(\w+)?-select/,"$1")]?.ds?.options?.findIndex(exist=>exist==unused)==-1))).map(option=>{
                                     // console.log(option,option==value.default)
-                                    if(option===3){
-                                        return (option)?<option key={key+"_"+option} selected value={option}>{option}</option>:null
-                                    }
+                                    // if(option===3){
+                                    //     return (option)?<option key={key+"_"+option} selected value={option}>{option}</option>:null
+                                    // }
                                     return (option)?<option key={key+"_"+option} value={option}>{option}</option>:null
                                 })}
-                                {/* {fields[key.replace(/(\w+)-select/,"$1")].options.map(option=>{
-                                    console.log(option,option==value.default)
-                                    if(option===3){
-                                        return (option)?<option key={key+"_"+option} selected value={option}>{option}</option>:null
-                                    }
-                                    return (option)?<option key={key+"_"+option} value={option}>{option}</option>:null
-                                })} */}
                             </Field>
       
                         </div>

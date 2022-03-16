@@ -1,0 +1,321 @@
+.verticalMenu{
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 2;
+    width: 250px;
+    /* background-image: url("/img/sidebar-1.jpg"); */
+    background-color: #fff;
+    background-position: center; /* Center the image */
+  background-repeat: no-repeat; /* Do not repeat the image */
+  background-size: cover;
+    box-shadow: 0 16px 38px -12px rgb(0 0 0 / 56%), 0 4px 25px 0 rgb(0 0 0 / 12%), 0 8px 10px -5px rgb(0 0 0 / 20%);
+}
+.verticalMenu .sidebarBackground{
+    position: absolute;
+    z-index: -1;
+    height: 100%;
+    width: 100%;
+    display: block;
+    top: 0;
+    left: 0;
+    background-image: url(/img/sidebar-4.jpg);
+    background-size: cover;
+    background-position: center center;
+}
+.verticalMenu .sidebarBackground::after {
+    position: absolute;
+    z-index: 3;
+    width: 100%;
+    height: 100%;
+    content: "";
+    display: block;
+    background: #fff;
+    opacity: .93;
+    }
+.verticalMenu a {
+    text-decoration: none;
+}
+.verticalMenu .logo:after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    right: 15px;
+    height: 1px;
+    width: calc(100% - 30px);
+    background-color: rgba(180,180,180,.3);
+}
+.logoTxt{
+    font-weight: 500;
+    font-size: 1.125rem;
+    vertical-align: middle;
+    margin-left: 5px;
+    -webkit-font-smoothing: auto;
+}
+.logo{
+    line-height: auto;
+    color: inherit!important;
+}
+.logoImg{
+    position: relative;
+    top: 8px;
+}
+.navbarBrandBox{
+    padding: 0 1.5rem;
+    width: 280px;
+    /* background: #fbfaff; */
+    /* border-right: 1px solid #e9e9ef; */
+    /* -webkit-box-shadow: 0 2px 2px #fbfaff;
+    box-shadow: 0 2px 2px #fbfaff; */
+}
+.sidebarLogo{
+    padding: 3px 0 15px;
+    margin: 0;
+    line-height: 30px;
+    display: block;
+    position: relative;
+    z-index: 4;
+}
+.h100{
+    height: 100%;
+}
+.menuTitle{
+    padding: 12px 20px!important;
+    pointer-events: none;
+    cursor: default;
+    font-size: 12px;
+    color: #545a6d;
+    font-weight: 500;
+}
+#sidebarMenu{
+    padding: 10px 0 30px 0;
+}
+#sidebarMenu ul li{
+    line-height: 1.5em;
+}
+#sidebarMenu ul li a {
+    display: block;
+    /* padding: 0.62rem 1.5rem; */
+    margin: 0 15px;
+    padding: 10px 15px;
+    /* margin: 10px 15px 0; */
+    border-radius: 3px;
+    color: #3c4858;
+    text-transform: capitalize;
+    font-size: 13px;
+    padding: 10px 15px;
+    -webkit-transition: all .4s;
+    transition: all .4s;
+    font-weight: 400;
+    text-decoration: none;
+}
+#sidebarMenu ul li .action{
+    position: relative;
+    margin: 0 15px;
+    padding: 0 15px 10px;
+}
+
+#sidebarMenu ul li .action button {
+    position: absolute;
+    left: 0;
+    right: 0;
+    color: var(--primary) !important;
+    border-color: var(--primary) !important;
+}
+#sidebarMenu ul li .action svg {
+    font-size: 24px;
+    /* float: left; */
+    position:absolute;
+    left:0.8rem;
+    margin-right: 15px;
+    /* margin-top: 3px; */
+    /* line-height: 30px; */
+    width: 30px;
+    text-align: center;
+}
+#sidebarMenu ul li a span {
+    margin: 0;
+    line-height: 30px;
+    font-size: 14px;
+    position: relative;
+    display: block;
+    height: auto;
+    white-space: nowrap;
+}
+#sidebarMenu ul li a svg {
+    font-size: 24px;
+    float: left;
+    margin-right: 15px;
+    margin-top: 3px;
+    /* line-height: 30px; */
+    width: 30px;
+    text-align: center;
+}
+#sidebarMenu ul li a:hover {
+    color: #5156be;
+}
+#sidebarMenu ul li a:hover svg{
+    color: #5156be;
+}
+.active{
+    background-color: #f44336;
+    box-shadow: 0 4px 20px 0 rgb(0 0 0 / 14%), 0 7px 10px -5px rgb(244 67 54 / 40%);
+    color: white!important;
+}
+.active svg{
+    color: white!important;
+}
+#sidebarMenu ul li .logoutDiv{
+    position: relative;
+    margin: 0 15px;
+    padding: 0 15px;
+}
+#sidebarMenu ul li .logoutDiv button {
+    position: absolute;
+    left: 0;
+    right: 0;
+    color: rgb(113, 113, 113) !important;
+    border-color: rgb(113, 113, 113) !important;
+}
+#sidebarMenu ul li .logoutDiv svg {
+    font-size: 24px;
+    /* float: left; */
+    position:absolute;
+    left:0.8rem;
+    margin-right: 15px;
+    /* margin-top: 3px; */
+    /* line-height: 30px; */
+    width: 30px;
+    text-align: center;
+}
+.logout{
+    position: absolute;
+    width: 100%;
+    bottom: 21vh;
+}
+.card {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 0;
+    /* margin-bottom: 30px;
+    margin-top: 30px; */
+    border-radius: 6px;
+    color: #333;
+    background: #fff;
+    width:90%;
+    max-width: 600px;
+    box-shadow: 0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 20%), 0 1px 5px 0 rgb(0 0 0 / 12%);
+    box-shadow: 0 1px 4px 0 rgb(0 0 0 / 14%);
+}
+.cardBody{
+    justify-content: center;
+    padding: 0.5rem 1.4rem;
+}
+.card .cardHeader{
+    margin: 0 15px;
+    padding: 0;
+    position: relative;
+}
+.cardStats .cardHeader.cardHeaderIcon svg {
+    line-height: 56px;
+    width: 56px;
+    height: 56px;
+    padding: 10px;
+    text-align: center;
+    color: #fff;
+}
+/* .card .cardCategory{
+    color: #999;
+    font-size: 14px;
+}
+.cardStats .cardHeader .cardIcon+.cardCategory, .cardStats .cardHeader .cardIcon+.cardTitle {
+    padding-top: 10px;
+} */
+.card .cardHeaderPrimary .cardIcon, .card .cardHeaderPrimary .cardText, .card .cardHeaderPrimary:not(.cardHeaderIcon):not(.cardHeaderText) {
+    box-shadow: 0 4px 20px 0 rgb(0 0 0 / 14%), 0 7px 10px -5px rgb(218 25 16 / 40%);
+}
+.card .cardHeaderPrimary .cardIcon, .card .cardHeaderPrimary .cardText, .card .cardHeaderPrimary:not(.cardHeaderIcon):not(.cardHeaderText), .card.bgWarning, .card.cardRotate.bgWarning .back, .card.cardRotate.bgWarning .front {
+    background: linear-gradient(60deg,rgb(238, 45, 36),rgb(218, 25, 16));
+}
+.card .cardHeader:not(.cardHeaderIcon):not(.cardHeaderText):not(.cardHeaderImage) {
+    border-radius: 3px;
+    margin-top: -20px;
+    padding: 15px;
+}
+.card:not(.cardHeaderIcon){
+    /* position: relative; */
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+}
+.card .cardHeader .cardTitle{
+    color:white;
+}
+.card .cardHeader .cardTitle+.cardCategory {
+    color: rgba(255,255,255,.62);
+}
+.card .cardHeader .cardTitle+.stats {
+    font-size: 12px;
+    color: white;
+}
+.card .cardHeader .cardTitle+.stats svg {
+    width: 16px;
+    height:auto;
+}
+.card .cardHeader .cardCategory {
+    margin: 0;
+}
+.actionContainer{
+    position: relative;
+    margin: 0 15px;
+    padding: 35px 0px 0px;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.9rem;
+}
+.dFlex{
+    display:flex;
+    flex-direction: column;
+}
+.actionContainer button{
+    
+    color: #fff;
+    border-color: var(--primary);
+    /* box-shadow: 0 2px 2px 0 rgb(239 47 37 / 14%), 0 3px 1px -2px rgb(239 47 37 / 20%), 0 1px 5px 0 rgb(239 47 37 / 12%); */
+    background-color: var(--primary);
+    border-radius: 2px;
+}
+.textFieldContainer{
+    padding-bottom: 1.25em;
+    /* color: var(--primary); */
+}
+.tabLink{
+    display: flex;
+    justify-content: center;
+}
+@media screen and (max-width: 1080px) {
+    .verticalMenu{
+        position: fixed;
+        display: block;
+        top: 0;
+        height: 100vh;
+        width: 260px;
+        right: 0;
+        left: auto;
+        z-index: 1032;
+        visibility: visible;
+        background-color: #9a9a9a;
+        overflow-y: visible;
+        border-top: none;
+        text-align: left;
+        padding-right: 0;
+        padding-left: 0;
+        -webkit-transform: translate3d(260px,0,0);
+        transform: translate3d(260px,0,0);
+        transition: all .33s cubic-bezier(.685,.0473,.346,1);
+    }
+}
