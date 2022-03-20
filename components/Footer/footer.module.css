@@ -1,10 +1,12 @@
 .footerContainer{
     /* box-shadow: 0px 2px 2px 1px black; */
-    position: absolute;
+    position: relative;
     border-top: 1px solid rgba(0,0,0,0.1);
-    bottom: -3px;
-    width: 100%;
+    bottom: 0;
+    width: calc(100% - 250px);
+    float: left;
     left: 250px;
+    text-align: right;
     background-color: #eeeeee;
 }
 @media screen and (max-width: 1080px){

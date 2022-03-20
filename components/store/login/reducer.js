@@ -1,6 +1,10 @@
-import {LOGIN_CHECK,LOGIN_SUCCESSFUL} from "./actionTypes";
+import {LOGIN_CHECK,LOGIN_SUCCESSFUL,OTP_VERIFY,OTP_VERIFICATION_SUCCESSFUL} from "./actionTypes";
 const INIT_STATE = {
-    loading: false
+    loading: {
+        login: false,
+        otp:false
+    },
+    openOtpService: false
 }
 const login = (state=INIT_STATE,action)=>{
     switch (action.type) {
@@ -8,13 +12,37 @@ const login = (state=INIT_STATE,action)=>{
             
             return {
                 ...state,
-                loading: true
+                loading:{
+                    login: false
+                }
             };
         case LOGIN_SUCCESSFUL:
 
             return {
                 ...state,
-                loading:false
+                loading:{
+                    login:false,
+                },
+                openOtpService: true
+            }
+        case OTP_VERIFY:
+
+            return {
+                ...state,
+                loading:{
+                    ...state.loading,
+                    otp:true,
+                }
+            }
+        case OTP_VERIFICATION_SUCCESSFUL:
+
+            return {
+                ...state,
+                loading:{
+                    ...state.loading,
+                    otp:false,
+                },
+                openOtpService: false
             }
     
         default:

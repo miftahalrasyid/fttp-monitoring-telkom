@@ -22,7 +22,9 @@ import styles from './sidebar.module.css';
 import home from './home.svg';
 import {
   MdDashboard,
+  MdPerson,
   MdOutlineAddBox,
+  MdOutlineClose,
   MdExitToApp
 } from 'react-icons/md';
 import TextField from '@mui/material/TextField';
@@ -96,6 +98,7 @@ function Sidebar() {
     setValue(newValue);
   };
   const router = useRouter();
+  console.log("sidebar", router.asPath)
   const style = {
     position: 'absolute',
     top: '50%',
@@ -137,9 +140,17 @@ function Sidebar() {
               <li className={styles.menuTitle} data-key="t-menu">Menu</li>
               <li>
                 <Link href="/odc" exact passHref>
-                <a className={styles.active}>
+                <a className={/\/odc/.test(router.asPath)?styles.active:""}>
                   <MdDashboard className={styles.sidebarSvg} />
                   <span data-key="t-dashboard">Dashboard</span>
+                </a>
+                </Link>
+              </li>
+              <li>
+                <Link href="/users" exact passHref>
+                <a className={/\/users/.test(router.asPath)?styles.active:""}>
+                  <MdPerson className={styles.sidebarSvg} />
+                  <span data-key="t-dashboard">Users</span>
                 </a>
                 </Link>
               </li>
@@ -153,106 +164,109 @@ function Sidebar() {
               </li>
               <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description">
-                <Box sx={{
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
-                  border: 0,
-                  /* margin-bottom: 30px;
-                  margin-top: 30px; */
-                  borderRadius: "6px",
-                  color: "#333",
-                  background: "#fff",
-                  width:"90%",
-                  maxWidth: "600px",
-                  boxShadow: "0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 20%), 0 1px 5px 0 rgb(0 0 0 / 12%)",
-                  boxShadow: "0 1px 4px 0 rgb(0 0 0 / 14%)",
-                }}>
-                {/* <Box sx={styles.card}> */}
-                  <ThemeProvider theme={theme}>
-                  <div className={`${styles.card}`}>
-                    <div className={`${styles.cardHeader} ${styles.cardHeaderPrimary}`}>
-                      <h4 className={styles.cardTitle}>Tambah ODC</h4>
-                      <div className={styles.stats}>
-                        {/* <MdOutlineDateRange width={16} height={"auto"} />  */}
-                        lengkapi semua isian yang ada
+                 <div>
+                  <div className={styles.closebtn}>
+                    <MdOutlineClose/>
+                  </div>
+                  <Box sx={{
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                    border: 0,
+                    /* margin-bottom: 30px;
+                    margin-top: 30px; */
+                    borderRadius: "6px",
+                    color: "#333",
+                    background: "#fff",
+                    width:"90%",
+                    maxWidth: "600px",
+                    boxShadow: "0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 20%), 0 1px 5px 0 rgb(0 0 0 / 12%)",
+                    boxShadow: "0 1px 4px 0 rgb(0 0 0 / 14%)",
+                  }}>
+                  {/* <Box sx={styles.card}> */}
+                    <div className={`${styles.card}`}>
+                      <div className={`${styles.cardHeader} ${styles.cardHeaderPrimary}`}>
+                        <h4 className={styles.cardTitle}>Tambah ODC</h4>
+                        <div className={styles.stats}>
+                          {/* <MdOutlineDateRange width={16} height={"auto"} />  */}
+                          lengkapi semua isian yang ada
+                        </div>
                       </div>
-                    </div>
-                    <div className={`${styles.cardBody} card-body row`}>
-                    <div className={styles.tabLink}>
-                      <CustomTabs value={value} onChange={handleChange} aria-label="basic tabs example">
-                        <CustomTab label="OLT" {...a11yProps(0)} />
-                        <CustomTab label="OA" {...a11yProps(1)} />
-                      </CustomTabs>
-                    </div>
-                    <div
-                      role="tabpanel"
-                      hidden={value !== 0}
-                      id={`simple-tabpanel-${0}`}
-                      aria-labelledby={`simple-tab-${0}`}
-                      // {...other}
-                    >
-                      {value === 0 && (
-                        <div className='row'>
+                      <div className={`${styles.cardBody} card-body row`}>
+                      <div className={styles.tabLink}>
+                        <CustomTabs value={value} onChange={handleChange} aria-label="basic tabs example">
+                          <CustomTab label="OLT" {...a11yProps(0)} />
+                          <CustomTab label="OA" {...a11yProps(1)} />
+                        </CustomTabs>
+                      </div>
+                      <div
+                        role="tabpanel"
+                        hidden={value !== 0}
+                        id={`simple-tabpanel-${0}`}
+                        aria-labelledby={`simple-tab-${0}`}
+                        // {...other}
+                      >
+                        {value === 0 && (
+                          <div className='row'>
+                            {/* <Typography> */}
+                              <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                <CustomTextField id="standard-basic" label="ID" variant="standard" />
+                              </div>
+                              <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                <CustomTextField id="standard-basic" label="Kapasitas" variant="standard" />
+                              </div>
+                              <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                <CustomTextField id="standard-basic" label="Merek" variant="standard" />
+                              </div>
+                              <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                <CustomTextField id="standard-basic" label="Deployment Date" color='primary'
+                                  variant="standard" />
+                              </div>
+                            {/* </Typography> */}
+                          </div>
+                        )}
+                      </div>
+                      <div
+                        role="tabpanel"
+                        hidden={value !== 1}
+                        id={`simple-tabpanel-${1}`}
+                        aria-labelledby={`simple-tab-${1}`}
+                        // {...other}
+                      >
+                        {value === 1 && (
+                          <div className='row'>
                           {/* <Typography> */}
                             <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                              <CustomTextField id="standard-basic" label="ID" variant="standard" />
+                              <CustomTextField id="standard-basic" label="Core" variant="standard" />
                             </div>
                             <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                              <CustomTextField id="standard-basic" label="Kapasitas" variant="standard" />
+                              <CustomTextField id="standard-basic" label="Rak OA" variant="standard" />
                             </div>
                             <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                              <CustomTextField id="standard-basic" label="Merek" variant="standard" />
+                              <CustomTextField id="standard-basic" label="Panel" variant="standard" />
                             </div>
                             <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                              <CustomTextField id="standard-basic" label="Deployment Date" color='primary'
+                              <CustomTextField id="standard-basic" label="Port" color='primary'
                                 variant="standard" />
                             </div>
                           {/* </Typography> */}
                         </div>
-                      )}
-                    </div>
-                    <div
-                      role="tabpanel"
-                      hidden={value !== 1}
-                      id={`simple-tabpanel-${1}`}
-                      aria-labelledby={`simple-tab-${1}`}
-                      // {...other}
-                    >
-                      {value === 1 && (
-                        <div className='row'>
-                        {/* <Typography> */}
-                          <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                            <CustomTextField id="standard-basic" label="Core" variant="standard" />
-                          </div>
-                          <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                            <CustomTextField id="standard-basic" label="Rak OA" variant="standard" />
-                          </div>
-                          <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                            <CustomTextField id="standard-basic" label="Panel" variant="standard" />
-                          </div>
-                          <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                            <CustomTextField id="standard-basic" label="Port" color='primary'
-                              variant="standard" />
-                          </div>
-                        {/* </Typography> */}
+                        )}
                       </div>
-                      )}
+                      
+                      </div>
+                      <div className={styles.actionContainer}>
+                      <CustomButtonGray onClick={(ev)=>handleChange(ev,value-1)} style={{visibility:(value<=0)?"hidden":"visible"}} variant="contained" color='primary' size="large">
+                      Prev
+                    </CustomButtonGray>
+                      <CustomButton onClick={(ev)=>(value>0)?handleOpen:handleChange(ev,value+1)}  variant="contained" color='primary' size="large">
+                      {(value>0)?"Submit":"Next"}
+                    </CustomButton>
+                      </div>
                     </div>
-                     
-                    </div>
-                    <div className={styles.actionContainer}>
-                    <CustomButtonGray onClick={(ev)=>handleChange(ev,value-1)} style={{visibility:(value<=0)?"hidden":"visible"}} variant="contained" color='primary' size="large">
-                    Prev
-                  </CustomButtonGray>
-                    <CustomButton onClick={(ev)=>(value>0)?handleOpen:handleChange(ev,value+1)}  variant="contained" color='primary' size="large">
-                    {(value>0)?"Submit":"Next"}
-                  </CustomButton>
-                    </div>
-                  </div>
-                  </ThemeProvider>
-                </Box>
+                  </Box>
+                </div>
               </Modal>
               <li className={styles.logout}>
                 <div className={styles.logoutDiv}>

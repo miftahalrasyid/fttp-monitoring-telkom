@@ -1,7 +1,12 @@
+.layoutWrapper{
+    /* background: red; */
+    width: 100vw;
+    overflow: hidden;
+}
 .topGap{
     position: relative;
     float: right;
-    height: 100vh;
+    min-height: 92vh;
     z-index: 1;
     background-color:var(--secondary);
     width: calc(100% - 250px);

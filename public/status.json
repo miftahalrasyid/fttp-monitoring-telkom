@@ -1,0 +1,88 @@
+{
+    "splitter": {
+        "data": [{
+                "splitter_index": 1,
+                "feeder_index": 2,
+                "status": "used"
+            },
+            {
+                "splitter_index": 2,
+                "feeder_index": 3,
+                "status": "used"
+            },
+            {
+                "splitter_index": 3,
+                "feeder_index": 4,
+                "status": "used"
+            },
+            {
+                "splitter_index": 4,
+                "feeder_index": 5,
+                "status": "used"
+            },
+            {
+                "splitter_index": 5,
+                "feeder_index": 7,
+                "status": "used"
+            },
+            {
+                "splitter_index": 6,
+                "status": "idle"
+            },
+            {
+                "splitter_index": 7,
+                "status": "idle"
+            },
+            {
+                "splitter_index": 8,
+                "status": "idle"
+            },
+            {
+                "splitter_index": 9,
+                "status": "idle"
+            },
+            {
+                "splitter_index": 10,
+                "status": "idle"
+            },
+            {
+                "splitter_index": 11,
+                "status": "idle"
+            },
+            {
+                "splitter_index": 12,
+                "status": "idle"
+            },
+            {
+                "splitter_index": 13,
+                "status": "idle"
+            },
+            {
+                "splitter_index": 14,
+                "status": "idle"
+            },
+            {
+                "splitter_index": 15,
+                "status": "idle"
+            },
+            {
+                "splitter_index": 16,
+                "status": "idle"
+            },
+            {
+                "splitter_index": 17,
+                "status": "idle"
+            },
+            {
+                "splitter_index": 18,
+                "status": "idle"
+            }
+        ]
+    },
+    "feeder": {
+
+    },
+    "distribution:": {
+
+    }
+}

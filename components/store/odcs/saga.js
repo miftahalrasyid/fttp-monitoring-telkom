@@ -35,7 +35,7 @@ function* getODCsBox(){
     // console.log("getODCsBox")
     try {
         const res = yield fetch("https://my-project-1550730936778.firebaseio.com/odcBox.json").then(res=>res.json());
-        console.log("getODCsBox", res)
+        // console.log("getODCsBox", res)
         yield put({type:GET_ODCs_SUCCESSFUL,payload:res})
     } catch (error) {
         console.error(error)

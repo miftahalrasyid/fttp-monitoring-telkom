@@ -1,7 +1,8 @@
 .panelWrapper{
     border-radius: 3px;
-    position:relative;
-    max-width:100%;
+    position:absolute;
+    /* max-width:100%; */
+    min-width:755px;
     padding: 1rem;
 }
 .panelContainer{
@@ -10,11 +11,149 @@
     flex-wrap: wrap;
     /* column-count: 9; */
 }
+.card {
+    border: 0;
+    margin-bottom: 30px;
+    margin-top: 30px;
+    border-radius: 6px;
+    color: #333;
+    background: #fff;
+    width: 100%;
+    box-shadow: 0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 20%), 0 1px 5px 0 rgb(0 0 0 / 12%);
+    box-shadow: 0 1px 4px 0 rgb(0 0 0 / 14%);
+    padding: 0 0 1rem
+}
+.card .cardIcon {
+    border-radius: 3px;
+    background-color: #999;
+    padding: 15px;
+    margin-top: -20px;
+    margin-right: 15px;
+    float: left;
+}
+.card .cardHeader{
+    margin: 0 15px;
+    padding: 0;
+    position: relative;
+}
+.cardStats .cardHeader.cardHeaderIcon svg {
+    line-height: 56px;
+    width: 56px;
+    height: 56px;
+    padding: 10px;
+    text-align: center;
+    color: #fff;
+}
+.card .cardHeaderWarning .cardIcon, .card .cardHeaderWarning .cardText, .card .cardHeaderWarning:not(.cardHeaderIcon):not(.cardHeaderText) {
+    box-shadow: 0 4px 20px 0 rgb(0 0 0 / 14%), 0 7px 10px -5px rgb(255 152 0 / 40%);
+}
+.card .cardHeaderWarning .cardIcon, .card .cardHeaderWarning .cardText, .card .cardHeaderWarning:not(.cardHeaderIcon):not(.cardHeaderText), .card.bgWarning, .card.cardRotate.bgWarning .back, .card.cardRotate.bgWarning .front {
+    background: linear-gradient(60deg,#ffa726,#fb8c00);
+}
+.card .cardCategory{
+    color: #999;
+    font-size: 14px;
+}
+.cardStats .cardHeader .cardIcon+.cardCategory, .cardStats .cardHeader .cardIcon+.cardTitle {
+    padding-top: 10px;
+}
+.cardStats .cardHeader.cardHeaderIcon, .cardStats .cardHeader.cardHeaderText {
+    text-align: right;
+    font-weight: 300;
+}
+.card .cardHeader.cardHeaderIcon .cardTitle, .card .cardHeader.cardHeaderText .cardTitle {
+    margin-top: 15px;
+    color: #3c4858;
+}
+.cardStats .cardHeader.cardHeaderIcon .cardCategory, .cardStats .cardHeader.cardHeaderIcon .cardTitle, .cardStats .cardHeader.cardHeaderText .cardCategory, .cardStats .cardHeader.cardHeaderText .cardTitle {
+    margin: 0;
+    font-weight: 300;
+}
+.cardTitle{
+    font-size:25px;
+    font-weight: 300;
+    line-height:1.4;
+    -webkit-text-stroke: thin;
+}
+.card .cardFooter {
+    display: flex;
+    align-items: center;
+    background-color: transparent;
+    border: 0;
+}
+.card .cardBody+.cardFooter, .card .cardFooter {
+    padding: 10px 0 10px;
+    margin: 0 15px 10px;
+    border-radius: 0;
+    justify-content: space-between;
+    align-items: center;
+}
+.cardStats .cardHeader+.cardFooter {
+    border-top: 1px solid #eee;
+    margin-top: 14px;
+}
+.card .cardBody+.cardFooter .stats, .card .cardFooter .stats {
+    color: #999;
+    font-size: 12px;
+    line-height: 22px;
+}
+.cardFooter .stats svg {
+    width: 16px;
+    height:auto;
+}
+.card .cardHeaderSuccess .cardIcon, .card .cardHeaderSuccess .cardText, .card .cardHeaderSuccess:not(.cardHeaderIcon):not(.cardHeaderText) {
+    box-shadow: 0 4px 20px 0 rgb(0 0 0 / 14%), 0 7px 10px -5px rgb(76 175 80 / 40%);
+}
+.card .cardHeaderSuccess .cardIcon, .card .cardHeaderSuccess .cardText, .card .cardHeaderSuccess:not(.cardHeaderIcon):not(.cardHeaderText), .card.bgWarning, .card.cardRotate.bgWarning .back, .card.cardRotate.bgWarning .front {
+    background: linear-gradient(60deg,#66bb6a,#43a047);
+}
+.card .cardHeaderInfo .cardIcon, .card .cardHeaderInfo .cardText, .card .cardHeaderInfo:not(.cardHeaderIcon):not(.cardHeaderText) {
+    box-shadow: 0 4px 20px 0 rgb(0 0 0 / 14%), 0 7px 10px -5px rgb(0 188 212 / 40%);
+}
+.card .cardHeaderInfo .cardIcon, .card .cardHeaderInfo .cardText, .card .cardHeaderInfo:not(.cardHeaderIcon):not(.cardHeaderText), .card.bgWarning, .card.cardRotate.bgWarning .back, .card.cardRotate.bgWarning .front {
+    background: linear-gradient(60deg,rgb(38, 198, 218),rgb(0, 172, 193));
+}
+.card .cardHeaderPrimary .cardIcon, .card .cardHeaderPrimary .cardText, .card .cardHeaderPrimary:not(.cardHeaderIcon):not(.cardHeaderText) {
+    box-shadow: 0 4px 20px 0 rgb(0 0 0 / 14%), 0 7px 10px -5px rgb(218 25 16 / 40%);
+}
+.card .cardHeaderPrimary .cardIcon, .card .cardHeaderPrimary .cardText, .card .cardHeaderPrimary:not(.cardHeaderIcon):not(.cardHeaderText), .card.bgWarning, .card.cardRotate.bgWarning .back, .card.cardRotate.bgWarning .front {
+    background: linear-gradient(60deg,rgb(238, 45, 36),rgb(218, 25, 16));
+}
+.card .cardHeader:not(.cardHeaderIcon):not(.cardHeaderText):not(.cardHeaderImage) {
+    border-radius: 3px;
+    margin-top: -20px;
+    margin-bottom:1rem;
+    padding: 15px;
+}
+.card:not(.cardHeaderIcon){
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+}
+.card .cardHeader .cardTitle{
+    color:white;
+}
+.card .cardHeader .cardTitle+.cardCategory {
+    color: rgba(255,255,255,.62);
+}
+.card .cardHeader .cardTitle+.stats {
+    font-size: 12px;
+    color: white;
+}
+.card .cardHeader .cardTitle+.stats svg {
+    width: 16px;
+    height:auto;
+}
+.card .cardHeader .cardCategory {
+    margin: 0;
+}
 @media (min-width:728px) {
     .panelWrapper{
         border-radius: 7px;
-        border: 3px solid gray;
-        max-width:730px;
+        /* border: 3px solid gray; */
+        max-width:755px;
     }
     .panelContainer{
         

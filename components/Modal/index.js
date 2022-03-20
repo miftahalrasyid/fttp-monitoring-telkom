@@ -81,7 +81,7 @@ function Modal({modalTitle="Feeder",title="172.29.237.121/FIBERHOME",onSubmit,ca
               <Form className={`${styles.form}`}>
                   {(updateField || false) && Object.entries(updateField).map(([key,value])=>{
                         // console.log("fields",fields,key.replace(/(\w+)-select/,"$1"),fields[key.replace(/(\w+)-select/,"$1")])
-                        console.log("fielsd",key.replace(/(\w+)(-)?(\w+)?-select/,"$1"),fields[key.replace(/(\w+)(-)?(\w+)?-select/,"$1")]?.ds,key)
+                        // console.log("fielsd",key.replace(/(\w+)(-)?(\w+)?-select/,"$1"),fields[key.replace(/(\w+)(-)?(\w+)?-select/,"$1")]?.ds,key)
                         if(/(\w+)-select/.test(key))
                             return <div key={key} className={`${styles.field}`}>
                             <label htmlFor={key}>{key.replace(/(\w+)-select/,"$1").toUpperCase()}</label>

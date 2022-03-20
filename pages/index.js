@@ -8,7 +8,12 @@ import {
   Tab,
   TextField,
   Fade,
+  Avatar,
+  Paper,
+  makeStyles, useTheme, styled, createTheme,MuiThemeProvider
 } from "@material-ui/core";
+import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
+import OtpInput from "react-otp-input";
 import { withRouter } from "next/router";
 import classnames from "classnames";
 import Image from 'next/image';
@@ -21,13 +26,20 @@ import logo from "../public/img/telkom logo.png";
 // import logo from "./logo.svg";
 import google from "../public/img/google.svg";
 import { connect } from "react-redux";
-import { checkLogin} from "../components/store/login/actions"
+import { checkLogin, verifyOtp} from "../components/store/login/actions"
 
 // context
 // import { useUserDispatch, loginUser } from "../../context/UserContext";
+const CustomButton = styled(Button)(({ theme }) => ({
+  background: theme.status.primary,
+}));
 
 function Login(props) {
-  const {checkLogin,router,isLoading} = props;
+  const {checkLogin,router,isLoading,isOtpVerify,verifyOtp,isOtpLoading} = props;
+  console.log(isLoading)
+  console.log(isOtpVerify)
+  // console.log(verifyOtp("test",router))
+  // verifyOtp("test",router)
   // var classes = useStyles();
 
   // global
@@ -40,6 +52,50 @@ function Login(props) {
   var [nameValue, setNameValue] = useState("");
   var [loginValue, setLoginValue] = useState("admin@telkom.com");
   var [passwordValue, setPasswordValue] = useState("password");
+  const [otp,setOtp] = useState(null);
+
+  React.useEffect(()=>{
+    setOtp("1234")
+  },[])
+  const otpHandleChange = React.useCallback((value)=>{
+    setOtp(value)
+    console.log(value)
+  },[otp])
+
+  // const otpHandleChange = (value) =>{
+    
+  // }
+  const useStyles = makeStyles(theme => ({
+    grid: {
+      backgroundColor: "grey",
+      height: "50vh",
+      textAlign: "center"
+    },
+    avatar: {
+      margin: theme.spacing(1),
+      backgroundColor: "#ee2e24"
+    },
+    submit: {
+      margin: theme.spacing(3, 0, 2),
+      backgroundColor: "#ee2e24"
+    },
+    paper: {
+      marginTop: theme.spacing(8),
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center"
+    },
+    paperroot:{
+      // backgroundColor: "#fafafa"
+    }
+  }));
+  const classes = useStyles();
+  const theme = createTheme({
+    status: {
+      primary: "#ee2d24!important",
+      darkgray: "darkgray!important"
+    },
+  });
 
   return (
     <Grid container className={styles.container}>
@@ -50,110 +106,161 @@ function Login(props) {
 
           </div>
           <Typography className={styles.logotypeText}>Telkom Indonesia</Typography>
-          </div>
-        {/* <img src={logo}  /> */}
+        </div>
+        {/* <img src={logo} /> */}
       </div>
       <div className={styles.formContainer}>
         <div className={styles.form}>
-          {/* <Tabs
-            value={activeTabId}
-            onChange={(e, id) => setActiveTabId(id)}
+          {/* <Tabs value={activeTabId} onChange={(e, id)=> setActiveTabId(id)}
             indicatorColor="primary"
             textColor="primary"
             centered
-          >
+            >
             <Tab label="Login" classes={{ root: styles.tab }} />
             <Tab label="New User" classes={{ root: styles.tab }} />
           </Tabs> */}
           {/* {activeTabId === 0 && ( */}
-            <React.Fragment>
-              <Typography variant="h1" className={styles.greeting}>
-                Welcome to Diginote ODC
-              </Typography>
-              {/* <Button size="large" className={styles.googleButton}>
-                <img src={google} alt="google" className={styles.googleIcon} />
-                &nbsp;Sign in with Google
-              </Button> */}
-              {/* <div className={styles.formDividerContainer}>
-                <div className={styles.formDivider} />
-                <Typography className={styles.formDividerWord}>or</Typography>
-                <div className={styles.formDivider} />
-              </div> */}
-              <Fade in={error}>
-                <Typography color="secondary" className={styles.errorMessage}>
-                  Something is wrong with your login or password :(
+          <React.Fragment>
+            {!isOtpVerify ?
+            <div>
+              <div>
+                <div className={styles.logotypeImageMobile}>
+                  <Image src={logo} alt="logo" />
+
+                </div>
+                <Typography className={styles.logotypeTextMobile}>Telkom Indonesia</Typography>
+              </div>
+              <div>
+                <Typography variant="h1" className={styles.greeting}>
+                  Welcome to Diginote ODC
                 </Typography>
-              </Fade>
-              <TextField
-                id="email"
-                InputProps={{
+                {/* <Button size="large" className={styles.googleButton}>
+                  <img src={google} alt="google" className={styles.googleIcon} />
+                  &nbsp;Sign in with Google
+                </Button> */}
+                {/* <div className={styles.formDividerContainer}>
+                  <div className={styles.formDivider} />
+                  <Typography className={styles.formDividerWord}>or</Typography>
+                  <div className={styles.formDivider} />
+                </div> */}
+                <Fade in={error}>
+                  <Typography color="secondary" className={styles.errorMessage}>
+                    Something is wrong with your login or password :(
+                  </Typography>
+                </Fade>
+                <TextField id="email" InputProps={{
                   classes: {
                     underline: styles.textFieldUnderline,
                     input: styles.textField,
                   },
-                }}
-                value={loginValue}
-                onChange={e => setLoginValue(e.target.value)}
-                margin="normal"
-                placeholder="Email Adress"
-                type="email"
-                fullWidth
-              />
-              <TextField
-                id="password"
-                InputProps={{
+                }} value={loginValue} onChange={e=> setLoginValue(e.target.value)}
+                  margin="normal"
+                  placeholder="Email Adress"
+                  type="email"
+                  fullWidth
+                  />
+                  <TextField id="password" InputProps={{
                   classes: {
                     underline: styles.textFieldUnderline,
                     input: styles.textField,
                   },
-                }}
-                value={passwordValue}
-                onChange={e => setPasswordValue(e.target.value)}
-                margin="normal"
-                placeholder="Password"
-                type="password"
-                fullWidth
-              />
-              <div className={styles.formButtons}>
-                {isLoading ? (
-                  <CircularProgress size={26} className={styles.loginLoader} />
-                ) : (
-                  <Button
-                  className={styles.loginbtn}
-                    disabled={
-                      loginValue.length === 0 || passwordValue.length === 0
-                    }
-                    onClick={() =>
-                      // loginUser(
-                      //   userDispatch,
-                      //   loginValue,
-                      //   passwordValue,
-                      //   props.history,
-                      //   setIsLoading,
-                      //   setError,
-                      // )
-                      checkLogin(
+                }} value={passwordValue} onChange={e=> setPasswordValue(e.target.value)}
+                    margin="normal"
+                    placeholder="Password"
+                    type="password"
+                    fullWidth
+                    />
+                    <div className={styles.formButtons}>
+                      {isLoading ? (
+                      <CircularProgress size={26} className={styles.loginLoader} />
+                      ) : (
+                      <Button className={styles.loginbtn} disabled={ loginValue.length===0 || passwordValue.length===0 }
+                        onClick={()=>
+                        checkLogin(
                         loginValue,
                         passwordValue,
                         router,
-                      )
-                    }
-                    variant="outlined"
-                    color="primary"
-                    size="large"
-                  >
-                    Login
-                  </Button>
-                )}
-                <Button
-                  color="primary"
-                  size="large"
-                  className={styles.forgetButton}
-                >
-                  Forget Password
-                </Button>
+                        )
+                        }
+                        variant="outlined"
+                        color="primary"
+                        size="large"
+                        >
+                        Login
+                      </Button>
+                      )}
+                      <Button color="primary" size="large" className={styles.forgetButton}>
+                        Forget Password
+                      </Button>
+                    </div>
               </div>
-            </React.Fragment>
+            </div>
+            :
+            <div className={classes.paper}>
+              <Grid container style={{ backgroundColor: "white" }} // style={{ backgroundColor: "#fafafa" }}
+                className={classes.grid} justify="center" alignItems="center" spacing={3}>
+                <Grid item container justify="center">
+                  <Grid item container alignItems="center" direction="column">
+                    <Grid item>
+                      <Avatar className={classes.avatar}>
+                        <LockOutlinedIcon />
+                      </Avatar>
+                    </Grid>
+                    <Grid item>
+                      <Typography component="h1" variant="h5">
+                        Verification Code
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                </Grid>
+                <Grid item xs={12} textAlign="center">
+                  <Paper elevation={0} className={classes.paperroot}>
+                    <Typography variant="h6">
+                      Please enter the verification code sent to your mobile
+                    </Typography>
+                  </Paper>
+                </Grid>
+                <Grid item xs={12} container justify="center" alignItems="center" direction="column">
+                  <Grid item spacing={3} justify="center">
+                    <OtpInput separator={ <span>
+                      <strong>.</strong>
+                      </span>
+                      }
+                      numInputs={4}
+                      value={otp}
+                      onChange={(ev)=>otpHandleChange(ev)}
+                      inputStyle={{
+                  width: "3rem",
+                  height: "3rem",
+                  margin: "0 1rem",
+                  fontSize: "2rem",
+                  borderRadius: 4,
+                  border: "1px solid rgba(0,0,0,0.3)"
+                }}
+                      />
+                  </Grid>
+                  <MuiThemeProvider theme={theme}>
+                    <Grid item>
+                      <div className={styles.formButtons}>
+                        {isOtpLoading ? (
+                        <CircularProgress size={26} className={styles.loginLoader} />
+                        ) : (
+                        <CustomButton type="submit" fullWidth variant="contained" color="primary" onClick={()=>
+                          {console.log("click"),verifyOtp(otp,router)}}
+                          className={classes.submit}
+                          >
+                          Verify
+                        </CustomButton>
+                        )}
+                      </div>
+                    </Grid>
+                  </MuiThemeProvider>
+                </Grid>
+              </Grid>
+            </div>
+            }
+
+          </React.Fragment>
           {/* )}*/}
           {/* {activeTabId === 1 && (
             <React.Fragment>
@@ -269,10 +376,13 @@ function Login(props) {
   );
 }
 const mapStateToProps = state =>({
-  isLoading: state.Login.loading
+  isLoading: state.Login.loading.login,
+  isOtpLoading: state.Login.loading.otp,
+  isOtpVerify: state.Login.openOtpService
 });
 const mapDispatchToProps = {
-  checkLogin
+  checkLogin,
+  verifyOtp
 }
 
 export default connect(mapStateToProps,mapDispatchToProps)(withRouter(Login));

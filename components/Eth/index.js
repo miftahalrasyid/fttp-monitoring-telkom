@@ -16,7 +16,7 @@ function Eth({id,columns,inUsed,isActive,from}) {
   const columnStyle = {
       flexShrink: 1,
       flexBasis: ((from==="splitter")?(100/(columns/3)):(100/(columns/2)))+"%",
-      background:"#6abd7c",
+      // background:"#6abd7c",
       cursor:inUsed?.ids?.find(item=> item==id)&&(from!=="splitter")?"pointer":"auto"
   }
   useEffect(()=>{

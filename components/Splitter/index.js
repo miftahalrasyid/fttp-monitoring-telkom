@@ -2,12 +2,18 @@ import React from 'react';
 import styles from './splitter.module.css';
 
 function Splitter({children,x,y}) {
-
+  
   return <div className={`${styles.splitWrapper}`} style={{top:y+"vh",left:x+"vw"}}>
-    <h2>Splitter</h2>
-      <div className={`${styles.splitContainer}`}>
-          {children}
+    <div className={`${styles.card}`}>
+      <div className={`${styles.cardHeader} ${styles.cardHeaderWarning}`}>
+
+
+        <h4 className={styles.cardTitle}>Splitter</h4>
       </div>
+        <div className={`${styles.splitContainer}`}>
+          {children}
+        </div>
+    </div>
   </div>;
 }
 

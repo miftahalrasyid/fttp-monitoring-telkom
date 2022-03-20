@@ -26,7 +26,7 @@ export default function Layout(props) {
         },333)
     },[closeState])
   
-    return <div className=''>
+    return <div className={styles.layoutWrapper}>
         <Sidebar/>
         <div className={styles.topGap}>
             <Navbar/>

@@ -5,6 +5,21 @@
     max-width: 1200px;
     min-height: calc(100vh - 123px);
 }
+.odcIdWrapper{
+    overflow: scroll;
+}
+.odcDetail{
+    margin:0 1rem;
+}
+.odcDetail p{
+    font-size: 1.125rem;
+    margin-bottom:0.5rem;
+}
+.splitPanelWrapper{
+    position:relative;
+    margin: 0;
+    max-width: 375px;
+}
 .card {
     border: 0;
     margin-bottom: 30px;
@@ -186,7 +201,30 @@
     margin-top:1rem;
 }
 .autoTagContainer{
-    border: 1px solid black;
+    border: 1px solid rgba(224, 224, 224, 1);
     display: flex;
+    overflow: scroll;
+    align-items: center;
     border-radius: 7px;
+}
+.odcDetailItems{
+    display: flex;
+    justify-content: space-between;
+}
+.distributionStatusContainer{
+    padding: 1rem 0;
+}
+.splitterStatusContainer{
+    padding: 1rem 0;
+}
+.feederStatusContainer{
+    padding: 1rem 0;
+}
+.closebtn{
+    color: white;
+    position: absolute;
+    top: 0;
+    font-size: 29px;
+    right: 1rem;
+    pointer-events: none;
 }

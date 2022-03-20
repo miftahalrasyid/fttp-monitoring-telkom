@@ -23,6 +23,10 @@
 }
 .navbarBrandBox{
     padding: 0 1.5rem;
+    display:flex;
+    justify-content: space-between;
+    /* line-height: 4rem; */
+    /* line-height:5.8rem; */
     /* width: 280px; */
     background-color: var(--secondary);
     /* border-right: 1px solid #e9e9ef;
@@ -31,6 +35,18 @@
 }
 .navbarBrandBox a {
     text-decoration: none;
+}
+.odcAction{
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+.odcAction button{
+   margin:auto;
+}
+.separator{
+    font-size: 1.125rem;
+    font-weight: 300;
 }
 .dFlex{
     display:flex
@@ -69,6 +85,7 @@
     outline: 0;
     border:0;
     display: inline-block!important;
+    position:absolute
 }
 .navbarToggler > span{
     pointer-events: none;
@@ -182,7 +199,11 @@
         transform: rotate(-135deg);
     }
 }
+
 @media (max-width: 1080px){
+    .odcAction{
+        display:none;
+    }
     .navbarBrandBox {
         width: auto;
         display: flex;
@@ -206,6 +227,9 @@
         height: 2px;
         border-radius: 1px;
         margin: 0 auto;
+    }
+    .navbarToggler{
+        position:relative
     }
 }
 .navbarToggler .navbarTogglerIcon+.navbarTogglerIcon {

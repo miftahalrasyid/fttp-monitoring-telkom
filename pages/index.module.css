@@ -42,6 +42,7 @@
       fontSize: 48;
     }, */
 }
+
 .formContainer{
     width: 40%;
     height: 100%;
@@ -55,6 +56,10 @@
 }
 .form{
     width: 320px;
+    height: 61vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 .tab{
     font-weight: 400;
@@ -155,8 +160,31 @@
     color: var(--primary) !important;
     border-color: var(--primary) !important;
 }
-@media (max-width: 1279.95px){
+.logotypeTextMobile{
+    display: none;
+}
+.logotypeImageMobile{
+    display: none;
+}
+@media (max-width: 1080px){
     .logotypeContainer {
         display: none;
+    }
+    .logotypeTextMobile{
+        color: "#00000099";
+        /* // color: "white"; */
+        font-weight: 500;
+        font-size: 24px !important;
+        text-align: center;
+        display:block
+    }
+    .logotypeImageMobile{
+        color: "#00000099";
+        width: 120px;
+        margin:auto;
+        /* // color: "white"; */
+        font-weight: 500;
+        font-size: 24px !important;
+        display:block
     }
 }
