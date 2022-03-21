@@ -32,3 +32,6 @@ export const getSelectedCoreFeeder = (data) => ({
     type: GET_SELECTED_CORE_FEEDER,
     payload: data
 })
+export const getOcdSplitpanelStatus = () => ({
+    type: GET_ODC_SPLITPANEL_STATUS,
+});

@@ -9,7 +9,8 @@ import {
     GET_SPLITTER_DATA,
     GET_SPLITTER_DATA_SUCCESSFUL,
     SET_SELECTED_CORE_FEEDER,
-    GET_SELECTED_CORE_FEEDER
+    GET_SELECTED_CORE_FEEDER,
+    GET_ODC_SPLITPANEL_STATUS
 } from './actionTypes';
 // import firebase from '../../Firebase';
 
@@ -112,6 +113,17 @@ function* setSelectedCoreFeederSaga({payload:{elmId}}){
     }
 }
 
+function* fetchStatus(){
+    try {
+        console.log("get fetch status");
+        const res = yield fetch("https://my-project-1550730936778.firebaseio.com/expOdcBox.json").then(res=>res.json());
+        // console.log("getODCsBox", res)
+        yield put({type:GET_ODC_SPLITPANEL_STATUS,payload:res})
+    } catch (error) {
+        console.error(error)
+    }
+}
+
 function* watchODCsData(){
     yield takeEvery(GET_SPLITTER_DATA,getSplitter)
     yield takeEvery(GET_CORE_FEEDER,getCoreFeeder)
@@ -119,6 +131,8 @@ function* watchODCsData(){
     yield takeEvery(UPDATE_CORE_FEEDER,updateCoreFeeder)
     yield takeEvery(UPDATE_SPLITTER_DISTRIBUTION,updateSplitterDistribution);
     yield takeEvery(SET_SELECTED_CORE_FEEDER,setSelectedCoreFeederSaga)
+
+    yield takeEvery(GET_ODC_SPLITPANEL_STATUS,fetchStatus)
 }
 
 function* odcsSaga() {

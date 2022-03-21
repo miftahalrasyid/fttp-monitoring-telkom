@@ -1,6 +1,7 @@
 {
-    "splitter": {
-        "data": [{
+    "odc-ktm-fs":{
+        "splitter":{
+            "data": [{
                 "splitter_index": 1,
                 "feeder_index": 2,
                 "status": "used"
@@ -78,11 +79,25 @@
                 "status": "idle"
             }
         ]
-    },
-    "feeder": {
-
-    },
-    "distribution:": {
-
+        },
+        "feeder":{
+            "data":[
+                {
+                    "feeder_id":12367,
+                    "feeder_index":1,
+                    "distribution_id":{
+                        "123324":{
+                            "name":"johnson"
+                        },
+                        "12ddsf24":{
+                            "name":"layla"
+                        }
+                    },
+                    "splitter_id":12332,
+                    "status":"idle"
+                }
+            ]
+        }
     }
+    
 }

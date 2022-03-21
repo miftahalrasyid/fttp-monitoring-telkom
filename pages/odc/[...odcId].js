@@ -364,6 +364,12 @@ function Odc({
                 </Distributor>
         </Panel>
         </div>
+        <script async src="https://telegram.org/js/telegram-widget.js?18" data-telegram-login="testuser41_bot" data-size="large" data-onauth="onTelegramAuth(user)" data-request-access="write"></script>
+        <script type="text/javascript">
+        {function onTelegramAuth(user) {
+            alert('Logged in as ' + user.first_name + ' ' + user.last_name + ' (' + user.id + (user.username ? ', @' + user.username : '') + ')');
+        }}
+        </script>
         </div>
       }
       )}
@@ -660,6 +666,7 @@ export const getServerSideProps = async (props) => wrapper.getServerSideProps(st
     store.dispatch(getCoreFeederInfo())
     store.dispatch(END)
     await store.sagaTask.toPromise();
+    console.log("req test:",req.url,res,etc)
     // console.log("static props",store.getState())
     // console.log("store",store.getState().ODCs.odcsBox,req,res)
     const {params:{odcId=[]}} = props;

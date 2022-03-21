@@ -5,7 +5,9 @@ import { GET_SPLITTER_DATA,
   GET_SPLITTER_DATA_SUCCESSFUL,
   GET_CORE_FEEDER_INFO_SUCCESSFUL,
   GET_ODCs_SUCCESSFUL,
-  GET_SELECTED_CORE_FEEDER
+  GET_SELECTED_CORE_FEEDER,
+  GET_ODC_SPLITPANEL_STATUS,
+  GET_ODC_SPLITPANEL_STATUS_SUCCESSFUL
 } from "./actionTypes";
 import { HYDRATE } from 'next-redux-wrapper';
 const INIT_STATE = {
@@ -14,10 +16,12 @@ const INIT_STATE = {
         getOdc:false,
         update:false,
         getSplitter:false,
+        getOdcSplitpanelStatus:false,
     },
     coreFeederData:"",
     odcsBox:[],
     splitterData:"",
+    selectedOdcSplitpanelStatus:{},
     client: {
       coreFeederData:'',
       odcsBoxClient:'',
@@ -118,6 +122,28 @@ const odcs = (state=INIT_STATE,action) => {
             ...state.client,
             selectedCoreFeeder: action.payload
           }
+        }
+
+      case GET_ODC_SPLITPANEL_STATUS:
+
+        return{
+          ...state,
+          loading:{
+            ...state.loading,
+            getOdcSplitpanelStatus: true
+          }
+        }
+        
+        case GET_ODC_SPLITPANEL_STATUS_SUCCESSFUL:
+          
+        return{
+          ...state,
+          loading:{
+            ...state.loading,
+            getOdcSplitpanelStatus: false
+          },
+          selectedOdcSplitpanelStatus: action.payload
+
         }
   
       default:
