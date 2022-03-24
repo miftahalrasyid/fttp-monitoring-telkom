@@ -29,6 +29,10 @@ transition: all .3s ease;
     position: absolute;
     right: 1rem;
 }
+.textFieldContainer{
+    display:flex;
+    align-items: flex-end;
+}
 .form{
     flex-direction: row;
     padding-bottom: 1rem;
@@ -70,4 +74,23 @@ transition: all .3s ease;
     background: #1664f9;
     color: white;
     font-weight: 500;
+}
+.splitter{
+    margin-left: -0.7rem;
+    padding-right: 1.1rem;
+}
+.splitterGap{
+    margin-left: 0.4rem;
+    padding-right: 2.2rem;
+    color:rgba(0, 0, 0, 0.6);
+}
+.splitterGap::after{
+    border-bottom-color: #ee2d24
+    /* border-bottom-color: var(--primary) */
+}
+.deleteFeeder{
+    display: inline-flex;
+    align-items: center;
+    justify-content: right;
+    padding-right: 2.3rem
 }

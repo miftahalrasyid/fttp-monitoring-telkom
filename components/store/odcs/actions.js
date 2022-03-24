@@ -5,7 +5,8 @@ import {
     GET_ODCs,
     UPDATE_SPLITTER_DISTRIBUTION,
     SET_SELECTED_CORE_FEEDER,
-    GET_SELECTED_CORE_FEEDER
+    GET_SELECTED_CORE_FEEDER,
+    GET_ODC_SPLITPANEL_STATUS
 } from './actionTypes'
 export const getSplitterData = () =>({
     type: GET_SPLITTER_DATA,
@@ -32,6 +33,7 @@ export const getSelectedCoreFeeder = (data) => ({
     type: GET_SELECTED_CORE_FEEDER,
     payload: data
 })
-export const getOcdSplitpanelStatus = () => ({
+export const getOcdSplitpanelStatus = (odcId) => ({
     type: GET_ODC_SPLITPANEL_STATUS,
+    payload: {odcId}
 });

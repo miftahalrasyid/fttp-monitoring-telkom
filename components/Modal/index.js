@@ -2,136 +2,273 @@ import { Formik, Form, Field } from 'formik';
 import React,{useState,useCallback,useEffect} from 'react';
 import {MdClose} from 'react-icons/md'
 import styles from './modal.module.css';
+import { 
+    styled as styledCustom 
+} from "@mui/material/styles";
+import {
+    Button
+} from "@material-ui/core";
+import {
+    MdOutlineClose,
+    MdOutlineDeleteForever
+} from 'react-icons/md';
+import odcStyles from '../Sidebar/sidebar.module.css';
+import {Modal as MUIModal,Box} from '@material-ui/core';
+import TextField from '@mui/material/TextField';
+import NativeSelect from '@mui/material/NativeSelect';
+const CustomButtonModal = styledCustom(Button)(({ theme }) => ({
+    background: theme.status.primary,
+}));
+const CustomButtonModalGray = styledCustom(Button)(({ theme }) => ({
+    background: theme.status.darkgray,
+}));
+const CustomNativeSelect = styledCustom(NativeSelect)(({theme})=>({
+  // color: theme.status.primary,
+}))
+const CustomTextField = styledCustom(TextField)(({ theme }) => ({
+  color: theme.status.primary,
+  '.MuiInputLabel-root.Mui-focused': {
+    color: theme.status.primary,
+  },
+  '.MuiOutlinedInput-notchedOutline': {
+    border: "none!important",
+    // borderColor: theme.status.primary
+  },
+  '.MuiInput-root::after': {
+    borderColor: theme.status.primary
+  },
+}));
+function Modal(props) {
+    const {header="feeder 2",splitter,passive_out,feederModal,feederFocus,splitterData,panelData} = props;
+    // const { distribution:distributionData, feeder:feederData} = panelData
+    // console.log("panelData",panelData)
+    // console.log("feederFocus",feederFocus?.distribution)
+    // console.log("feedermodal",panelData.filter(pn=>pn.type==='distribution').map(ds=>{
 
-function Modal({modalTitle="Feeder",title="172.29.237.121/FIBERHOME",onSubmit,capacity,visible,fields,inputOrder=fields ? Object.keys(fields):[],gpon="",modul="",port="",core=""}) {
-    // console.log("data modal ",fields)
+    //   return ds.data.map(dsit=>({index:dsit.index ,status:dsit.status,rak:ds.rak_index}))
+    // }))
+    const availDistribution = panelData.filter(pn=>pn.type==='distribution').map(ds=>{
 
-    // console.log("modal order ",inputOrder)
-
-    // const modalTitle = "feeder 2";
-    // const title = "";
-    const [updateField,setUpdateField] = useState(inputOrder?.reduce((newarr,currArr)=>({...newarr,[currArr]:""}),{}));
-    const [editState, setEditState] = useState(true);
-    const [availablePort,setAvailablePort] = useState(capacity)
-    const unusedPort = new Array(capacity);
-    for (let index = 0; index < unusedPort.length; index++) {
-        unusedPort[index] = (index+1);
-    }
-    const editToggle = useCallback(()=>{
-        // console.log("click",editState)
-        setEditState(state=>!state)
-    },[editState]);
-    const exitClick = useCallback(()=>{
-        visible[1](state=>!state);
-        setEditState(true)
-    },[visible])
-    const propagation = (ev) =>{
-        ev.stopPropagation();
-    }
-    // console.log("unused",fields?.splitter?.default,unusedPort.filter(unused=>(unused==fields.default || (fields?.splitter?.options?.findIndex(exist=>exist==unused)==-1))))
-    const checkNested = () =>{
-
-    };
-    console.log("available port",availablePort)
-    useEffect(()=>{
-        setAvailablePort(Object.entries(capacity).reduce((prev,[key,value])=>{
-            const unusedPort = new Array(value);
-            for (let index = 0; index < unusedPort.length; index++) {
-                unusedPort[index] = (index+1);
-            }
-            return {...prev,[key]:unusedPort}
-        },{}))
-    },[])
-    useEffect(()=>{
-        if(fields || false){
-            setUpdateField(Object.entries(fields).reduce((newarr,...idx)=>{
-                // console.log("modal order",Object.entries(fields).find((item)=>item[0]==inputOrder[idx[1]]))
-                const [newKey,newVal] = Object.entries(fields).find((item)=>item[0]==inputOrder[idx[1]]) || ["",""];
-                const {type=""} = newVal;
-                if(type == 'select')
-                return {...newarr,[newKey+"-select"]:newVal.default}
-                if(newVal.nested){
-                    const {id} = newVal;
-                    // Object.entries(newVal).forEach(([key, value]) => );
-                    console.log("entries", newKey,newVal,Object.entries(newVal),id)
-                    const [newtype,nested,odpName,passiveId,dsId] =  Object.entries(newVal);
-                    console.log("passive id",passiveId)
-                    
-                    if(passiveId[1].type == "select")
-                    return {...newarr,[newKey]:newVal.name,["passive_out"+"_"+passiveId[1].default+"-select"]:passiveId[1].default}
-                    // return {...newarr}
-                }
-                if(newKey){
-                    return {...newarr,[newKey]:newVal.name}
-                }
-                // if(newKey && newVal)
-                
-
-                return newarr
-            },{}))
-        }
-        // setUpdateField({gpon,modul,port,core})
-    },[fields,inputOrder])
-  return <div className={`${styles.modalWrapper}`} style={{visibility:visible[0]?"visible":"hidden",opacity:visible[0]?"1":"0"}} onClick={exitClick}>
-      <div className={`${styles.modalContainer}`} style={{transform:"translateY("+(visible[0]?"0px":"-11px")+")"}} onClick={propagation}>
-          <MdClose onClick={exitClick} fontSize={"1.3rem"}/>
-          <h4>{("Feeder "+modalTitle).replace(/\w+ (\d) \/ (\w+ \d+) \d+/,"Distributor $1 $2")}</h4>
-          <h3>{title}</h3>
-          <Formik enableReinitialize initialValues={updateField} onSubmit={(state)=>onSubmit({...state,id:parseInt(modalTitle.replace(/(\d) \/ (\w+ \d+) (\d+)/,"$3"))})}>
-              <Form className={`${styles.form}`}>
-                  {(updateField || false) && Object.entries(updateField).map(([key,value])=>{
-                        // console.log("fields",fields,key.replace(/(\w+)-select/,"$1"),fields[key.replace(/(\w+)-select/,"$1")])
-                        // console.log("fielsd",key.replace(/(\w+)(-)?(\w+)?-select/,"$1"),fields[key.replace(/(\w+)(-)?(\w+)?-select/,"$1")]?.ds,key)
-                        if(/(\w+)-select/.test(key))
-                            return <div key={key} className={`${styles.field}`}>
-                            <label htmlFor={key}>{key.replace(/(\w+)-select/,"$1").toUpperCase()}</label>
-                            <Field name={key} disabled={editState}  as="select" >
-                                {availablePort.splitter.filter(unused=>(unused==fields[key.replace(/(\w+)-select/,"$1")]?.default || (fields[key.replace(/(\w+)(-)?(\w+)?-select/,"$1")]?.options?.findIndex(exist=>exist==unused)==-1 || fields[key.replace(/(\w+)(-)?(\w+)?-select/,"$1")]?.ds?.options?.findIndex(exist=>exist==unused)==-1))).map(option=>{
-                                    // console.log(option,option==value.default)
-                                    // if(option===3){
-                                    //     return (option)?<option key={key+"_"+option} selected value={option}>{option}</option>:null
-                                    // }
-                                    return (option)?<option key={key+"_"+option} value={option}>{option}</option>:null
-                                })}
-                            </Field>
-      
-                        </div>
-                        return <div key={key} className={`${styles.field}`}>
-                        <label htmlFor={key}>{key.toUpperCase()}</label>
-                        <Field id={key} name={key} placeholder={"-"} disabled={editState} style={{pointerEvents:(editState)?"none":"all"}} />
-  
+      return ds.data.map(dsit=>({index:dsit.index ,status:dsit.status,rak_index:ds.rak_index,rak_level:ds.rak_level}))
+    })
+    console.log("feederfokus",feederFocus)
+    const [feed,setFeed] = feederModal;
+    const handleClose = () => setFeed(false);
+    return (
+        <MUIModal key={header} open={feed} onClose={handleClose} className={`${styles.modalWrapper}`} aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description">
+                  <div>
+                  <div className={odcStyles.closebtn}>
+                    <MdOutlineClose/>
+                  </div>
+                <Box sx={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  border: 0,
+                  borderRadius: "6px",
+                  color: "#333",
+                  width:"90%",
+                  maxWidth: "600px",
+                  boxShadow: "0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 20%), 0 1px 5px 0 rgb(0 0 0 / 12%)",
+                  boxShadow: "0 1px 4px 0 rgb(0 0 0 / 14%)",
+                  "div":{
+                      margin:0
+                  }
+                }}>
+                 
+                  <div className={`${odcStyles.card}  ${odcStyles.cardStats}`}>
+                    <div className={`${odcStyles.cardHeader} ${odcStyles.cardHeaderPrimary}`}>
+                      <h4 className={odcStyles.cardTitle}>{header.toUpperCase()}</h4>
+                      <div className={odcStyles.stats}>
+                        atur koneksi feeder ke splitter dan distribusi
+                      </div>
                     </div>
-                    })}
-                  {/* <div className={`${styles.field}`}>
-                      <label htmlFor="gpon">GPON :</label>
-                      <Field id="gpon" name="gpon" placeholder="Jane"  disabled={editState} />
+                    <div className={`${odcStyles.cardBody} card-body row`}>
+                      <div className={`row ${odcStyles.formGap}`}>
+                        {/* <div className={`col-lg-12 col-md-12 ${styles.textFieldContainer}`}> */}
+                          <div className={`row ${odcStyles.formGap}`}>
+                            <div className={`col-lg-4 col-md-6 ${styles.textFieldContainer}`}>
+                              <p>Splitter</p>
 
+                            </div>
+                            <div className={`col-lg-8 col-md-6 ${styles.textFieldContainer} ${styles.splitter}`}>
+                            <CustomNativeSelect defaultValue={feederFocus?.splitter?.splitter_id?"sp"+feederFocus?.splitter?.splitter_id:"0"} inputProps={{
+                                    name: 'Splitter',
+                                    id: 'uncontrolled-native',
+                                    }} className={`col-lg-12 ${styles.splitterGap}`}>
+                                      <option value={0}>Empty</option>
+                                      {
+                                        feederFocus?.splitter?.splitter_id && 
+                                        <option key={"splitter"+feederFocus?.splitter?.splitter_index} value={"sp"+feederFocus?.splitter?.splitter_id}>{feederFocus?.splitter?.splitter_index}</option>
+                                      }
+                                      {splitterData.filter(item=>item.status==="idle").map(item=><option key={"splitter"+item.index} value={"sp"+item.id}>{item.index}</option>
+                                      )}
+                              </CustomNativeSelect>
+                            </div>
+                          </div>
+                        {/* <CustomTextField id="standard-basic" label="Splitter" variant="standard" className={`col-lg-12 ${styles.splitterGap}`}/> */}
+                        {/* </div> */}
+                        <div className={`col-lg-12 col-md-12 ${styles.textFieldContainer}`}>
+                          <div className={`row ${odcStyles.formGap}`}>
+                            <div className={`col-lg-4 col-md-12 ${styles.textFieldContainer}`}>
+                              <p>Passive Out 1</p>
+                            </div>
+                            <div className={`col-lg-4 col-md-12  ${styles.textFieldContainer}`}>
+                              <CustomTextField id="standard-basic" label="ODP Name 1" defaultValue={(feederFocus?.odpName)?feederFocus?.odpName[0] : null} variant="standard" />
+                            </div>
+                            <div className={`col-lg-4 col-md-12 ${styles.textFieldContainer}`}>
+                            {/* {feederFocus?.distribution[0]?.distribution_index} */}
+                              <NativeSelect defaultValue={feederFocus?.distribution[0]?.distribution_id?"dist"+feederFocus?.distribution[0]?.distribution_id:null} inputProps={{
+                                    name: 'Distribusi PO1',
+                                    id: 'uncontrolled-native',
+                                    }} className={`col-lg-12 ${styles.splitterGap}`}>
+                                      <option value={0}>Empty</option>
+                                      {
+                                        feederFocus?.distribution[0]?.distribution_id && 
+                                        <option key={"dist"+feederFocus?.distribution[0]?.distribution_index} value={"dist"+feederFocus?.distribution[0]?.distribution_id}>{(feederFocus?.distribution[0].distribution_level%2==0)?"D"+feederFocus?.distribution[0]?.distribution_level_id+"-"+(feederFocus?.distribution[0]?.distribution_index+12):"D"+feederFocus?.distribution[0]?.distribution_level_id+"-"+feederFocus?.distribution[0]?.distribution_index}</option>
+                                      }
+                                      {availDistribution.map((item,idx)=>{
+                                        // console.log("ds",item)
+                                       
+                                      return  item.map(dsitem=>{
+                                        // console.log("dsiteman",dsitem)
+                                        // console.log("dsitem",(dsitem.rak_level%2==0)?"D"+dsitem.rak_index+"-"+(dsitem.index+13):"D"+dsitem.rak_index+"-"+dsitem.index)
+                                          if(dsitem.status!=="used")
+                                        return <option key={"dist"+idx} value={0}>{(dsitem.rak_level%2==0)?"D"+dsitem.rak_index+"-"+(dsitem.index+12):"D"+dsitem.rak_index+"-"+dsitem.index}</option>
+                                      })
+                                      })}
+                              </NativeSelect>
+                            </div>
+                          </div>
+                        </div>
+                        <div className={`col-lg-12 col-md-12 ${styles.textFieldContainer}`}>
+                          <div className={`row ${odcStyles.formGap}`}>
+                          <div className={`col-lg-4 col-md-12 ${styles.textFieldContainer}`}>
+                              <p>Passive Out 2</p>
+                            </div>
+                              <div className={`col-lg-4 col-md-12 ${styles.textFieldContainer}`}>
+                                <CustomTextField id="standard-basic" label="ODP Name 2" defaultValue={(feederFocus?.odpName)?feederFocus?.odpName[1] : null} variant="standard" />
+                              </div>
+                              <div className={`col-lg-4 col-md-12 ${styles.textFieldContainer}`}>
+                              <NativeSelect defaultValue={feederFocus?.distribution[1]?.distribution_id?"dist"+feederFocus?.distribution[1]?.distribution_id:null} inputProps={{
+                                    name: 'Distribusi PO2',
+                                    id: 'uncontrolled-native',
+                                    }} className={`col-lg-12 ${styles.splitterGap}`}>
+                                      <option value={0}>Empty</option>
+                                      {
+                                        feederFocus?.distribution[1]?.distribution_id && 
+                                        <option key={"dist"+feederFocus?.distribution[1]?.distribution_index} value={"dist"+feederFocus?.distribution[1]?.distribution_id}>{(feederFocus?.distribution[1].distribution_level%2==0)?"D"+feederFocus?.distribution[1]?.distribution_level_id+"-"+(feederFocus?.distribution[1]?.distribution_index+12):"D"+feederFocus?.distribution[1]?.distribution_level_id+"-"+feederFocus?.distribution[1]?.distribution_index}</option>
+                                      }
+                                      {availDistribution.map((item,idx)=>{
+                                        // console.log("ds",item)
+                                       
+                                      return  item.map(dsitem=>{
+                                        // console.log("dsiteman",dsitem)
+                                        // console.log("dsitem",(dsitem.rak_level%2==0)?"D"+dsitem.rak_index+"-"+(dsitem.index+13):"D"+dsitem.rak_index+"-"+dsitem.index)
+                                          if(dsitem.status!=="used")
+                                        return <option key={"dist"+idx} value={0}>{(dsitem.rak_level%2==0)?"D"+dsitem.rak_index+"-"+(dsitem.index+12):"D"+dsitem.rak_index+"-"+dsitem.index}</option>
+                                      })
+                                      })}
+                              </NativeSelect>
+                              </div>
+                              </div>
+                        </div>
+                        <div className={`col-lg-12 col-md-12  ${styles.textFieldContainer}`}>
+                          <div className={`row ${odcStyles.formGap}`}>
+                          <div className={`col-lg-4 col-md-12  ${styles.textFieldContainer}`}>
+                              <p>Passive Out 3</p>
+                            </div>
+                              <div className={`col-lg-4 col-md-12 ${styles.textFieldContainer}`}>
+                                <CustomTextField id="standard-basic" label="ODP Name 3" defaultValue={(feederFocus?.odpName)?feederFocus?.odpName[2] : null} variant="standard" />
+                              </div>
+                              <div className={`col-lg-4 col-md-12 ${styles.textFieldContainer}`}>
+                              <NativeSelect defaultValue={feederFocus?.distribution[2]?.distribution_id?"dist"+feederFocus?.distribution[2]?.distribution_id:null} inputProps={{
+                                    name: 'Distribusi PO3',
+                                    id: 'uncontrolled-native',
+                                    }} className={`col-lg-12 ${styles.splitterGap}`}>
+                                      <option value={0}>Empty</option>
+                                      {
+                                        feederFocus?.distribution[2]?.distribution_id && 
+                                        <option key={"dist"+feederFocus?.distribution[2]?.distribution_index} value={"dist"+feederFocus?.distribution[2]?.distribution_id}>{(feederFocus?.distribution[1].distribution_level%2==0)?"D"+feederFocus?.distribution[2]?.distribution_level_id+"-"+(feederFocus?.distribution[2]?.distribution_index+12):"D"+feederFocus?.distribution[2]?.distribution_level_id+"-"+feederFocus?.distribution[2]?.distribution_index}</option>
+                                      }
+                                      {availDistribution.map((item,idx)=>{
+                                        // console.log("ds",item)
+                                       
+                                      return  item.map(dsitem=>{
+                                        // console.log("dsiteman",dsitem)
+                                        // console.log("dsitem",(dsitem.rak_level%2==0)?"D"+dsitem.rak_index+"-"+(dsitem.index+13):"D"+dsitem.rak_index+"-"+dsitem.index)
+                                          if(dsitem.status!=="used")
+                                        return <option key={"dist"+idx} value={0}>{(dsitem.rak_level%2==0)?"D"+dsitem.rak_index+"-"+(dsitem.index+12):"D"+dsitem.rak_index+"-"+dsitem.index}</option>
+                                      })
+                                      })}
+                              </NativeSelect>
+                              </div>
+                            </div>
+                        </div>
+                        <div className={`col-lg-12 col-md-12  ${styles.textFieldContainer}`}>
+                          <div className={`row ${odcStyles.formGap}`}>
+                          <div className={`col-lg-4 col-md-12 ${styles.textFieldContainer}`}>
+                              <p>Passive Out 4</p>
+                            </div>
+                              <div className={`col-lg-4 col-md-12  ${styles.textFieldContainer}`}>
+                                <CustomTextField id="standard-basic" label="ODP Name 4" defaultValue={(feederFocus?.odpName)?feederFocus?.odpName[3] : null} variant="standard" />
+                              </div>
+                              <div className={`col-lg-4 col-md-12 ${styles.textFieldContainer}`}>
+                              <NativeSelect defaultValue={feederFocus?.distribution[3]?.distribution_id?"dist"+feederFocus?.distribution[3]?.distribution_id:null} inputProps={{
+                                    name: 'Distribusi PO4',
+                                    id: 'uncontrolled-native',
+                                    }} className={`col-lg-12 ${styles.splitterGap}`}>
+                                      <option value={0}>Empty</option>
+                                      {
+                                        feederFocus?.distribution[3]?.distribution_id && 
+                                        <option key={"dist"+feederFocus?.distribution[3]?.distribution_index} value={"dist"+feederFocus?.distribution[3]?.distribution_id}>{(feederFocus?.distribution[1].distribution_level%2==0)?"D"+feederFocus?.distribution[3]?.distribution_level_id+"-"+(feederFocus?.distribution[3]?.distribution_index+12):"D"+feederFocus?.distribution[3]?.distribution_level_id+"-"+feederFocus?.distribution[3]?.distribution_index}</option>
+                                      }
+                                      {availDistribution.map((item,idx)=>{
+                                        // console.log("ds",item)
+                                       
+                                      return  item.map(dsitem=>{
+                                        // console.log("dsiteman",dsitem)
+                                        // console.log("dsitem",(dsitem.rak_level%2==0)?"D"+dsitem.rak_index+"-"+(dsitem.index+13):"D"+dsitem.rak_index+"-"+dsitem.index)
+                                          if(dsitem.status!=="used")
+                                        return <option key={"dist"+idx} value={0}>{(dsitem.rak_level%2==0)?"D"+dsitem.rak_index+"-"+(dsitem.index+12):"D"+dsitem.rak_index+"-"+dsitem.index}</option>
+                                      })
+                                      })}
+                              </NativeSelect>
+                              </div>
+                            </div>
+                          </div>
+                      </div>
+                    <div className={`col-lg-12 col-md-12  
+                      ${odcStyles.deleteFeeder}`}>
+                      <div className={`row `}>
+                        <div className={`col-md-12 col-lg-6 `}>
+                          <div className={odcStyles.actionContainer}>
+                            <div className={`col-md-12 col-lg-6 `}>
+                              <CustomButtonModal>
+                                {"Submit"}
+                              </CustomButtonModal>
+                            </div>
+                            <div className={`col-md-12 col-lg-6 `}>
+                              <CustomButtonModalGray onClick={()=>handleClose()}>
+                                {"Cancel"}
+                              </CustomButtonModalGray>
+                            </div>
+                          </div>
+                        </div>
+                        <div className={`col-md-12 col-lg-6 ${styles.deleteFeeder} ${styles.textFieldContainer}`}>
+                          <MdOutlineDeleteForever />delete this feeder
+                        </div>
+                      </div>
+                    </div>
+                    </div>
+                    
                   </div>
-                  <div className={`${styles.field}`}>
-                      <label htmlFor="modul">Modul :</label>
-                      <Field id="modul" name="modul" placeholder="Doe" disabled={editState} />
-
-                  </div>
-                  <div className={`${styles.field}`}>
-                      <label htmlFor="port">Port :</label>
-                      <Field id="port" name="port" placeholder="jane@acme.com" disabled={editState} />
-
-                  </div>
-                  <div className={`${styles.field}`}>
-
-                      <label htmlFor="core">Core :</label>
-                      <Field id="core" name="core" placeholder="jane@acme.com"  disabled={editState} />
-                  </div> */}
-                  <div className={`${styles.field} ${styles.edit}`} onClick={editToggle}>
-                      {editState?"edit":"cancel"}
-                  </div>
-                  <div className={`${styles.field} ${styles.submitBtn}`} style={{display:editState?"none":"block"}} onClick={exitClick}>
-                    <button type="submit">Submit</button>
-                  </div>
-              </Form>
-          </Formik>
-      </div>
-  </div>;
+                </Box>
+                </div>
+              </MUIModal>
+    )
 }
 
 export default Modal;

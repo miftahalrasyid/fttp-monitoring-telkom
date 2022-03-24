@@ -13,12 +13,14 @@
     color: gray;
     /* font-size: 2.3rem; */
     font-size: 3.3rem;
+    pointer-events: none;
     transform: rotate(90deg);
 }
 .ethContainer svg path{
     pointer-events: none;
 }
 .ethContainer p{
+    pointer-events: none;
     position: absolute;
     margin:auto;
     /* line-height: 2rem; */

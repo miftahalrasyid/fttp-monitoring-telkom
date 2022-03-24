@@ -225,6 +225,10 @@
 .cardBody{
     justify-content: center;
     padding: 0.5rem 1.4rem;
+    overflow: scroll;
+}
+.cardBody p{
+    margin-bottom: 0.1rem;
 }
 .card .cardHeader{
     margin: 0 15px;
@@ -255,7 +259,7 @@
 .card .cardHeader:not(.cardHeaderIcon):not(.cardHeaderText):not(.cardHeaderImage) {
     border-radius: 3px;
     margin-top: -20px;
-    padding: 15px;
+    padding: 15px 1.5rem;
 }
 .card:not(.cardHeaderIcon){
     /* position: relative; */
@@ -263,6 +267,7 @@
     flex-direction: column;
     min-width: 0;
     word-wrap: break-word;
+    max-height: calc(100vh - 9rem);
 }
 .card .cardHeader .cardTitle{
     color:white;
@@ -283,11 +288,15 @@
 }
 .actionContainer{
     position: relative;
-    margin: 0 15px;
-    padding: 35px 0px 0px;
+    /* margin: 0 15px; */
+    padding: 1rem 0px 0px;
     display: flex;
     justify-content: space-between;
     margin-bottom: 0.9rem;
+}
+.actionContainer div{
+    display:flex;
+    justify-content: left;
 }
 .dFlex{
     display:flex;
@@ -317,7 +326,28 @@
     right: 1rem;
     pointer-events: none;
 }
+.formGap{
+    margin: 5px 0;
+}
+.deleteFeeder{
+    text-align: right;
+    margin-top:1rem;
+    padding:0 1.5rem;
+    justify-content: flex-end;
+    cursor:pointer
+}
+.deleteFeeder svg{
+    width: 22px;
+    color: var(--primary);
+    height: auto;
+}
 @media (max-width: 1080px) {
+    .actionContainer{
+        justify-content: space-around;
+    }
+    .deleteFeeder{
+        justify-content: center;
+    }
     .verticalMenu{
         position: fixed;
         display: block;

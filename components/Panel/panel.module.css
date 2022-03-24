@@ -4,6 +4,7 @@
     /* max-width:100%; */
     min-width:755px;
     padding: 1rem;
+    user-select: none;
 }
 .panelContainer{
     position: relative;

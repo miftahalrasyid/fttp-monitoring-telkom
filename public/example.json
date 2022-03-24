@@ -1,0 +1,227 @@
+{
+    "suucess": true,
+    "odc_id": "odc-ktm-fs",
+    "capacity": 144,
+    "core": 24,
+    "deployment_date": "Mar 1994",
+    "notes": "text",
+    "panel": [
+    {
+        "rak_level": 1,
+        "rak_id": "wwew-ewwe-988-wewew",
+        "type": "feeder",
+        "data": [
+            {
+                "id": "wwew-ewwe-988-wewew",
+                "index": 1,
+                "status": "idle",
+                "pass_through":false,
+                "passive_out": []
+            },
+            {
+                "id": "wwew-ewwe-988-3434",
+                "index": 2,
+                "status": "used",
+                "pass_through":false,
+                "passive_out": [{
+                        "name": "ps 1",
+                        "po_index": 1,
+                        "splitter": {
+                            "splitter_id": "wwew-ewwe-988-343432",
+                            "splitter_index": 1
+                        },
+                        "feeder": {
+                            "feeder_id": "wwew-ewwe-988-3434",
+                            "feeder_level": 1,
+                            "feeder_index": 1
+                        },
+                        "distribution": {
+                            "distribution_id": "123-ewqeq-ewew",
+                            "distribution_level": 3,
+                            "distribution_index": 1
+                        }
+                    },
+                    {
+                        "name": "ps 2",
+                        "po_index": 2,
+                        "splitter": {
+                            "splitter_id": "wwew-ewwe-988-343432",
+                            "splitter_index": 1
+                        },
+                        "feeder": {
+                            "feeder_id": "wwew-ewwe-988-3434",
+                            "feeder_level": 1,
+                            "feeder_index": 1
+                        },
+                        "distribution": {
+                            "distribution_id": "123-ewqeq-ewew",
+                            "distribution_level": 3,
+                            "distribution_index": 2
+                        }
+                    },
+                    {
+                        "name": "",
+                        "po_index": 3,
+                        "splitter":{},
+                        "feeder":{},
+                        "distribution":{}
+                    },
+                    {
+                        "name": "",
+                        "po_index": 4,
+                        "splitter":{},
+                        "feeder":{},
+                        "distribution":{}
+                    }
+                ]
+            }, {
+                "id": "wwew-ewwe-988-ggfgf",
+                "index": 3,
+                "status": "used",
+                "pass_through":true,
+                "passive_out": [{
+                        "name": "ps 1",
+                        "po_index": 1,
+                        "splitter": {},
+                        "feeder": {
+                            "feeder_id": "wwew-ewwe-988-3434",
+                            "feeder_level": 1,
+                            "feeder_index": 1
+                        },
+                        "distribution": {
+                            "distribution_id": "123-ewqeq-ewew",
+                            "distribution_level": 3,
+                            "distribution_index": 4
+                        }
+                    },
+                    {
+                        "name": "",
+                        "po_index": 2,
+                        "splitter":{},
+                        "feeder":{},
+                        "distribution":{}
+                    },
+                    {
+                        "name": "",
+                        "po_index": 3,
+                        "splitter":{},
+                        "feeder":{},
+                        "distribution":{}
+                    },
+                    {
+                        "name": "",
+                        "po_index": 4,
+                        "splitter":{},
+                        "feeder":{},
+                        "distribution":{}
+                    }
+                ]
+            },{},{},{}
+        ]
+    },
+    {
+        "rak_level": 2,
+        "rak_id": "wwew-ewwe-988-wewew",
+        "type": "",
+        "data": []
+    },
+    {
+        "rak_level": 3,
+        "rak_id": "wwew-ewwe-988-wewew",
+        "type": "distribution",
+        "data": [
+            {
+                "id": "wwew-ewwe-988-wewew",
+                "index": 1,
+                "status": "used",
+                "pass_through":false,
+                "passive_out": [
+                    {
+                        "name": "ps 1",
+                        "po_index": 1,
+                        "splitter": {
+                            "splitter_id": "wwew-ewwe-988-343432",
+                            "splitter_index": 1
+                        },
+                        "feeder": {
+                            "feeder_id": "wwew-ewwe-988-3434",
+                            "feeder_level": 1,
+                            "feeder_index": 1
+                        },
+                        "distribution": {
+                            "distribution_id": "123-ewqeq-ewew",
+                            "distribution_level": 3,
+                            "distribution_index": 1
+                        }
+                    }
+                ]
+            },
+            {
+                "id": "wwew-ewwe-988-wewew",
+                "index": 2,
+                "status": "used",
+                "pass_through":false,
+                "passive_out": [
+                    {
+                        "name": "ps 1",
+                        "po_index": 2,
+                        "splitter": {
+                            "splitter_id": "wwew-ewwe-988-343432",
+                            "splitter_index": 1
+                        },
+                        "feeder": {
+                            "feeder_id": "wwew-ewwe-988-3434",
+                            "feeder_level": 1,
+                            "feeder_index": 1
+                        },
+                        "distribution": {
+                            "distribution_id": "123-ewqeq-ewew",
+                            "distribution_level": 3,
+                            "distribution_index": 2
+                        }
+                    }
+                ]   
+            },
+            {
+                "id": "wwew-ewwe-988-wewew",
+                "index": 3,
+                "status": "idle",
+                "pass_through":false,
+                "passive_out": []
+            },
+            {
+                "id": "wwew-ewwe-988-wewew",
+                "index": 4,
+                "status": "used",
+                "pass_through":true,
+                "passive_out": [
+                    {
+                        "name": "ps 1",
+                        "po_index": 1,
+                        "splitter": {},
+                        "feeder": {
+                            "feeder_id": "wwew-ewwe-988-3434",
+                            "feeder_level": 1,
+                            "feeder_index": 1
+                        },
+                        "distribution": {
+                            "distribution_id": "123-ewqeq-ewew",
+                            "distribution_level": 3,
+                            "distribution_index": 4
+                        }
+                    }
+                ]
+            }
+        ]
+    }],
+    "splitter": [{
+        "id": "wwew-ewwe-988-wewew",
+        "index": 1,
+        "status": "idle"
+    },
+    {
+        "id": "wwew-ewwe-988-wewew",
+        "index": 2,
+        "status": "idle"
+    },{},{}]
+}

@@ -59,7 +59,7 @@
     height: 61vh;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: center;
 }
 .tab{
     font-weight: 400;
@@ -110,7 +110,7 @@
     margin-top: 32px;
     /* marginTop: theme.spacing(4); */
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     align-items: center;
 }
 .forgetButton{
@@ -166,6 +166,21 @@
 .logotypeImageMobile{
     display: none;
 }
+.resetPassword{
+    text-align: center;
+}
+.resetSubtitle{
+    text-align: center;
+
+}
+.decorationNone{
+    text-decoration:none;
+    color: var(--primary)
+}
+.goToLogin{
+    margin-top: 3rem;
+    text-align: center;
+}
 @media (max-width: 1080px){
     .logotypeContainer {
         display: none;
@@ -186,5 +201,8 @@
         font-weight: 500;
         font-size: 24px !important;
         display:block
+    }
+    .form{
+        justify-content: space-between;
     }
 }

@@ -3,6 +3,7 @@
     justify-content: space-around;
     background:blue;
     align-items: center;
+    height: 50px;
 }
 .labelWrapper svg{
     color: white;
@@ -25,6 +26,8 @@
         line-height: 3rem;
     } */
     .labelWrapper svg{
-        font-size: 3.3rem;
+        /* font-size: 3.3rem; */
+        font-size: 3.5rem;
+        width: 56px;
     }
 }

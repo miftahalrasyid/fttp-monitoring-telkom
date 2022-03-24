@@ -153,7 +153,8 @@ function Navbar(props) {
   return  <nav id={indexStyles.topBar}>
       <div className='container-fluid'></div>
             <div className={indexStyles.navbarBrandBox}>
-                  {typeof odcId !== 'object' || typeof userPath !== 'object'? 
+                  {typeof odcId !== 'object'? 
+                  // {typeof odcId !== 'object' || typeof userPath !== 'object'? 
               <Link href={"/"} passHref>
                 <a className={indexStyles.logo}>
                     <span className={indexStyles.logoTxt}> {(!odcId)?router.pathname.replace(/(\/.*)?\/(\S+)/,"$2").toUpperCase():odcId[0].toUpperCase()}</span>

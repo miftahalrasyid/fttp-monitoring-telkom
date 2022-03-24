@@ -2,7 +2,7 @@
     /* margin-top: 70px; */
     margin:auto;
     padding: 30px 15px;
-    max-width: 1200px;
+    max-width: 1323px;
     min-height: calc(100vh - 123px);
 }
 .odcIdWrapper{
@@ -181,6 +181,7 @@
     justify-content: space-between;
     margin-bottom: 0.9rem;
 }
+
 .actionContainer button{
     
     color: #fff;
@@ -227,4 +228,56 @@
     font-size: 29px;
     right: 1rem;
     pointer-events: none;
+}
+.MuiBox-root .card{
+    margin-bottom:0
+}
+.portLabel{
+    text-transform: capitalize;
+}
+.odcFiles{
+    display: flex;
+    /* float: right; */
+    justify-content: right;
+    gap: 1rem;
+}
+.kmlWrapper{
+    padding: 0.8rem;
+    min-width: 256px;
+    border-radius: 7px;
+    width: 130px;
+    box-shadow: 0 1px 4px 0 rgb(0 0 0 / 14%);
+    background: white;
+}
+.kmlContainer{
+    min-width: 230px;
+    width: 135px;
+    margin-top: -3.4rem;
+    padding-top: 3rem;
+    padding-left:1rem;
+    min-height: 135px;
+    border: 2px dashed #ced4da;
+    background: #fff;
+    border-radius: 6px;
+    color:#838689;
+}
+.mcWrapper{
+    padding: 0.8rem;
+    min-width: 256px;
+    border-radius: 7px;
+    width: 130px;
+    box-shadow: 0 1px 4px 0 rgb(0 0 0 / 14%);
+    background: white;
+}
+.mcContainer{
+    min-width: 230px;
+    width: 135px;
+    margin-top: -3.4rem;
+    padding-top: 3rem;
+    padding-left:1rem;
+    min-height: 135px;
+    border: 2px dashed #ced4da;
+    background: #fff;
+    border-radius: 6px;
+    color:#838689;
 }

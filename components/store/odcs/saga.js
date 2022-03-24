@@ -10,7 +10,8 @@ import {
     GET_SPLITTER_DATA_SUCCESSFUL,
     SET_SELECTED_CORE_FEEDER,
     GET_SELECTED_CORE_FEEDER,
-    GET_ODC_SPLITPANEL_STATUS
+    GET_ODC_SPLITPANEL_STATUS,
+    GET_ODC_SPLITPANEL_STATUS_SUCCESSFUL
 } from './actionTypes';
 // import firebase from '../../Firebase';
 
@@ -113,12 +114,13 @@ function* setSelectedCoreFeederSaga({payload:{elmId}}){
     }
 }
 
-function* fetchStatus(){
+function* fetchStatus({payload:{odcId}}){
     try {
-        console.log("get fetch status");
+        // console.log("get fetch status");
         const res = yield fetch("https://my-project-1550730936778.firebaseio.com/expOdcBox.json").then(res=>res.json());
-        // console.log("getODCsBox", res)
-        yield put({type:GET_ODC_SPLITPANEL_STATUS,payload:res})
+        const filtered = yield res.filter(item=>item.odc_id===odcId);
+        console.log("filtered", res, filtered[0],odcId)
+        yield put({type:GET_ODC_SPLITPANEL_STATUS_SUCCESSFUL,payload:filtered[0]})
     } catch (error) {
         console.error(error)
     }

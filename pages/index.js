@@ -12,6 +12,7 @@ import {
   Paper,
   makeStyles, useTheme, styled, createTheme,MuiThemeProvider
 } from "@material-ui/core";
+import Link from 'next/link';
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import OtpInput from "react-otp-input";
 import { withRouter } from "next/router";
@@ -189,9 +190,13 @@ function Login(props) {
                         Login
                       </Button>
                       )}
-                      <Button color="primary" size="large" className={styles.forgetButton}>
-                        Forget Password
-                      </Button>
+                      <Link href={'/forgot_password'}>
+                        <a className={styles.decorationNone}>
+                          <Button color="primary" size="large" className={styles.forgetButton}>
+                            Forgot Password
+                          </Button>
+                        </a>
+                      </Link>
                     </div>
               </div>
             </div>
