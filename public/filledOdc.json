@@ -8,6 +8,7 @@
     "panel_oa":2,
     "rak_oa":"1.3",
     "port":5,
+    "merk":"samsung",
     "panel": {
         "position": {
             "top": 0,

@@ -164,6 +164,9 @@
     border-radius: 22px !important;
     min-width:fit-content !important;
 }
+.customCardBodyUser{
+    margin-left: 0.3rem;
+}
 .tableAction svg{
     width: 22px;
     color: var(--primary);

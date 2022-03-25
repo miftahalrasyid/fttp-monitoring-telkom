@@ -4,7 +4,7 @@ import withAuth from '../../components/Auth';
 import {END} from 'redux-saga';
 import { connect, useDispatch } from 'react-redux';
 
-import Layout from '../../components/Layout';
+// import Layout from '../../components/Layout';
 // import styles from '../../components/Distributor/distributor.module.css';
 import styles from './odc.module.css';
 import splitterStyle from '../../components/Splitter/splitter.module.css';
@@ -13,25 +13,27 @@ import Splitter from '../../components/Splitter';
 import Eth from '../../components/Eth';
 import Rak from '../../components/Rak';
 import Panel from '../../components/Panel';
+import {MdOutlineViewSidebar} from 'react-icons/md';
 // import panelStyles from '../../components/panel.module.css';
-import Feeder from '../../components/Feeder';
-import Distributor from '../../components/Distributor';
-import {
-    MdInventory,
-    MdNfc,
-    MdSettingsInputComposite,
-    MdOutlineDateRange,
-    MdOpenInBrowser,
-    MdRemoveRedEye,
-    MdDeleteForever
-  } from 'react-icons/md';
+// import Feeder from '../../components/Feeder';
+// import Distributor from '../../components/Distributor';
+// import {
+//     MdInventory,
+//     MdNfc,
+//     MdSettingsInputComposite,
+//     MdOutlineDateRange,
+//     MdOpenInBrowser,
+//     MdRemoveRedEye,
+//     MdDeleteForever
+//   } from 'react-icons/md';
   import { createTheme, MuiThemeProvider,styled } from "@material-ui/core/styles";
   const DynamicMUIDataTable = dynamic(() => import('mui-datatables'),{ ssr: false });
 import {
     getOcdSplitpanelStatus
 } from '../../components/store/odcs/actions';
+import {getUserData} from '../../components/store/users/actions'
 import { wrapper,makeStore } from "../../components/store";
-import store from '../../components/store'
+// import store from '../../components/store'
 import Modal from '../../components/Modal';
 import {Typography} from '@mui/material';
 import InputLabel from '@mui/material/InputLabel';
@@ -96,6 +98,7 @@ import {
   });
 function Odc({
     data:ODCData,
+    userData
     }) {
       console.log("ODC Data",ODCData)
         /**
@@ -271,6 +274,20 @@ function Odc({
       else if(ev.target.children[1].getAttribute("fill")=="#ffda00" && ev.target.getAttribute("data-type")=="feeder"){
         feederModal[1](true);
       }
+      else if( ev.target.getAttribute("data-type")=="distribution"){
+      // else if(ev.target.children[1].getAttribute("fill")=="blue" && ev.target.getAttribute("data-type")=="distribution"){
+        const [{data:dataDist=[{
+          id:"",
+          index:"",
+          pass_through:"",
+          status:"",
+          passive_out:[], 
+        }]}] = panel.data.filter(pnl=>pnl.rak_level.toString()===ev.target.getAttribute('data-rak'));
+        const [{passive_out:[{name,po_index,splitter:{splitter_index}}]}] = dataDist.filter(dt=>dt.index.toString()==ev.target.getAttribute('data-id'));
+        // {name,po_index,splitter:{splitter_index}}
+        // console.log("distribution port click data",passive_out);
+        alert("ODP Name: "+name+"\n"+"Splitter: "+splitter_index+"\nPassive Out: "+po_index)
+      }
       
       /**
        * on feeder click end
@@ -293,7 +310,17 @@ function Odc({
     /**
      * variables for activity log page
      */
-     const [datatable, setDatatable] = useState([[]])
+     const [datatable, setDatatable] = useState([[]]);
+     useEffect(()=>{
+      setDatatable(userData.map(item=>([
+        item.name,
+        item.email,
+        item.role,
+        ODCData.deployment_date,
+        item.action || "user merubah ODC"
+      ])))
+    },[ODCData,userData])
+     /** display odc panel */
     if(odcId.length==1){
         return <div className={`wrapper ${styles.odcIdWrapper}`}>
           { ODCData &&
@@ -362,6 +389,95 @@ function Odc({
                 })}
                 </Panel>
               </div>
+              <div className={styles.odcFiles}>
+              <div className={`${splitterStyle.videoWrapper}`} style={{left:"30px",top:"393px"}}>
+              {/* <div className={`${splitterStyle.splitWrapper}`} style={{top:"250px",left:"0px"}}> */}
+                <div className={`${splitterStyle.card}`}>
+                  <div className={`${splitterStyle.cardHeader} ${splitterStyle.cardHeaderBlue}`} style={{zIndex:"1"}}>
+
+
+                    <h4 className={splitterStyle.cardTitle} >Video</h4>
+                  </div>
+                  <div className={`${splitterStyle.videoContainer}`}>
+                  <iframe frameBorder="0" scrolling="no" marginHeight="0" marginWidth="0" width="315" height="auto" type="text/html" src="https://www.youtube.com/embed/_cAIkgb5I0E?autoplay=0&fs=0&iv_load_policy=3&showinfo=0&rel=0&cc_load_policy=0&start=0&end=0&origin=http://youtubeembedcode.com"></iframe>
+                  </div>
+                  </div>
+                </div>
+              <div className={`${splitterStyle.legendWrapper}`} style={{left:"30px",top:"676px"}}>
+              {/* <div className={`${splitterStyle.splitWrapper}`} style={{top:"250px",left:"0px"}}> */}
+                <div className={`${splitterStyle.card}`}>
+                  <div className={`${splitterStyle.cardHeader} ${splitterStyle.cardHeaderPurple}`} style={{zIndex:"1"}}>
+
+
+                    <h4 className={splitterStyle.cardTitle} >Legends</h4>
+                  </div>
+                  <div className={`${splitterStyle.legendContainer}`}>
+                    
+                      <div className='col-md-12 col-lg-12'>
+                        <div className="row">
+                          <div className='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
+                            <div className='row'>
+                              <div className='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
+                                focused
+                              </div>
+                              <div className='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
+                                <MdOutlineViewSidebar fill='#ffda00'/>
+                                
+                              </div>
+                            </div>
+                          </div>
+                          <div className='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
+                            <div className='row'>
+                              <div className='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
+                                priority
+                              </div>
+                              <div className='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
+                              <MdOutlineViewSidebar fill='#ee2d24'/>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      {/* </div> */}
+                      {/* <div className='col-xs-12 col-sm-12 col-md-6 col-lg-6'> */}
+                      <div className="row">
+                        <div className='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
+                          <div className='row'>
+                            <div className='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
+                            used
+                            </div>
+                            <div className='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
+                              <MdOutlineViewSidebar fill='blue'/>
+                            </div>
+                          </div>
+                        </div>
+                        <div className='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
+                          <div className='row'>
+                            <div className='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
+                            idle
+                            </div>
+                            <div className='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
+                              <MdOutlineViewSidebar />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="row">
+                      <div className='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
+                          <div className='row'>
+                            <div className='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
+                            broken
+                            </div>
+                            <div className='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
+                              <MdOutlineViewSidebar fill='black'/>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      </div>
+                  </div>
+                  </div>
+                </div>
+              </div>
               <Modal open={feederModal[0]} header={"Feeder "+feederFocus.splitter.splitter_index} splitterData={splitter.data} panelData={panel.data} feederModal={feederModal} feederFocus={feederFocus}/>
               {/* <script async src="https://telegram.org/js/telegram-widget.js?18" data-telegram-login="miftah1112_bot"
                 data-size="large" data-onauth="onTelegramAuth(user)" data-request-access="write"></script> */}
@@ -369,7 +485,7 @@ function Odc({
               <div className={`${splitterStyle.splitWrapper}`} style={{position:"relative",minWidth:"279px"}}>
               {/* <div className={`${splitterStyle.splitWrapper}`} style={{top:"250px",left:"0px"}}> */}
                 <div className={`${splitterStyle.card}`}>
-                  <div className={`${splitterStyle.cardHeader} ${splitterStyle.cardHeaderWarning}`} style={{zIndex:"1"}}>
+                  <div className={`${splitterStyle.cardHeader} ${splitterStyle.cardPinkish}`} style={{zIndex:"1"}}>
 
 
                     <h4 className={splitterStyle.cardTitle} >KML Data</h4>
@@ -384,7 +500,7 @@ function Odc({
               <div className={`${splitterStyle.splitWrapper}`} style={{position:"relative",minWidth:"279px"}}>
                 {/* <div className={`${splitterStyle.splitWrapper}`} style={{top:"250px",left:"0px"}}> */}
                   <div className={`${splitterStyle.card}`}>
-                    <div className={`${splitterStyle.cardHeader} ${splitterStyle.cardHeaderWarning}`}
+                    <div className={`${splitterStyle.cardHeader} ${splitterStyle.cardPinkish}`}
                       style={{zIndex:"1"}}>
 
 
@@ -484,7 +600,7 @@ function Odc({
       </div>
     )
   }
-
+/** display user activity log */
   else if(odcId[1]=="activity log"){
 
     return (
@@ -521,7 +637,7 @@ function Odc({
                                             }
                                           }
                                         },{
-                                          name: "Nama",
+                                          name: "User",
                                           options:{
                                             customBodyRender:(value, tableMeta, update) => {
                                               let newValue = tableMeta.rowData[0]
@@ -529,7 +645,7 @@ function Odc({
                                             }
                                           }
                                         },{
-                                          name: "Role",
+                                          name: "Email",
                                           options:{
                                             customBodyRender:(value, tableMeta, update) => {
                                               let newValue = tableMeta.rowData[1]
@@ -537,7 +653,7 @@ function Odc({
                                             }
                                           }
                                         },{
-                                          name: "Tanggal",
+                                          name: "Role",
                                           options:{
                                             customBodyRender:(value, tableMeta, update) => {
                                               let newValue = tableMeta.rowData[2]
@@ -545,10 +661,18 @@ function Odc({
                                             }
                                           }
                                         },{
-                                          name: "Aksi",
+                                          name: "Tanggal",
                                           options:{
                                             customBodyRender:(value, tableMeta, update) => {
                                               let newValue = tableMeta.rowData[3]
+                                              return ( <span>{newValue}</span> )
+                                            }
+                                          }
+                                        },{
+                                          name: "Aksi",
+                                          options:{
+                                            customBodyRender:(value, tableMeta, update) => {
+                                              let newValue = tableMeta.rowData[4]
                                               return ( <span>{newValue}</span> )
                                             }
                                           }
@@ -571,13 +695,15 @@ export const getServerSideProps = async (props) => wrapper.getServerSideProps(st
     // const { token } = /authUserToken=(?<token>\S+)/g.exec(req.headers.cookie)?.groups || {token: ""} ;
     const {params:{odcId=[]}} = props;
     store.dispatch(getOcdSplitpanelStatus(odcId[0]))
+    store.dispatch(getUserData())
     store.dispatch(END)
     await store.sagaTask.toPromise();
+    console.log("user data",store.getState().Users)
     // console.log("req test:",req.url,res,etc)
     // console.log("store",store.getState().ODCs.selectedOdcSplitpanelStatus)
 
     const {ODCs:{selectedOdcSplitpanelStatus}} = store.getState();
-    // console.log("selected odc",selectedOdcSplitpanelStatus)
+    console.log("selected odc",selectedOdcSplitpanelStatus)
     // const {ODCs:{odcsBox=[],splitterData=[],coreFeederData=[]}} = store.getState();
 
     if(odcId.length!==0 && selectedOdcSplitpanelStatus==={}){
@@ -588,7 +714,7 @@ export const getServerSideProps = async (props) => wrapper.getServerSideProps(st
         }
         else{
             return {
-                props:{ data: selectedOdcSplitpanelStatus},
+                props:{ data: selectedOdcSplitpanelStatus, userData: store.getState().Users.userData},
                 // props:{ data: odcsBox,splitterData,coreFeederData},
                 // revalidate:60,
             } 

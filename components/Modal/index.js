@@ -12,6 +12,8 @@ import {
     MdOutlineClose,
     MdOutlineDeleteForever
 } from 'react-icons/md';
+import MetisMenu from '@metismenu/react';
+import 'metismenujs/dist/metismenujs.css';
 import odcStyles from '../Sidebar/sidebar.module.css';
 import {Modal as MUIModal,Box} from '@material-ui/core';
 import TextField from '@mui/material/TextField';
@@ -51,7 +53,8 @@ function Modal(props) {
 
       return ds.data.map(dsit=>({index:dsit.index ,status:dsit.status,rak_index:ds.rak_index,rak_level:ds.rak_level}))
     })
-    console.log("feederfokus",feederFocus)
+    console.log("availDistribution",availDistribution)
+    // console.log("feederfokus",feederFocus)
     const [feed,setFeed] = feederModal;
     const handleClose = () => setFeed(false);
     return (
@@ -61,6 +64,7 @@ function Modal(props) {
                   <div className={odcStyles.closebtn}>
                     <MdOutlineClose/>
                   </div>
+                  <MetisMenu>
                 <Box sx={{
                   position: "absolute",
                   top: "50%",
@@ -120,7 +124,7 @@ function Modal(props) {
                             </div>
                             <div className={`col-lg-4 col-md-12 ${styles.textFieldContainer}`}>
                             {/* {feederFocus?.distribution[0]?.distribution_index} */}
-                              <NativeSelect defaultValue={feederFocus?.distribution[0]?.distribution_id?"dist"+feederFocus?.distribution[0]?.distribution_id:null} inputProps={{
+                              <NativeSelect /*onChange={po1ClickHandler}*/ defaultValue={feederFocus?.distribution[0]?.distribution_id?"dist"+feederFocus?.distribution[0]?.distribution_id:null} inputProps={{
                                     name: 'Distribusi PO1',
                                     id: 'uncontrolled-native',
                                     }} className={`col-lg-12 ${styles.splitterGap}`}>
@@ -266,6 +270,7 @@ function Modal(props) {
                     
                   </div>
                 </Box>
+                </MetisMenu>
                 </div>
               </MUIModal>
     )

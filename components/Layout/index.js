@@ -1,4 +1,4 @@
-import React, { useState,useCallback } from 'react';
+import React, { useState,useCallback,useEffect } from 'react';
 import Navbar from '../Navbar';
 import Sidebar from '../Sidebar';
 import Footer from '../Footer';
@@ -13,7 +13,8 @@ export default function Layout(props) {
     //         <Footer/>
     //     </div>
     // }
-    const {children} = props;
+    const {children,data} = props;
+
     const [closeState,setCloseState] = useState(true);
     const closeMenu = useCallback(event=>{
         setCloseState(!closeState);
@@ -29,7 +30,7 @@ export default function Layout(props) {
     return <div className={styles.layoutWrapper}>
         <Sidebar/>
         <div className={styles.topGap}>
-            <Navbar/>
+            <Navbar odcData={data}/>
 
             {children}
             <div className={styles.overlay} onClick={closeMenu}></div>

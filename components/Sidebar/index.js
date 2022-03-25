@@ -11,13 +11,14 @@ Button
 import dynamic from 'next/dynamic';
 
 import MetisMenu from '@metismenu/react';
+import 'metismenujs/dist/metismenujs.css';
 import Link from 'next/link';
 import {NavLink} from './components/NavLink';
 import Image from 'next/image';
 import {useRouter} from 'next/router'
 
 // import MetisMenu css
-import 'metismenujs/dist/metismenujs.css';
+import odcStyles from '../../pages/odc/odc.module.css';
 import styles from './sidebar.module.css';
 import home from './home.svg';
 import {
@@ -38,6 +39,9 @@ const CustomTab = styled(Tab)(({theme})=>({
     color: "black!important"
   },
 }))
+const CustomButtonModal = styled(Button)(({ theme }) => ({
+  background: theme.status.primary,
+}));
 const CustomTabs = styled(Tabs)(({theme})=>({
   '.MuiTabs-indicator': {
     backgroundColor: theme.status.primary,
@@ -256,14 +260,29 @@ function Sidebar() {
                       </div>
                       
                       </div>
-                      <div className={styles.actionContainer}>
-                      <CustomButtonGray onClick={(ev)=>handleChange(ev,value-1)} style={{visibility:(value<=0)?"hidden":"visible"}} variant="contained" color='primary' size="large">
-                      Prev
-                    </CustomButtonGray>
-                      <CustomButton onClick={(ev)=>(value>0)?handleOpen:handleChange(ev,value+1)}  variant="contained" color='primary' size="large">
-                      {(value>0)?"Submit":"Next"}
-                    </CustomButton>
-                      </div>
+                      <div className={odcStyles.actionContainer}>
+                    <CustomButtonGray onClick={(ev)=>handleChange(ev,value-1)} style={{visibility:(value<=0)?"hidden":"visible"}} variant="contained" color='primary' size="large">
+                    Prev
+                  </CustomButtonGray>
+                  <div className='row'>
+                    <div className='col-md-12 col-lg-6'> 
+                    {(value>0) && <CustomButtonModal onClick={(ev)=>(value>0)?handleOpen:handleChange(ev,value+1)}  variant="contained" color='primary' size="large">
+                      Submit
+                      </CustomButtonModal>}
+                    </div>
+                    <div className='col-md-12 col-lg-6'> 
+                    {(value>0) && <CustomButtonGray onClick={()=>handleClose()}  variant="contained" color='primary' size="large">
+                        Cancel
+                        </CustomButtonGray>}
+                    </div>
+                  </div>
+                  <div>
+
+                   <CustomButtonModal style={{visibility: (value>0)?"hidden":"visible"}} onClick={(ev)=>(value>0)?handleOpen:handleChange(ev,value+1)}  variant="contained" color='primary' size="large">
+                   {(value<=0)? "Next":""}
+                  </CustomButtonModal>
+                  </div>
+                    </div>
                     </div>
                   </Box>
                 </div>

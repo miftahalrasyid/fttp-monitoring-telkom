@@ -5,8 +5,7 @@ import Layout from '../Layout';
 export default function Auth(Component) {
     const AuthwithLayout = (pageProps) =>{
 
-
-        return <Layout>
+        return <Layout {...pageProps}>
             <Component {...pageProps}/>
         </Layout>
     }

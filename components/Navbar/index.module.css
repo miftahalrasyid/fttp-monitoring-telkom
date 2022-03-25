@@ -33,6 +33,11 @@
     -webkit-box-shadow: 0 2px 2px #fbfaff;
     box-shadow: 0 2px 2px #fbfaff; */
 }
+.navbarBrandBox svg {
+    font-size: 32px;
+    margin-top: -5px;
+    color: gray;
+}
 .navbarBrandBox a {
     text-decoration: none;
 }
