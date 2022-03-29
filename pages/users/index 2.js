@@ -1,6 +1,6 @@
 import React from 'react'
 import withAuth from '../../components/Auth';
-import {Modal,Box, Typography} from '@material-ui/core';
+import {Modal,Box} from '@material-ui/core';
 import { createTheme, MuiThemeProvider,styled } from "@material-ui/core/styles";
 import dynamic from 'next/dynamic';
 import { 
@@ -95,21 +95,16 @@ function User({data}) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-
-  const [openDeleteRowModal, setOpenDeleteRowModal] = React.useState(false);
-  const deleteRowHandleOpen = () => setOpenDeleteRowModal(true);
-  const deleteRowHandleClose = () => setOpenDeleteRowModal(false);
-
   React.useEffect(()=>{
   setDatatable(data.map(item=>([
-    item.email,
-    item.role,
+    item.name,item.email,
+    item.address,
     item.status,
     <div key={0} className={odcStyles.tableAction}>
         <CustomButton onClick={handleOpen} variant='text'>
           <MdRemoveRedEye />
         </CustomButton>
-        <CustomButton onClick={deleteRowHandleOpen} variant='text'>
+        <CustomButton onClick={()=>deleteRow(item.id)} variant='text'>
           <MdDeleteForever />
         </CustomButton>
         <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title"
@@ -146,26 +141,26 @@ function User({data}) {
                     </div>
                     <div className={`${odcStyles.cardBody} card-body row ${odcStyles.customCardBodyUser}`}>
                       <div className={`row ${odcStyles.formGap}`}>
-                        {/* <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
+                        <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
                           <CustomTextField id="standard-basic" label="Name" variant="standard" defaultValue={item.name} />
-                        </div> */}
-                        <div className={`col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
+                        </div>
+                        <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
                           <CustomTextField id="standard-basic" label="Email" variant="standard" defaultValue={item.email} />
                         </div>
-                        <div className={`col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
+                        <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
                           <CustomTextField id="standard-basic" label="Password" type={"password"} variant="standard" defaultValue={item.password} />
                         </div>
-                        <div className={`col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
+                        <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
                           <CustomTextField id="standard-basic" label="Role" color='primary' variant="standard"
                             defaultValue={item.role} />
                         </div>
-                        {/* <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
+                        <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
                           <CustomTextField id="standard-basic" label="Address" variant="standard" defaultValue={item.address} />
-                        </div> */}
-                        {/* <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
+                        </div>
+                        <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
                           <CustomTextField id="standard-basic" label="Status" color='primary' variant="standard"
                             defaultValue={item.status} />
-                        </div> */}
+                        </div>
                       </div>
                     </div>
                     <div className={odcStyles.actionContainer}>
@@ -189,67 +184,9 @@ function User({data}) {
                   </Box>
               </div>
               </Modal>
-              <Modal open={openDeleteRowModal} onClose={deleteRowHandleClose} >
-            <div>
-                  <div className={odcStyles.closebtn}>
-                    <MdOutlineClose/>
-                  </div>
-                    <Box sx={{
-                      position: "absolute",
-                      top: "50%",
-                      left: "50%",
-                      transform: "translate(-50%, -50%)",
-                      border: 0,
-                      /* margin-bottom: 30px;
-                      margin-top: 30px; */
-                      borderRadius: "6px",
-                      color: "#333",
-                      // background: "#fff",
-                      width:"90%",
-                      maxWidth: "480px",
-                      boxShadow: "0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 20%), 0 1px 5px 0 rgb(0 0 0 / 12%)",
-                      boxShadow: "0 1px 4px 0 rgb(0 0 0 / 14%)",
-                    }}>
-                      <div className={`${odcStyles.card}  ${odcStyles.cardStats}`}>
-                        <div className={`${odcStyles.cardHeader} ${odcStyles.cardHeaderPrimary}`}>
-                          <h4 className={odcStyles.cardTitle}>{"Konfirmasi Delete"}</h4>
-                          <div className={odcStyles.stats}>
-                            proses ini akan menghapus user secara permanen. mohon di cek kembali
-                          </div>
-                        </div>
-                        <div className={`${odcStyles.cardBody} card-body row`}>
-                          <div className={odcStyles.confirmationWrapper}>
-                            <div className={`col-md-12`}>
-                            <Typography variant='h6' className={odcStyles.confirmationTitle}>
-                              Anda yakin akan menghapus user {item.email} ?
-                            </Typography>
-                            </div>
-                            <div className={odcStyles.actionContainer}>
-
-                                  <div >
-                                    <CustomButtonModal>
-                                      {"Submit"}
-                                    </CustomButtonModal>
-                                  </div>
-                                  <div >
-                                    <CustomButtonModalGray onClick={()=>deleteRowHandleClose()}>
-                                      {"Cancel"}
-                                    </CustomButtonModalGray>
-                                  </div>
-                            </div>
-                          </div>
-
-
-                        
-                        </div>
-
-                      </div>
-                    </Box>
-                  </div>
-            </Modal>
       </div>
   ])))
-},[data,open,openDeleteRowModal])
+},[data,open])
   return (<div className={odcStyles.mainContent}>
     <div className={`container-fluid`}>
       <div className='row'>
@@ -280,7 +217,7 @@ function User({data}) {
                     }
                   }
                 },{
-                  name: "Email",
+                  name: "Name",
                   options:{
                     customBodyRender:(value, tableMeta, update) => {
                       let newValue = tableMeta.rowData[0]
@@ -288,7 +225,7 @@ function User({data}) {
                     }
                   }
                 },{
-                  name: "Role",
+                  name: "Email",
                   options:{
                     customBodyRender:(value, tableMeta, update) => {
                       let newValue = tableMeta.rowData[1]
@@ -296,7 +233,7 @@ function User({data}) {
                     }
                   }
                 },{
-                  name: "Status",
+                  name: "Address",
                   options:{
                     customBodyRender:(value, tableMeta, update) => {
                       let newValue = tableMeta.rowData[2]
@@ -304,10 +241,18 @@ function User({data}) {
                     }
                   }
                 },{
-                  name: "Aksi",
+                  name: "Status",
                   options:{
                     customBodyRender:(value, tableMeta, update) => {
                       let newValue = tableMeta.rowData[3]
+                      return ( <span>{newValue}</span> )
+                    }
+                  }
+                },{
+                  name: "Aksi",
+                  options:{
+                    customBodyRender:(value, tableMeta, update) => {
+                      let newValue = tableMeta.rowData[4]
                       return ( <span>{newValue}</span> )
                     }
                   }

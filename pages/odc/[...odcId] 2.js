@@ -14,7 +14,6 @@ import Eth from '../../components/Eth';
 import Rak from '../../components/Rak';
 import Panel from '../../components/Panel';
 import {MdOutlineViewSidebar} from 'react-icons/md';
-import Button from '@mui/material/Button';
 // import panelStyles from '../../components/panel.module.css';
 // import Feeder from '../../components/Feeder';
 // import Distributor from '../../components/Distributor';
@@ -101,7 +100,7 @@ function Odc({
     data:ODCData,
     userData
     }) {
-      // console.log("ODC Data",ODCData)
+      console.log("ODC Data",ODCData)
         /**
          * variables for Selected ODC 
          */
@@ -119,34 +118,24 @@ function Odc({
     // const [feederFocus,setFeederFocus] = useState(false); 
     const [feederFocus,setFeederFocus] = useState(
       {
-        distribution: [
-          {distribution_id: "",
-          distribution_index: null,
-          distribution_level: null,
-          distribution_level_id: null
-        }, {
-          distribution_id: "",
-          distribution_index: null,
-          distribution_level: null,
-          distribution_level_id: null
-        }, {
-          distribution_id: "",
-          distribution_index: null,
-          distribution_level: null,
-          distribution_level_id: null
-        }, {
-          distribution_id: "",
-          distribution_index: null,
-          distribution_level: null,
-          distribution_level_id: null
-        }],
-        
-        distributionElm: [null, null, null, null],
-        feeder: {feeder_id: '', feeder_index: null, feeder_level: null},
-        feederElm: null,
-        odpName: ['', '', '', ''],
-        splitter: {splitter_id: '', splitter_index: null},
-        splitterElm: null
+        feederElm:null,
+        splitterElm:null,
+        distributionElm:null,
+        feeder:{
+          feeder_id:null,
+          feeder_index:null,
+          feeder_level:null
+        },
+        distribution:{
+          distribution_id:null,
+          distribution_index:null,
+          distribution_level:null
+        },
+        splitter:{
+          splitter_id:null,
+          splitter_index:null,
+          splitter_level:null
+        }
       }); 
     
     const panelClickHandler = useCallback((ev)=>{
@@ -316,7 +305,7 @@ function Odc({
      */
 
     useEffect(()=>{
-        // console.log("feeder focus",feederFocus)
+        console.log("feeder focus",feederFocus)
     },[feederFocus])
     /**
      * variables for activity log page
@@ -400,24 +389,21 @@ function Odc({
                 })}
                 </Panel>
               </div>
-              {/* <div className={styles.odcFiles}> */}
-                <div className={`${splitterStyle.videoWrapper}`} style={{left:"30px",top:"419px"}}>
+              <div className={styles.odcFiles}>
+              <div className={`${splitterStyle.videoWrapper}`} style={{left:"30px",top:"393px"}}>
               {/* <div className={`${splitterStyle.splitWrapper}`} style={{top:"250px",left:"0px"}}> */}
                 <div className={`${splitterStyle.card}`}>
                   <div className={`${splitterStyle.cardHeader} ${splitterStyle.cardHeaderBlue}`} style={{zIndex:"1"}}>
 
 
-                    <h4 className={splitterStyle.cardTitle}>Video</h4>
+                    <h4 className={splitterStyle.cardTitle} >Video</h4>
                   </div>
                   <div className={`${splitterStyle.videoContainer}`}>
-                    <iframe frameBorder="0" scrolling="no" marginHeight="0" marginWidth="0" width="315" height="auto"
-                      type="text/html"
-                      src="https://www.youtube.com/embed/_cAIkgb5I0E?autoplay=0&fs=0&iv_load_policy=3&showinfo=0&rel=0&cc_load_policy=0&start=0&end=0&origin=http://youtubeembedcode.com"></iframe>
+                  <iframe frameBorder="0" scrolling="no" marginHeight="0" marginWidth="0" width="315" height="auto" type="text/html" src="https://www.youtube.com/embed/_cAIkgb5I0E?autoplay=0&fs=0&iv_load_policy=3&showinfo=0&rel=0&cc_load_policy=0&start=0&end=0&origin=http://youtubeembedcode.com"></iframe>
+                  </div>
                   </div>
                 </div>
-              {/* </div> */}
-              </div>
-              <div className={`${splitterStyle.legendWrapper}`} style={{left:"30px",top:"701px"}}>
+              <div className={`${splitterStyle.legendWrapper}`} style={{left:"30px",top:"676px"}}>
               {/* <div className={`${splitterStyle.splitWrapper}`} style={{top:"250px",left:"0px"}}> */}
                 <div className={`${splitterStyle.card}`}>
                   <div className={`${splitterStyle.cardHeader} ${splitterStyle.cardHeaderPurple}`} style={{zIndex:"1"}}>
@@ -491,27 +477,28 @@ function Odc({
                   </div>
                   </div>
                 </div>
-              <Modal open={feederModal[0]} header={"Feeder "+feederFocus.feeder.feeder_index} splitterData={splitter.data} panelData={panel.data} feederModal={feederModal} feederFocus={feederFocus}/>
+              </div>
+              <Modal open={feederModal[0]} header={"Feeder "+feederFocus.splitter.splitter_index} splitterData={splitter.data} panelData={panel.data} feederModal={feederModal} feederFocus={feederFocus}/>
               {/* <script async src="https://telegram.org/js/telegram-widget.js?18" data-telegram-login="miftah1112_bot"
                 data-size="large" data-onauth="onTelegramAuth(user)" data-request-access="write"></script> */}
               <div className={styles.odcFiles}>
-                <div className={`${splitterStyle.splitWrapper}`} style={{position:"relative",minWidth:"279px"}}>
-                  {/* <div className={`${splitterStyle.splitWrapper}`} style={{top:"250px",left:"0px"}}> */}
-                  <div className={`${splitterStyle.card}`}>
-                    <div className={`${splitterStyle.cardHeader} ${splitterStyle.cardPinkish}`} style={{zIndex:"1"}}>
+              <div className={`${splitterStyle.splitWrapper}`} style={{position:"relative",minWidth:"279px"}}>
+              {/* <div className={`${splitterStyle.splitWrapper}`} style={{top:"250px",left:"0px"}}> */}
+                <div className={`${splitterStyle.card}`}>
+                  <div className={`${splitterStyle.cardHeader} ${splitterStyle.cardPinkish}`} style={{zIndex:"1"}}>
 
 
-                      <h4 className={splitterStyle.cardTitle}>KML Data</h4>
-                    </div>
-                    <div className={`${splitterStyle.splitContainer}`}>
-                      <div className={styles.kmlContainer}>
-                        klik disini untuk upload file
-                      </div>
-                    </div>
+                    <h4 className={splitterStyle.cardTitle} >KML Data</h4>
                   </div>
+                    <div className={`${splitterStyle.splitContainer}`}>
+                    <div className={styles.kmlContainer}>
+                      klik disini untuk upload file
+                    </div>
+                    </div>
                 </div>
-                <div className={`${splitterStyle.splitWrapper}`} style={{position:"relative",minWidth:"279px"}}>
-                  {/* <div className={`${splitterStyle.splitWrapper}`} style={{top:"250px",left:"0px"}}> */}
+              </div>
+              <div className={`${splitterStyle.splitWrapper}`} style={{position:"relative",minWidth:"279px"}}>
+                {/* <div className={`${splitterStyle.splitWrapper}`} style={{top:"250px",left:"0px"}}> */}
                   <div className={`${splitterStyle.card}`}>
                     <div className={`${splitterStyle.cardHeader} ${splitterStyle.cardPinkish}`}
                       style={{zIndex:"1"}}>
@@ -521,19 +508,12 @@ function Odc({
                     </div>
                     <div className={`${splitterStyle.splitContainer}`}>
                       <div className={styles.mcContainer}>
-                        klik disini untuk upload file
+                      klik disini untuk upload file
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-              <div className={styles.notesContainer}>
-                Notes: 
-                <textarea name="" id="" cols="30" rows="10"></textarea>
-                <Button variant={"outlined"}><a>Edit</a></Button>
-
-              </div>
-              
               {/* <Dropzone
                   accept='image/jpeg, image/png'
                   onDrop={acceptedFiles =>
@@ -651,7 +631,7 @@ function Odc({
                                           name: "No",
                                           options:{
                                             customBodyRender:(value, tableMeta, update) => {
-                                                // console.log("row render",tableMeta)
+                                                console.log("row render",tableMeta)
                                               let rowIndex = (tableMeta.rowData[1])?Number(tableMeta.rowIndex) + 1: "";
                                               return ( <span>{rowIndex}</span> )
                                             }

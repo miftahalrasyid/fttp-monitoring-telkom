@@ -341,6 +341,22 @@
     color: var(--primary);
     height: auto;
 }
+.confirmationTitle{
+    margin:1rem 0 !important;
+    text-align: center;
+    /* margin-left: 1rem !important; */
+}
+.confirmationWrapper{
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.confirmationWrapper .actionContainer{
+    justify-content: center;
+    width:100%;
+    gap: 1.5rem;
+}
 @media (max-width: 1080px) {
     .actionContainer{
         justify-content: space-around;

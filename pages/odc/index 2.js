@@ -1,4 +1,4 @@
-import React,{useEffect,useState} from 'react';
+import React,{useCallback, useEffect,useState} from 'react';
 import withAuth from '../../components/Auth';
 import Link from 'next/link';
 import {
@@ -19,7 +19,7 @@ import dynamic from 'next/dynamic';
 const DynamicMUIDataTable = dynamic(() => import('mui-datatables'),{ ssr: false });
 // import MUIDataTable from "mui-datatables";
 import Button from '@mui/material/Button';
-import {Modal,Box, Typography} from '@material-ui/core';
+import {Modal,Box} from '@material-ui/core';
 import { createTheme, MuiThemeProvider,styled } from "@material-ui/core/styles";
 import { 
   styled as styledCustom
@@ -152,7 +152,7 @@ function Odc(props) {
   // };
   useEffect(()=>{
     otpVerificationSuccessfull()
-  },[])
+  },[otpVerificationSuccessfull])
   const getMuiTheme = () =>
   createTheme({
     // components: {
@@ -227,18 +227,152 @@ function Odc(props) {
     },
   });
   const [open, setOpen] = React.useState(false);
-  const [openDeleteRowModal, setOpenDeleteRowModal] = React.useState(false);
+  const deleteRow = useCallback((id)=>{
+    setDatatable(rawData.map(item=>{
+      if(item.id!==id)
+      return [
+            item.id,item.capacity,
+            `idle: ${item.feeder.idle} | used: ${item.feeder.used} | broken: ${item.feeder.broken}`,
+            `idle: ${item.distribution.idle} | used: ${item.distribution.used} | broken: ${item.distribution.broken}`,
+            <div key={0} className={styles.tableAction}>
+                  <Link href={`/odc/${item.id}`} passHref>
+                  <a>
+                <CustomButton>
+                    <MdOpenInBrowser />
+                </CustomButton>
+                  </a>
+                  </Link>
+                <CustomButton onClick={handleOpen} variant='text'>
+                  <MdRemoveRedEye />
+                </CustomButton>
+                <CustomButton onClick={()=>deleteRow(item.id)} variant='text'>
+                  <MdDeleteForever />
+                </CustomButton>
+                <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title"
+                        aria-describedby="modal-modal-description">
+                    <div>
+                      <div className={styles.closebtn}>
+                        <MdOutlineClose/>
+                      </div>
+                        <Box sx={{
+                          position: "absolute",
+                          top: "50%",
+                          left: "50%",
+                          transform: "translate(-50%, -50%)",
+                          border: 0,
+                          /* margin-bottom: 30px;
+                          margin-top: 30px; */
+                          borderRadius: "6px",
+                          color: "#333",
+                          // background: "#fff",
+                          width:"90%",
+                          maxWidth: "600px",
+                          boxShadow: "0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 20%), 0 1px 5px 0 rgb(0 0 0 / 12%)",
+                          boxShadow: "0 1px 4px 0 rgb(0 0 0 / 14%)",
+                        }}>
+                        {/* <Box sx={styles.card}> */}
+                          <div className={`${styles.card}  ${styles.cardStats}`}>
+                            <div className={`${styles.cardHeader} ${styles.cardHeaderPrimary}`}>
+                              <h4 className={styles.cardTitle}>{item.id.toUpperCase()}</h4>
+                              <div className={styles.stats}>
+                                {/* <MdOutlineDateRange width={16} height={"auto"} />  */}
+                                lengkapi semua isian yang ada
+                              </div>
+                            </div>
+                            <div className={`${styles.cardBody} card-body row`}>
+                            <div className={styles.tabLink}>
+                              <CustomTabs value={value} onChange={handleChange} aria-label="basic tabs example">
+                                <CustomTab label="OLT" {...a11yProps(0)} />
+                                <CustomTab label="OA" {...a11yProps(1)} />
+                              </CustomTabs>
+                            </div>
+                            <div className={styles.tabLink}>
+                            </div>
+                            <div
+                              role="tabpanel"
+                              hidden={value !== 0}
+                              id={`simple-tabpanel-${0}`}
+                              aria-labelledby={`simple-tab-${0}`}
+                              // {...other}
+                            >
+                              {value === 0 && (
+                                <div className={`row ${styles.formGap}`}>
+                                  {/* <Typography> */}
+                                    <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                      <CustomTextField id="standard-basic" label="ID" variant="standard" defaultValue={item.id}/>
+                                    </div>
+                                    <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                      <CustomTextField id="standard-basic" label="Kapasitas" variant="standard" defaultValue={item.capacity}/>
+                                    </div>
+                                    <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                      <CustomTextField id="standard-basic" label="Merek" variant="standard" defaultValue={item.merek}/>
+                                    </div>
+                                    {/* {item.merek} */}
+                                    {/* merk
+        deploymentDate
+        core
+        rakOa
+        panelOa
+        port */}
+                                    <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                      <CustomTextField id="standard-basic" label="Deployment Date" color='primary'
+                                        variant="standard" defaultValue={item.deploymentDate}/>
+                                    </div>
+                                  {/* </Typography> */}
+                                </div>
+                              )}
+                            </div>
+                            <div
+                              role="tabpanel"
+                              hidden={value !== 1}
+                              id={`simple-tabpanel-${1}`}
+                              aria-labelledby={`simple-tab-${1}`}
+                              // {...other}
+                            >
+                              {value === 1 && (
+                                <div className={`row ${styles.formGap}`}>
+                                {/* <Typography> */}
+                                  <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                    <CustomTextField id="standard-basic" label="Core" variant="standard" defaultValue={item.core}/>
+                                  </div>
+                                  <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                    <CustomTextField id="standard-basic" label="Rak OA" variant="standard" defaultValue={item.rakOa}/>
+                                  </div>
+                                  <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                    <CustomTextField id="standard-basic" label="Panel" variant="standard" defaultValue={item.panelOa}/>
+                                  </div>
+                                  <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                    <CustomTextField id="standard-basic" label="Port" color='primary'
+                                      variant="standard" defaultValue={item.port}/>
+                                  </div>
+                                {/* </Typography> */}
+                              </div>
+                              )}
+                            </div>
+                            
+                            </div>
+                            <div className={styles.actionContainer}>
+                            <CustomButtonModalGray onClick={(ev)=>handleChange(ev,value-1)} style={{visibility:(value<=0)?"hidden":"visible"}} variant="contained" color='primary' size="large">
+                            Prev
+                          </CustomButtonModalGray>
+                            <CustomButtonModal onClick={(ev)=>(value>0)?handleOpen:handleChange(ev,value+1)}  variant="contained" color='primary' size="large">
+                            {(value>0)?"Submit":"Next"}
+                          </CustomButtonModal>
+                            </div>
+                          </div>
+                        </Box>
+                      </div>
+                      </Modal>
+              </div>
+          ]}))
+  },[open,rawData,value])
   const [datatable, setDatatable] = React.useState([[]])
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
-    const deleteRowHandleOpen = () => setOpenDeleteRowModal(true);
-    const deleteRowHandleClose = () => setOpenDeleteRowModal(false);
     const [value, setValue] = React.useState(0);
-    console.log("openDeleteRowModal",openDeleteRowModal)
     const handleChange = (event, newValue) => {
       setValue(newValue);
     };
-
     React.useEffect(()=>{
 
       setDatatable(rawData.map(item=>([
@@ -256,12 +390,9 @@ function Odc(props) {
             <CustomButton onClick={handleOpen} variant='text'>
               <MdRemoveRedEye />
             </CustomButton>
-            <CustomButton onClick={deleteRowHandleOpen} variant='text'>
+            <CustomButton onClick={()=>deleteRow(item.id)} variant='text'>
               <MdDeleteForever />
             </CustomButton>
-            {/* <CustomButton onClick={()=>deleteRow(item.id)} variant='text'>
-              <MdDeleteForever />
-            </CustomButton> */}
             <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title"
                     aria-describedby="modal-modal-description">
                                       <div>
@@ -377,67 +508,9 @@ function Odc(props) {
                     </Box>
                   </div>
                   </Modal>
-            <Modal open={openDeleteRowModal} onClose={deleteRowHandleClose} >
-            <div>
-                  <div className={styles.closebtn}>
-                    <MdOutlineClose/>
-                  </div>
-                    <Box sx={{
-                      position: "absolute",
-                      top: "50%",
-                      left: "50%",
-                      transform: "translate(-50%, -50%)",
-                      border: 0,
-                      /* margin-bottom: 30px;
-                      margin-top: 30px; */
-                      borderRadius: "6px",
-                      color: "#333",
-                      // background: "#fff",
-                      width:"90%",
-                      maxWidth: "480px",
-                      boxShadow: "0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 20%), 0 1px 5px 0 rgb(0 0 0 / 12%)",
-                      boxShadow: "0 1px 4px 0 rgb(0 0 0 / 14%)",
-                    }}>
-                      <div className={`${styles.card}  ${styles.cardStats}`}>
-                        <div className={`${styles.cardHeader} ${styles.cardHeaderPrimary}`}>
-                          <h4 className={styles.cardTitle}>{"Konfirmasi Delete"}</h4>
-                          <div className={styles.stats}>
-                            proses ini akan menghapus data odc secara permanen. mohon di cek kembali
-                          </div>
-                        </div>
-                        <div className={`${styles.cardBody} card-body row`}>
-                          <div className={styles.confirmationWrapper}>
-                            <div className={`col-md-12`}>
-                            <Typography variant='h6' className={styles.confirmationTitle}>
-                              Anda yakin akan menghapus {item.id} ?
-                            </Typography>
-                            </div>
-                            <div className={styles.actionContainer}>
-
-                                  <div >
-                                    <CustomButtonModal>
-                                      {"Submit"}
-                                    </CustomButtonModal>
-                                  </div>
-                                  <div >
-                                    <CustomButtonModalGray onClick={()=>deleteRowHandleClose()}>
-                                      {"Cancel"}
-                                    </CustomButtonModalGray>
-                                  </div>
-                            </div>
-                          </div>
-
-
-                        
-                        </div>
-
-                      </div>
-                    </Box>
-                  </div>
-            </Modal>
           </div>
       ])))
-    },[rawData,open,value,openDeleteRowModal])
+    },[deleteRow,open,rawData,value])
     React.useEffect(()=>{
 
     },[datatable])
@@ -445,7 +518,7 @@ function Odc(props) {
   const onDelete = (title) => () => {
     setTagPickerValue((value) => value.filter((v) => v.title !== title));
   };
-  console.log("data transform",datatable)
+  // console.log("data transform",datatable)
   return (<div className={styles.mainContent}>
     <div className={`container-fluid`}>
         <div className='row'>

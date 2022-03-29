@@ -36,7 +36,7 @@ function FirebaseBackEnd() {
     // code below should exist to trigger the database to update
     onValue(starCountRef, (snapshot) => {
     const data = snapshot.val();
-        console.log(data)
+        // console.log(data)
     });
     function setSplitter({odcboxIndex,feederIndex,newData}) {
         update(ref(db,`odcBox/${odcboxIndex}/feeder/data/${feederIndex}`),newData)

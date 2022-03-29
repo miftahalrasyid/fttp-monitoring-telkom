@@ -1,4 +1,12 @@
-import { LOGIN_CHECK,LOGIN_SUCCESSFUL,OTP_VERIFY,OTP_VERIFICATION_SUCCESSFUL} from "./actionTypes";
+import { 
+    LOGIN_CHECK,
+    LOGIN_SUCCESSFUL,
+    OTP_VERIFY,
+    OTP_VERIFICATION_SUCCESSFUL,
+    TELEGRAM_USER_VERIFY,
+    FORGOT_PASSWORD_REQUEST,
+    FORGOT_PASSWORD_PAGE_CLOSED
+} from "./actionTypes";
 
 export const checkLogin = (email,password,history)=>({
     type: LOGIN_CHECK,
@@ -13,4 +21,15 @@ export const successfullLogin = () =>({
 })
 export const otpVerificationSuccessfull = () =>({
     type: OTP_VERIFICATION_SUCCESSFUL
+})
+export const verifyUser = (email) =>({
+    type: TELEGRAM_USER_VERIFY,
+    payload: {email}
+});
+export const requestForgotPassword = (email) => ({
+    type: FORGOT_PASSWORD_REQUEST,
+    payload: {email}
+});
+export const forgotPageClosed = () =>({
+    type: FORGOT_PASSWORD_PAGE_CLOSED
 })

@@ -168,7 +168,6 @@
 }
 .resetPassword{
     text-align: center;
-    margin-bottom:0.5rem !important;
 }
 .resetSubtitle{
     text-align: center;
@@ -182,83 +181,6 @@
     margin-top: 3rem;
     text-align: center;
 }
-.telegramWrapper{
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    align-items: center;
-}
-.telegramWrapper > span{
-    margin-bottom:1rem !important;
-}
-.telegramWrapper ol{
-    margin-top: 1rem;
-}
-.telegramWrapper button:last-child:not(.tooltip button){
-    margin-top: 2rem;
-}
-.telegramWrapper li{
-    margin-top: 0.5rem;
-    
-}
-.telegramSubTitle{
-    margin-top: 2rem !important;
-}
-.tooltip {
-    position: relative;
-    display: inline-block;
-  }
-  
-  .tooltip .tooltiptext {
-    visibility: hidden;
-    width: 140px;
-    background-color: #555;
-    color: #fff;
-    text-align: center;
-    border-radius: 6px;
-    padding: 5px;
-    position: absolute;
-    z-index: 1;
-    bottom: 100%;
-    left: 50%;
-    margin-left: -75px;
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-  
-  .tooltip .tooltiptext::after {
-    content: "";
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    margin-left: -5px;
-    border-width: 5px;
-    border-style: solid;
-    border-color: #555 transparent transparent transparent;
-  }
-  
-  .tooltip:hover .tooltiptext {
-    visibility: visible;
-    opacity: 1;
-  }
-  .confirmationPageWrapper{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-  .confirmationPageWrapper > span {
-      margin-bottom: 1rem !important;
-  }
-  .confirmationTitle {
-      text-align: center;
-      padding: 0 1rem;
-      margin-bottom: 1.5rem !important;
-  }
-  .confirmationDetail{
-    padding-left: 1.6rem;
-      margin-bottom: 2.5rem !important;
-  }
 @media (max-width: 1080px){
     .logotypeContainer {
         display: none;
@@ -282,6 +204,5 @@
     }
     .form{
         justify-content: space-between;
-        margin-top: -9rem;
     }
 }

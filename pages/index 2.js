@@ -12,9 +12,6 @@ import {
   Paper,
   makeStyles, useTheme, styled, createTheme,MuiThemeProvider
 } from "@material-ui/core";
-import { 
-  styled as styledCustom 
-} from "@mui/material/styles";
 import Link from 'next/link';
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import OtpInput from "react-otp-input";
@@ -28,23 +25,20 @@ import styles from './index.module.css';
 import logo from "../public/img/telkom logo.png";
 
 // import logo from "./logo.svg";
-import teleLogo from '../public/img/telegram.svg';
 import google from "../public/img/google.svg";
 import { connect } from "react-redux";
-import { checkLogin, verifyOtp,forgotPageClosed} from "../components/store/login/actions"
+import { checkLogin, verifyOtp} from "../components/store/login/actions"
 
 // context
 // import { useUserDispatch, loginUser } from "../../context/UserContext";
-const CustomButton = styledCustom(Button)(({ theme }) => ({
-  borderColor: theme.status.primary,
-  color:theme.status.primary,
-  textDecoration: "none",
+const CustomButton = styled(Button)(({ theme }) => ({
+  background: theme.status.primary,
 }));
 
 function Login(props) {
-  const {checkLogin,router,isLoading,isOtpVerify,verifyOtp,isOtpLoading, isUserVerify,isUserVerifyLoading,forgotPageClosed} = props;
-  // console.log(isLoading)
-  // console.log(isOtpVerify)
+  const {checkLogin,router,isLoading,isOtpVerify,verifyOtp,isOtpLoading} = props;
+  console.log(isLoading)
+  console.log(isOtpVerify)
   // console.log(verifyOtp("test",router))
   // verifyOtp("test",router)
   // var classes = useStyles();
@@ -63,7 +57,6 @@ function Login(props) {
 
   React.useEffect(()=>{
     setOtp("1234")
-    forgotPageClosed();
   },[])
   const otpHandleChange = React.useCallback((value)=>{
     setOtp(value)
@@ -104,6 +97,7 @@ function Login(props) {
       darkgray: "darkgray!important"
     },
   });
+
   return (
     <Grid container className={styles.container}>
       <div className={styles.logotypeContainer}>
@@ -128,7 +122,7 @@ function Login(props) {
           </Tabs> */}
           {/* {activeTabId === 0 && ( */}
           <React.Fragment>
-            {isUserVerifyLoading ?
+            {!isOtpVerify ?
             <div>
               <div>
                 <div className={styles.logotypeImageMobile}>
@@ -207,104 +201,68 @@ function Login(props) {
               </div>
             </div>
             :
-             isUserVerify ? <div className={styles.telegramWrapper}>
-              <Image src={teleLogo} alt="telegram logo" width={50} height={50} />
-              <Typography Typography variant="h5" className={styles.telegramTitle}>
-                Integrasi dengan Telegram
-              </Typography>
-              <Typography variant="subtitle1" className={styles.telegramSubTitle}>
-                untuk menyambungkan akun anda dengan telegram, silahkan ikuti langkah berikut:
-              </Typography>
-              <ol>
-                <li>
-                  klik token dibawah untuk menyalin ke clipboard
-                </li>
-                <div className={styles.tooltip}>
-                  <span className={styles.tooltiptext} id="myTooltip">Salin token</span>
-                  <Button onClick={(ev)=>{myTooltip.innerHTML = "token disalin"; setTimeout(()=>{myTooltip.style.visibility = "hidden"},1000); navigator.clipboard.writeText(ev.target.innerHTML)}} className={styles.telegramToken}>
-                    TOKEN123As2DwYTKLWSKWL234Sm
-                  </Button>
-                </div>
-                <li>
-                  buka link dibawah, lalu masukkan token ke dalam chat
-                </li>
-                <Link href={"https://t.me/yoga_test01bot"}>
-                <a >
-                <Typography variant="subtitle1" className={styles.telegramToken}>
-                  https://t.me/yoga_test01bot
-                </Typography>
-                </a>
-                </Link>
-                
-              </ol>
-                <CustomButton variant="outlined" onClick={()=>router.reload(window.location.pathname)}>
-                        Kembali
-                </CustomButton>
-             </div>
-            : 
             <div className={classes.paper}>
-            <Grid container style={{ backgroundColor: "white" }} // style={{ backgroundColor: "#fafafa" }}
-              className={classes.grid} justify="center" alignItems="center" spacing={3}>
-              <Grid item container justify="center">
-                <Grid item container alignItems="center" direction="column">
-                  <Grid item>
-                    <Avatar className={classes.avatar}>
-                      <LockOutlinedIcon />
-                    </Avatar>
+              <Grid container style={{ backgroundColor: "white" }} // style={{ backgroundColor: "#fafafa" }}
+                className={classes.grid} justify="center" alignItems="center" spacing={3}>
+                <Grid item container justify="center">
+                  <Grid item container alignItems="center" direction="column">
+                    <Grid item>
+                      <Avatar className={classes.avatar}>
+                        <LockOutlinedIcon />
+                      </Avatar>
+                    </Grid>
+                    <Grid item>
+                      <Typography component="h1" variant="h5">
+                        Verification Code
+                      </Typography>
+                    </Grid>
                   </Grid>
-                  <Grid item>
-                    <Typography component="h1" variant="h5">
-                      Verification Code
+                </Grid>
+                <Grid item xs={12} textAlign="center">
+                  <Paper elevation={0} className={classes.paperroot}>
+                    <Typography variant="h6">
+                      Please enter the verification code sent to your mobile
                     </Typography>
+                  </Paper>
+                </Grid>
+                <Grid item xs={12} container justify="center" alignItems="center" direction="column">
+                  <Grid item spacing={3} justify="center">
+                    <OtpInput separator={ <span>
+                      <strong>.</strong>
+                      </span>
+                      }
+                      numInputs={4}
+                      value={otp}
+                      onChange={(ev)=>otpHandleChange(ev)}
+                      inputStyle={{
+                  width: "3rem",
+                  height: "3rem",
+                  margin: "0 1rem",
+                  fontSize: "2rem",
+                  borderRadius: 4,
+                  border: "1px solid rgba(0,0,0,0.3)"
+                }}
+                      />
                   </Grid>
+                  <MuiThemeProvider theme={theme}>
+                    <Grid item>
+                      <div className={styles.formButtons}>
+                        {isOtpLoading ? (
+                        <CircularProgress size={26} className={styles.loginLoader} />
+                        ) : (
+                        <CustomButton type="submit" fullWidth variant="contained" color="primary" onClick={()=>
+                          {console.log("click"),verifyOtp(otp,router)}}
+                          className={classes.submit}
+                          >
+                          Verify
+                        </CustomButton>
+                        )}
+                      </div>
+                    </Grid>
+                  </MuiThemeProvider>
                 </Grid>
               </Grid>
-              <Grid item xs={12} textAlign="center">
-                <Paper elevation={0} className={classes.paperroot}>
-                  <Typography variant="h6">
-                    Please enter the verification code sent to your mobile
-                  </Typography>
-                </Paper>
-              </Grid>
-              <Grid item xs={12} container justify="center" alignItems="center" direction="column">
-                <Grid item spacing={3} justify="center">
-                  <OtpInput separator={ <span>
-                    <strong>.</strong>
-                    </span>
-                    }
-                    numInputs={4}
-                    value={otp}
-                    onChange={(ev)=>otpHandleChange(ev)}
-                    inputStyle={{
-                width: "3rem",
-                height: "3rem",
-                margin: "0 1rem",
-                fontSize: "2rem",
-                borderRadius: 4,
-                border: "1px solid rgba(0,0,0,0.3)"
-              }}
-                    />
-                </Grid>
-                <MuiThemeProvider theme={theme}>
-                  <Grid item>
-                    <div className={styles.formButtons}>
-                      {isOtpLoading ? (
-                      <CircularProgress size={26} className={styles.loginLoader} />
-                      ) : (
-                      <Button type="submit" fullWidth variant="contained" color="primary" onClick={()=>
-                        {console.log("click"),verifyOtp(otp,router)}}
-                        className={classes.submit}
-                        >
-                        Verify
-                      </Button>
-                      )}
-                    </div>
-                  </Grid>
-                </MuiThemeProvider>
-              </Grid>
-            </Grid>
-          </div>
-          // null
+            </div>
             }
 
           </React.Fragment>
@@ -424,14 +382,11 @@ function Login(props) {
 }
 const mapStateToProps = state =>({
   isLoading: state.Login.loading.login,
-  isUserVerifyLoading: state.Login.loading.verifyUser,
-  isUserVerify: state.Login.openTelegramVerify,
   isOtpLoading: state.Login.loading.otp,
   isOtpVerify: state.Login.openOtpService
 });
 const mapDispatchToProps = {
   checkLogin,
-  forgotPageClosed,
   verifyOtp
 }
 

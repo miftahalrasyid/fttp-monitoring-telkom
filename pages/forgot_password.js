@@ -14,20 +14,31 @@ import {
     Paper,
     makeStyles, useTheme, styled, createTheme,MuiThemeProvider
   } from "@material-ui/core";
+  import { useRouter } from 'next/router';
   import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
   import styles from './index.module.css';
   import logo from "../public/img/telkom logo.png";
   import { connect } from "react-redux";
-  import { checkLogin, verifyOtp} from "../components/store/login/actions"
-  const CustomButton = styled(Button)(({ theme }) => ({
-    background: theme.status.primary,
-  }));
-function Forgot_password({isLoading,checkLogin}) {
+  import { checkLogin, verifyOtp,requestForgotPassword} from "../components/store/login/actions";
+  import correctImg from '../public/img/correct.png';
+
+import { 
+  styled as styledCustom 
+} from "@mui/material/styles";
+const CustomButton = styledCustom(Button)(({ theme }) => ({
+  borderColor: theme.status.primary,
+  color:theme.status.primary,
+  textDecoration: "none",
+}));
+
+function Forgot_password({requestForgotPassword,isRequestConfirm}) {
+  const router = useRouter();
     var [error, setError] = useState(null);
     var [activeTabId, setActiveTabId] = useState(0);
     var [nameValue, setNameValue] = useState("");
     var [loginValue, setLoginValue] = useState("admin@telkom.com");
     var [passwordValue, setPasswordValue] = useState("password");
+    console.log("openconfirmation page",isRequestConfirm)
   return (
     <Grid container className={styles.container}>
         <div className={styles.logotypeContainer}>
@@ -51,64 +62,71 @@ function Forgot_password({isLoading,checkLogin}) {
                 </div>
                 <Typography className={styles.logotypeTextMobile}>Telkom Indonesia</Typography>
               </div>
-              <div>
-                <Typography variant="h6" className={styles.resetPassword}>
-                  Reset Password
-                </Typography>
-                <Typography variant="subtitle1" className={styles.resetSubtitle}>
-                  Silahkan masukkan email anda
-                </Typography>
-                {/* <Button size="large" className={styles.googleButton}>
-                  <img src={google} alt="google" className={styles.googleIcon} />
-                  &nbsp;Sign in with Google
-                </Button> */}
-                {/* <div className={styles.formDividerContainer}>
-                  <div className={styles.formDivider} />
-                  <Typography className={styles.formDividerWord}>or</Typography>
-                  <div className={styles.formDivider} />
-                </div> */}
-                <Fade in={error}>
-                  <Typography color="secondary" className={styles.errorMessage}>
-                    Something is wrong with your login or password :(
+              {!isRequestConfirm?
+                <div>
+                  <Typography variant="h6" className={styles.resetPassword}>
+                    Ajukan ganti password
                   </Typography>
-                </Fade>
-                <TextField id="email" InputProps={{
+                  <Typography variant="subtitle1" className={styles.resetSubtitle}>
+                    Silahkan masukkan email anda
+                  </Typography>
+                  <Fade in={error}>
+                    <Typography color="secondary" className={styles.errorMessage}>
+                      Something is wrong with your login or password :(
+                    </Typography>
+                  </Fade>
+                  <TextField id="email" InputProps={{
                   classes: {
                     underline: styles.textFieldUnderline,
                     input: styles.textField,
                   },
                 }} value={loginValue} onChange={e=> setLoginValue(e.target.value)}
-                  margin="normal"
-                  placeholder="Email Adress"
-                  type="email"
-                  fullWidth
-                  />
-                 
-                <div className={styles.formButtons}>
-                    {isLoading ? (
-                    <CircularProgress size={26} className={styles.loginLoader} />
-                    ) : (
-                    <Button className={styles.loginbtn} disabled={ loginValue.length===0 || passwordValue.length===0 }
-                    onClick={()=>
-                    checkLogin(
-                    loginValue,
-                    passwordValue,
-                    router,
-                    )
-                    }
-                    variant="outlined"
-                    color="primary"
-                    size="large"
-                    >
-                    Reset
-                    </Button>
-                    )}    
-                </div>
-                <p className={styles.goToLogin}>
-                    apakah sudah ingat? <Link href={"/"}><a className={styles.decorationNone}>Sign In</a></Link>
-                </p>
+                    margin="normal"
+                    placeholder="Email Adress"
+                    type="email"
+                    fullWidth
+                    />
 
+                    <div className={styles.formButtons}>
+                      {isRequestConfirm ? (
+                      <CircularProgress size={26} className={styles.loginLoader} />
+                      ) : (
+                      <Button className={styles.loginbtn} disabled={ loginValue.length===0 ||
+                        passwordValue.length===0 } onClick={()=>
+                          requestForgotPassword(email)
+                        }
+                        variant="outlined"
+                        color="primary"
+                        size="large"
+                        >
+                        Submit
+                      </Button>
+                      )}
+                    </div>
+                    <p className={styles.goToLogin}>
+                      {"apakah sudah ingat? "}
+                      <Link href={"/"}><a className={styles.decorationNone}>Sign In</a></Link>
+                    </p>
+
+                </div>
+              :<div className={styles.confirmationPageWrapper}>
+                <Image src={correctImg} alt="correctImg" width={50} height={50}/>
+                <Typography variant='h5' className={styles.confirmationTitle}>
+                  Permintaan anda telah kami proses
+                </Typography>
+                <Typography variant='subtitle2' className={styles.confirmationDetail}>
+                  Link reset password akan segera dikirimkan ke telegram anda  
+                </Typography>
+                <Link href={"/"}>
+                  <a className={styles.decorationNone}>
+                    <CustomButton variant="outlined" >
+                      Kembali
+                    </CustomButton>
+                  </a>
+                </Link>
               </div>
+              }
+
             </div>
 
           </React.Fragment>
@@ -121,10 +139,9 @@ function Forgot_password({isLoading,checkLogin}) {
   )
 }
 const mapStateToProps = state =>({
-    isLoading: state.Login.loading.login,
+    isRequestConfirm: state.Login.openConfirmationPage,
   });
   const mapDispatchToProps = {
-    checkLogin,
-    verifyOtp
+    requestForgotPassword
   }
 export default connect(mapStateToProps,mapDispatchToProps)(Forgot_password)

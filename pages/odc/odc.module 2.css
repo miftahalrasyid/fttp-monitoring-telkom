@@ -1,80 +1,24 @@
-
-.splitWrapper{
-    /* border-radius: 3px; */
-    position:absolute;
-    /* max-width:100%; */
-    min-width:375px;
-    padding: 0 1rem 1rem;
-    user-select: none;
+.mainContent{
+    /* margin-top: 70px; */
+    margin:auto;
+    padding: 30px 15px;
+    max-width: 1323px;
+    min-height: calc(100vh - 123px);
 }
-.splitContainer{
-    position: relative;
-    display:flex;
-    flex-wrap: wrap;
-    margin: 0 0.5rem;
-    /* column-count: 9; */
+.odcIdWrapper{
+    overflow: scroll;
 }
-.legendContainer{
-    position: relative;
-    display:flex;
-    flex-wrap: wrap;
-    margin: 0 0 0 1rem;
+.odcDetail{
+    margin:0 1rem;
 }
-.legendContainer div{
-    align-items: center;
+.odcDetail p{
+    font-size: 1.125rem;
+    margin-bottom:0.5rem;
 }
-.legendContainer svg{
-    color: gray;
-    /* font-size: 2.3rem; */
-    font-size: 3.3rem;
-    pointer-events: none;
-    transform: rotate(90deg);
-}
-.legendWrapper{
-        /* border-radius: 3px; */
-        position:absolute;
-        /* max-width:100%; */
-        min-width:377px;
-        width: 377px;
-        padding: 0 1rem 1rem;
-        user-select: none;
-}
-.videoContainer{
-    position: relative;
-    display:flex;
-    flex-wrap: wrap;
-    margin: 0 0 0 1rem;
-}
-.videoContainer div{
-    align-items: center;
-}
-.videoContainer svg{
-    color: gray;
-    /* font-size: 2.3rem; */
-    font-size: 3.3rem;
-    pointer-events: none;
-    transform: rotate(90deg);
-}
-.videoWrapper{
-        /* border-radius: 3px; */
-        position:absolute;
-        /* max-width:100%; */
-        min-width:377px;
-        width:377px;
-        padding: 0 1rem 1rem;
-        user-select: none;
-}
-.cardHeaderBlue{
-    background: linear-gradient(60deg,#00a8ff,#004dff);
-    box-shadow: 0 4px 20px 0 rgb(0 0 0 / 14%), 0 7px 10px -5px rgb(0 76 255 / 40%);
-}
-.cardHeaderPurple{
-    background: linear-gradient(60deg,#9a75ff,#6f00fb);
-    box-shadow: 0 4px 20px 0 rgb(0 0 0 / 14%), 0 7px 10px -5px rgb(102 0 255 / 40%);
-}
-.cardPinkish{
-    background: linear-gradient(60deg,#f14399,#e42e2e);
-    box-shadow: 0 4px 20px 0 rgb(0 0 0 / 14%), 0 7px 10px -5px rgb(255 0 131 / 40%);
+.splitPanelWrapper{
+    position:relative;
+    margin: 0;
+    max-width: 375px;
 }
 .card {
     border: 0;
@@ -86,7 +30,6 @@
     width: 100%;
     box-shadow: 0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 20%), 0 1px 5px 0 rgb(0 0 0 / 12%);
     box-shadow: 0 1px 4px 0 rgb(0 0 0 / 14%);
-    padding: 0 0 1rem
 }
 .card .cardIcon {
     border-radius: 3px;
@@ -187,7 +130,6 @@
 .card .cardHeader:not(.cardHeaderIcon):not(.cardHeaderText):not(.cardHeaderImage) {
     border-radius: 3px;
     margin-top: -20px;
-    margin-bottom:1rem;
     padding: 15px;
 }
 .card:not(.cardHeaderIcon){
@@ -214,11 +156,131 @@
 .card .cardHeader .cardCategory {
     margin: 0;
 }
-@media (min-width:1080px) {
-    .splitWrapper{
-        /* border-radius: 7px; */
-        /* border: 3px solid gray; */
-        max-width:375px;
-        margin-top: 1rem;
-    }
+.tableAction button{
+    border-radius: 22px !important;
+    min-width:fit-content !important;
+}
+.tableAction a{
+    border-radius: 22px !important;
+    min-width:fit-content !important;
+}
+.customCardBodyUser{
+    margin-left: 0.3rem;
+}
+.tableAction svg{
+    width: 22px;
+    color: var(--primary);
+    height: auto;
+}
+.tabLink{
+    display: flex;
+    justify-content: center;
+}
+.actionContainer{
+    position: relative;
+    margin: 0 15px;
+    padding: 35px 0px 0px;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.9rem;
+}
+
+.actionContainer button{
+    
+    color: #fff;
+    border-color: var(--primary);
+    /* box-shadow: 0 2px 2px 0 rgb(239 47 37 / 14%), 0 3px 1px -2px rgb(239 47 37 / 20%), 0 1px 5px 0 rgb(239 47 37 / 12%); */
+    background-color: var(--primary);
+    border-radius: 2px;
+}
+.dFlex{
+    display:flex;
+    flex-direction: column;
+}
+.textFieldContainer{
+    padding-bottom: 1.25em;
+    /* color: var(--primary); */
+}
+.formGap{
+    margin-top:1rem;
+}
+.autoTagContainer{
+    border: 1px solid rgba(224, 224, 224, 1);
+    display: flex;
+    overflow: scroll;
+    align-items: center;
+    border-radius: 7px;
+}
+.odcDetailItems{
+    display: flex;
+    justify-content: space-between;
+}
+.distributionStatusContainer{
+    padding: 1rem 0;
+}
+.splitterStatusContainer{
+    padding: 1rem 0;
+}
+.feederStatusContainer{
+    padding: 1rem 0;
+}
+.closebtn{
+    color: white;
+    position: absolute;
+    top: 0;
+    font-size: 29px;
+    right: 1rem;
+    pointer-events: none;
+}
+.MuiBox-root .card{
+    margin-bottom:0
+}
+.portLabel{
+    text-transform: capitalize;
+}
+.odcFiles{
+    display: flex;
+    /* float: right; */
+    justify-content: right;
+    gap: 1rem;
+}
+.kmlWrapper{
+    padding: 0.8rem;
+    min-width: 256px;
+    border-radius: 7px;
+    width: 130px;
+    box-shadow: 0 1px 4px 0 rgb(0 0 0 / 14%);
+    background: white;
+}
+.kmlContainer{
+    min-width: 230px;
+    width: 135px;
+    margin-top: -3.4rem;
+    padding-top: 3rem;
+    padding-left:1rem;
+    min-height: 135px;
+    border: 2px dashed #ced4da;
+    background: #fff;
+    border-radius: 6px;
+    color:#838689;
+}
+.mcWrapper{
+    padding: 0.8rem;
+    min-width: 256px;
+    border-radius: 7px;
+    width: 130px;
+    box-shadow: 0 1px 4px 0 rgb(0 0 0 / 14%);
+    background: white;
+}
+.mcContainer{
+    min-width: 230px;
+    width: 135px;
+    margin-top: -3.4rem;
+    padding-top: 3rem;
+    padding-left:1rem;
+    min-height: 135px;
+    border: 2px dashed #ced4da;
+    background: #fff;
+    border-radius: 6px;
+    color:#838689;
 }

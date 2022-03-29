@@ -389,7 +389,7 @@ function Navbar(props) {
                 {/* <Box sx={odcStyles.card}> */}
                   <div className={`${odcStyles.card} ${odcStyles.cardStats}`}>
                     <div className={`${odcStyles.cardHeader} ${odcStyles.cardHeaderPrimary}`}>
-                      <h4 className={odcStyles.cardTitle}>{`User Details`}</h4>
+                      <h4 className={odcStyles.cardTitle}>{`Add New User`}</h4>
                       <div className={odcStyles.stats}>
                         {/*
                         <MdOutlineDateRange width={16} height={"auto"} /> */}
@@ -398,26 +398,26 @@ function Navbar(props) {
                     </div>
                     <div className={`${odcStyles.cardBody} card-body row ${odcStyles.customCardBodyUser}`}>
                       <div className={`row ${odcStyles.formGap}`}>
-                        <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
+                        {/* <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
                           <CustomTextField id="standard-basic" label="Name" variant="standard" defaultValue={""} />
-                        </div>
-                        <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
+                        </div> */}
+                        <div className={`col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
                           <CustomTextField id="standard-basic" label="Email" variant="standard" defaultValue={""} />
                         </div>
-                        <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
+                        <div className={`col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
                           <CustomTextField id="standard-basic" label="Password" variant="standard" defaultValue={""} />
                         </div>
-                        <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
+                        <div className={`col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
                           <CustomTextField id="standard-basic" label="Role" color='primary' variant="standard"
                             defaultValue={""} />
                         </div>
-                        <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
+                        {/* <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
                           <CustomTextField id="standard-basic" label="Address" variant="standard" defaultValue={""} />
                         </div>
                         <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
                           <CustomTextField id="standard-basic" label="Status" color='primary' variant="standard"
                             defaultValue={""} />
-                        </div>
+                        </div> */}
                       </div>
                     </div>
                     <div className={odcStyles.actionContainer}>
