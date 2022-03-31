@@ -101,6 +101,12 @@ function User({data}) {
   const deleteRowHandleClose = () => setOpenDeleteRowModal(false);
 
   React.useEffect(()=>{
+    setTimeout(()=>{
+      if(document.querySelector('[itemref="userDetailModal"]'))
+      document.querySelector('[itemref="userDetailModal"]').style.top = "50%";
+      if(document.querySelector('[itemref="userDeleteModal"]'))
+      document.querySelector('[itemref="userDeleteModal"]').style.top = "50%";
+    },50);
   setDatatable(data.map(item=>([
     item.email,
     item.role,
@@ -118,10 +124,11 @@ function User({data}) {
               <div className={odcStyles.closebtn}>
                 <MdOutlineClose/>
               </div>
-                <Box sx={{
+                <Box itemRef='userDetailModal'  sx={{
                   position: "absolute",
-                  top: "50%",
+                  top: "48%",
                   left: "50%",
+                  transition: 'all 0.3s ease-out',
                   transform: "translate(-50%, -50%)",
                   border: 0,
                   /* margin-bottom: 30px;
@@ -194,10 +201,12 @@ function User({data}) {
                   <div className={odcStyles.closebtn}>
                     <MdOutlineClose/>
                   </div>
-                    <Box sx={{
+                  
+                    <Box itemRef='userDeleteModal' sx={{
                       position: "absolute",
-                      top: "50%",
+                      top: "48%",
                       left: "50%",
+                      transition: 'all 0.3s ease-out',
                       transform: "translate(-50%, -50%)",
                       border: 0,
                       /* margin-bottom: 30px;

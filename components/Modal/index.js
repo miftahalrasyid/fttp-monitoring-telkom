@@ -49,7 +49,8 @@ function Modal(props) {
       feederModal,
       feederFocus= {
         distribution: [
-          {distribution_id: "",
+        {
+          distribution_id: "",
           distribution_index: null,
           distribution_level: null,
           distribution_level_id: null
@@ -83,7 +84,7 @@ function Modal(props) {
    
     // const { distribution:distributionData, feeder:feederData} = panelData
     // console.log("panelData",panelData)
-    // console.log("feederFocus",feederFocus.distribution)
+    console.log("feederFocus",feederFocus.distribution)
     // console.log("feedermodal",panelData.filter(pn=>pn.type==='distribution').map(ds=>{
 
     //   return ds.data.map(dsit=>({index:dsit.index ,status:dsit.status,rak:ds.rak_index}))
@@ -100,6 +101,17 @@ function Modal(props) {
     const deleteRowHandleOpen = () => setOpenDeleteRowModal(true);
     const deleteRowHandleClose = () => setOpenDeleteRowModal(false);
     // console.log("openDeleteRowModal",openDeleteRowModal)
+    useEffect(()=>{
+    
+      // console.log("odc",odc_edit_modal.current,document.querySelector('[itemref="testing"]'))
+      setTimeout(()=>{
+        // console.log("odc",document.querySelector('[itemref="detailFeederModal"]'))
+        if(document.querySelector('[itemref="detailFeederModal"]'))
+        document.querySelector('[itemref="detailFeederModal"]').style.top = "50%";
+        if(document.querySelector('[itemref="detailFeederDeleteModal"]'))
+        document.querySelector('[itemref="detailFeederDeleteModal"]').style.top = "50%";
+      },50)
+    },[feed,openDeleteRowModal])
     return (
         <MUIModal key={header} open={feed} onClose={handleClose} className={`${styles.modalWrapper}`} aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description">
@@ -108,22 +120,22 @@ function Modal(props) {
                     <MdOutlineClose/>
                   </div>
                   <MetisMenu>
-                <Box sx={{
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
-                  border: 0,
-                  borderRadius: "6px",
-                  color: "#333",
-                  width:"90%",
-                  maxWidth: "600px",
-                  boxShadow: "0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 20%), 0 1px 5px 0 rgb(0 0 0 / 12%)",
-                  boxShadow: "0 1px 4px 0 rgb(0 0 0 / 14%)",
+                <Box itemRef='detailFeederModal' sx={{
+                  // position: "absolute",
+                  top: "48%",
+                  // left: "50%",
+                  // transform: "translate(-50%, -50%)",
+                  // border: 0,
+                  // borderRadius: "6px",
+                  // color: "#333",
+                  // width:"90%",
+                  // maxWidth: "600px",
+                  // boxShadow: "0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 20%), 0 1px 5px 0 rgb(0 0 0 / 12%)",
+                  // boxShadow: "0 1px 4px 0 rgb(0 0 0 / 14%)",
                   "div":{
                       margin:0
                   }
-                }}>
+                }} className={odcStyles.modalBox}>
                  
                   <div className={`${odcStyles.card}  ${odcStyles.cardStats}`}>
                     <div className={`${odcStyles.cardHeader} ${odcStyles.cardHeaderPrimary}`}>
@@ -314,10 +326,11 @@ function Modal(props) {
                   <div className={styles.closebtn}>
                     <MdOutlineClose/>
                   </div>
-                    <Box sx={{
+                    <Box itemRef='detailFeederDeleteModal' sx={{
                       position: "absolute",
-                      top: "50%",
+                      top: "48%",
                       left: "50%",
+                      transition: 'all 0.3s ease-out',
                       transform: "translate(-50%, -50%)",
                       border: 0,
                       /* margin-bottom: 30px;

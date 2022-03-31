@@ -1,4 +1,4 @@
-import React,{useCallback, useState} from 'react';
+import React,{useCallback, useState,useEffect, useRef} from 'react';
 import styles from './navbar.module.css';
 import { MdMenu } from 'react-icons/md';
 // import {
@@ -107,6 +107,7 @@ function a11yProps(index) {
  */
 
 function Navbar(props) {
+  const odc_edit_modal = useRef(null);
   const { dataClient,odcData } = props;
   // console.log("raw data",dataClient,props)
   const router = useRouter();
@@ -144,7 +145,16 @@ function Navbar(props) {
  const handleChange = (event, newValue) => {
    setValue(newValue);
   };
-  
+  useEffect(()=>{
+    
+    console.log("odc",odc_edit_modal.current,document.querySelector('[itemref="testing"]'))
+    setTimeout(()=>{
+      
+      if(document.querySelector('[itemref="testing"]'))
+      document.querySelector('[itemref="testing"]').style.top = "50%";
+    },50)
+  },[open])
+
   /**
    * modal popup for users page
    */
@@ -216,23 +226,25 @@ function Navbar(props) {
                   {odcData && 
                  <Modal key={odcData.odc_id} open={open} onClose={handleClose} aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description">
-                  <div>
+                  <div ref={odc_edit_modal}>
                   <div className={odcStyles.closebtn}>
                     <MdOutlineClose/>
                   </div>
-                <Box sx={{
+                <Box itemRef='testing' sx={{
                   position: "absolute",
-                  top: "50%",
+                  top: "48%",
                   left: "50%",
+                  transition:'all 0.3s ease-out',
                   transform: "translate(-50%, -50%)",
                   border: 0,
                   borderRadius: "6px",
                   color: "#333",
                   width:"90%",
                   maxWidth: "600px",
-                  boxShadow: "0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 20%), 0 1px 5px 0 rgb(0 0 0 / 12%)",
-                  boxShadow: "0 1px 4px 0 rgb(0 0 0 / 14%)",
-                }}>
+                  // boxShadow: "0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 20%), 0 1px 5px 0 rgb(0 0 0 / 12%)",
+                  // boxShadow: "0 1px 4px 0 rgb(0 0 0 / 14%)",
+                }} >
+                {/* }} className={` ${open && odcStyles.modalActive}`}> */}
                  
                   <div className={`${odcStyles.card}  ${odcStyles.cardStats}`}>
                     <div className={`${odcStyles.cardHeader} ${odcStyles.cardHeaderPrimary}`}>

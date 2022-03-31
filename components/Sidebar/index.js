@@ -122,6 +122,15 @@ function Sidebar() {
         mm.current.el.classList.add("list-unstyled")
         mm.current.el.id = "side-menu"
     },[])
+    useEffect(()=>{
+    
+      // console.log("odc",odc_edit_modal.current,document.querySelector('[itemref="testing"]'))
+      setTimeout(()=>{
+        console.log("odc",document.querySelector('[itemref="addOdcSidbarModal"]'))
+        if(document.querySelector('[itemref="addOdcSidbarModal"]'))
+        document.querySelector('[itemref="addOdcSidbarModal"]').style.top = "50%";
+      },50)
+    },[open])
   return (
     <div className={`${styles.verticalMenu}`}>
         <div className={styles.sidebarLogo}>
@@ -172,9 +181,9 @@ function Sidebar() {
                   <div className={styles.closebtn}>
                     <MdOutlineClose/>
                   </div>
-                  <Box sx={{
+                  <Box itemRef='addOdcSidbarModal' sx={{
                     position: "absolute",
-                    top: "50%",
+                    top: "48%",
                     left: "50%",
                     transform: "translate(-50%, -50%)",
                     border: 0,
@@ -183,10 +192,11 @@ function Sidebar() {
                     borderRadius: "6px",
                     color: "#333",
                     background: "#fff",
+                    transition: "all 0.3s ease-out",
                     width:"90%",
                     maxWidth: "600px",
-                    boxShadow: "0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 20%), 0 1px 5px 0 rgb(0 0 0 / 12%)",
-                    boxShadow: "0 1px 4px 0 rgb(0 0 0 / 14%)",
+                    // boxShadow: "0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 20%), 0 1px 5px 0 rgb(0 0 0 / 12%)",
+                    // boxShadow: "0 1px 4px 0 rgb(0 0 0 / 14%)",
                   }}>
                   {/* <Box sx={styles.card}> */}
                     <div className={`${styles.card}`}>

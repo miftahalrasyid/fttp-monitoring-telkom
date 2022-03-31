@@ -81,6 +81,9 @@ const CustomButtonModalGray = styledCustom(Button)(({ theme }) => ({
 const CustomButton = styled(Button)(({ theme }) => ({
   color: theme.status.primary,
 }));
+const CustomButtonGray = styled(Button)(({ theme }) => ({
+  background: theme.status.darkgray,
+}));
 // const CustomDynamicMUIDataTable = styled(DynamicMUIDataTable)(({theme})=>({
 //     ".MuiPaper-root":{
 //       boxShadow: "none"
@@ -240,7 +243,15 @@ function Odc(props) {
     };
 
     React.useEffect(()=>{
-
+    
+        // console.log("odc",odc_edit_modal.current,document.querySelector('[itemref="testing"]'))
+        setTimeout(()=>{
+          // console.log("odc",document.querySelector('[itemref="odcDetailModal"]'))
+          if(document.querySelector('[itemref="odcDetailModal"]'))
+          document.querySelector('[itemref="odcDetailModal"]').style.top = "50%";
+          if(document.querySelector('[itemref="odcDeleteModal"]'))
+          document.querySelector('[itemref="odcDeleteModal"]').style.top = "50%";
+        },50)
       setDatatable(rawData.map(item=>([
         item.id,item.capacity,
         `idle: ${item.feeder.idle} | used: ${item.feeder.used} | broken: ${item.feeder.broken}`,
@@ -268,10 +279,11 @@ function Odc(props) {
                   <div className={styles.closebtn}>
                     <MdOutlineClose/>
                   </div>
-                    <Box sx={{
+                    <Box itemRef='odcDetailModal' sx={{
                       position: "absolute",
-                      top: "50%",
+                      top: "48%",
                       left: "50%",
+                      transition: 'all 0.3s ease-out',
                       transform: "translate(-50%, -50%)",
                       border: 0,
                       /* margin-bottom: 30px;
@@ -366,12 +378,29 @@ function Odc(props) {
                         
                         </div>
                         <div className={styles.actionContainer}>
-                        <CustomButtonModalGray onClick={(ev)=>handleChange(ev,value-1)} style={{visibility:(value<=0)?"hidden":"visible"}} variant="contained" color='primary' size="large">
-                        Prev
-                      </CustomButtonModalGray>
-                        <CustomButtonModal onClick={(ev)=>(value>0)?handleOpen:handleChange(ev,value+1)}  variant="contained" color='primary' size="large">
-                        {(value>0)?"Submit":"Next"}
-                      </CustomButtonModal>
+                          <CustomButtonModalGray onClick={(ev)=>handleChange(ev,value-1)}
+                            style={{visibility:(value<=0)?"hidden":"visible"}} variant="contained" color='primary'
+                            size="large">
+                            Prev
+                          </CustomButtonModalGray>
+                          <div className='row'>
+                            <div className='col-md-12 col-lg-6'>
+                              {(value>0) && <CustomButtonModal onClick={(ev)=>
+                                (value>0)?handleOpen:handleChange(ev,value+1)} variant="contained" color='primary'
+                                size="large">
+                                Submit
+                              </CustomButtonModal>}
+                            </div>
+                            <div className='col-md-12 col-lg-6'>
+                              {(value>0) && <CustomButtonGray onClick={()=>handleClose()} variant="contained"
+                                color='primary' size="large">
+                                Cancel
+                              </CustomButtonGray>}
+                            </div>
+                          </div>
+                          <CustomButtonModal style={{visibility: (value>0)?"hidden":"visible"}} onClick={(ev)=>(value>0)?handleOpen:handleChange(ev,value+1)}  variant="contained" color='primary' size="large">
+                          {(value<=0)? "Next":""}
+                          </CustomButtonModal>
                         </div>
                       </div>
                     </Box>
@@ -382,10 +411,11 @@ function Odc(props) {
                   <div className={styles.closebtn}>
                     <MdOutlineClose/>
                   </div>
-                    <Box sx={{
+                    <Box itemRef='odcDeleteModal' sx={{
                       position: "absolute",
-                      top: "50%",
+                      top: "48%",
                       left: "50%",
+                      transition: 'all 0.3s ease-out',
                       transform: "translate(-50%, -50%)",
                       border: 0,
                       /* margin-bottom: 30px;

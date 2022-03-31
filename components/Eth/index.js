@@ -27,7 +27,7 @@ function Eth({id,rak_level,columns,clickHandler,status,isActive,from}) {
       {/* <div className={`${styles.ethHotspot}`}>
       </div> */}
         <p>{id}</p>
-      <MdOutlineViewSidebar fill={status==='used'?'blue':'#75767e'} />
+      <MdOutlineViewSidebar fill={status==='used'?'blue':status==='priority'?'#ee2d24':'#75767e'} />
       {/* <MdOutlineViewSidebar fill={((isActive?.ids?.find(item=> item==id) && inUsed?.ids?.find(item=> item==id))|| (from=="distributor" && inUsed?.ids.find(item=> item==id)))?'yellow':inUsed?.ids?.find(item=> item==id)?'blue':'#75767e'} /> */}
     </div>;
 }

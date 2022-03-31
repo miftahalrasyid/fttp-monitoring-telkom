@@ -2,8 +2,12 @@
     /* margin-top: 70px; */
     margin:auto;
     padding: 30px 15px;
-    max-width: 1323px;
+    overflow: scroll;
+    width: 100%;
     min-height: calc(100vh - 123px);
+}
+.content{
+    width: 1323px;
 }
 .odcIdWrapper{
     overflow: scroll;
@@ -321,4 +325,16 @@
     justify-content: center;
     width:100%;
     gap: 1.5rem;
+}
+.modalBox{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transition: all 0.3s ease-out;
+    transform: translate(-50%, -52%);
+    border: 0;
+    border-radius: 6px;
+    color: #333;
+    width:90%;
+    max-width: 600px;
 }

@@ -107,7 +107,7 @@ function Odc({
          */
         // console.log("data raw [...odcid]",ODCDataClient)
     const dispatch = useDispatch();
-
+      // console.log("focus feeder",feederFocus)
     // choose saga datastream (server || client)
     /**
      * startpoint route /odc/odc-ktm-fs
@@ -157,6 +157,7 @@ function Odc({
       if(ev.target.children[1].getAttribute("fill")=="#75767e"){
         feederModal[1](true);
         if(feederFocus && (ev.target.children[1]!==feederFocus)){
+          
           feederFocus.feederElm?.setAttribute("fill","blue");
           feederFocus.splitterElm?.setAttribute("fill","blue");
           feederFocus.distributionElm?.forEach(item=>{
@@ -165,24 +166,34 @@ function Odc({
           })
         }
         setFeederFocus({
-          feederElm:null,
-          splitterElm:null,
-          distributionElm:null,
-          feeder:{
-            feeder_id:null,
-            feeder_index:null,
-            feeder_level:null
-          },
-          distribution:{
-            distribution_id:null,
-            distribution_index:null,
-            distribution_level:null
-          },
-          splitter:{
-            splitter_id:null,
-            splitter_index:null,
-            splitter_level:null
-          }
+          distribution: [
+            {distribution_id: "",
+            distribution_index: null,
+            distribution_level: null,
+            distribution_level_id: null
+          }, {
+            distribution_id: "",
+            distribution_index: null,
+            distribution_level: null,
+            distribution_level_id: null
+          }, {
+            distribution_id: "",
+            distribution_index: null,
+            distribution_level: null,
+            distribution_level_id: null
+          }, {
+            distribution_id: "",
+            distribution_index: null,
+            distribution_level: null,
+            distribution_level_id: null
+          }],
+          
+          distributionElm: [null, null, null, null],
+          feeder: {feeder_id: '', feeder_index: null, feeder_level: null},
+          feederElm: null,
+          odpName: ['', '', '', ''],
+          splitter: {splitter_id: '', splitter_index: null},
+          splitterElm: null
         })
       }
       /**if the feeder are used */
@@ -193,6 +204,7 @@ function Odc({
 
           /* ketika klik feeder used lainnya*/
           if(feederFocus && (ev.target.children[1]!==feederFocus)){
+            
             feederFocus.feederElm?.setAttribute("fill","blue");
             feederFocus.splitterElm?.setAttribute("fill","blue");
             feederFocus.distributionElm?.forEach(item=>{
@@ -247,8 +259,9 @@ function Odc({
                 splitter_level:""
               }
             }]
-            ,pass_through,index:feederIndex}] = data.filter(rpnl=>rpnl.index.toString() === ev.target.getAttribute('data-id'));
+            ,pass_through,status,index:feederIndex}] = data.filter(rpnl=>rpnl.index.toString() === ev.target.getAttribute('data-id'));
             return passive_out.reduce((prevPa,currPa)=>{
+              console.log("feeder on focus",status,prevPa)
           // return passive_out.reduce(pa=>{
             // console.log("rak children",document.querySelector(`[data-id="${pa.splitter.splitter_index}"][data-type="splitter"]`))
             /** change color from used to focused with pass_through condition for splitter*/
@@ -566,7 +579,7 @@ function Odc({
    */
   else if(odcId[1]=="status"){
     return (<div className={styles.mainContent}>
-      <div className={`container-fluid`}>
+      <div className={`container-fluid ${styles.content}`}>
         <div className='row'>
           <div className="col-lg-12 col-md-12">
             <div className={`${styles.card}`}>
@@ -576,14 +589,14 @@ function Odc({
               <div className="card-body table-responsive">
                 <div className={styles.splitterStatusContainer}>
                   <Typography> Splitter </Typography>
-                  {ODCData.splitter.data.map(item=><FormControl key={item.id} variant="standard" sx={{ m: 1, minWidth: 120 }}>
+                  {ODCData.splitter.data.map(item=><FormControl key={item.id} variant="standard" sx={{ m: 1, minWidth: 124 }}>
                     <InputLabel id="demo-simple-select-standard-label">Splitter {item.index}</InputLabel>
 
-                    <NativeSelect defaultValue={20} inputProps={{
+                    <NativeSelect defaultValue={item.status=="used" ? 10:20} inputProps={{
                         name: 'age',
                         id: 'uncontrolled-native',
                         }}>
-                          {(item.status=="used") && ["used","priority"].map(item=><option key={"sp"+item} value={10}> {item}</option>)}
+                          {(item.status=="used" || item.status=="priority") && [{status:"used",value:10},{status:"priority",value:20}].map(item=><option key={"sp"+item.status} value={item.value}> {item.status}</option>)}
                           {(item.status=="idle") && ["idle","broken"].map(item=><option key={"sp"+item} value={10}> {item}</option>)}
                     </NativeSelect>
                     </FormControl>
@@ -594,16 +607,18 @@ function Odc({
               <div>
                   {ODCData.panel.data.map(item=>(<>
                     {item.data.map(distFeed=>{
-                     return <FormControl key={distFeed.index} variant="standard" sx={{ m: 1, minWidth: 87 }}>
+                      return <FormControl key={distFeed.index} variant="standard" sx={{ m: 1, minWidth: 89 }}>
                      <InputLabel id="demo-simple-select-standard-label" className={styles.portLabel}> { ((item.rak_level)%2===0)?item.type+item.rak_index+" "+(distFeed.index+12):item.type+item.rak_index+" "+distFeed.index }</InputLabel>
+                     {/* <InputLabel id="demo-simple-select-standard-label" className={styles.portLabel}> { ((item.rak_level)%2===0)?item.type+item.rak_index+" "+(distFeed.index+12):item.type+item.rak_index+" "+distFeed.index }</InputLabel> */}
                         {/* {ODCData.panel.data.length}
                         {item.data.length} */}
-                     <NativeSelect  defaultValue={20} inputProps={{
-                        name: 'age',
-                        id: 'uncontrolled-native',
-                        }}>
+                       
+                     <NativeSelect  defaultValue={distFeed.status=="used" ? 10:20} inputProps={{
+                       name: 'age',
+                       id: 'uncontrolled-native',
+                      }}>
                              {/* (item.status=="used") ? ["used","priority"].map(item=><option key={"sp"+item} value={10}> {item}</option>) : ["idle","broken"].map(item=><option key={"sp"+item} value={10}> {item}</option>) */}
-                          {(distFeed.status=="used") && ["used","priority"].map(item=><option key={"sp"+item} value={10}> {item}</option>)}
+                          {(distFeed.status=="used" || distFeed.status=="priority") && [{status:"used",value:10},{status:"priority",value:20}].map(item=><option key={"sp"+item.status} value={item.value}> {item.status}</option>)}
                           {(distFeed.status=="idle") && ["idle","broken"].map(item=><option key={"sp"+item} value={10}> {item}</option>)}
                     </NativeSelect>
                     </FormControl>
@@ -721,12 +736,13 @@ export const getServerSideProps = async (props) => wrapper.getServerSideProps(st
     console.log("user data",store.getState().Users)
     // console.log("req test:",req.url,res,etc)
     // console.log("store",store.getState().ODCs.selectedOdcSplitpanelStatus)
-
     const {ODCs:{selectedOdcSplitpanelStatus}} = store.getState();
-    console.log("selected odc",selectedOdcSplitpanelStatus)
     // const {ODCs:{odcsBox=[],splitterData=[],coreFeederData=[]}} = store.getState();
-
-    if(odcId.length!==0 && selectedOdcSplitpanelStatus==={}){
+    
+    console.log("odc id",odcId,odcId.length)
+    // if(odcId.length>1){
+      if(selectedOdcSplitpanelStatus==={} && (odcId[1]!=='status' || odcId[1]!=='activity log')){
+        console.log("selected odc",selectedOdcSplitpanelStatus)
     // if(odcId.length!==0 && odcsBox.filter(item=>item?.odc?.id == odcId[0]).length==0){
             return {
                 notFound: true
