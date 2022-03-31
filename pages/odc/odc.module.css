@@ -160,6 +160,9 @@
 .card .cardHeader .cardCategory {
     margin: 0;
 }
+.cardFilter{
+    margin: 0 2rem;
+}
 .tableAction button{
     border-radius: 22px !important;
     min-width:fit-content !important;

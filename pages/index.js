@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Grid,
   CircularProgress,
@@ -12,6 +12,8 @@ import {
   Paper,
   makeStyles, useTheme, styled, createTheme,MuiThemeProvider
 } from "@material-ui/core";
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 import { 
   styled as styledCustom 
 } from "@mui/material/styles";
@@ -104,12 +106,32 @@ function Login(props) {
       darkgray: "darkgray!important"
     },
   });
+  const [isImageReady, setIsImageReady] = useState(false);
+  useEffect(()=>{
+    logoLoadCallback()
+  },[isImageReady])
+  const logoLoadCallback = useCallback((ev)=>{
+    setIsImageReady(true)
+    typeof onLoad === "function" && onLoad(e)
+  },[isImageReady])
+  // const logoLoadCallback = (ev) =>{
+  //   console.log("loading image",ev)
+     
+  // }
   return (
     <Grid container className={styles.container}>
       <div className={styles.logotypeContainer}>
         <div className={styles.pattern}>
-          <div className={styles.logotypeImage}>
-            <Image src={logo} alt="logo" />
+          <div className={`${styles.logotypeImage}`}>
+          {!isImageReady ? (
+              <Skeleton
+                  circle
+                  width="165px"
+                  height="165px"
+                  containerClassName="avatar-skeleton"
+              />
+          ):<Image layout="responsive" onLoadingComplete={(ev)=>logoLoadCallback(ev)} src={logo} alt="logo" />}
+            
 
           </div>
           <Typography className={styles.logotypeText}>Telkom Indonesia</Typography>
@@ -132,7 +154,7 @@ function Login(props) {
             <div>
               <div>
                 <div className={styles.logotypeImageMobile}>
-                  <Image src={logo} alt="logo" />
+                  <Image onLoad={logoLoadCallback} src={logo} alt="logo" />
 
                 </div>
                 <Typography className={styles.logotypeTextMobile}>Telkom Indonesia</Typography>

@@ -25,6 +25,7 @@ import {
   styled as styledCustom
 } from "@mui/material/styles";
 import Tabs from '@mui/material/Tabs';
+import NativeSelect from '@mui/material/NativeSelect';
 import Tab from '@mui/material/Tab';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -538,8 +539,36 @@ function Odc(props) {
               <div className="card-body table-responsive">
                   {/* <Chip label="tauah gelap" /> */}
                 {/* autotagcompletion */}
+                <NativeSelect className={styles.cardFilter} defaultValue={10} inputProps={{
+                  name: 'regional',
+                  id: 'uncontrolled-native',
+                }}>
+                     
+                      <option value={10}> Regional</option>
+                </NativeSelect>
+                <NativeSelect className={styles.cardFilter} defaultValue={10} inputProps={{
+                  name: 'witel',
+                  id: 'uncontrolled-native',
+                }}>
+                     
+                      <option value={10}> Witel</option>
+                </NativeSelect>
+                <NativeSelect className={styles.cardFilter} defaultValue={10} inputProps={{
+                  name: 'datel',
+                  id: 'uncontrolled-native',
+                }}>
+                     
+                      <option value={10}> Datel</option>
+                </NativeSelect>
+                <NativeSelect className={styles.cardFilter} defaultValue={10} inputProps={{
+                  name: 'sto',
+                  id: 'uncontrolled-native',
+                }}>
+                     
+                      <option value={10}> STO</option>
+                </NativeSelect>
 {/* 
-                <div className={styles.autoTagContainer}>
+                  <div className={styles.autoTagContainer}>
                 {tagPickerValue.map((v) => (
                   <DynamicChip key={v.title} label={v.title} onDelete={onDelete(v.title)} />
                 ))}
@@ -560,7 +589,8 @@ function Odc(props) {
                 </Box>
                 </ThemeProvider>
 
-                </div> */}
+              </div> 
+              */}
 
 
               {/* <SafeHydrate> */}
