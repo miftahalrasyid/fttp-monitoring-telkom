@@ -1,6 +1,6 @@
 import React from 'react'
 import withAuth from '../../components/Auth';
-import {Modal,Box, Typography} from '@material-ui/core';
+import {Modal,Box,FormControl,InputLabel,NativeSelect, Typography} from '@material-ui/core';
 import { createTheme, MuiThemeProvider,styled } from "@material-ui/core/styles";
 import dynamic from 'next/dynamic';
 import { 
@@ -22,8 +22,8 @@ import { END } from 'redux-saga';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 
-const CustomButtonModal = styledCustom(Button)(({ theme }) => ({
-  background: theme.status.primary,
+const CustomButtonModal = styledCustom(Button)(({ theme, btnType }) => ({
+  background: btnType == 'submit' ? '#1ebc51!important':theme.status.primary,
 }));
 
 const CustomButton = styled(Button)(({ theme }) => ({
@@ -31,6 +31,12 @@ const CustomButton = styled(Button)(({ theme }) => ({
 }));
 const CustomButtonModalGray = styledCustom(Button)(({ theme }) => ({
   background: theme.status.darkgray,
+}));
+const CustomInputLabel = styledCustom(InputLabel)(({ theme }) => ({
+  '&.Mui-focused':{
+    color: theme.status.primary,
+
+  }
 }));
 const CustomTextField = styledCustom(TextField)(({ theme }) => ({
   color: theme.status.primary,
@@ -163,8 +169,31 @@ function User({data}) {
                           <CustomTextField id="standard-basic" label="Password" type={"password"} variant="standard" defaultValue={item.password} />
                         </div>
                         <div className={`col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
-                          <CustomTextField id="standard-basic" label="Role" color='primary' variant="standard"
-                            defaultValue={item.role} />
+                        <FormControl key='role' variant="standard" sx={{ m: 1, minWidth: 124 }}>
+                        <CustomInputLabel id="demo-simple-select-standard-label">Role</CustomInputLabel>
+
+                        <NativeSelect defaultValue={item.role} inputProps={{
+                            name: 'age',
+                            id: 'uncontrolled-native',
+                            }}>
+                              <option key={"role-admin"} value="admin"> Admin </option>
+                              <option key={"role-user"} value="user"> User </option>
+                        </NativeSelect>
+                        </FormControl>
+                        </div>
+                        
+                        <div className={`col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
+                        <FormControl key={"status"} variant="standard" sx={{ m: 1, minWidth: 124 }}>
+                        <CustomInputLabel sx={{color: "red"}} id="demo-simple-select-standard-label">Status</CustomInputLabel>
+
+                        <NativeSelect defaultValue={item.status} inputProps={{
+                            name: 'age',
+                            id: 'uncontrolled-native',
+                            }}>
+                              <option key={"status-active"} value="active"> Active </option>
+                              <option key={"status-suspend"} value="suspend"> Suspend </option>
+                        </NativeSelect>
+                        </FormControl>
                         </div>
                         {/* <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
                           <CustomTextField id="standard-basic" label="Address" variant="standard" defaultValue={item.address} />
@@ -174,24 +203,24 @@ function User({data}) {
                             defaultValue={item.status} />
                         </div> */}
                       </div>
-                    </div>
                     <div className={odcStyles.actionContainer}>
                       <div className='col-md-6'>
                         <div className='row'>
 
                             <div className={`col-md-12 col-lg-4 `}>
-                              <CustomButtonModal>
+                              <CustomButtonModal btnType={"submit"}>
                                 {"Submit"}
                               </CustomButtonModal>
                             </div>
                             <div className={`col-md-12 col-lg-4 `}>
-                              <CustomButtonModalGray onClick={()=>handleClose()}>
+                              <CustomButtonModal onClick={()=>handleClose()}>
                                 {"Cancel"}
-                              </CustomButtonModalGray>
+                              </CustomButtonModal>
                             </div>
                           </div>
                         </div>
                       </div>
+                    </div>
                   </div>
                   </Box>
               </div>
@@ -236,14 +265,14 @@ function User({data}) {
                             <div className={odcStyles.actionContainer}>
 
                                   <div >
-                                    <CustomButtonModal>
+                                    <CustomButtonModal btnType={'submit'}>
                                       {"Submit"}
                                     </CustomButtonModal>
                                   </div>
                                   <div >
-                                    <CustomButtonModalGray onClick={()=>deleteRowHandleClose()}>
+                                    <CustomButtonModal onClick={()=>deleteRowHandleClose()}>
                                       {"Cancel"}
-                                    </CustomButtonModalGray>
+                                    </CustomButtonModal>
                                   </div>
                             </div>
                           </div>

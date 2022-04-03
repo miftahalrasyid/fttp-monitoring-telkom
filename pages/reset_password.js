@@ -8,12 +8,19 @@ import {
     Button,
     Tabs,
     Tab,
-    TextField,
     Fade,
     Avatar,
     Paper,
     makeStyles, useTheme, styled, createTheme,MuiThemeProvider
   } from "@material-ui/core";
+  import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
+import Input from '@mui/material/Input';
+import InputLabel from '@mui/material/InputLabel';
+import InputAdornment from '@mui/material/InputAdornment';
+import FormControl from '@mui/material/FormControl';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
   import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
   import styles from './index.module.css';
   import logo from "../public/img/telkom logo.png";
@@ -28,6 +35,51 @@ function Reset_password({isLoading,checkLogin}) {
     var [nameValue, setNameValue] = useState("");
     var [loginValue, setLoginValue] = useState("");
     var [passwordValue, setPasswordValue] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
+    const handleChange = (prop) => (event) => {
+
+      setValues({ ...values, [prop]: event.target.value });
+    };
+  
+    const handleClickShowPassword = () => {
+      setValues({
+        ...values,
+        showPassword: !values.showPassword,
+      });
+    };
+  
+    const handleMouseDownPassword = (event) => {
+      event.preventDefault();
+    };
+    const handleChangeConfirm = (prop) => (event) => {
+
+      setValuesConfirm({ ...valuesConfirm, [prop]: event.target.value });
+    };
+  
+    const handleClickShowPasswordConfirm = () => {
+      setValuesConfirm({
+        ...valuesConfirm,
+        showPassword: !valuesConfirm.showPassword,
+      });
+    };
+  
+    const handleMouseDownPasswordConfirm = (event) => {
+      event.preventDefault();
+    };
+const [values, setValues] = useState({
+  amount: '',
+  password: '',
+  weight: '',
+  weightRange: '',
+  showPassword: false,
+});
+const [valuesConfirm, setValuesConfirm] = useState({
+  amount: '',
+  password: '',
+  weight: '',
+  weightRange: '',
+  showPassword: false,
+});
   return (
     <Grid container className={styles.container}>
         <div className={styles.logotypeContainer}>
@@ -72,28 +124,48 @@ function Reset_password({isLoading,checkLogin}) {
                     Something is wrong with your login or password :(
                   </Typography>
                 </Fade>
-                <TextField id="password" InputProps={{
-                  classes: {
-                    underline: styles.textFieldUnderline,
-                    input: styles.textField,
-                  },
-                }} value={loginValue} onChange={e=> setLoginValue(e.target.value)}
-                  margin="normal"
-                  placeholder="Password"
-                  type="password"
-                  fullWidth
-                  />
-                  <TextField id="password_confirm" InputProps={{
-                  classes: {
-                    underline: styles.textFieldUnderline,
-                    input: styles.textField,
-                  },
-                }} value={passwordValue} onChange={e=> setPasswordValue(e.target.value)}
-                    margin="normal"
-                    placeholder="Konfirmasi password"
-                    type="password"
-                    fullWidth
-                    />
+
+        <FormControl sx={{ m: 1, width: '100%' }} variant="standard">
+          <InputLabel htmlFor="standard-adornment-password">Password</InputLabel>
+          <Input
+            id="standard-adornment-password"
+            type={values.showPassword ? 'text' : 'password'}
+            value={values.password}
+            onChange={handleChange('password')}
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label="toggle password visibility"
+                  onClick={handleClickShowPassword}
+                  onMouseDown={handleMouseDownPassword}
+                >
+                  {values.showPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            }
+          />
+        </FormControl>
+        <FormControl sx={{ m: 1, width: '100%' }} variant="standard">
+          <InputLabel htmlFor="standard-adornment-password">Konfirmasi password</InputLabel>
+          <Input
+            id="standard-adornment-password"
+            type={valuesConfirm.showPassword ? 'text' : 'password'}
+            value={valuesConfirm.password}
+            onChange={handleChangeConfirm('password')}
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label="toggle password visibility"
+                  onClick={handleClickShowPasswordConfirm}
+                  onMouseDown={handleMouseDownPasswordConfirm}
+                >
+                  {valuesConfirm.showPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            }
+          />
+        </FormControl>
+
                  
                 <div className={styles.formButtons}>
                     {isLoading ? (

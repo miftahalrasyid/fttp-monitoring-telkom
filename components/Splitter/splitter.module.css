@@ -14,6 +14,9 @@
     margin: 0 0.5rem;
     /* column-count: 9; */
 }
+.splitContainer div{
+    margin-bottom: 0.5rem;
+}
 .legendContainer{
     position: relative;
     display:flex;

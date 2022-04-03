@@ -73,8 +73,8 @@ const CustomTextField = styledCustom(TextField)(({ theme }) => ({
     borderColor: theme.status.primary
   },
 }));
-const CustomButtonModal = styledCustom(Button)(({ theme }) => ({
-  background: theme.status.primary,
+const CustomButtonModal = styled(Button)(({ theme, btnType }) => ({
+  background: btnType == 'submit' ? '#1ebc51!important':theme.status.primary,
 }));
 const CustomButtonModalGray = styledCustom(Button)(({ theme }) => ({
   background: theme.status.darkgray,
@@ -190,6 +190,18 @@ function Odc(props) {
       MuiOutlinedInput:{
         root:{
           color: "#ee2d24!important"
+        }
+      },
+      MuiTypography:{
+        root:{
+
+          fontFamily:"'GothamRounded-Book' !important"
+        }
+      },
+      MuiButtonBase:{
+        root:{
+          fontFamily:"'GothamRounded-Book' !important"
+
         }
       },
       MuiTableRow:{
@@ -379,24 +391,24 @@ function Odc(props) {
                         
                         </div>
                         <div className={styles.actionContainer}>
-                          <CustomButtonModalGray onClick={(ev)=>handleChange(ev,value-1)}
+                          <CustomButtonModal onClick={(ev)=>handleChange(ev,value-1)}
                             style={{visibility:(value<=0)?"hidden":"visible"}} variant="contained" color='primary'
                             size="large">
                             Prev
-                          </CustomButtonModalGray>
+                          </CustomButtonModal>
                           <div className='row'>
                             <div className='col-md-12 col-lg-6'>
-                              {(value>0) && <CustomButtonModal onClick={(ev)=>
+                              {(value>0) && <CustomButtonModal btnType={"submit"} onClick={(ev)=>
                                 (value>0)?handleOpen:handleChange(ev,value+1)} variant="contained" color='primary'
                                 size="large">
                                 Submit
                               </CustomButtonModal>}
                             </div>
                             <div className='col-md-12 col-lg-6'>
-                              {(value>0) && <CustomButtonGray onClick={()=>handleClose()} variant="contained"
+                              {(value>0) && <CustomButtonModal onClick={()=>handleClose()} variant="contained"
                                 color='primary' size="large">
                                 Cancel
-                              </CustomButtonGray>}
+                              </CustomButtonModal>}
                             </div>
                           </div>
                           <CustomButtonModal style={{visibility: (value>0)?"hidden":"visible"}} onClick={(ev)=>(value>0)?handleOpen:handleChange(ev,value+1)}  variant="contained" color='primary' size="large">
@@ -446,14 +458,14 @@ function Odc(props) {
                             <div className={styles.actionContainer}>
 
                                   <div >
-                                    <CustomButtonModal>
+                                    <CustomButtonModal btnType={'submit'}>
                                       {"Submit"}
                                     </CustomButtonModal>
                                   </div>
                                   <div >
-                                    <CustomButtonModalGray onClick={()=>deleteRowHandleClose()}>
+                                    <CustomButtonModal onClick={()=>deleteRowHandleClose()}>
                                       {"Cancel"}
-                                    </CustomButtonModalGray>
+                                    </CustomButtonModal>
                                   </div>
                             </div>
                           </div>

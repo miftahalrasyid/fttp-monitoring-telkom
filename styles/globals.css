@@ -3,17 +3,23 @@
  --secondary: #eeeeee;
  --warning: #FFC260;
  --success: #3CD4A0;
+ --green: #1ebc51;
  --info: #9013FE;
 }
+@font-face {
+  font-family: "GothamRounded-Book" !important;
+  src: url("../public/font/GothamRounded-Book.otf");
+}
 span,h1,h2,h3,h4,div{
-  font-family: Roboto,Helvetica,Arial,sans-serif;
+  font-family: "GothamRounded-Book" !important;
+  /* font-family: Roboto,Helvetica,Arial,sans-serif; */
 }
 html,
 body {
   padding: 0;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  font-family: 'GothamRounded-Book';
+  /* font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif; */
 }
 
 a {

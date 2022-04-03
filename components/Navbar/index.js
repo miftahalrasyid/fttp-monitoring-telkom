@@ -6,7 +6,7 @@ import { MdMenu } from 'react-icons/md';
 // } from "@material-ui/core";
 import Image from 'next/image';
 import Link from 'next/link';
-import {Modal,Box} from '@material-ui/core';
+import {Modal,Box,FormControl,InputLabel,NativeSelect} from '@material-ui/core';
 import { 
   styled as styledCustom
 } from "@mui/material/styles";
@@ -61,21 +61,25 @@ const CustomTabs = styledCustom(Tabs)(({theme})=>({
     backgroundColor: theme.status.primary,
   },
 }))
-const CustomTextField = styledCustom(TextField)(({ theme }) => ({
-  color: theme.status.primary,
+const CustomTextField = styledCustom(TextField)((props) => ({
+  // test:console.log("customText field",props),
+  color: props.theme.status.primary,
   '.MuiInputLabel-root.Mui-focused': {
-    color: theme.status.primary,
+    color: props.theme.status.primary,
+  },
+  '.MuiInput-root input':{
+    textTransform: props.id == "odcName" ? "uppercase" : "none"
   },
   '.MuiOutlinedInput-notchedOutline': {
     border: "none!important",
     // borderColor: theme.status.primary
   },
   '.MuiInput-root::after': {
-    borderColor: theme.status.primary
+    borderColor: props.theme.status.primary
   },
 }));
-const CustomButtonModal = styledCustom(Button)(({ theme }) => ({
-  background: theme.status.primary,
+const CustomButtonModal = styledCustom(Button)(({ theme, btnType }) => ({
+  background: btnType == 'submit' ? '#1ebc51!important':theme.status.primary,
 }));
 const CustomButtonEdit= styledCustom(Button)(({ theme }) => ({
   borderColor: theme.status.primary,
@@ -95,6 +99,12 @@ const CustomButtonDownload= styledCustom(Button)(({ theme }) => ({
 }));
 const CustomButtonModalGray = styledCustom(Button)(({ theme }) => ({
   background: theme.status.darkgray,
+}));
+const CustomInputLabel = styledCustom(InputLabel)(({ theme }) => ({
+  '&.Mui-focused':{
+    color: theme.status.primary,
+
+  }
 }));
 function a11yProps(index) {
   return {
@@ -256,7 +266,7 @@ function Navbar(props) {
                     <div className={`${odcStyles.cardBody} card-body row`}>
                     <div className={odcStyles.tabLink}>
                       <CustomTabs value={value} onChange={handleChange} aria-label="basic tabs example">
-                        <CustomTab label="OLT" {...a11yProps(0)} />
+                        <CustomTab label="ODC" {...a11yProps(0)} />
                         <CustomTab label="OA" {...a11yProps(1)} />
                       </CustomTabs>
                     </div>
@@ -271,7 +281,7 @@ function Navbar(props) {
                       {value === 0 && (
                         <div className={`row ${odcStyles.formGap}`}>
                             <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
-                              <CustomTextField id="standard-basic" label="ID" variant="standard" defaultValue={odcData.odc_id}/>
+                              <CustomTextField id="odcName" label="Nama ODC" variant="standard" defaultValue={odcData.odc_id}/>
                             </div>
                             <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
                               <CustomTextField id="standard-basic" label="Kapasitas" variant="standard" defaultValue={odcData.capacity}/>
@@ -295,7 +305,7 @@ function Navbar(props) {
                       {value === 1 && (
                         <div className={`row ${odcStyles.formGap}`}>
                           <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
-                            <CustomTextField id="standard-basic" label="Core" variant="standard" defaultValue={odcData.core}/>
+                            <CustomTextField id="standard-basic" label="Core Terminasi" variant="standard" defaultValue={odcData.core}/>
                           </div>
                           <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
                             <CustomTextField id="standard-basic" label="Rak OA" variant="standard" defaultValue={odcData.rak_oa}/>
@@ -313,19 +323,19 @@ function Navbar(props) {
                     
                     </div>
                     <div className={odcStyles.actionContainer}>
-                    <CustomButtonModalGray onClick={(ev)=>handleChange(ev,value-1)} style={{visibility:(value<=0)?"hidden":"visible"}} variant="contained" color='primary' size="large">
+                    <CustomButtonModal onClick={(ev)=>handleChange(ev,value-1)} style={{visibility:(value<=0)?"hidden":"visible"}} variant="contained" color='primary' size="large">
                     Prev
-                  </CustomButtonModalGray>
+                  </CustomButtonModal>
                   <div className='row'>
                     <div className='col-md-12 col-lg-6'> 
-                    {(value>0) && <CustomButtonModal onClick={(ev)=>(value>0)?handleOpen:handleChange(ev,value+1)}  variant="contained" color='primary' size="large">
+                    {(value>0) && <CustomButtonModal btnType={'submit'} onClick={(ev)=>(value>0)?handleOpen:handleChange(ev,value+1)}  variant="contained" color='primary' size="large">
                       Submit
                       </CustomButtonModal>}
                     </div>
                     <div className='col-md-12 col-lg-6'> 
-                    {(value>0) && <CustomButtonModalGray onClick={()=>handleClose()}  variant="contained" color='primary' size="large">
+                    {(value>0) && <CustomButtonModal onClick={()=>handleClose()}  variant="contained" color='primary' size="large">
                         Cancel
-                        </CustomButtonModalGray>}
+                        </CustomButtonModal>}
                     </div>
                   </div>
                   <div>
@@ -420,9 +430,19 @@ function Navbar(props) {
                           <CustomTextField id="standard-basic" label="Password" variant="standard" defaultValue={""} />
                         </div>
                         <div className={`col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
-                          <CustomTextField id="standard-basic" label="Role" color='primary' variant="standard"
-                            defaultValue={""} />
+                        <FormControl key='role' variant="standard" sx={{ m: 1, minWidth: 124 }}>
+                        <CustomInputLabel id="demo-simple-select-standard-label">Role</CustomInputLabel>
+
+                        <NativeSelect defaultValue={"user"} inputProps={{
+                            name: 'age',
+                            id: 'uncontrolled-native',
+                            }}>
+                              <option key={"role-admin"} value="admin"> Admin </option>
+                              <option key={"role-user"} value="user"> User </option>
+                        </NativeSelect>
+                        </FormControl>
                         </div>
+                        
                         {/* <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
                           <CustomTextField id="standard-basic" label="Address" variant="standard" defaultValue={""} />
                         </div>
@@ -431,24 +451,24 @@ function Navbar(props) {
                             defaultValue={""} />
                         </div> */}
                       </div>
-                    </div>
                     <div className={odcStyles.actionContainer}>
                       <div className='col-md-6'>
                         <div className='row'>
 
                             <div className={`col-md-12 col-lg-4 `}>
-                              <CustomButtonModal>
+                              <CustomButtonModal btnType={'submit'}>
                                 {"Submit"}
                               </CustomButtonModal>
                             </div>
                             <div className={`col-md-12 col-lg-4 `}>
-                              <CustomButtonModalGray onClick={()=>handleAddUserClose()}>
+                              <CustomButtonModal onClick={()=>handleAddUserClose()}>
                                 {"Cancel"}
-                              </CustomButtonModalGray>
+                              </CustomButtonModal>
                             </div>
                           </div>
                         </div>
                       </div>
+                    </div>
                   </div>
                   </Box>
                 </div>

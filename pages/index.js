@@ -41,6 +41,9 @@ const CustomButton = styledCustom(Button)(({ theme }) => ({
   borderColor: theme.status.primary,
   color:theme.status.primary,
   textDecoration: "none",
+  typography: {
+    fontFamily: 'GothamRounded-Book',
+  },
 }));
 
 function Login(props) {

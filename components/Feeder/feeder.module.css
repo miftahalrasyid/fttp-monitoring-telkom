@@ -2,11 +2,26 @@
     position: relative;
     display: flex;
     flex-wrap: wrap;
-    padding: 0 0 0.5rem;
+    width:643px;
+    /* padding: 0 0 0.5rem; */
 }
 .feederDivider{
     display:flex;
+    margin: 0.2rem 0px;
     padding: 0 1rem 0 0.5rem;
+}
+.feederMark{
+    /* background:red; */
+    margin: 0.2rem 0px 1rem;
+    position: relative;
+}
+.feederMark::after{
+    content: '';
+    position:absolute;
+    width:calc(100% - 2rem);
+    left:1rem;
+    bottom:-0.7rem;
+    border-bottom: 2px solid gray
 }
 .feederLabel{
     display:flex;

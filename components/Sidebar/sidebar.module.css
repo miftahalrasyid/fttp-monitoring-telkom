@@ -218,14 +218,18 @@
     color: #333;
     background: #fff;
     width:90%;
-    max-width: 600px;
+    /* max-width: 600px; */
+    max-width: 100%;
     box-shadow: 0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 20%), 0 1px 5px 0 rgb(0 0 0 / 12%);
     box-shadow: 0 1px 4px 0 rgb(0 0 0 / 14%);
 }
 .cardBody{
     justify-content: center;
     padding: 0.5rem 1.4rem;
-    overflow: scroll;
+    /* overflow: scroll; */
+}
+.cardBody .spacer {
+    padding: 1rem 2rem 0;
 }
 .cardBody p{
     margin-bottom: 0.1rem;
@@ -291,7 +295,9 @@
     /* margin: 0 15px; */
     padding: 1rem 0px 0px;
     display: flex;
-    justify-content: space-between;
+    /* justify-content: space-between; */
+    justify-content: left;
+    gap:1rem;
     margin-bottom: 0.9rem;
 }
 .actionContainer div{
@@ -367,7 +373,8 @@
     border-radius: 6px;
     color: #333;
     width:90%;
-    max-width: 600px;
+    width:80%;
+    /* max-width: 600px; */
 }
 @media (max-width: 1080px) {
     .actionContainer{

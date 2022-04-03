@@ -39,8 +39,8 @@ const CustomTab = styled(Tab)(({theme})=>({
     color: "black!important"
   },
 }))
-const CustomButtonModal = styled(Button)(({ theme }) => ({
-  background: theme.status.primary,
+const CustomButtonModal = styled(Button)(({ theme, btnType }) => ({
+  background: btnType == 'submit' ? '#1ebc51!important':theme.status.primary,
 }));
 const CustomTabs = styled(Tabs)(({theme})=>({
   '.MuiTabs-indicator': {
@@ -210,11 +210,12 @@ function Sidebar() {
                       <div className={`${styles.cardBody} card-body row`}>
                       <div className={styles.tabLink}>
                         <CustomTabs value={value} onChange={handleChange} aria-label="basic tabs example">
-                          <CustomTab label="OLT" {...a11yProps(0)} />
+                          <CustomTab label="ODC" {...a11yProps(0)} />
                           <CustomTab label="OA" {...a11yProps(1)} />
                         </CustomTabs>
                       </div>
                       <div
+                        className={styles.spacer}
                         role="tabpanel"
                         hidden={value !== 0}
                         id={`simple-tabpanel-${0}`}
@@ -225,7 +226,7 @@ function Sidebar() {
                           <div className='row'>
                             {/* <Typography> */}
                               <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                <CustomTextField id="standard-basic" label="ID" variant="standard" />
+                                <CustomTextField id="standard-basic" label="Nama ODC" variant="standard" placeholder='ODC-xxx-xxx'/>
                               </div>
                               <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
                                 <CustomTextField id="standard-basic" label="Kapasitas" variant="standard" />
@@ -242,6 +243,7 @@ function Sidebar() {
                         )}
                       </div>
                       <div
+                        className={styles.spacer}
                         role="tabpanel"
                         hidden={value !== 1}
                         id={`simple-tabpanel-${1}`}
@@ -252,7 +254,7 @@ function Sidebar() {
                           <div className='row'>
                           {/* <Typography> */}
                             <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                              <CustomTextField id="standard-basic" label="Core" variant="standard" />
+                              <CustomTextField id="standard-basic" label="Core Terminasi" variant="standard" placeholder='xxx-xxx'/>
                             </div>
                             <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
                               <CustomTextField id="standard-basic" label="Rak OA" variant="standard" />
@@ -271,19 +273,19 @@ function Sidebar() {
                       
                       </div>
                       <div className={odcStyles.actionContainer}>
-                    <CustomButtonGray onClick={(ev)=>handleChange(ev,value-1)} style={{visibility:(value<=0)?"hidden":"visible"}} variant="contained" color='primary' size="large">
+                    <CustomButtonModal onClick={(ev)=>handleChange(ev,value-1)} style={{visibility:(value<=0)?"hidden":"visible"}} variant="contained" color='primary' size="large">
                     Prev
-                  </CustomButtonGray>
+                  </CustomButtonModal>
                   <div className='row'>
                     <div className='col-md-12 col-lg-6'> 
-                    {(value>0) && <CustomButtonModal onClick={(ev)=>(value>0)?handleOpen:handleChange(ev,value+1)}  variant="contained" color='primary' size="large">
+                    {(value>0) && <CustomButtonModal btnType={"submit"} onClick={(ev)=>(value>0)?handleOpen:handleChange(ev,value+1)}  variant="contained" color='primary' size="large">
                       Submit
                       </CustomButtonModal>}
                     </div>
                     <div className='col-md-12 col-lg-6'> 
-                    {(value>0) && <CustomButtonGray onClick={()=>handleClose()}  variant="contained" color='primary' size="large">
+                    {(value>0) && <CustomButtonModal onClick={()=>handleClose()}  variant="contained" color='primary' size="large">
                         Cancel
-                        </CustomButtonGray>}
+                        </CustomButtonModal>}
                     </div>
                   </div>
                   <div>

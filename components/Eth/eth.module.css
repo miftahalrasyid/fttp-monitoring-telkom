@@ -6,8 +6,26 @@
 .ethContainer{
     display: inline-flex;
     justify-content: space-around;
+    /* padding:0 0 0.5rem */
     /* align-items: center; */
     /* margin:auto */
+}
+.portBorder{
+    border: 2px solid black;
+    /* padding: 13px; */
+    display: flex;
+    width: 40px;
+    justify-content: center;
+    border-radius: 5px;
+    align-items: center;
+    height: 40px;
+    margin: auto;
+}
+.feederPorts:hover{
+    opacity:0.5;
+}
+.active:hover{
+    opacity: 1;
 }
 .ethContainer svg{
     color: gray;
@@ -26,6 +44,7 @@
     /* line-height: 2rem; */
     line-height: 3rem;
 }
+
 .ethHotspot{
     width:2.3rem;
     height:100%;

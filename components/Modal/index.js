@@ -19,19 +19,25 @@ import odcStyles from '../Sidebar/sidebar.module.css';
 import {Modal as MUIModal,Box} from '@material-ui/core';
 import TextField from '@mui/material/TextField';
 import NativeSelect from '@mui/material/NativeSelect';
-const CustomButtonModal = styledCustom(Button)(({ theme }) => ({
-    background: theme.status.primary,
+const CustomButtonModal = styledCustom(Button)(({ theme, btnType }) => ({
+    background: btnType == 'submit' ? '#1ebc51!important':theme.status.primary,
 }));
-const CustomButtonModalGray = styledCustom(Button)(({ theme }) => ({
-    background: theme.status.darkgray,
-}));
+// const CustomButtonModalGray = styledCustom(Button)(({ theme }) => ({
+//     background: theme.status.darkgray,
+// }));
 const CustomNativeSelect = styledCustom(NativeSelect)(({theme})=>({
   // color: theme.status.primary,
 }))
-const CustomTextField = styledCustom(TextField)(({ theme }) => ({
+const CustomTextField = styledCustom(TextField)(({ theme, label }) => ({
   color: theme.status.primary,
   '.MuiInputLabel-root.Mui-focused': {
     color: theme.status.primary,
+  },
+  '.MuiInput-root input':{
+    textTransform: /ODP Name/.test(label) ? "uppercase" : "none"
+  },
+  '&.MuiFormControl-root':{
+    width: "100%"
   },
   '.MuiOutlinedInput-notchedOutline': {
     border: "none!important",
@@ -169,7 +175,7 @@ function Modal(props) {
                           </div>
                         {/* <CustomTextField id="standard-basic" label="Splitter" variant="standard" className={`col-lg-12 ${styles.splitterGap}`}/> */}
                         {/* </div> */}
-                        <div className={`col-lg-12 col-md-12 ${styles.textFieldContainer}`}>
+                        {/* <div className={`col-lg-12 col-md-12 ${styles.textFieldContainer}`}> */}
                           <div className={`row ${odcStyles.formGap}`}>
                             <div className={`col-lg-4 col-md-12 ${styles.textFieldContainer}`}>
                               <p>Passive Out 1</p>
@@ -201,8 +207,8 @@ function Modal(props) {
                               </NativeSelect>
                             </div>
                           </div>
-                        </div>
-                        <div className={`col-lg-12 col-md-12 ${styles.textFieldContainer}`}>
+                        {/* </div> */}
+                        {/* <div className={`col-lg-12 col-md-12 ${styles.textFieldContainer}`}> */}
                           <div className={`row ${odcStyles.formGap}`}>
                           <div className={`col-lg-4 col-md-12 ${styles.textFieldContainer}`}>
                               <p>Passive Out 2</p>
@@ -233,8 +239,8 @@ function Modal(props) {
                               </NativeSelect>
                               </div>
                               </div>
-                        </div>
-                        <div className={`col-lg-12 col-md-12  ${styles.textFieldContainer}`}>
+                        {/* </div> */}
+                        {/* <div className={`col-lg-12 col-md-12  ${styles.textFieldContainer}`}> */}
                           <div className={`row ${odcStyles.formGap}`}>
                           <div className={`col-lg-4 col-md-12  ${styles.textFieldContainer}`}>
                               <p>Passive Out 3</p>
@@ -265,8 +271,8 @@ function Modal(props) {
                               </NativeSelect>
                               </div>
                             </div>
-                        </div>
-                        <div className={`col-lg-12 col-md-12  ${styles.textFieldContainer}`}>
+                        {/* </div> */}
+                        {/* <div className={`col-lg-12 col-md-12  ${styles.textFieldContainer}`}> */}
                           <div className={`row ${odcStyles.formGap}`}>
                           <div className={`col-lg-4 col-md-12 ${styles.textFieldContainer}`}>
                               <p>Passive Out 4</p>
@@ -298,22 +304,22 @@ function Modal(props) {
                               </div>
                             </div>
                           </div>
-                      </div>
+                      {/* </div> */}
                     <div className={`col-lg-12 col-md-12  
                       ${odcStyles.deleteFeeder}`}>
                       <div className={`row `}>
                         <div className={`col-md-12 col-lg-6 `}>
                           <div className={odcStyles.actionContainer}>
-                            <div className={`col-md-12 col-lg-6 `}>
-                              <CustomButtonModal>
+                            {/* <div className={`col-md-12 col-lg-6 `}> */}
+                              <CustomButtonModal btnType={"submit"}>
                                 {"Submit"}
                               </CustomButtonModal>
-                            </div>
-                            <div className={`col-md-12 col-lg-6 `}>
-                              <CustomButtonModalGray onClick={()=>handleClose()}>
+                            {/* </div>
+                            <div className={`col-md-12 col-lg-6 `}> */}
+                              <CustomButtonModal onClick={()=>handleClose()}>
                                 {"Cancel"}
-                              </CustomButtonModalGray>
-                            </div>
+                              </CustomButtonModal>
+                            {/* </div> */}
                           </div>
                         </div>
                         <div className={`col-md-12 col-lg-6 ${styles.deleteFeeder} ${styles.textFieldContainer}`}>
@@ -365,9 +371,9 @@ function Modal(props) {
                                     </CustomButtonModal>
                                   </div>
                                   <div >
-                                    <CustomButtonModalGray onClick={()=>deleteRowHandleClose()}>
+                                    <CustomButtonModal onClick={()=>deleteRowHandleClose()}>
                                       {"Cancel"}
-                                    </CustomButtonModalGray>
+                                    </CustomButtonModal>
                                   </div>
                             </div>
                           </div>

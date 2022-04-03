@@ -93,6 +93,9 @@
     background-color: transparent;
     border: 0;
 }
+.card .cardBody{
+    padding: 0.5rem 1.4rem
+}
 .card .cardBody+.cardFooter, .card .cardFooter {
     padding: 10px 0 10px;
     margin: 0 15px 10px;
@@ -134,7 +137,7 @@
 .card .cardHeader:not(.cardHeaderIcon):not(.cardHeaderText):not(.cardHeaderImage) {
     border-radius: 3px;
     margin-top: -20px;
-    padding: 15px;
+    padding: 15px 1.5rem;
 }
 .card:not(.cardHeaderIcon){
     position: relative;
@@ -172,7 +175,7 @@
     min-width:fit-content !important;
 }
 .customCardBodyUser{
-    margin-left: 0.3rem;
+    /* margin-left: 0.3rem; */
 }
 .tableAction svg{
     width: 22px;
@@ -186,7 +189,7 @@
 .actionContainer{
     position: relative;
     margin: 0 15px;
-    padding: 35px 0px 0px;
+    padding: 35px 0.5rem 0px;
     display: flex;
     justify-content: space-between;
     margin-bottom: 0.9rem;
@@ -210,6 +213,7 @@
 }
 .formGap{
     margin-top:1rem;
+    padding: 1rem 2.3rem 0;
 }
 .autoTagContainer{
     border: 1px solid rgba(224, 224, 224, 1);
@@ -228,8 +232,20 @@
 .splitterStatusContainer{
     padding: 1rem 0;
 }
+.splitterStatusContainer select {
+    text-transform: capitalize;
+}
+.splitterStatusContainer select option{
+    text-transform: capitalize;
+}
 .feederStatusContainer{
     padding: 1rem 0;
+}
+.feederStatusContainer select {
+    text-transform: capitalize;
+}
+.feederStatusContainer select option{
+    text-transform: capitalize;
 }
 .closebtn{
     color: white;

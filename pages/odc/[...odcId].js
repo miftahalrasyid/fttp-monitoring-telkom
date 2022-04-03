@@ -11,6 +11,7 @@ import splitterStyle from '../../components/Splitter/splitter.module.css';
 // import styles from '../../components/Feeder/feeder.module.css'
 import Splitter from '../../components/Splitter';
 import Eth from '../../components/Eth';
+import ethStyles from '../../components/Eth/eth.module.css';
 import Rak from '../../components/Rak';
 import Panel from '../../components/Panel';
 import {MdOutlineViewSidebar} from 'react-icons/md';
@@ -148,21 +149,31 @@ function Odc({
         splitter: {splitter_id: '', splitter_index: null},
         splitterElm: null
       }); 
-    
+      function hexToRgb(hex) {
+        var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+
+        return `rgb(${parseInt(result[1],16)}, ${parseInt(result[2],16)}, ${parseInt(result[3],16)})`
+      }
     const panelClickHandler = useCallback((ev)=>{
       /**
        * on feeder click start
        */
       /**if the feeder are idle */
-      if(ev.target.children[1].getAttribute("fill")=="#75767e"){
+      console.log(ev.target.style.borderColor,hexToRgb("#75767e"), ev.target.parentNode.getAttribute("data-type")=="feeder")
+      if(ev.target.style.borderColor==hexToRgb("#75767e")){
+      // if(ev.target.children[1].getAttribute("fill")=="#75767e"){
         feederModal[1](true);
-        if(feederFocus && (ev.target.children[1]!==feederFocus)){
+        if(feederFocus && (ev.target!==feederFocus.feederElm)){
           
-          feederFocus.feederElm?.setAttribute("fill","blue");
-          feederFocus.splitterElm?.setAttribute("fill","blue");
+          if(feederFocus.feederElm?.style)
+          feederFocus.feederElm.style.borderColor="blue";
+          if(feederFocus.splitterElm?.style)
+          feederFocus.splitterElm.style.borderColor="blue";
+          // feederFocus.splitterElm?.style.borderColor = "blue";
           feederFocus.distributionElm?.forEach(item=>{
+            // console.log("fill",feederFocus,item?.style || "")
             if(item)
-            item.setAttribute("fill","blue");
+            item.childNodes[0].style.borderColor = "blue";
           })
         }
         setFeederFocus({
@@ -196,21 +207,27 @@ function Odc({
           splitterElm: null
         })
       }
+
       /**if the feeder are used */
       // console.log(ev.target.children[1].getAttribute("fill"))
-      else if(ev.target.children[1].getAttribute("fill")=="blue" && ev.target.getAttribute("data-type")=="feeder"){
+      else if(ev.target.style.borderColor=="blue" && ev.target.parentNode.getAttribute("data-type")=="feeder"){
+      // else if(ev.target.children[1].getAttribute("fill")=="blue" && ev.target.getAttribute("data-type")=="feeder"){
         
         setFeederFocus(()=>{
 
           /* ketika klik feeder used lainnya*/
           if(feederFocus && (ev.target.children[1]!==feederFocus)){
             
-            feederFocus.feederElm?.setAttribute("fill","blue");
-            feederFocus.splitterElm?.setAttribute("fill","blue");
-            feederFocus.distributionElm?.forEach(item=>{
+            if(feederFocus.feederElm?.style){
+              feederFocus.feederElm.parentNode.classList.remove(ethStyles.active)
+              feederFocus.feederElm.style.borderColor="blue";
+            }
+            if(feederFocus.splitterElm?.style)
+              feederFocus.splitterElm.style.borderColor="blue";
+              feederFocus.distributionElm?.forEach(item=>{
               if(item)
-              item.setAttribute("fill","blue");
-            })
+                item.childNodes[0].style.borderColor = "blue";
+              })
           }
           const [{data=[{
             id:"",
@@ -218,7 +235,7 @@ function Odc({
             pass_through:"",
             status:"",
             passive_out:[],
-          }],rak_index}] = panel.data.filter(pnl=>pnl.rak_level.toString()==ev.target.getAttribute('data-rak'));
+          }],rak_index}] = panel.data.filter(pnl=>pnl.rak_level.toString()==ev.target.parentNode.getAttribute('data-rak'));
 
           /**
            * data
@@ -259,26 +276,31 @@ function Odc({
                 splitter_level:""
               }
             }]
-            ,pass_through,status,index:feederIndex}] = data.filter(rpnl=>rpnl.index.toString() === ev.target.getAttribute('data-id'));
+            ,pass_through,status,index:feederIndex}] = data.filter(rpnl=>rpnl.index.toString() === ev.target.parentNode.getAttribute('data-id'));
             return passive_out.reduce((prevPa,currPa)=>{
-              console.log("feeder on focus",status,prevPa)
+              // console.log("feeder on focus",status,prevPa)
           // return passive_out.reduce(pa=>{
             // console.log("rak children",document.querySelector(`[data-id="${pa.splitter.splitter_index}"][data-type="splitter"]`))
             /** change color from used to focused with pass_through condition for splitter*/
             /** kondisi jika tidak passthrough */
-            const splitter = (!pass_through)?document.querySelector(`[data-id="${currPa.splitter.splitter_index}"][data-type="splitter"]`).children[1]:null;
+            const splitter = (!pass_through)?document.querySelector(`[data-id="${currPa.splitter.splitter_index}"][data-type="splitter"]`).children[0]:null;
             if(!pass_through)
-            splitter.setAttribute("fill","#ffda00");
-            const distribution = (currPa.distribution)?document.querySelector(`[data-id="${currPa.distribution.distribution_index}"][data-rak="${currPa.distribution.distribution_level}"]`).children[1]:null;
-            if(currPa.distribution)
-            distribution.setAttribute("fill","#ffda00");
-            ev.target.children[1].setAttribute("fill","#ffda00");
+            splitter.style.borderColor = "#ffda00";
+            const distribution = (currPa.distribution)?document.querySelector(`[data-id="${currPa.distribution.distribution_index}"][data-rak="${currPa.distribution.distribution_level}"]`):null;
+            if(currPa.distribution){
+              distribution.childNodes[0].style.borderColor = "#ffda00";
+            }
+            splitter.style.borderColor = "#ffda00";
+            console.log("ethstyles",ethStyles)
+            ev.target.parentNode.classList.add(ethStyles.active)
+            ev.target.style.borderColor = "#ffda00";
 
             // console.log("prev pa",prevPa,currPa)
+            // console.log("feeder elm",splitter,distribution)
             return {
               /** assign new data to either remove or add focused status */
               splitterElm:splitter,
-              feederElm: ev.target.children[1],
+              feederElm: ev.target,
               distributionElm: [...prevPa.distributionElm,distribution],
               /** input all passive out data for later Modal popup */
               odpName: [...prevPa.odpName,currPa.name],
@@ -295,10 +317,12 @@ function Odc({
         });
       }
       /**if the feeder already focused */
-      else if(ev.target.children[1].getAttribute("fill")=="#ffda00" && ev.target.getAttribute("data-type")=="feeder"){
+      else if(ev.target.style.borderColor==hexToRgb("#ffda00") && ev.target.parentNode.getAttribute("data-type")=="feeder"){
+      // else if(ev.target.children[1].getAttribute("fill")=="#ffda00" && ev.target.getAttribute("data-type")=="feeder"){
         feederModal[1](true);
       }
-      else if( ev.target.getAttribute("data-type")=="distribution"){
+      else if( ev.target.parentNode.getAttribute("data-type")=="distribution"){
+        
       // else if(ev.target.children[1].getAttribute("fill")=="blue" && ev.target.getAttribute("data-type")=="distribution"){
         const [{data:dataDist=[{
           id:"",
@@ -306,8 +330,8 @@ function Odc({
           pass_through:"",
           status:"",
           passive_out:[], 
-        }]}] = panel.data.filter(pnl=>pnl.rak_level.toString()===ev.target.getAttribute('data-rak'));
-        const [{passive_out:[{name,po_index,splitter:{splitter_index}}]}] = dataDist.filter(dt=>dt.index.toString()==ev.target.getAttribute('data-id'));
+        }]}] = panel.data.filter(pnl=>pnl.rak_level.toString()===ev.target.parentNode.getAttribute('data-rak'));
+        const [{passive_out:[{name,po_index,splitter:{splitter_index}}]}] = dataDist.filter(dt=>dt.index.toString()==ev.target.parentNode.getAttribute('data-id'));
         // {name,po_index,splitter:{splitter_index}}
         // console.log("distribution port click data",passive_out);
         alert("ODP Name: "+name+"\n"+"Splitter: "+splitter_index+"\nPassive Out: "+po_index)
@@ -340,7 +364,8 @@ function Odc({
         item.name,
         item.email,
         item.role,
-        ODCData.deployment_date,
+        // ODCData.deployment_date,
+        "Sat Apr 02 2022 22:32:35",
         item.action || "user merubah ODC"
       ])))
     },[ODCData,userData])
@@ -352,8 +377,8 @@ function Odc({
             <div className={`row ${styles.odcDetail}`}>
               <div className='col-lg-3'>
                 <div className={styles.odcDetailItems}>
-                  <Typography>ID : </Typography>
-                  <Typography>{ODCData.odc_id}</Typography>
+                  <Typography sx={{ whiteSpace: "nowrap"}}>Nama ODC : </Typography>
+                  <Typography sx={{textTransform: "uppercase", whiteSpace: "nowrap"}}>{ODCData.odc_id}</Typography>
                 </div>
                 <div className={styles.odcDetailItems}>
                   <Typography>Kapasitas : </Typography>
@@ -402,7 +427,7 @@ function Odc({
                 </Splitter>
                 <Panel x={panel.position.left} y={panel.position.top}>
                 {panel.data.map((r_item,idx)=>{
-                    return <Rak key={'r'+r_item.rak_level} /*last_feeder={panel.data.filter(item=>item.type==="feeder").length} */level={r_item.rak_index} type={r_item.type} datalen={12}>
+                    return <Rak key={'r'+r_item.rak_level} last_feeder={panel.data.filter(item=>item.type==="feeder").length} level={r_item.rak_level} type={r_item.type} datalen={12}>
                       {r_item.data.map(p_item=>
                       /** odd even to define 13-24 */
                         <Eth from={r_item.type} clickHandler={panelClickHandler} key={"port"+p_item.index} rak_level={r_item.rak_level} id={((idx+1)%2===0)?(p_item.index+12):p_item.index} status={p_item.status}
@@ -596,7 +621,7 @@ function Odc({
                         name: 'age',
                         id: 'uncontrolled-native',
                         }}>
-                          {(item.status=="used" || item.status=="priority") && [{status:"used",value:10},{status:"priority",value:20}].map(item=><option key={"sp"+item.status} value={item.value}> {item.status}</option>)}
+                          {(item.status=="used" || item.status=="priority") && [{status:"used",value:10},{status:"priority",value:20},{status:"broken",value:30}].map(item=><option key={"sp"+item.status} value={item.value}> {item.status}</option>)}
                           {(item.status=="idle") && ["idle","broken"].map(item=><option key={"sp"+item} value={10}> {item}</option>)}
                     </NativeSelect>
                     </FormControl>
@@ -618,7 +643,8 @@ function Odc({
                        id: 'uncontrolled-native',
                       }}>
                              {/* (item.status=="used") ? ["used","priority"].map(item=><option key={"sp"+item} value={10}> {item}</option>) : ["idle","broken"].map(item=><option key={"sp"+item} value={10}> {item}</option>) */}
-                          {(distFeed.status=="used" || distFeed.status=="priority") && [{status:"used",value:10},{status:"priority",value:20}].map(item=><option key={"sp"+item.status} value={item.value}> {item.status}</option>)}
+                          {(distFeed.status=="used" || distFeed.status=="priority") && [{status:"used",value:10},{status:"priority",value:20},{status:"broken",value:30}].map(item=><option key={"sp"+item.status} value={item.value}> {item.status}</option>)}
+                          {/* {(distFeed.status=="used" || distFeed.status=="priority") && [{status:"used",value:10},{status:"priority",value:20}].map(item=><option key={"sp"+item.status} value={item.value}> {item.status}</option>)} */}
                           {(distFeed.status=="idle") && ["idle","broken"].map(item=><option key={"sp"+item} value={10}> {item}</option>)}
                     </NativeSelect>
                     </FormControl>

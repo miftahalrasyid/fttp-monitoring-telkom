@@ -1,6 +1,7 @@
 import React,{useRef,useEffect} from 'react';
 import {MdOutlineViewSidebar} from 'react-icons/md';
 import styles from './eth.module.css';
+import Button from '@mui/material/Button';
 
 function Eth({id,rak_level,columns,clickHandler,status,isActive,from}) {
   // console.log("eth",inUsed?.ids.find(item=> item==id));
@@ -23,11 +24,13 @@ function Eth({id,rak_level,columns,clickHandler,status,isActive,from}) {
     ethRef?.current?.setAttribute("data-type",from)
   },[])
   // return <div className={`${styles.ethContainer}`} >
-  return <div ref={ethRef} onClick={clickHandler} className={`${styles.ethContainer}`} style={columnStyle}>
+  return <div ref={ethRef} onClick={clickHandler} className={`${styles.ethContainer} ${from=="feeder"? styles.feederPorts : ""}`} style={columnStyle}>
       {/* <div className={`${styles.ethHotspot}`}>
       </div> */}
-        <p>{id}</p>
-      <MdOutlineViewSidebar fill={status==='used'?'blue':status==='priority'?'#ee2d24':'#75767e'} />
+        <div className={styles.portBorder} style={{borderColor:status ==='used'?'blue':status ==="priority"?"#ee2d24":'#75767e'}}>
+          <p>{id}</p>
+        </div>
+      {/* <MdOutlineViewSidebar fill={status==='used'?'blue':status==='priority'?'#ee2d24':'#75767e'} /> */}
       {/* <MdOutlineViewSidebar fill={((isActive?.ids?.find(item=> item==id) && inUsed?.ids?.find(item=> item==id))|| (from=="distributor" && inUsed?.ids.find(item=> item==id)))?'yellow':inUsed?.ids?.find(item=> item==id)?'blue':'#75767e'} /> */}
     </div>;
 }
