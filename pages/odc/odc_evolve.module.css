@@ -12,7 +12,10 @@
     top: 0;
     z-index: -1;
     left: 0;
-    width: calc(100% + 60px);
+    width: 100vw;
+}
+.odcBackdrop span{
+    width: inherit !important
 }
 .cardWrapper{
     display: flex;
@@ -254,8 +257,12 @@
 }
 .charts{
     display:flex;
+    justify-content: space-around;
     margin: 0 2rem;
     margin-top:2rem;
+}
+.charts > div h2{
+    text-align: center;
 }
 
 @media screen and (max-width: 1080px) {
