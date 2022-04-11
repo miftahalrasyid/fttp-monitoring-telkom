@@ -1,12 +1,6 @@
-import React from 'react';
-import Image from 'next/image';
+import React,{useEffect,useState} from 'react';
+import withAuth from '../../components/Auth';
 import Link from 'next/link';
-import styles from './odc_evolve.module.css';
-import Card from '../../components/Card';
-import dynamic from 'next/dynamic';
-const ApexChart = dynamic(()=>import('react-apexcharts'),{ssr:false});
-// import Chart from "react-apexcharts";
-import { connect } from 'react-redux';
 import {
   MdInventory,
   MdNfc,
@@ -17,25 +11,56 @@ import {
   MdOutlineClose,
   MdDeleteForever
 } from 'react-icons/md';
+import { connect } from 'react-redux';
 import {END} from 'redux-saga';
 import { wrapper,makeStore } from "../../components/store";
-import { getODCsBox } from '../../components/store/odcs/actions';
-import {otpVerificationSuccessfull} from "../../components/store/login/actions";
-import withAuth from '../../components/Auth';
+import { getODCsBox } from '../../components/store/odcs/actions'
+import dynamic from 'next/dynamic';
 const DynamicMUIDataTable = dynamic(() => import('mui-datatables'),{ ssr: false });
-import {styled } from '@mui/material/styles';
-import {
-  Button,
-  Box,
-  Modal,
-  Typography
-  } from "@material-ui/core";
-// import { makeStyles } from '@material-ui/styles';
-import { createTheme, MuiThemeProvider,makeStyles } from "@material-ui/core/styles";
+// import MUIDataTable from "mui-datatables";
+import Button from '@mui/material/Button';
+import {Modal,Box, Typography} from '@material-ui/core';
+import { createTheme, MuiThemeProvider,styled } from "@material-ui/core/styles";
+import { 
+  styled as styledCustom
+} from "@mui/material/styles";
 import Tabs from '@mui/material/Tabs';
+import NativeSelect from '@mui/material/NativeSelect';
 import Tab from '@mui/material/Tab';
 import TextField from '@mui/material/TextField';
-const CustomTextField = styled(TextField)(({ theme }) => ({
+import Autocomplete from '@mui/material/Autocomplete';
+import Chip from '@mui/material/Chip';
+const DynamicChip =dynamic(()=>import('@mui/material/Chip'),{ssr: false});
+import Stack from '@mui/material/Stack';
+import {otpVerificationSuccessfull} from "../../components/store/login/actions"
+
+// createtheme
+import styles from './odc.module.css';
+
+export const odcWrapper = () =>wrapper;
+const CustomTab = styledCustom(Tab)(({theme})=>({
+  color:"gray!important",
+  '&.MuiTab-root.Mui-selected': {
+    color: "black!important"
+  },
+}))
+const CustomTabs = styledCustom(Tabs)(({theme})=>({
+  '.MuiTabs-indicator': {
+    backgroundColor: theme.status.primary,
+  },
+}))
+const CustomAutocomplete = styledCustom(Autocomplete)(({theme})=>({
+  '.MuiOutlinedInput-notchedOutline':{
+    borderWidth:"0"
+  },
+  '.MuiOutlinedInput-notchedOutline legend': {
+    display: "none",
+  },
+  '.MuiOutlinedInput-root .MuiAutocomplete-endAdornment':{
+    top:"unset"
+  }
+}))
+const CustomTextField = styledCustom(TextField)(({ theme }) => ({
   color: theme.status.primary,
   '.MuiInputLabel-root.Mui-focused': {
     color: theme.status.primary,
@@ -48,30 +73,23 @@ const CustomTextField = styled(TextField)(({ theme }) => ({
     borderColor: theme.status.primary
   },
 }));
-const CustomTab = styled(Tab)(({theme})=>({
-  color:"gray!important",
-  '&.MuiTab-root.Mui-selected': {
-    color: "black!important"
-  },
-}))
-const CustomTabs = styled(Tabs)(({theme})=>({
-  '.MuiTabs-indicator': {
-    backgroundColor: theme.status.primary,
-  },
-}))
-const CustomButton = styled(Button)(({theme})=>({
-    // backgroundColor:"#00C092!important",
-    // padding: "6px 16px!important",
-    // color:"white!important",
-    // borderRadius:"2rem!important"
-}))
-function CustomSelect({data,name}){
-  return <div className={styles.witel}>
-      <select>
-        {data.map(item=><option key={name+item.value}>{item.label}</option> )}
-      </select>
-  </div>
-}
+const CustomButtonModal = styled(Button)(({ theme, btnType }) => ({
+  background: btnType == 'submit' ? '#1ebc51!important':theme.status.primary,
+}));
+const CustomButtonModalGray = styledCustom(Button)(({ theme }) => ({
+  background: theme.status.darkgray,
+}));
+const CustomButton = styled(Button)(({ theme }) => ({
+  color: theme.status.primary,
+}));
+const CustomButtonGray = styled(Button)(({ theme }) => ({
+  background: theme.status.darkgray,
+}));
+// const CustomDynamicMUIDataTable = styled(DynamicMUIDataTable)(({theme})=>({
+//     ".MuiPaper-root":{
+//       boxShadow: "none"
+//     }
+// }));
 const rawData = [{
   id: "odc-ktm-fs",
   capacity:144,
@@ -93,102 +111,82 @@ const rawData = [{
   },
 
 }]
-const witel = [
-  {label: "WITEL", value:0},
-  {label: "Semarang", value:1},
-  {label: "Kudus", value:2},
-  {label: "Magelang", value:3},
-  {label: "Pekalongan", value:4},
-  {label: "Solo", value:5},
-  {label: "Purwokerto", value:6},
-]
-const datel = [
-  {label: "DATEL", value:0},
-  {label: "Brebes", value:1},
-  {label: "Tegal", value:2},
-  {label: "Pemalang", value:3},
-  {label: "Pekalongan", value:4},
-  {label: "Batang", value:5},
-]
-const sto = [
-  {label: "STO", value:0},
-  {label: "Brebes", value:1},
-  {label: "Bulakamba", value:2},
-  {label: "Ketanggungan Timur", value:3},
-  {label: "Tanjungtegal", value:4},
-  {label: "Bumiayu", value:5},
-  {label: "Tegal", value:6},
-  {label: "Margadana", value:7},
-  {label: "Slawi", value:8},
-  {label: "Balapulang", value:9},
-  {label: "Adiwerna", value:10},
-  {label: "Pemalang", value:11},
-  {label: "Comal", value:12},
-  {label: "Randudongkal", value:13},
-  {label: "Pekalongan", value:14},
-  {label: "Kedungwuni", value:15},
-  {label: "Kajen", value:16},
-  {label: "Batang", value:17},
-  {label: "Subah", value:18},
-  {label: "Bandarsedayu", value:19},
-]
+console.log("rawdata",rawData[0].merek)
 function a11yProps(index) {
   return {
     id: `simple-tab-${index}`,
     'aria-controls': `simple-tabpanel-${index}`,
   };
 }
-function ODC() {
-  const [open, setOpen] = React.useState(false);
-  const [openDeleteRowModal, setOpenDeleteRowModal] = React.useState(false);
-  const [value, setValue] = React.useState(0);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-  const deleteRowHandleOpen = () => setOpenDeleteRowModal(true);
-  const deleteRowHandleClose = () => setOpenDeleteRowModal(false);
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
-  const useStyles = makeStyles(theme => ({
-    green: {
-        backgroundColor:"#009873!important",
-        color:"white!important",
-        padding:"6px 16px",
-        borderRadius:"1rem!important"
-    },
-    red: {
-        backgroundColor:"#B10040!important",
-        color:"white!important",
-        width:"170px",
-        borderRadius:"1rem!important"
-    }
-  }));
-  const classes = useStyles();
-  const regional=[
-    {label: "Regional",value:1}
-  ]
-  const CustomButtonModal = styled(Button)(({ theme, btnType }) => ({
-    background: btnType == 'submit' ? '#1ebc51!important':theme.status.primary,
-  }));
+function Odc(props) {
+  const {data,otpVerificationSuccessfull} = props
+
+  const {rawData} = data;
+  // console.log("data",data)
+  // let MUIDataTable = (typeof window !== 'undefined')? import('mui-datatables'):undefined;
+
+
+  const SafeHydrate = ({ children }) =>{
+    return (
+      <div suppressHydrationWarning>
+        {typeof window === 'undefined' ? null : children}
+      </div>
+    )
+  }
+  // const datatable = [["test","test",'test','test','test']]
+  // const options = {
+  //   filterType: "checkbox",
+  //   rowsPerPage: [3],
+  //   rowsPerPageOptions: [1, 3, 5, 6],
+  //   jumpToPage: true,
+  //   textLabels: {
+  //     pagination: {
+  //       next: "Next >",
+  //       previous: "< Previous",
+  //       rowsPerPage: "Total items Per Page",
+  //       displayRows: "OF",
+  //     },
+  //   },
+  //   onChangePage(currentPage) {
+  //     console.log({ currentPage });
+  //   },
+  //   onChangeRowsPerPage(numberOfRows) {
+  //     console.log({ numberOfRows });
+  //   },
+  // };
+  useEffect(()=>{
+    otpVerificationSuccessfull()
+  },[])
   const getMuiTheme = () =>
   createTheme({
+    // components: {
+      
+    //   MuiPaper:{
+    //     styleOverrides:{
+    //       root:{
+    //         boxShadow:"none!important"
+    //       }
+    //     }
+    //   },
+    //   MUIDataTableBodyCell: {
+    //     styleOverrides:{
+    //       root: {
+    //         whiteSpace: "nowrap"
+    //       },
+    //     }
+    //   },
+    //   // MUIDataTablePagination: {
+    //   //   root: {
+    //   //     backgroundColor: "#000",
+    //   //     color: "#fff",
+    //   //   },
+    //   // },
+    // },
     status: {
       primary: "#ee2d24!important",
       darkgray: "darkgray!important"
     },
     overrides: {
-      MUIDataTable:{
-        paper:{
-          // position:'relative',
-          // top:"250px",
-          margin:"1rem 0",
-          // background: 'rgba(255,255,255,0.3)',
-          background: 'transparent',
-          padding:'0 1rem',
-          // background: 'black'
-        }
-      },
-
       MuiOutlinedInput:{
         root:{
           color: "#ee2d24!important"
@@ -208,25 +206,6 @@ function ODC() {
       },
       MuiTableRow:{
         color:"#ee2d24",
-        root:{
-          backgroundColor:"transparent"
-          // background:"rgba(255,255,255,0.3)"
-        }
-      },
-      MUIDataTableHeadRow:{
-        root:{
-
-          backgroundImage:"linear-gradient(to right,rgba(178,98,98,0.3),rgb(255 228 228 / 30%))",
-          backgroundImage:"linear-gradient(to right,rgb(237 167 88 / 30%),rgb(253 243 236 / 30%))",
-        }
-      },
-      MUIDataTableHeadCell:{
-        fixedHeader:{
-          // backgroundImage:"linear-gradient(to right,rgba(178,98,98,0.3),rgba(255,255,255,0.3))"
-
-          backgroundColor:"transparent"
-          // backgroundColor:"linear-gradient(rgba(178,98,98,0.3),rgba(255,255,255,0.3))"
-        }
       },
       MuiInput:{
         underline:{'&:after':{borderBottomColor:"#ee2d24!important"}}
@@ -255,9 +234,27 @@ function ODC() {
           whiteSpace: "nowrap"
         },
       },
+      // MUIDataTablePagination: {
+      //   root: {
+      //     backgroundColor: "#000",
+      //     color: "#fff",
+      //   },
+      // },
     },
   });
+  const [open, setOpen] = React.useState(false);
+  const [openDeleteRowModal, setOpenDeleteRowModal] = React.useState(false);
   const [datatable, setDatatable] = React.useState([[]])
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
+    const deleteRowHandleOpen = () => setOpenDeleteRowModal(true);
+    const deleteRowHandleClose = () => setOpenDeleteRowModal(false);
+    const [value, setValue] = React.useState(0);
+    console.log("openDeleteRowModal",openDeleteRowModal)
+    const handleChange = (event, newValue) => {
+      setValue(newValue);
+    };
+
     React.useEffect(()=>{
     
         // console.log("odc",odc_edit_modal.current,document.querySelector('[itemref="testing"]'))
@@ -484,99 +481,132 @@ function ODC() {
           </div>
       ])))
     },[rawData,open,value,openDeleteRowModal])
-
     React.useEffect(()=>{
 
     },[datatable])
-    const state = {
-          
-      series: [{
-        name: 'PRODUCT A',
-        data: [44, 55, 41, 67, 22, 43]
-      }, {
-        name: 'PRODUCT B',
-        data: [13, 23, 20, 8, 13, 27]
-      }, {
-        name: 'PRODUCT C',
-        data: [11, 17, 15, 15, 21, 14]
-      }, {
-        name: 'PRODUCT D',
-        data: [21, 7, 25, 13, 22, 8]
-      }],
-      options: {
-        chart: {
-          type: 'bar',
-          height: 350,
-          stacked: true,
-          toolbar: {
-            show: true
-          },
-          zoom: {
-            enabled: true
-          }
-        },
-        responsive: [{
-          breakpoint: 480,
-          options: {
-            legend: {
-              position: 'bottom',
-              offsetX: -10,
-              offsetY: 0
-            }
-          }
-        }],
-        plotOptions: {
-          bar: {
-            horizontal: false,
-            borderRadius: 10
-          },
-        },
-        xaxis: {
-          type: 'datetime',
-          categories: ['01/01/2011 GMT', '01/02/2011 GMT', '01/03/2011 GMT', '01/04/2011 GMT',
-            '01/05/2011 GMT', '01/06/2011 GMT'
-          ],
-        },
-        legend: {
-          position: 'right',
-          offsetY: 40
-        },
-        fill: {
-          opacity: 1
-        }
-      },
-    
-    
-    };
+  const [tagPickerValue, setTagPickerValue] = useState([]);
+  const onDelete = (title) => () => {
+    setTagPickerValue((value) => value.filter((v) => v.title !== title));
+  };
+  console.log("data transform",datatable)
   return (<div className={styles.mainContent}>
-          <div className={styles.cardWrapper}>
-            <Card title='Total ODC' value='18.669' unit='unit' primaryFill={"#FF72BE"} secondaryFill={'#006ED3'}/>
-            <Card title='Core Feeder Idle' unit='ports' primaryFill={"#6FB400"} secondaryFill={'#006ED3'}/>
-            <Card title='Core Feeder Used' unit='ports' primaryFill={"#00C092"} secondaryFill={'#006ED3'}/>
-            <Card title='Core Feeder Broken' unit='ports' primaryFill={"#ABD601"} secondaryFill={'#006ED3'}/>
-            <Card title='Core Distribusi Idle' unit='ports' primaryFill={"#36DBFF"} secondaryFill={'#006ED3'}/>
-            <Card title='Core Distribusi Used' unit='ports' primaryFill={"#00BBE4"} secondaryFill={'#006ED3'}/>
-            <Card title='Core Distribusi Broken' unit='ports' primaryFill={"#51C0FF"} secondaryFill={'#006ED3'}/>
+    <div className={`container-fluid`}>
+        <div className='row'>
+          <div className="col-lg-4 col-md-6 col-sm-6">
+            <div className={`${styles.card} ${styles.cardStats}`}>
+              <div className={`${styles.cardHeader} ${styles.cardHeaderWarning}  ${styles.cardHeaderIcon}`}>
+                <div className={styles.cardIcon}>
+                <MdInventory/>
+                </div>
+                <p className={styles.cardCategory}>Total ODC (unit)</p>
+                <h3 className={styles.cardTitle}>250</h3>
+              </div>
+              <div className={styles.cardFooter}>
+                <div className={styles.stats}>
+                  <MdOutlineDateRange /> Last 24 Hours
+                </div>
+              </div>
+            </div>
           </div>
-          <p className={styles.last_update}>Last Update : Minggu, 03 April 2022 - 14.30 WIB</p>
+          <div className="col-lg-4 col-md-6 col-sm-6">
+            <div className={`${styles.card} ${styles.cardStats}`}>
+              <div className={`${styles.cardHeader} ${styles.cardHeaderSuccess}  ${styles.cardHeaderIcon}`}>
+                <div className={styles.cardIcon}>
+                <MdSettingsInputComposite/>
+                </div>
+                <p className={styles.cardCategory}>Used Feeder (ports)</p>
+                <h3 className={styles.cardTitle}>1.2k</h3>
+              </div>
+              <div className={styles.cardFooter}>
+                <div className={styles.stats}>
+                  <MdOutlineDateRange /> Last 24 Hours
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="col-lg-4 col-md-6 col-sm-6">
+            <div className={`${styles.card} ${styles.cardStats}`}>
+              <div className={`${styles.cardHeader} ${styles.cardHeaderInfo}  ${styles.cardHeaderIcon}`}>
+                <div className={styles.cardIcon}>
+                <MdSettingsInputComposite/>
+                </div>
+                <p className={styles.cardCategory}>Used Distribution (ports)</p>
+                <h3 className={styles.cardTitle}>20k</h3>
+              </div>
+              <div className={styles.cardFooter}>
+                <div className={styles.stats}>
+                  <MdOutlineDateRange width={16} height={"auto"} /> Last 24 Hours
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="col-lg-12 col-md-12">
+            <div className={`${styles.card}`}>
+              <div className={`${styles.cardHeader} ${styles.cardHeaderPrimary}`}>
+                <h4 className={styles.cardTitle}>All ODCs</h4>
+                {/* <div className={styles.stats}>
+                  <MdOutlineDateRange width={16} height={"auto"} /> Last 24 Hours
+                </div> */}
+              </div>
+              <div className="card-body table-responsive">
+                  {/* <Chip label="tauah gelap" /> */}
+                {/* autotagcompletion */}
+                <NativeSelect className={styles.cardFilter} defaultValue={10} inputProps={{
+                  name: 'regional',
+                  id: 'uncontrolled-native',
+                }}>
+                     
+                      <option value={10}> Regional</option>
+                </NativeSelect>
+                <NativeSelect className={styles.cardFilter} defaultValue={10} inputProps={{
+                  name: 'witel',
+                  id: 'uncontrolled-native',
+                }}>
+                     
+                      <option value={10}> Witel</option>
+                </NativeSelect>
+                <NativeSelect className={styles.cardFilter} defaultValue={10} inputProps={{
+                  name: 'datel',
+                  id: 'uncontrolled-native',
+                }}>
+                     
+                      <option value={10}> Datel</option>
+                </NativeSelect>
+                <NativeSelect className={styles.cardFilter} defaultValue={10} inputProps={{
+                  name: 'sto',
+                  id: 'uncontrolled-native',
+                }}>
+                     
+                      <option value={10}> STO</option>
+                </NativeSelect>
+{/* 
+                  <div className={styles.autoTagContainer}>
+                {tagPickerValue.map((v) => (
+                  <DynamicChip key={v.title} label={v.title} onDelete={onDelete(v.title)} />
+                ))}
+                <ThemeProvider theme={tema}>
+                <Box sx={{ width: "100%",minWidth: 300 }}>
+                <CustomAutocomplete
+                  multiple
+                  options={top100Films}
+                  defaultValue={[top100Films[13]]}
+                  getOptionLabel={(option) => option.title}
+                  value={tagPickerValue}
+                  onChange={(e, newTagPickerValue) => setTagPickerValue(newTagPickerValue)}
+                  renderTags={() => null}
+                  renderInput={(params) => (
+                    <CustomTextField {...params} placeholder="Favorites" />
+                  )}
+                />
+                </Box>
+                </ThemeProvider>
 
-        <div className={styles.toolbar}>
-          <CustomSelect data={regional} name='regional'/>
-          <CustomSelect data={witel} name='witel'/>
-          <CustomSelect data={datel} name='datel'/>
-          <CustomSelect data={sto} name='sto'/>
-          <CustomButton className={classes.green}>Submit</CustomButton>
-        </div>
-        <div className={styles.charts}>
+              </div> 
+              */}
 
-        <ApexChart
-options={state.options} series={state.series} type="bar" width={600} height={350}
-            />
-        <ApexChart
-options={state.options} series={state.series} type="bar" width={600} height={350}
-            />
-        </div>
-        <MuiThemeProvider theme={getMuiTheme()}>
+
+              {/* <SafeHydrate> */}
+                    <MuiThemeProvider theme={getMuiTheme()}>
               {/* <ThemeProvider theme={getMuiTheme()}> */}
               {datatable ? <DynamicMUIDataTable 
                 // title={"Employee List"}
@@ -641,25 +671,166 @@ options={state.options} series={state.series} type="bar" width={600} height={350
                 
               {/* </ThemeProvider> */}
               </MuiThemeProvider>
-      <div className={styles.odcBackdrop}>
-        <Image src={'/img/backdrop_odc.jpeg'} width={1440} height={1213} alt={"backdrop"}/>
+
+                {/* </SafeHydrate> */}
+              </div>
+            </div>
+          </div>
       </div>
     </div>
+  </div>
   )
 }
 export const getServerSideProps = async (props) => wrapper.getServerSideProps(store => async ({req, res, ...etc}) => {
+  // const { token } = /authUserToken=(?<token>\S+)/g.exec(req.headers.cookie)?.groups || {token: ""} ;
   store.dispatch(getODCsBox())
-  // console.log("static props",store.getState())
+  // store.dispatch(getSplitterData())
+  // store.dispatch(getCoreFeederInfo())
+  console.log("static props",store.getState())
   store.dispatch(END)
   await store.sagaTask.toPromise();
+  // console.log("store",store.getState().ODCs.odcsBox,req,res)
+  // const {params:{odcId}} = props;
+  // const {ODCs:{odcsBox=[],splitterData=[],coreFeederData=[]}} = store.getState();
+  // console.log("store",odcsBox.filter(item=>item?.odc?.id == odcId))
+  // console.log("store",splitterData)
+  // console.log("core feeder",coreFeederData)
+      // if(odcsBox.filter(item=>item?.odc?.id == odcId).length==0){
+      //     return {
+      //         notFound: true
+      //     }
+      // }
+      // else{
+      //     return {
+      //         props:{ data: odcsBox,splitterData,coreFeederData},
+      //         // revalidate:60,
+      //     } 
+
+      // }
       return {
         props:{data:{rawData}}
       }
     })(props);
-const mapStateToProps = state => ({
-});
-const mapFunctionToProps = {
-otpVerificationSuccessfull,
-getODCsBox
-}
-export default connect(mapStateToProps,mapFunctionToProps)(withAuth(ODC))
+    const mapStateToProps = state => ({
+      // dataClient:state?.ODCs?.odcsBox,
+      // loading: state.ODCs.loading.get,
+      // selectedCoreFeeder:state.ODCs.client.selectedCoreFeeder,
+      // coreFeederDataClient: state.ODCs.client.coreFeederData,
+  });
+  const mapFunctionToProps = {
+    otpVerificationSuccessfull,
+    getODCsBox
+      // getSplitterData,
+      // getCoreFeederInfo,
+      // updateCoreFeederInfo,
+      // updateSplitterDistributionInfo,
+      // getODCsBox,
+      // setSelectedCoreFeeder
+  }
+  const top100Films = [
+    { title: 'The Shawshank Redemption', year: 1994 },
+    { title: 'The Godfather', year: 1972 },
+    { title: 'The Godfather: Part II', year: 1974 },
+    { title: 'The Dark Knight', year: 2008 },
+    { title: '12 Angry Men', year: 1957 },
+    { title: "Schindler's List", year: 1993 },
+    { title: 'Pulp Fiction', year: 1994 },
+    { title: 'The Lord of the Rings: The Return of the King', year: 2003 },
+    { title: 'The Good, the Bad and the Ugly', year: 1966 },
+    { title: 'Fight Club', year: 1999 },
+    { title: 'The Lord of the Rings: The Fellowship of the Ring', year: 2001 },
+    { title: 'Star Wars: Episode V - The Empire Strikes Back', year: 1980 },
+    { title: 'Forrest Gump', year: 1994 },
+    { title: 'Inception', year: 2010 },
+    { title: 'The Lord of the Rings: The Two Towers', year: 2002 },
+    { title: "One Flew Over the Cuckoo's Nest", year: 1975 },
+    { title: 'Goodfellas', year: 1990 },
+    { title: 'The Matrix', year: 1999 },
+    { title: 'Seven Samurai', year: 1954 },
+    { title: 'Star Wars: Episode IV - A New Hope', year: 1977 },
+    { title: 'City of God', year: 2002 },
+    { title: 'Se7en', year: 1995 },
+    { title: 'The Silence of the Lambs', year: 1991 },
+    { title: "It's a Wonderful Life", year: 1946 },
+    { title: 'Life Is Beautiful', year: 1997 },
+    { title: 'The Usual Suspects', year: 1995 },
+    { title: 'Léon: The Professional', year: 1994 },
+    { title: 'Spirited Away', year: 2001 },
+    { title: 'Saving Private Ryan', year: 1998 },
+    { title: 'Once Upon a Time in the West', year: 1968 },
+    { title: 'American History X', year: 1998 },
+    { title: 'Interstellar', year: 2014 },
+    { title: 'Casablanca', year: 1942 },
+    { title: 'City Lights', year: 1931 },
+    { title: 'Psycho', year: 1960 },
+    { title: 'The Green Mile', year: 1999 },
+    { title: 'The Intouchables', year: 2011 },
+    { title: 'Modern Times', year: 1936 },
+    { title: 'Raiders of the Lost Ark', year: 1981 },
+    { title: 'Rear Window', year: 1954 },
+    { title: 'The Pianist', year: 2002 },
+    { title: 'The Departed', year: 2006 },
+    { title: 'Terminator 2: Judgment Day', year: 1991 },
+    { title: 'Back to the Future', year: 1985 },
+    { title: 'Whiplash', year: 2014 },
+    { title: 'Gladiator', year: 2000 },
+    { title: 'Memento', year: 2000 },
+    { title: 'The Prestige', year: 2006 },
+    { title: 'The Lion King', year: 1994 },
+    { title: 'Apocalypse Now', year: 1979 },
+    { title: 'Alien', year: 1979 },
+    { title: 'Sunset Boulevard', year: 1950 },
+    {
+      title:
+        'Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb',
+      year: 1964,
+    },
+    { title: 'The Great Dictator', year: 1940 },
+    { title: 'Cinema Paradiso', year: 1988 },
+    { title: 'The Lives of Others', year: 2006 },
+    { title: 'Grave of the Fireflies', year: 1988 },
+    { title: 'Paths of Glory', year: 1957 },
+    { title: 'Django Unchained', year: 2012 },
+    { title: 'The Shining', year: 1980 },
+    { title: 'WALL·E', year: 2008 },
+    { title: 'American Beauty', year: 1999 },
+    { title: 'The Dark Knight Rises', year: 2012 },
+    { title: 'Princess Mononoke', year: 1997 },
+    { title: 'Aliens', year: 1986 },
+    { title: 'Oldboy', year: 2003 },
+    { title: 'Once Upon a Time in America', year: 1984 },
+    { title: 'Witness for the Prosecution', year: 1957 },
+    { title: 'Das Boot', year: 1981 },
+    { title: 'Citizen Kane', year: 1941 },
+    { title: 'North by Northwest', year: 1959 },
+    { title: 'Vertigo', year: 1958 },
+    { title: 'Star Wars: Episode VI - Return of the Jedi', year: 1983 },
+    { title: 'Reservoir Dogs', year: 1992 },
+    { title: 'Braveheart', year: 1995 },
+    { title: 'M', year: 1931 },
+    { title: 'Requiem for a Dream', year: 2000 },
+    { title: 'Amélie', year: 2001 },
+    { title: 'A Clockwork Orange', year: 1971 },
+    { title: 'Like Stars on Earth', year: 2007 },
+    { title: 'Taxi Driver', year: 1976 },
+    { title: 'Lawrence of Arabia', year: 1962 },
+    { title: 'Double Indemnity', year: 1944 },
+    { title: 'Eternal Sunshine of the Spotless Mind', year: 2004 },
+    { title: 'Amadeus', year: 1984 },
+    { title: 'To Kill a Mockingbird', year: 1962 },
+    { title: 'Toy Story 3', year: 2010 },
+    { title: 'Logan', year: 2017 },
+    { title: 'Full Metal Jacket', year: 1987 },
+    { title: 'Dangal', year: 2016 },
+    { title: 'The Sting', year: 1973 },
+    { title: '2001: A Space Odyssey', year: 1968 },
+    { title: "Singin' in the Rain", year: 1952 },
+    { title: 'Toy Story', year: 1995 },
+    { title: 'Bicycle Thieves', year: 1948 },
+    { title: 'The Kid', year: 1921 },
+    { title: 'Inglourious Basterds', year: 2009 },
+    { title: 'Snatch', year: 2000 },
+    { title: '3 Idiots', year: 2009 },
+    { title: 'Monty Python and the Holy Grail', year: 1975 },
+  ];
+  export default connect(mapStateToProps,mapFunctionToProps)(withAuth(Odc));

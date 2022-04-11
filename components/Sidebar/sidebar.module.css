@@ -44,7 +44,7 @@
     right: 15px;
     height: 1px;
     width: calc(100% - 30px);
-    background-color: rgba(180,180,180,.3);
+    /* background-color: rgba(180,180,180,.3); */
 }
 .logoTxt{
     font-weight: 500;
@@ -60,10 +60,14 @@
 .logoImg{
     position: relative;
     top: 8px;
+    width: 65%;
+    display: flex;
+    justify-content: center;
+    margin: 1rem auto;
 }
 .navbarBrandBox{
     padding: 0 1.5rem;
-    width: 280px;
+    width: 250px;
     /* background: #fbfaff; */
     /* border-right: 1px solid #e9e9ef; */
     /* -webkit-box-shadow: 0 2px 2px #fbfaff;

@@ -1,6 +1,7 @@
 import {
     LOGIN_CHECK,
     LOGIN_SUCCESSFUL,
+    LOGIN_FAILED,
     OTP_VERIFY,
     OTP_VERIFICATION_SUCCESSFUL,
     TELEGRAM_USER_VERIFY, 
@@ -28,6 +29,7 @@ const login = (state=INIT_STATE,action)=>{
             return {
                 ...state,
                 loading:{
+                    ...state.loading,
                     login: false
                 }
             };
@@ -36,9 +38,22 @@ const login = (state=INIT_STATE,action)=>{
             return {
                 ...state,
                 loading:{
+                    ...state.loading,
+                    verifyUser: false,
                     login:false,
                 },
                 openOtpService: true
+            }
+        case LOGIN_FAILED:
+
+            return {
+                ...state,
+                loading:{
+                    ...state.loading,
+                    verifyUser: true,
+                    login:false,
+                },
+                openOtpService: false
             }
         case TELEGRAM_USER_VERIFY:
 

@@ -9,6 +9,7 @@
     min-height: 92vh;
     z-index: 1;
     background-color:var(--secondary);
+    background-color:transparent;
     width: calc(100% - 250px);
     transition: .33s,cubic-bezier(.685,.0473,.346,1);
 }

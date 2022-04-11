@@ -6,9 +6,22 @@
  --green: #1ebc51;
  --info: #9013FE;
 }
+@import url(https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css);
 @font-face {
   font-family: "GothamRounded-Book" !important;
   src: url("../public/font/GothamRounded-Book.otf");
+}
+@font-face {
+  font-family: "GothamRounded-Medium" !important;
+  src: url("../public/font/GothamRounded-Medium.otf");
+}
+@font-face {
+  font-family: "GothamRounded-Bold" !important;
+  src: url("../public/font/GothamRounded-Bold.otf");
+}
+@font-face {
+  font-family: "Gilroy-Regular";
+  src: url("../public/font/Gilroy-Regular.woff2") format('woff2');
 }
 span,h1,h2,h3,h4,div{
   font-family: "GothamRounded-Book" !important;

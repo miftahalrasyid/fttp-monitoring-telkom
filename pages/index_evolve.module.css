@@ -1,0 +1,235 @@
+.containerWrapper{
+    display:flex;
+    width:100vw;
+    height:100vh;
+}
+.containerWrapper h1{
+    font-family:  "GothamRounded-Medium" !important;
+        -webkit-font-smoothing: antialiased;
+}
+.containerWrapper h2{
+    font-family:  "GothamRounded-Medium" !important;
+        -webkit-font-smoothing: antialiased;
+}
+.containerWrapper h3{
+    font-family:  "GothamRounded-Medium" !important;
+        -webkit-font-smoothing: antialiased;
+}
+.containerWrapper  p{
+    font-family:  "GothamRounded-Medium" !important;
+        -webkit-font-smoothing: antialiased;
+}
+.backdrop{
+    position:absolute;
+    width:100vw;
+    height:100vh;
+}
+.backdrop > span{
+    width: auto !important;
+    height: 100% !important;
+}
+.leftSide{
+    flex: 60% 1;
+    display: flex;
+    overflow: hidden;
+    flex-direction: column;
+    padding: 4rem 0rem 4rem 4rem;
+    justify-content: space-between;
+}
+
+.logoWrapper{
+    position:relative;
+}
+.logoContainer{
+    width: 18.57%;
+    position: absolute;
+}
+.primaryGroup{
+    display: flex;
+}
+.mainImg{
+    margin-top: 3rem;
+    margin-left: 6rem;
+    flex: 165.4% 1;
+}
+.mainTxt{
+    display: flex;
+    position: relative;
+    flex: 41.4% 1;
+    flex-direction: column;
+    justify-content: space-between;
+    margin: 5rem 0 1.5rem;
+}
+.mainTxt > p{
+    margin-left: -6.3rem;
+    font-size: 1rem;
+}
+.textGroupOne{
+    margin-left: -8.5rem;
+}
+.textGroupOne h1{
+    color: #47ACC2;
+    /* font-weight: 600; */
+    margin-bottom:0;
+}
+.textGroupOne p{
+    color: #5959A0;
+    font-size: 1.4rem;
+    /* font-weight: 600; */
+}
+.blue{
+    color: #36639C;
+    font-family: inherit !important;
+}
+.lightBlue{
+    color: #2098A9;
+    font-family: inherit !important;
+}
+.footer{
+    position: relative;
+    color:#AAAAAA;
+}
+.rightSide{
+    flex: 40% 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.baloon{
+    position: relative;
+    border-radius: 1.3rem;
+    background: white;
+    box-shadow: 0 1px 20px -7px;
+    padding: 3rem;
+    height: 500px;
+    width: 373px;
+    padding: 2.5rem;
+}
+.baloon h2{
+    text-align: center;
+    margin-bottom: 3.5rem;
+}
+.form{
+    display:flex;
+    flex-direction: column;
+    justify-content: space-between;
+    /* margin: 2rem 0 4rem; */
+    height: inherit;
+}
+.formButton{
+    margin:auto;
+}
+.inputField{
+    border: 0;
+    border-radius: 3px;
+    background-color: #f1f1f1 !important;
+    outline: none;
+    padding: 0.2rem;
+    text-indent: 0.4rem;
+    /* margin-bottom:1rem */
+}
+.validation{
+    color:#e33e3e;
+    margin-bottom: 0.5rem;
+}
+.inputLabel{
+    margin:0.5rem 0;
+}
+.passwordField{
+    display:grid;
+    position:relative;
+    align-items: center;
+}
+.passwordField input{
+   padding: 0.2rem 2.1rem 0.2rem 0;
+}
+.passwordField svg{
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: auto;
+    bottom: 0;
+    margin-right: 0.5rem;
+    font-size: 20px;
+    color:#C7D2D6
+}
+.submitBtn{
+    border: 0;
+    background-color: #E58A00;
+    margin: auto;
+    border-radius: 3px;
+    /* display: flex; */
+    color: white;
+    width: 127px;
+    padding: 0.2rem;
+}
+.loginLoader{
+    border: 0;
+    margin: auto;
+    border-radius: 3px;
+    /* display: flex; */
+    color: white;
+    width: 127px;
+    padding: 0.2rem;
+}
+.loginLoader svg{
+    color: #E58A00
+}
+.groupInputField{
+    display:flex;
+    flex-direction: column;
+}
+.decorationNone{
+    text-decoration: none;
+    color:black;
+    font-size:12px
+}
+.decorationNone:hover{
+    text-decoration: underline;
+    color:black
+}
+.anchorWrapper{
+    user-select: none;
+    display: block;
+    float: left;
+    width: fit-content;
+}
+.goToLogin{
+    font-size: 12px;
+}
+.confirmationPageWrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    height: 100%;
+}
+.confirmGroup{
+    /* margin-bottom: 4rem; */
+    /* flex-basis: 32%; */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* justify-content: center; */
+    padding:0rem 0;
+}
+.confirmGroup h3{
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+.confirmGroup p{
+    padding-left: 1.6rem;
+    padding-right: 0.5rem;
+    margin-bottom: 2.5rem;
+}
+.backBtn{
+    border: 0;
+    background-color: #B10040!important;
+    margin: auto;
+    border-radius: 3px;
+    /* display: flex; */
+    color: white;
+    width: 127px;
+    padding: 0.5rem;
+}

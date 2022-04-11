@@ -16,9 +16,14 @@ import {
   } from "@material-ui/core";
   import { useRouter } from 'next/router';
   import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
-  import styles from './index.module.css';
+  // import styles from './index.module.css';
+  import styles from './index_evolve.module.css';
+  import { Formik } from 'formik';
   import logo from "../public/img/telkom logo.png";
   import { connect } from "react-redux";
+  import telkom_bg from "../public/img/telkom_bg.jpeg";
+  import logo_paperless from '../public/img/logo_paperless.png';
+import main_img from "../public/img/main_img.png";
   import { checkLogin, verifyOtp,requestForgotPassword} from "../components/store/login/actions";
   import correctImg from '../public/img/correct.png';
 
@@ -40,102 +45,157 @@ function Forgot_password({requestForgotPassword,isRequestConfirm}) {
     var [passwordValue, setPasswordValue] = useState("password");
     console.log("openconfirmation page",isRequestConfirm)
   return (
-    <Grid container className={styles.container}>
-        <div className={styles.logotypeContainer}>
-            <div className={styles.pattern}>
-            <div className={styles.logotypeImage}>
-                <Image src={logo} alt="logo" />
+    <div className={styles.containerWrapper}>
+      <div className={styles.backdrop}>
+        <Image src={telkom_bg} width={1829} height={1100} alt={"background"} />
+      </div>
+      <div className={`container ${styles.leftSide}`}>
+        <div className={styles.logoWrapper}>
+          <div className={` ${styles.logoContainer}`}>
+            <Image src={logo_paperless} width={230} height={162} alt={"background"}/>
+          </div>
 
-            </div>
-            <Typography className={styles.logotypeText}>Telkom Indonesia</Typography>
-            </div>
-            {/* <img src={logo} /> */}
         </div>
-        <div className={styles.formContainer}>
-        <div className={styles.form}>
-        <React.Fragment>
-            <div>
-              <div>
-                <div className={styles.logotypeImageMobile}>
-                  <Image src={logo} alt="logo" />
+        <div className={styles.primaryGroup}>
+          <div className={styles.mainImg}>
+            <Image src={main_img} width={752} height={746} alt={"background"}/>
+          </div>
+          <div className={styles.mainTxt}>
+            <div className={styles.textGroupOne}>
+              <h1>The Ultimate</h1>
+              <p>Management Core</p>
+            </div>
+            <p> <span className={styles.blue}> The Ultimate Reference <br/>for</span> <span className={styles.lightBlue}>Deployment</span> <span className={styles.blue}>&</span><br/> <span className={styles.lightBlue}>Maintenance Operation</span><br/> <span className={styles.blue}>with</span> <span className={styles.lightBlue}>Real Layout Mirroring</span></p>
+          </div>
+        </div>
+        <div className={styles.footer}>
+          <p>© 2022 Telkom Indonesia, Tbk. All rights reserved</p>
+        </div>
+      </div>
+        <div className={`container ${styles.rightSide}`}>
+      
+      {/* <Tabs value={activeTabId} onChange={(e, id)=> setActiveTabId(id)}
+        indicatorColor="primary"
+        textColor="primary"
+        centered
+        >
+        <Tab label="Login" classes={{ root: styles.tab }} />
+        <Tab label="New User" classes={{ root: styles.tab }} />
+      </Tabs> */}
+      {/* {activeTabId === 0 && ( */}
+      <React.Fragment>
+      <div className={styles.baloon}>
+        {!isRequestConfirm ? 
+    <div className={styles.form}>
+        <>
+        <h2>Ajukan ganti password</h2>
+        <p>Silahkan masukkan email anda</p>
 
-                </div>
-                <Typography className={styles.logotypeTextMobile}>Telkom Indonesia</Typography>
-              </div>
-              {!isRequestConfirm?
-                <div>
-                  <Typography variant="h6" className={styles.resetPassword}>
-                    Ajukan ganti password
-                  </Typography>
-                  <Typography variant="subtitle1" className={styles.resetSubtitle}>
-                    Silahkan masukkan email anda
-                  </Typography>
-                  <Fade in={error}>
-                    <Typography color="secondary" className={styles.errorMessage}>
-                      Something is wrong with your login or password :(
-                    </Typography>
-                  </Fade>
-                  <TextField id="email" InputProps={{
-                  classes: {
-                    underline: styles.textFieldUnderline,
-                    input: styles.textField,
-                  },
-                }} value={loginValue} onChange={e=> setLoginValue(e.target.value)}
-                    margin="normal"
-                    placeholder="Email Adress"
+            {/* <Button size="large" className={styles.googleButton}>
+              <img src={google} alt="google" className={styles.googleIcon} />
+              &nbsp;Sign in with Google
+            </Button> */}
+            {/* <div className={styles.formDividerContainer}>
+              <div className={styles.formDivider} />
+              <Typography className={styles.formDividerWord}>or</Typography>
+              <div className={styles.formDivider} />
+            </div> */}
+            <Formik 
+            initialValues={{ email: '', password: '' }}
+            validate={values => {
+              const errors = {};
+              if (!values.email) {
+                errors.email = '*Required';
+              } else if (
+                !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
+              ) {
+                errors.email = '*Invalid email address';
+              }
+              return errors;
+            }}
+            onSubmit={(values, { setSubmitting }) => {
+              requestForgotPassword(values.email)
+              // setTimeout(() => {
+              //   alert(JSON.stringify(values, null, 2));
+              //   setSubmitting(false);
+              // }, 400);
+            }}
+          >
+            {({
+              values,
+              errors,
+              touched,
+              handleChange,
+              handleBlur,
+              handleSubmit,
+              isSubmitting,
+              /* and other goodies */
+            }) => (
+              <form className={styles.form} onSubmit={handleSubmit}>
+                <div className={styles.groupInputField}>
+                <label htmlFor="email" className={styles.inputLabel}>Email</label>
+                  <input
+                  className={styles.inputField}
                     type="email"
-                    fullWidth
-                    />
-
-                    <div className={styles.formButtons}>
-                      {isRequestConfirm ? (
-                      <CircularProgress size={26} className={styles.loginLoader} />
-                      ) : (
-                      <Button className={styles.loginbtn} disabled={ loginValue.length===0 ||
-                        passwordValue.length===0 } onClick={()=>
-                          requestForgotPassword(email)
-                        }
-                        variant="outlined"
-                        color="primary"
-                        size="large"
-                        >
-                        Submit
-                      </Button>
-                      )}
-                    </div>
-                    <p className={styles.goToLogin}>
-                      {"apakah sudah ingat? "}
-                      <Link href={"/"}><a className={styles.decorationNone}>Sign In</a></Link>
-                    </p>
-
+                    name="email"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.email}
+                  />
+                  <span className={styles.validation}>
+                  {errors.email && touched.email && errors.email}
+                  </span>
                 </div>
-              :<div className={styles.confirmationPageWrapper}>
-                <Image src={correctImg} alt="correctImg" width={50} height={50}/>
-                <Typography variant='h5' className={styles.confirmationTitle}>
-                  Permintaan anda telah kami proses
-                </Typography>
-                <Typography variant='subtitle2' className={styles.confirmationDetail}>
-                  Link reset password akan segera dikirimkan ke telegram anda  
-                </Typography>
-                <Link href={"/"}>
-                  <a className={styles.decorationNone}>
-                    <CustomButton variant="outlined" >
-                      Kembali
-                    </CustomButton>
+                <p className={styles.goToLogin}>
+                  {'Remember? '}
+                <Link href={'/'}>
+                  <a className={styles.decorationNone} style={{color:"blue"}}>
+                    Sign In
                   </a>
                 </Link>
-              </div>
-              }
-
-            </div>
-
-          </React.Fragment>
+                </p>
+                {isRequestConfirm ? (
+                <CircularProgress size={35} className={styles.loginLoader} />
+                  ) : (
+                    <button className={styles.submitBtn} disabled={ loginValue.length===0 ||
+                      passwordValue.length===0 
+                        
+                      }>
+                      Submit
+                  </button>
+                )}
+              </form>
+            )}
+          </Formik>
+           
+        </>
+        
+    </div>
+    :<div className={styles.confirmationPageWrapper}>
+      <div>
+    <Image src={correctImg} alt="correctImg" width={50} height={50}/>
         </div>
-            <Typography color="primary" className={styles.copyright}>
-            © 2014-{new Date().getFullYear()} <a style={{ textDecoration: 'none', color: 'inherit' }} href="https://telkom.com" rel="noopener noreferrer" target="_blank">Telkom Indonesia</a>, LLC. All rights reserved.
-            </Typography>
+        <div className={styles.confirmGroup}>
+        
+    <h3>Permintaan anda telah kami proses</h3>
+    <p className={styles.confirmationDetail}>
+      Link reset password akan segera dikirimkan ke telegram anda  
+    </p>
         </div>
-    </Grid>
+    <Link href={"/"}>
+      <a className={styles.decorationNone}>
+      <button className={styles.backBtn}>
+      Kembali
+      </button>
+      </a>
+    </Link>
+  </div>
+        }
+  </div>
+      </React.Fragment>
+      
+        </div>
+    </div>
   )
 }
 const mapStateToProps = state =>({

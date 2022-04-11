@@ -5,6 +5,8 @@
     left: 0;
     /* z-index: 1002; */
     background-color: var(--secondary);
+    background-color:transparent;
+    box-shadow: 1px -3px 10px 2px #ea9563;
     /* border-bottom: 1px solid #e9e9ef; */
 }
 .navbarHeader{
@@ -29,6 +31,7 @@
     /* line-height:5.8rem; */
     /* width: 280px; */
     background-color: var(--secondary);
+    background-color:transparent;
     /* border-right: 1px solid #e9e9ef;
     -webkit-box-shadow: 0 2px 2px #fbfaff;
     box-shadow: 0 2px 2px #fbfaff; */
@@ -90,7 +93,8 @@
     outline: 0;
     border:0;
     display: inline-block!important;
-    position:absolute
+    position:absolute;
+    background-color: transparent;
 }
 .navbarToggler > span{
     pointer-events: none;

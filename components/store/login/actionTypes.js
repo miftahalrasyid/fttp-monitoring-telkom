@@ -1,5 +1,6 @@
 export const LOGIN_CHECK = "check_user_credential";
 export const LOGIN_SUCCESSFUL = "user_successfuly_logged_in";
+export const LOGIN_FAILED = "user_failed_to_logged_in";
 export const OTP_VERIFY = "verify_otp";
 export const OTP_VERIFICATION_SUCCESSFUL = "verify_otp_successful";
 export const TELEGRAM_USER_VERIFY = "telegram_user_verify";

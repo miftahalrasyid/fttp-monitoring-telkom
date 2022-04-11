@@ -1,139 +1,181 @@
-import React,{useEffect,useState} from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import sidebar_img from '../../public/img/sidebarImg.png';
+import React,{useRef,useEffect} from 'react';
 import SimpleBar from 'simplebar-react';
 import 'simplebar/dist/simplebar.min.css';
-import odcStyles from '../../pages/odc/odc.module.css';
-import home from '../../public/img/Home.png';
-import {MdOutlineClose} from 'react-icons/md';
-import styles from './sidebar_evolve.module.css';
-import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 import {
-  Button,
+  Modal,
   Box,
-  Modal
-  } from "@material-ui/core";
-  import {useRouter} from 'next/router';
-import { makeStyles } from '@material-ui/styles';
+Typography,
+Button
+} from "@material-ui/core";
+// import { createTheme } from '@material-ui/core/styles';
+import dynamic from 'next/dynamic';
+
+import MetisMenu from '@metismenu/react';
+import 'metismenujs/dist/metismenujs.css';
+import Link from 'next/link';
+import {NavLink} from './components/NavLink';
+import Image from 'next/image';
+import {useRouter} from 'next/router'
+
+// import MetisMenu css
+import odcStyles from '../../pages/odc/odc.module.css';
+import styles from './sidebar.module.css';
+import home from './home.svg';
+import {
+  MdDashboard,
+  MdPerson,
+  MdOutlineAddBox,
+  MdOutlineClose,
+  MdExitToApp
+} from 'react-icons/md';
+import TextField from '@mui/material/TextField';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import TextField from '@mui/material/TextField';
-const CustomTextField = styled(TextField)(({ theme }) => ({
-    color: theme.status.primary,
-    '.MuiInputLabel-root.Mui-focused': {
-      color: theme.status.primary,
-    },
-    '.MuiInput-root::after': {
-      borderColor: theme.status.primary
-    },
-  }));
+// import Button from '@mui/material/Button';
+import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 const CustomTab = styled(Tab)(({theme})=>({
   color:"gray!important",
   '&.MuiTab-root.Mui-selected': {
     color: "black!important"
   },
 }))
+const CustomButtonModal = styled(Button)(({ theme, btnType }) => ({
+  background: btnType == 'submit' ? '#1ebc51!important':theme.status.primary,
+}));
 const CustomTabs = styled(Tabs)(({theme})=>({
   '.MuiTabs-indicator': {
     backgroundColor: theme.status.primary,
   },
 }))
-const CustomButton = styled(Button)(({theme})=>({
-    // backgroundColor:"#009873!important",
-    // color:"white!important",
-    // borderRadius:"2rem!important"
-}))
-const CustomButtonModal = styled(Button)(({ theme, btnType }) => ({
-    background: btnType == 'submit' ? '#1ebc51!important':theme.status.primary,
-  }));
-  function a11yProps(index) {
-    return {
-      id: `simple-tab-${index}`,
-      'aria-controls': `simple-tabpanel-${index}`,
-    };
-  }
-function Index_evolve() {
-    const router = useRouter();
-    const [open, setOpen] = useState(false);
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ p: 3 }}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  );
+}
+function a11yProps(index) {
+  return {
+    id: `simple-tab-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`,
+  };
+}
+const CustomTextField = styled(TextField)(({ theme }) => ({
+  color: theme.status.primary,
+  '.MuiInputLabel-root.Mui-focused': {
+    color: theme.status.primary,
+  },
+  '.MuiInput-root::after': {
+    borderColor: theme.status.primary
+  },
+}));
+const CustomButton = styled(Button)(({ theme }) => ({
+  background: theme.status.primary,
+}));
+const CustomButtonGray = styled(Button)(({ theme }) => ({
+  background: theme.status.darkgray,
+}));
+
+const theme = createTheme({
+  status: {
+    primary: "#ee2d24!important",
+    darkgray: "darkgray!important"
+  },
+});
+// const theme = responsiveFontSizes(base);
+// console.log("theme",theme, CustomTextField)
+function Sidebar() {
+  const [value, setValue] = React.useState(0);
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
+  const router = useRouter();
+  console.log("sidebar", router.asPath)
+  const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 4,
+  };
+    const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
-    const [value, setValue] = React.useState(0);
-    const handleChange = (event, newValue) => {
-        setValue(newValue);
-      };
-      
-    const useStyles = makeStyles(theme => ({
-        green: {
-            backgroundColor:"#009873!important",
-            color:"white!important",
-            width:"170px",
-            borderRadius:"1rem!important"
-        },
-        red: {
-            backgroundColor:"#B10040!important",
-            color:"white!important",
-            width:"170px",
-            borderRadius:"1rem!important"
-        }
-      }));
-      const classes = useStyles();
-      useEffect(()=>{
+    const mm = useRef();
+    useEffect(()=>{
+        mm.current.el.classList.add("list-unstyled")
+        mm.current.el.id = "side-menu"
+    },[])
+    useEffect(()=>{
     
-        // console.log("odc",odc_edit_modal.current,document.querySelector('[itemref="testing"]'))
-        setTimeout(()=>{
-          console.log("odc",document.querySelector('[itemref="addOdcSidbarModal"]'))
-          if(document.querySelector('[itemref="addOdcSidbarModal"]'))
-          document.querySelector('[itemref="addOdcSidbarModal"]').style.top = "50%";
-        },50)
-      },[open])
+      // console.log("odc",odc_edit_modal.current,document.querySelector('[itemref="testing"]'))
+      setTimeout(()=>{
+        console.log("odc",document.querySelector('[itemref="addOdcSidbarModal"]'))
+        if(document.querySelector('[itemref="addOdcSidbarModal"]'))
+        document.querySelector('[itemref="addOdcSidbarModal"]').style.top = "50%";
+      },50)
+    },[open])
   return (
     <div className={`${styles.verticalMenu}`}>
-    <div className={styles.sidebarLogo}>
-    <div className={styles.navbarBrandBox}>
-          <Link href={"/"} passHref>
-            <a className={styles.logo}>
-              <span className={styles.logoLg}>
-                <span className={styles.logoImg}>
-                  <Image src="/img/logo_paperless.png" alt="logo" width={156} height={110}/>
-                </span>
-              </span>
-            </a>
-          </Link>
-        </div>    
-    </div>
-    <SimpleBar className={styles.simplebar}>
-    {/* <SimpleBar className={styles.h100}> */}
-
-      <div id={styles.sidebarMenu}>
-        <ul>
-            <li>
-                <Link href={"/odc"}>
-                    <a>
-                        <div className={styles.menuList}>
-                            <div className={styles.menuIcon}>
-                                <Image src={home} width={27} height={27} alt={"home"}/>
-                            </div>
-                            <p>Home</p>
-                        </div>
-                        <div className={styles.bullet}></div>
-                    </a>
+        <div className={styles.sidebarLogo}>
+        <div className={styles.navbarBrandBox}>
+              <Link href={"/"} passHref>
+                <a className={styles.logo}>
+                  <span className={styles.logoLg}>
+                    <span className={styles.logoImg}>
+                      <Image src="/img/telkom logo.png" alt="logo" width={35} height={35}/>
+                    </span>
+                    <span className={styles.logoTxt}> Telkom Indonesia</span>
+                  </span>
+                </a>
+              </Link>
+            </div>    
+        </div>
+        <SimpleBar className={styles.h100}>
+          <div id={styles.sidebarMenu}>
+            <MetisMenu ref={mm}>
+              <li className={styles.menuTitle} data-key="t-menu">Menu</li>
+              <li>
+                <Link href="/odc" exact passHref>
+                <a className={/\/odc/.test(router.asPath)?styles.active:""}>
+                  <MdDashboard className={styles.sidebarSvg} />
+                  <span data-key="t-dashboard">Dashboard</span>
+                </a>
                 </Link>
-            </li>
-        </ul>
-      </div>
-    </SimpleBar>
-      <div className={styles.action}>
-          <div className={styles.sidebarImage}>
-              <Image src={sidebar_img} width={180} height={210} alt={'sidebar_img'}/>
-          </div>
-          <p>Action</p>
-          <div className={styles.actionBtn}>
-
-          <p>
-
-            <CustomButton className={classes.green} onClick={handleOpen} variant='contained' > Tambah ODC</CustomButton>
-            <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title"
+              </li>
+              <li>
+                <Link href="/users" exact passHref>
+                <a className={/\/users/.test(router.asPath)?styles.active:""}>
+                  <MdPerson className={styles.sidebarSvg} />
+                  <span data-key="t-dashboard">Users</span>
+                </a>
+                </Link>
+              </li>
+              <li className={styles.menuTitle} data-key="t-action">Action</li>
+              <li>
+                <div className={styles.action}>
+                  <Button onClick={handleOpen} variant="outlined" color='primary' size="large">
+                    <MdOutlineAddBox/> Tambah ODC
+                  </Button>
+                </div>
+              </li>
+              <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description">
                  <div>
                   <div className={styles.closebtn}>
@@ -257,20 +299,26 @@ function Index_evolve() {
                   </Box>
                 </div>
               </Modal>
-        </p>
-        <p>
-            <CustomButton className={classes.red} onClick={()=>{
+              <li className={styles.logout}>
+                <div className={styles.logoutDiv}>
+                  <Button onClick={()=>{
                     router.push("/")
-                    }} variant='contained' > Sign Out</CustomButton>
-        </p>
+                    }}
+                    variant="outlined"
+                    
+                    color='primary'
+                    size="large">
+                    <MdExitToApp/> Sign Out
+                  </Button>
+                </div>
+              </li>
+
+            </MetisMenu>
           </div>
-      </div>
-      <div className={styles.footer}>
-        <p>© 2022 Telkom Indonesia, Tbk. All rights reserved</p>
-      </div>
-    {/* <div className={styles.sidebarBackground}></div> */}
-</div>
+        </SimpleBar>
+        <div className={styles.sidebarBackground}></div>
+    </div>
   )
 }
 
-export default Index_evolve
+export default Sidebar

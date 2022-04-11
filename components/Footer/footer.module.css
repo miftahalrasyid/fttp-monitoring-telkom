@@ -3,11 +3,13 @@
     position: relative;
     border-top: 1px solid rgba(0,0,0,0.1);
     bottom: 0;
+    z-index: 1;
     width: calc(100% - 250px);
     float: left;
     left: 250px;
     text-align: right;
     background-color: #eeeeee;
+    background: transparent;
 }
 @media screen and (max-width: 1080px){
     .footerContainer{

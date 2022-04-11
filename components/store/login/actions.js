@@ -8,9 +8,9 @@ import {
     FORGOT_PASSWORD_PAGE_CLOSED
 } from "./actionTypes";
 
-export const checkLogin = (email,password,history)=>({
+export const checkLogin = (email,password,history,errorState)=>({
     type: LOGIN_CHECK,
-    payload: {email,password,history}
+    payload: {email,password,history,errorState}
 });
 export const verifyOtp = (value,history)=>({
     type: OTP_VERIFY,
@@ -22,9 +22,9 @@ export const successfullLogin = () =>({
 export const otpVerificationSuccessfull = () =>({
     type: OTP_VERIFICATION_SUCCESSFUL
 })
-export const verifyUser = (email) =>({
+export const verifyUser = (status,errorCon) =>({
     type: TELEGRAM_USER_VERIFY,
-    payload: {email}
+    payload: {status,errorCon}
 });
 export const requestForgotPassword = (email) => ({
     type: FORGOT_PASSWORD_REQUEST,
