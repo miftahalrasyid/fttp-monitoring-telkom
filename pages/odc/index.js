@@ -138,7 +138,8 @@ function a11yProps(index) {
     'aria-controls': `simple-tabpanel-${index}`,
   };
 }
-function ODC() {
+function ODC(props) {
+  const {data,otpVerificationSuccessfull} = props
   const [open, setOpen] = React.useState(false);
   const [openDeleteRowModal, setOpenDeleteRowModal] = React.useState(false);
   const [value, setValue] = React.useState(0);
@@ -268,12 +269,12 @@ function ODC() {
           if(document.querySelector('[itemref="odcDeleteModal"]'))
           document.querySelector('[itemref="odcDeleteModal"]').style.top = "50%";
         },50)
-      setDatatable(rawData.map(item=>([
-        item.id,item.capacity,
-        `idle: ${item.feeder.idle} | used: ${item.feeder.used} | broken: ${item.feeder.broken}`,
-        `idle: ${item.distribution.idle} | used: ${item.distribution.used} | broken: ${item.distribution.broken}`,
+      setDatatable(data.map(item=>([
+        item.name,item.capacity,
+        `idle: ${item.core_feeder_idle} | used: ${item.core_feeder_used} | broken: ${item.core_feeder_broken}`,
+        `idle: ${item.core_distribusi_idle} | used: ${item.core_distribusi_used} | broken: ${item.core_distribusi_broken}`,
         <div key={0} className={styles.tableAction}>
-              <Link href={`/odc/${item.id}`} passHref>
+              <Link href={`/odc/${item.name}`} passHref>
               <a>
             <CustomButton>
                 <MdOpenInBrowser />
@@ -315,7 +316,7 @@ function ODC() {
                     {/* <Box sx={styles.card}> */}
                       <div className={`${styles.card}  ${styles.cardStats}`}>
                         <div className={`${styles.cardHeader} ${styles.cardHeaderPrimary}`}>
-                          <h4 className={styles.cardTitle}>{item.id.toUpperCase()}</h4>
+                          <h4 className={styles.cardTitle}>{item.name.toUpperCase()}</h4>
                           <div className={styles.stats}>
                             {/* <MdOutlineDateRange width={16} height={"auto"} />  */}
                             lengkapi semua isian yang ada
@@ -532,8 +533,11 @@ function ODC() {
           },
         },
         xaxis: {
-          type: 'datetime',
+          type: 'category',
           categories: ['01/01/2011 GMT', '01/02/2011 GMT', '01/03/2011 GMT', '01/04/2011 GMT',
+            '01/05/2011 GMT', '01/06/2011 GMT'
+          ],
+          categories: ['STO data', '01/02/2011 GMT', '01/03/2011 GMT', '01/04/2011 GMT',
             '01/05/2011 GMT', '01/06/2011 GMT'
           ],
         },
@@ -548,6 +552,7 @@ function ODC() {
     
     
     };
+    console.log("odc data",data)
   return (<div className={styles.mainContent}>
           <div className={styles.cardWrapper}>
             <Card title='Total ODC' value='18.669' unit='unit' primaryFill={"#FF72BE"} secondaryFill={'#006ED3'}/>
@@ -568,13 +573,18 @@ function ODC() {
           <CustomButton className={classes.green}>Submit</CustomButton>
         </div>
         <div className={styles.charts}>
-
+          <div>
+            <h2>Feeder Chart</h2>
         <ApexChart
 options={state.options} series={state.series} type="bar" width={600} height={350}
             />
+          </div>
+          <div>
+            <h2>Distribution Chart</h2>
         <ApexChart
 options={state.options} series={state.series} type="bar" width={600} height={350}
             />
+          </div>
         </div>
         <MuiThemeProvider theme={getMuiTheme()}>
               {/* <ThemeProvider theme={getMuiTheme()}> */}
@@ -592,9 +602,18 @@ options={state.options} series={state.series} type="bar" width={600} height={350
                   options:{
                     customBodyRender:(value, tableMeta, update) => {
                       console.log("row render",tableMeta)
-                    let rowIndex = (tableMeta.rowData[1])?Number(tableMeta.rowIndex) + 1: "";
-                    return ( <span>{rowIndex}</span> )
+                      let rowIndex = (tableMeta.rowData[0])?Number(tableMeta.rowIndex) + 1: "";
+                      return ( <span>{rowIndex}</span> )
+                    },
+                    filter
                   }
+                },{
+                  name: "ODC ID",
+                  options:{
+                    customBodyRender:(value, tableMeta, update) => {
+                      let newValue = tableMeta.rowData[0]
+                      return ( <span>{newValue}</span> )
+                    }
                   }
                 },{
                   name: "ODC ID",
@@ -649,11 +668,11 @@ options={state.options} series={state.series} type="bar" width={600} height={350
 }
 export const getServerSideProps = async (props) => wrapper.getServerSideProps(store => async ({req, res, ...etc}) => {
   store.dispatch(getODCsBox())
-  // console.log("static props",store.getState())
   store.dispatch(END)
   await store.sagaTask.toPromise();
+  console.log("static props",store.getState())
       return {
-        props:{data:{rawData}}
+        props:{data:store.getState().ODCs.odcsBox}
       }
     })(props);
 const mapStateToProps = state => ({
