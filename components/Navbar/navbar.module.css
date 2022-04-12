@@ -35,3 +35,44 @@
     font-size: 32px;
 
 }
+.userContainer{
+    display: flex;
+    margin: 0.5rem 1.2rem;
+    /* width: 243px; */
+    height: 51px;
+    padding: 0 0.7rem 0 0;
+    background: rgba(255,255,255,0.5);
+    box-sizing: border-box;
+    border-radius: 16px;
+}
+.userContainer .userImg{
+    width: 35px;
+    margin: 0.5rem 0.7rem 0.5rem 0.6rem;
+    height: 35px;
+    border-radius: 7px;
+    overflow: hidden;
+    font-size: 2.9rem;
+    position: relative;
+}
+.userContainer .userImg svg{
+    position: absolute;
+    top: -0.59rem;
+    left: -0.35rem;
+}
+.userContainer .userDetail{
+    margin: 0.5rem 0px;
+    display: flex;
+    flex-direction: column;
+}
+.userContainer .userDetail h6{
+    margin:0;
+    font-family: 'GothamRounded-Medium' !important;
+}
+.userContainer .userDetail span{
+    font-size: 0.8rem;
+}
+@media (max-width: 1080px){
+.userContainer{
+    display:none;
+}
+}

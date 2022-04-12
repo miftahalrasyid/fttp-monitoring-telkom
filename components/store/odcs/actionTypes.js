@@ -11,3 +11,9 @@ export const GET_SELECTED_CORE_FEEDER = "get_selected_core_feeder";
 
 export const GET_ODC_SPLITPANEL_STATUS = "get_odc_splitpanel_status";
 export const GET_ODC_SPLITPANEL_STATUS_SUCCESSFUL = "get_odc_splitpanel_status_successful";
+
+export const GET_GRAPH_FEEDER = "get_odc_graph_feeder";
+export const GET_GRAPH_FEEDER_SUCCESSFUL = "get_odc_graph_feeder_successful";
+
+export const GET_GRAPH_DISTRIBUTION = "get_odc_graph_distribution";
+export const GET_GRAPH_DISTRIBUTION_SUCCESSFUL = "get_odc_graph_distribution_successful";

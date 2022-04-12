@@ -1,5 +1,7 @@
 #topBar{
     position: relative;
+    display:flex;
+    justify-content: space-between;
     top: 0;
     right: 0;
     left: 0;
@@ -27,6 +29,7 @@
     padding: 0 1.5rem;
     display:flex;
     justify-content: space-between;
+    width:100%;
     /* line-height: 4rem; */
     /* line-height:5.8rem; */
     /* width: 280px; */
@@ -214,7 +217,7 @@
         display:none;
     }
     .navbarBrandBox {
-        width: auto;
+        width: 100%;
         display: flex;
         justify-content: space-between;
     }

@@ -1,6 +1,10 @@
 import {call,all,put,fork,takeEvery} from 'redux-saga/effects';
 import {
     GET_CORE_FEEDER,
+    GET_GRAPH_FEEDER,
+    GET_GRAPH_FEEDER_SUCCESSFUL,
+    GET_GRAPH_DISTRIBUTION,
+    GET_GRAPH_DISTRIBUTION_SUCCESSFUL,
     UPDATE_CORE_FEEDER,
     UPDATE_SPLITTER_DISTRIBUTION,
     GET_CORE_FEEDER_INFO_SUCCESSFUL,
@@ -126,8 +130,57 @@ function* fetchStatus({payload:{odcId}}){
         console.error(error)
     }
 }
+function* getFeederGraph({payload:{data,token}}){
+    console.log("get feeder graph",data,token)
+    var requestOptions = {
+        method: 'GET',
+        headers: {
+            "Authorization": "Bearer "+token,
+            "Content-Type":"application/json",
+        },
+        redirect: 'follow'
+      };
+    try {
+        let res;
+        if(typeof window !== 'undefined')
+        // res = yield fetch("/api/feeder-status-graph?region=&witel=&datel=&sto",requestOptions).then(res=>res.json());
+        res = yield fetch(`/api/feeder-status-graph?region=${data.regional}&witel=${data.witel}&datel=${data.datel}&sto`,requestOptions).then(res=>res.json());
+        else
+        res = yield fetch(`${process.env.NEXT_PUBLIC_API_HOST}/api/feeder-status-graph?region=&witel=&datel=&sto`,requestOptions).then(res=>res.json());
+        console.log("get feeder graph response",res)
+        yield put({type:GET_GRAPH_FEEDER_SUCCESSFUL,payload:res})
+    } catch (error) {
+        console.log("getfeedergraph",error)
+    }
+}
+function* getDistributionGraph({payload:{data,token}}){
+    console.log("get distribution graph",data,token)
+    var requestOptions = {
+        method: 'GET',
+        headers: {
+            "Authorization": "Bearer "+token,
+            "Content-Type":"application/json",
+        },
+        redirect: 'follow'
+      };
+    try {
+        let res;
+        if(typeof window !== 'undefined')
+        // res = yield fetch("/api/feeder-status-graph?region=&witel=&datel=&sto",requestOptions).then(res=>res.json());
+        res = yield fetch(`/api/distribution-status-graph?region=${data.regional}&witel=${data.witel}&datel=${data.datel}&sto`,requestOptions).then(res=>res.json());
+        else
+        res = yield fetch(`${process.env.NEXT_PUBLIC_API_HOST}/api/distribution-status-graph?region=&witel=&datel=&sto`,requestOptions).then(res=>res.json());
+        // console.log("get feeder graph response",res)
+        yield put({type:GET_GRAPH_DISTRIBUTION_SUCCESSFUL,payload:res})
+    } catch (error) {
+        console.log("getfeedergraph",error)
+    }
+}
 
 function* watchODCsData(){
+    yield takeEvery(GET_GRAPH_FEEDER,getFeederGraph)
+    yield takeEvery(GET_GRAPH_DISTRIBUTION,getDistributionGraph)
+    
     yield takeEvery(GET_SPLITTER_DATA,getSplitter)
     yield takeEvery(GET_CORE_FEEDER,getCoreFeeder)
     yield takeEvery(GET_ODCs,getODCsBox)
@@ -136,6 +189,7 @@ function* watchODCsData(){
     yield takeEvery(SET_SELECTED_CORE_FEEDER,setSelectedCoreFeederSaga)
 
     yield takeEvery(GET_ODC_SPLITPANEL_STATUS,fetchStatus)
+    
 }
 
 function* odcsSaga() {

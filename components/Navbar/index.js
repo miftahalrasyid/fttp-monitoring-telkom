@@ -16,6 +16,7 @@ import { FaBars } from 'react-icons/fa';
 import indexStyles from './index.module.css';
 import odcStyles from '../../pages/odc/odc.module.css';
 import {useRouter} from 'next/router';
+import jwt from 'jwt-decode';
 import {
 Button
 } from "@material-ui/core";
@@ -23,6 +24,12 @@ import {
   MdOutlineClose,
   MdKeyboardArrowLeft
 } from 'react-icons/md';
+import {
+  IoPersonCircleSharp
+} from 'react-icons/io5';
+import {
+  BsFillFilePersonFill
+} from 'react-icons/bs';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import TextField from '@mui/material/TextField';
@@ -171,9 +178,25 @@ function Navbar(props) {
   const [userModalOpen, setUserModalOpen] = React.useState(false);
   const handleAddUserOpen = () => setUserModalOpen(true);
   const handleAddUserClose = () => setUserModalOpen(false);
+  const getCookie = (cname)=> {
+    let name = cname + "=";
+    let decodedCookie = decodeURIComponent(document.cookie);
+    let ca = decodedCookie.split(';');
+    for(let i = 0; i < ca.length; i++) {
+      let c = ca[i];
+      while (c.charAt(0) == ' ') {
+        c = c.substring(1);
+      }
+      if (c.indexOf(name) == 0) {
+        return c.substring(name.length, c.length);
+      }
+    }
+    return "";
+  }
+  const {email,role_name} = jwt(getCookie("token"));
 // console.log("odcid",odcId)
   return  <nav id={indexStyles.topBar}>
-      <div className='container-fluid'></div>
+      {/* <div className='container-fluid'></div> */}
             <div className={indexStyles.navbarBrandBox}>
                   {typeof odcId !== 'object'? 
                   // {typeof odcId !== 'object' || typeof userPath !== 'object'? 
@@ -485,6 +508,18 @@ function Navbar(props) {
                 {/* : null)} */}
             
             </div>
+            {(router.asPath=="/odc")&& <div className={styles.userContainer}>
+              <div className={styles.userImg}>
+                <BsFillFilePersonFill/>
+              </div>
+              <div className={styles.userDetail}>
+                  <h6>{email.replace(/(\w+)@\S+/,"$1")}</h6>
+                 <span>{role_name}</span>
+
+              </div>
+
+            </div>}
+            
   </nav>
 }
 

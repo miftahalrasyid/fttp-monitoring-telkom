@@ -19,11 +19,15 @@ import odcStyles from '../odc/odc.module.css';
 import {getUserData} from '../../components/store/users/actions'
 import { wrapper } from '../../components/store';
 import { END } from 'redux-saga';
-import Button from '@mui/material/Button';
+import {
+  Button
+  } from "@material-ui/core";
+// import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 
 const CustomButtonModal = styledCustom(Button)(({ theme, btnType }) => ({
   background: btnType == 'submit' ? '#1ebc51!important':theme.status.primary,
+  color:"white !important",
 }));
 
 const CustomButton = styled(Button)(({ theme }) => ({
@@ -119,10 +123,10 @@ function User({data}) {
     item.status,
     <div key={0} className={odcStyles.tableAction}>
         <CustomButton onClick={handleOpen} variant='text'>
-          <MdRemoveRedEye />
+          <MdRemoveRedEye fill='#3124c1'/>
         </CustomButton>
         <CustomButton onClick={deleteRowHandleOpen} variant='text'>
-          <MdDeleteForever />
+           <MdDeleteForever fill='#B10040'/>
         </CustomButton>
         <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description">
@@ -184,7 +188,7 @@ function User({data}) {
                         
                         <div className={`col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
                         <FormControl key={"status"} variant="standard" sx={{ m: 1, minWidth: 124 }}>
-                        <CustomInputLabel sx={{color: "red"}} id="demo-simple-select-standard-label">Status</CustomInputLabel>
+                        <CustomInputLabel  id="demo-simple-select-standard-label">Status</CustomInputLabel>
 
                         <NativeSelect defaultValue={item.status} inputProps={{
                             name: 'age',

@@ -7,8 +7,10 @@ import 'simplebar/dist/simplebar.min.css';
 import odcStyles from '../../pages/odc/odc.module.css';
 import home from '../../public/img/Home.png';
 import {MdOutlineClose} from 'react-icons/md';
+import {IoPersonCircleOutline} from 'react-icons/io5';
 import styles from './sidebar_evolve.module.css';
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
+import jwt from 'jwt-decode';
 import {
   Button,
   Box,
@@ -87,6 +89,25 @@ function Index_evolve() {
           document.querySelector('[itemref="addOdcSidbarModal"]').style.top = "50%";
         },50)
       },[open])
+      const getCookie = (cname)=> {
+        if(typeof window !== "undefined"){
+          
+        }
+        let name = cname + "=";
+        let decodedCookie = (typeof window !== "undefined") ? decodeURIComponent(document.cookie) : "";
+        let ca = decodedCookie.split(';');
+        for(let i = 0; i < ca.length; i++) {
+          let c = ca[i];
+          while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+          }
+          if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+          }
+        }
+        return "";
+      }
+      const {role_name} = jwt(getCookie("token"));
   return (
     <div className={`${styles.verticalMenu}`}>
     <div className={styles.sidebarLogo}>
@@ -116,10 +137,24 @@ function Index_evolve() {
                             </div>
                             <p>Home</p>
                         </div>
-                        <div className={styles.bullet}></div>
+                        <div className={/\/odc/.test(router.asPath)?styles.bullet:""}></div>
                     </a>
                 </Link>
             </li>
+            {(role_name==="Admin") && <li>
+              <Link href="/users">
+                <a>
+                  <div className={styles.menuList}>
+                    <div className={styles.menuIcon}>
+                      <IoPersonCircleOutline className={styles.sidebarSvg} />
+                    </div>
+                    <p>Users</p>
+                  </div>
+                  <div className={/\/users/.test(router.asPath)?styles.bullet:""}></div>
+                </a>
+              </Link>
+            </li>}
+            
         </ul>
       </div>
     </SimpleBar>
@@ -183,19 +218,41 @@ function Index_evolve() {
                         {value === 0 && (
                           <div className='row'>
                             {/* <Typography> */}
-                              <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                <CustomTextField id="standard-basic" label="Nama ODC" variant="standard" placeholder='ODC-xxx-xxx'/>
-                              </div>
-                              <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                <CustomTextField id="standard-basic" label="Kapasitas" variant="standard" />
-                              </div>
-                              <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                <CustomTextField id="standard-basic" label="Merek" variant="standard" />
-                              </div>
-                              <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                <CustomTextField id="standard-basic" label="Deployment Date" color='primary'
-                                  variant="standard" />
-                              </div>
+                            <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                  <CustomTextField id="standard-basic" label="Nama ODC" variant="standard" />
+                                </div>
+                                <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                  <CustomTextField id="standard-basic" label="Regional" variant="standard" />
+                                </div>
+                                <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                  <CustomTextField id="standard-basic" label="WITEL" variant="standard" />
+                                </div>
+                                <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                  <CustomTextField id="standard-basic" label="DATEL" variant="standard" />
+                                </div>
+                                <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                  <CustomTextField id="standard-basic" label="STO" variant="standard" />
+                                </div>
+                                <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                  <CustomTextField id="standard-basic" label="Kapasitas" variant="standard" />
+                                </div>
+                                <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                  <CustomTextField id="standard-basic" label="Merek" variant="standard" />
+                                </div>
+                                <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                  <CustomTextField id="standard-basic" label="Splitter Position" variant="standard" />
+                                </div>
+                                {/* {item.merek} */}
+                                {/* merk
+                                  deploymentDate
+                                  core
+                                  rakOa
+                                  panelOa
+                                  port */}
+                                <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                  <CustomTextField id="standard-basic" label="Deployment Date" color='primary'
+                                    variant="standard" />
+                                </div>
                             {/* </Typography> */}
                           </div>
                         )}
@@ -211,19 +268,19 @@ function Index_evolve() {
                         {value === 1 && (
                           <div className='row'>
                           {/* <Typography> */}
-                            <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                              <CustomTextField id="standard-basic" label="Core Terminasi" variant="standard" placeholder='xxx-xxx'/>
-                            </div>
-                            <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                              <CustomTextField id="standard-basic" label="Rak OA" variant="standard" />
-                            </div>
-                            <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                              <CustomTextField id="standard-basic" label="Panel" variant="standard" />
-                            </div>
-                            <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                              <CustomTextField id="standard-basic" label="Port" color='primary'
-                                variant="standard" />
-                            </div>
+                             <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                <CustomTextField id="standard-basic" label="Port Feeder Terminasi" variant="standard" />
+                              </div>
+                              <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                <CustomTextField id="standard-basic" label="Rak OA" variant="standard" />
+                              </div>
+                              <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                <CustomTextField id="standard-basic" label="Panel" variant="standard" />
+                              </div>
+                              <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                <CustomTextField id="standard-basic" label="Port" color='primary'
+                                  variant="standard"/>
+                              </div>
                           {/* </Typography> */}
                         </div>
                         )}
@@ -249,7 +306,7 @@ function Index_evolve() {
                   <div>
 
                    <CustomButtonModal style={{visibility: (value>0)?"hidden":"visible"}} onClick={(ev)=>(value>0)?handleOpen:handleChange(ev,value+1)}  variant="contained" color='primary' size="large">
-                   {(value<=0)? "Next":""}
+                    {(value<=0)? "Next":""}
                   </CustomButtonModal>
                   </div>
                     </div>

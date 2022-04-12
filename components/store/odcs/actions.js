@@ -1,5 +1,7 @@
 import {
     GET_SPLITTER_DATA,
+    GET_GRAPH_FEEDER,
+    GET_GRAPH_DISTRIBUTION,
     GET_CORE_FEEDER, 
     UPDATE_CORE_FEEDER,
     GET_ODCs,
@@ -20,6 +22,14 @@ export const getODCsBox = () =>({
 export const updateCoreFeederInfo = (data) =>({
     type: UPDATE_CORE_FEEDER,
     payload: {data}
+});
+export const getFeederGraph = (data,token) =>({
+    type: GET_GRAPH_FEEDER,
+    payload: {data,token}
+});
+export const getDistributionGraph = (data,token) =>({
+    type: GET_GRAPH_DISTRIBUTION,
+    payload: {data,token}
 });
 export const updateSplitterDistributionInfo = (data) =>({
     type: UPDATE_SPLITTER_DISTRIBUTION,

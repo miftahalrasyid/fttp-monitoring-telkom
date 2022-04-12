@@ -80,6 +80,7 @@ function* otpVerify({payload:{value,history}}){
         console.log("otp verify",res)
         if(res.success){
             console.log("go to odc",history)
+            yield document.cookie = "token="+res.data.token;
             yield history.push("/odc")
         }
         else{
@@ -98,7 +99,7 @@ function* userVerify({payload:{status,errorCon}}){
         // if(email!=="noone@telkom.com"){
             if(errorCon){
                 console.log("login failed badly")
-            yield put({type:LOGIN_FAILED})
+                yield put({type:LOGIN_FAILED})
             }
             else
             {
@@ -110,6 +111,7 @@ function* userVerify({payload:{status,errorCon}}){
         else{
             yield put({type: TELEGRAM_USER_VERIFY_SUCCESSFUL})
             yield put({type:LOGIN_SUCCESSFUL})
+           
         }
     } catch (error) {
         

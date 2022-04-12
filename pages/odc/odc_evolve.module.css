@@ -235,7 +235,8 @@
     background: transparent;
     color: white;
     border:none;
-    width:100%;
+    /* width:100%; */
+    width: 200px;
     height:100%;
     z-index:2;
 }
@@ -258,16 +259,33 @@
 .charts{
     display:flex;
     justify-content: space-around;
+    flex-wrap: wrap;
     margin: 0 2rem;
     margin-top:2rem;
+}
+.charts > div {
+    /* display:inline-block;
+    max-width: 595px; */
 }
 .charts > div h2{
     text-align: center;
 }
-
+.tableAction button{
+    border-radius: 22px !important;
+    min-width:fit-content !important;
+}
+.tableAction a{
+    border-radius: 22px !important;
+    min-width:fit-content !important;
+}
+.tableAction svg{
+    width: 22px;
+    /* color: var(--primary); */
+    height: auto;
+}
 @media screen and (max-width: 1080px) {
-    .odcBackdrop{
+    /* .odcBackdrop{
         width: calc(100vh + 139px);
-    }
+    } */
 
 }

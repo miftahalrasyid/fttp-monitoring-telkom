@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import styles from './odc_evolve.module.css';
@@ -8,10 +8,6 @@ const ApexChart = dynamic(()=>import('react-apexcharts'),{ssr:false});
 // import Chart from "react-apexcharts";
 import { connect } from 'react-redux';
 import {
-  MdInventory,
-  MdNfc,
-  MdSettingsInputComposite,
-  MdOutlineDateRange,
   MdOpenInBrowser,
   MdRemoveRedEye,
   MdOutlineClose,
@@ -19,7 +15,7 @@ import {
 } from 'react-icons/md';
 import {END} from 'redux-saga';
 import { wrapper,makeStore } from "../../components/store";
-import { getODCsBox } from '../../components/store/odcs/actions';
+import { getODCsBox, getFeederGraph,getDistributionGraph } from '../../components/store/odcs/actions';
 import {otpVerificationSuccessfull} from "../../components/store/login/actions";
 import withAuth from '../../components/Auth';
 const DynamicMUIDataTable = dynamic(() => import('mui-datatables'),{ ssr: false });
@@ -32,9 +28,11 @@ import {
   } from "@material-ui/core";
 // import { makeStyles } from '@material-ui/styles';
 import { createTheme, MuiThemeProvider,makeStyles } from "@material-ui/core/styles";
+import { Select,MenuItem, FormControl, InputLabel, Checkbox, ListItemText } from '@mui/material';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import TextField from '@mui/material/TextField';
+import { Formik } from 'formik';
 const CustomTextField = styled(TextField)(({ theme }) => ({
   color: theme.status.primary,
   '.MuiInputLabel-root.Mui-focused': {
@@ -65,10 +63,10 @@ const CustomButton = styled(Button)(({theme})=>({
     // color:"white!important",
     // borderRadius:"2rem!important"
 }))
-function CustomSelect({data,name}){
+function CustomSelect({defaultValue,data,name,onChange,onBlur}){
   return <div className={styles.witel}>
-      <select>
-        {data.map(item=><option key={name+item.value}>{item.label}</option> )}
+      <select value={defaultValue} onChange={onChange} onBlur={onBlur} name={name}>
+        {data.map(item=><option key={name+item.value} value={item.value}>{item.label}</option> )}
       </select>
   </div>
 }
@@ -139,14 +137,43 @@ function a11yProps(index) {
   };
 }
 function ODC(props) {
-  const {data,otpVerificationSuccessfull} = props
-  const [open, setOpen] = React.useState(false);
-  const [openDeleteRowModal, setOpenDeleteRowModal] = React.useState(false);
+  // if(typeof window !== 'undefined')
+  // console.log("cookie",document.cookie.replace(/token=(\w+)/,))
+  const {data,otpVerificationSuccessfull,getFeederGraph,getDistributionGraph,feederGraph,feederGraphClient,distributionGraph,distributionGraphClient} = props
+  console.log("data",data)
+  const [open, setOpen] = React.useState(data.map(item=>({status:false})));
+  // const [open, setOpen] = React.useState(false);
+  console.log("modal edit",open)
+  // const [openDeleteRowModal, setOpenDeleteRowModal] = React.useState(false);
+  const [openDeleteRowModal, setOpenDeleteRowModal] = React.useState(data.map(item=>({status:false})));
   const [value, setValue] = React.useState(0);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-  const deleteRowHandleOpen = () => setOpenDeleteRowModal(true);
-  const deleteRowHandleClose = () => setOpenDeleteRowModal(false);
+
+  const handleOpen = useCallback((row)=>{
+    setOpen(prev=>{
+      prev[row].status = true;
+      return {...prev}
+    });
+  },[setOpen])
+  const handleClose = useCallback((row)=>{
+    setOpen(prev=>{
+      prev[row].status = false;
+      return {...prev}
+    });
+  },[setOpen])
+  const deleteRowHandleOpen = useCallback((row)=>{
+    setOpenDeleteRowModal(prev=>{
+      prev[row].status = true;
+      return {...prev}
+    })
+  },[setOpenDeleteRowModal])
+  const deleteRowHandleClose = useCallback((row)=>{
+    setOpenDeleteRowModal(prev=>{
+      prev[row].status = false;
+      return {...prev}
+    })
+  },[setOpenDeleteRowModal])
+  // const deleteRowHandleOpen = () => setOpenDeleteRowModal(true);
+  // const deleteRowHandleClose = () => setOpenDeleteRowModal(false);
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -166,7 +193,9 @@ function ODC(props) {
   }));
   const classes = useStyles();
   const regional=[
-    {label: "Regional",value:1}
+    {label: "Regional",value:0},
+    {label: "4",value:1},
+    {label: "2",value:2},
   ]
   const CustomButtonModal = styled(Button)(({ theme, btnType }) => ({
     background: btnType == 'submit' ? '#1ebc51!important':theme.status.primary,
@@ -216,7 +245,6 @@ function ODC(props) {
       },
       MUIDataTableHeadRow:{
         root:{
-
           backgroundImage:"linear-gradient(to right,rgba(178,98,98,0.3),rgb(255 228 228 / 30%))",
           backgroundImage:"linear-gradient(to right,rgb(237 167 88 / 30%),rgb(253 243 236 / 30%))",
         }
@@ -225,8 +253,12 @@ function ODC(props) {
         fixedHeader:{
           // backgroundImage:"linear-gradient(to right,rgba(178,98,98,0.3),rgba(255,255,255,0.3))"
 
-          backgroundColor:"transparent"
+          backgroundColor:"transparent",
           // backgroundColor:"linear-gradient(rgba(178,98,98,0.3),rgba(255,255,255,0.3))"
+        },
+        toolButton:{
+          justifyContent:"center"
+
         }
       },
       MuiInput:{
@@ -269,28 +301,35 @@ function ODC(props) {
           if(document.querySelector('[itemref="odcDeleteModal"]'))
           document.querySelector('[itemref="odcDeleteModal"]').style.top = "50%";
         },50)
-      setDatatable(data.map(item=>([
-        item.name,item.capacity,
-        `idle: ${item.core_feeder_idle} | used: ${item.core_feeder_used} | broken: ${item.core_feeder_broken}`,
-        `idle: ${item.core_distribusi_idle} | used: ${item.core_distribusi_used} | broken: ${item.core_distribusi_broken}`,
+      setDatatable(data.map((item,idx)=>([
+        idx+1,
+        item.name,item.regional,item.witel,item.datel,item.sto,
+        item.kapasitas,
+        item.port_feeder_terminasi,
+        item.core_feeder_idle,
+        item.core_feeder_used,
+        item.core_feeder_broken,
+        item.core_distribusi_idle,
+        item.core_distribusi_used,
+        item.core_distribusi_broken,
         <div key={0} className={styles.tableAction}>
               <Link href={`/odc/${item.name}`} passHref>
               <a>
             <CustomButton>
-                <MdOpenInBrowser />
+                <MdOpenInBrowser fill='#009873' />
             </CustomButton>
               </a>
               </Link>
-            <CustomButton onClick={handleOpen} variant='text'>
-              <MdRemoveRedEye />
+            <CustomButton onClick={()=>handleOpen(idx)} variant='text'>
+              <MdRemoveRedEye fill='#3124c1'/>
             </CustomButton>
-            <CustomButton onClick={deleteRowHandleOpen} variant='text'>
-              <MdDeleteForever />
+            <CustomButton onClick={()=>deleteRowHandleOpen(idx)} variant='text'>
+              <MdDeleteForever fill='#B10040'/>
             </CustomButton>
             {/* <CustomButton onClick={()=>deleteRow(item.id)} variant='text'>
               <MdDeleteForever />
             </CustomButton> */}
-            <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title"
+            <Modal open={open[idx].status} onClose={()=>handleClose(idx)} aria-labelledby="modal-modal-title"
                     aria-describedby="modal-modal-description">
                                       <div>
                   <div className={styles.closebtn}>
@@ -325,7 +364,7 @@ function ODC(props) {
                         <div className={`${styles.cardBody} card-body row`}>
                         <div className={styles.tabLink}>
                           <CustomTabs value={value} onChange={handleChange} aria-label="basic tabs example">
-                            <CustomTab label="OLT" {...a11yProps(0)} />
+                            <CustomTab label="ODC" {...a11yProps(0)} />
                             <CustomTab label="OA" {...a11yProps(1)} />
                           </CustomTabs>
                         </div>
@@ -342,21 +381,36 @@ function ODC(props) {
                             <div className={`row ${styles.formGap}`}>
                               {/* <Typography> */}
                                 <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                  <CustomTextField id="standard-basic" label="ID" variant="standard" defaultValue={item.id}/>
+                                  <CustomTextField id="standard-basic" label="Nama ODC" variant="standard" defaultValue={item.name}/>
                                 </div>
                                 <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                  <CustomTextField id="standard-basic" label="Kapasitas" variant="standard" defaultValue={item.capacity}/>
+                                  <CustomTextField id="standard-basic" label="Regional" variant="standard" defaultValue={item.regional}/>
                                 </div>
                                 <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                  <CustomTextField id="standard-basic" label="Merek" variant="standard" defaultValue={item.merek}/>
+                                  <CustomTextField id="standard-basic" label="WITEL" variant="standard" defaultValue={item.witel}/>
+                                </div>
+                                <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                  <CustomTextField id="standard-basic" label="DATEL" variant="standard" defaultValue={item.datel}/>
+                                </div>
+                                <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                  <CustomTextField id="standard-basic" label="STO" variant="standard" defaultValue={item.sto}/>
+                                </div>
+                                <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                  <CustomTextField id="standard-basic" label="Kapasitas" variant="standard" defaultValue={item.kapasitas}/>
+                                </div>
+                                <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                  <CustomTextField id="standard-basic" label="Merek" variant="standard" defaultValue={item.merk}/>
+                                </div>
+                                <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                  <CustomTextField id="standard-basic" label="Splitter Position" variant="standard" defaultValue={item.merk}/>
                                 </div>
                                 {/* {item.merek} */}
                                 {/* merk
-    deploymentDate
-    core
-    rakOa
-    panelOa
-    port */}
+                                  deploymentDate
+                                  core
+                                  rakOa
+                                  panelOa
+                                  port */}
                                 <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
                                   <CustomTextField id="standard-basic" label="Deployment Date" color='primary'
                                     variant="standard" defaultValue={item.deploymentDate}/>
@@ -376,13 +430,13 @@ function ODC(props) {
                             <div className={`row ${styles.formGap}`}>
                             {/* <Typography> */}
                               <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                <CustomTextField id="standard-basic" label="Core" variant="standard" defaultValue={item.core}/>
+                                <CustomTextField id="standard-basic" label="Port Feeder Terminasi" variant="standard" defaultValue={item.port_feeder_terminasi}/>
                               </div>
                               <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                <CustomTextField id="standard-basic" label="Rak OA" variant="standard" defaultValue={item.rakOa}/>
+                                <CustomTextField id="standard-basic" label="Rak OA" variant="standard" defaultValue={item.rak_OA}/>
                               </div>
                               <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                <CustomTextField id="standard-basic" label="Panel" variant="standard" defaultValue={item.panelOa}/>
+                                <CustomTextField id="standard-basic" label="Panel" variant="standard" defaultValue={item.panel}/>
                               </div>
                               <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
                                 <CustomTextField id="standard-basic" label="Port" color='primary'
@@ -409,7 +463,7 @@ function ODC(props) {
                               </CustomButtonModal>}
                             </div>
                             <div className='col-md-12 col-lg-6'>
-                              {(value>0) && <CustomButtonModal onClick={()=>handleClose()} variant="contained"
+                              {(value>0) && <CustomButtonModal onClick={()=>handleClose(idx)} variant="contained"
                                 color='primary' size="large">
                                 Cancel
                               </CustomButtonModal>}
@@ -423,7 +477,7 @@ function ODC(props) {
                     </Box>
                   </div>
                   </Modal>
-            <Modal open={openDeleteRowModal} onClose={deleteRowHandleClose} >
+            <Modal open={openDeleteRowModal[idx].status} onClose={()=>deleteRowHandleClose(idx)} >
             <div>
                   <div className={styles.closebtn}>
                     <MdOutlineClose/>
@@ -456,7 +510,7 @@ function ODC(props) {
                           <div className={styles.confirmationWrapper}>
                             <div className={`col-md-12`}>
                             <Typography variant='h6' className={styles.confirmationTitle}>
-                              Anda yakin akan menghapus {item.id} ?
+                              Anda yakin akan menghapus {item.name} ?
                             </Typography>
                             </div>
                             <div className={styles.actionContainer}>
@@ -467,7 +521,7 @@ function ODC(props) {
                                     </CustomButtonModal>
                                   </div>
                                   <div >
-                                    <CustomButtonModal onClick={()=>deleteRowHandleClose()}>
+                                    <CustomButtonModal onClick={()=>deleteRowHandleClose(idx)}>
                                       {"Cancel"}
                                     </CustomButtonModal>
                                   </div>
@@ -485,74 +539,141 @@ function ODC(props) {
           </div>
       ])))
     },[rawData,open,value,openDeleteRowModal])
-
-    React.useEffect(()=>{
-
-    },[datatable])
+    const graph = {
+      feeder:{
+        series: [{
+          name: 'Idle',
+          data: feederGraphClient? feederGraphClient.group.iddle : feederGraph.group.iddle
+        }, {
+          name: 'Used',
+          data: feederGraphClient? feederGraphClient.group.used : feederGraph.group.used
+        }, {
+          name: 'broken',
+          data: feederGraphClient? feederGraphClient.group.broken : feederGraph.group.broken
+        }],
+        options: {
+          chart: {
+            type: 'bar',
+            height: 350,
+            stacked: true,
+            toolbar: {
+              show: true
+            },
+            zoom: {
+              enabled: true
+            }
+          },
+          responsive: [{
+            breakpoint: 480,
+            options: {
+              legend: {
+                position: 'bottom',
+                offsetX: -10,
+                offsetY: 0
+              }
+            }
+          }],
+          plotOptions: {
+            bar: {
+              horizontal: false,
+              borderRadius: 10
+            },
+          },
+          xaxis: {
+            type: 'category',
+            // categories: ['01/01/2011 GMT', '01/02/2011 GMT', '01/03/2011 GMT', '01/04/2011 GMT',
+            //   '01/05/2011 GMT', '01/06/2011 GMT'
+            // ],
+            categories: feederGraphClient? feederGraphClient.xaxis : feederGraph.xaxis,
+          },
+          legend: {
+            position: 'right',
+            offsetY: 40
+          },
+          fill: {
+            opacity: 1
+          }
+        },
+      },
+      distribution:{
+        series: [{
+          name: 'Idle',
+          data: distributionGraphClient? distributionGraphClient.group.iddle : distributionGraph.group.iddle
+        }, {
+          name: 'Used',
+          data: distributionGraphClient? distributionGraphClient.group.used : distributionGraph.group.used
+        }, {
+          name: 'broken',
+          data: distributionGraphClient? distributionGraphClient.group.broken : distributionGraph.group.broken
+        }],
+        options: {
+          chart: {
+            type: 'bar',
+            height: 350,
+            stacked: true,
+            toolbar: {
+              show: true
+            },
+            zoom: {
+              enabled: true
+            }
+          },
+          responsive: [{
+            breakpoint: 480,
+            options: {
+              legend: {
+                position: 'bottom',
+                offsetX: -10,
+                offsetY: 0
+              }
+            }
+          }],
+          plotOptions: {
+            bar: {
+              horizontal: false,
+              borderRadius: 10
+            },
+          },
+          xaxis: {
+            type: 'category',
+            // categories: ['01/01/2011 GMT', '01/02/2011 GMT', '01/03/2011 GMT', '01/04/2011 GMT',
+            //   '01/05/2011 GMT', '01/06/2011 GMT'
+            // ],
+            categories: distributionGraphClient? distributionGraphClient.xaxis : distributionGraph.xaxis,
+          },
+          legend: {
+            position: 'right',
+            offsetY: 40
+          },
+          fill: {
+            opacity: 1
+          }
+        },
+      }
+    }
     const state = {
           
-      series: [{
-        name: 'PRODUCT A',
-        data: [44, 55, 41, 67, 22, 43]
-      }, {
-        name: 'PRODUCT B',
-        data: [13, 23, 20, 8, 13, 27]
-      }, {
-        name: 'PRODUCT C',
-        data: [11, 17, 15, 15, 21, 14]
-      }, {
-        name: 'PRODUCT D',
-        data: [21, 7, 25, 13, 22, 8]
-      }],
-      options: {
-        chart: {
-          type: 'bar',
-          height: 350,
-          stacked: true,
-          toolbar: {
-            show: true
-          },
-          zoom: {
-            enabled: true
-          }
-        },
-        responsive: [{
-          breakpoint: 480,
-          options: {
-            legend: {
-              position: 'bottom',
-              offsetX: -10,
-              offsetY: 0
-            }
-          }
-        }],
-        plotOptions: {
-          bar: {
-            horizontal: false,
-            borderRadius: 10
-          },
-        },
-        xaxis: {
-          type: 'category',
-          categories: ['01/01/2011 GMT', '01/02/2011 GMT', '01/03/2011 GMT', '01/04/2011 GMT',
-            '01/05/2011 GMT', '01/06/2011 GMT'
-          ],
-          categories: ['STO data', '01/02/2011 GMT', '01/03/2011 GMT', '01/04/2011 GMT',
-            '01/05/2011 GMT', '01/06/2011 GMT'
-          ],
-        },
-        legend: {
-          position: 'right',
-          offsetY: 40
-        },
-        fill: {
-          opacity: 1
-        }
-      },
+     
     
     
     };
-    console.log("odc data",data)
+    console.log("state",state)
+    const getCookie = (cname)=> {
+      let name = cname + "=";
+      let decodedCookie = decodeURIComponent(document.cookie);
+      let ca = decodedCookie.split(';');
+      for(let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) == ' ') {
+          c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+          return c.substring(name.length, c.length);
+        }
+      }
+      return "";
+    }
+
   return (<div className={styles.mainContent}>
           <div className={styles.cardWrapper}>
             <Card title='Total ODC' value='18.669' unit='unit' primaryFill={"#FF72BE"} secondaryFill={'#006ED3'}/>
@@ -565,25 +686,72 @@ function ODC(props) {
           </div>
           <p className={styles.last_update}>Last Update : Minggu, 03 April 2022 - 14.30 WIB</p>
 
-        <div className={styles.toolbar}>
-          <CustomSelect data={regional} name='regional'/>
-          <CustomSelect data={witel} name='witel'/>
-          <CustomSelect data={datel} name='datel'/>
-          <CustomSelect data={sto} name='sto'/>
-          <CustomButton className={classes.green}>Submit</CustomButton>
-        </div>
+          <Formik 
+          initialValues={{ regional: '', witel: '', datel: '', sto: ''}}
+          onSubmit={(values)=>{
+            console.log("on filter submit",values)
+            // console.log("cookie",document.cookie.split(" "))
+            getFeederGraph(values || { regional: '', witel: '', datel: '', sto: ''},getCookie("token"))
+            getDistributionGraph(values || { regional: '', witel: '', datel: '', sto: ''},getCookie("token"))
+          }}>
+          {({
+            values,
+            errors,
+            touched,
+            handleChange,
+            handleBlur,
+            handleSubmit,
+            isSubmitting,
+            /* and other goodies */
+          }) => (<form onSubmit={handleSubmit}>
+                  <div className={styles.toolbar}>
+                    <CustomSelect 
+                      defaultValue={values.regional} 
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      data={regional} 
+                      name='regional'
+                    />
+                    <CustomSelect 
+                      defaultValue={values.witel} 
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      data={witel} 
+                      name='witel'
+                    />
+                    <CustomSelect 
+                      defaultValue={values.datel} 
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      data={datel} 
+                      name='datel'
+                    />
+                    <CustomSelect 
+                      defaultValue={values.sto} 
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      data={sto} 
+                      name='sto'
+                    />
+                    <CustomButton className={classes.green} type="submit">Submit</CustomButton>
+                    {/* <CustomButton className={classes.green} type="submit" disabled={isSubmitting}>Submit</CustomButton> */}
+                </div>
+                  </form>
+                )}
+          </Formik>
+
         <div className={styles.charts}>
           <div>
             <h2>Feeder Chart</h2>
-        <ApexChart
-options={state.options} series={state.series} type="bar" width={600} height={350}
-            />
+        {((graph.feeder?.series[0]?.data || false) ||  (graph.feeder?.series[0]?.data?.length === 0)) ? <ApexChart
+options={graph.feeder.options} series={graph.feeder.series} type="bar" width={600} height={350}
+            />: <h2>No Data</h2>}
           </div>
           <div>
             <h2>Distribution Chart</h2>
-        <ApexChart
-options={state.options} series={state.series} type="bar" width={600} height={350}
-            />
+            {((graph.distribution?.series[0]?.data || false) ||  (graph.distribution?.series[0]?.data?.length === 0)) ? <ApexChart
+options={graph.distribution.options} series={graph.distribution.series} type="bar" width={600} height={350}
+            />: <h2>No Data</h2>}
           </div>
         </div>
         <MuiThemeProvider theme={getMuiTheme()}>
@@ -600,31 +768,47 @@ options={state.options} series={state.series} type="bar" width={600} height={350
                 columns={[{
                   name: "No",
                   options:{
-                    customBodyRender:(value, tableMeta, update) => {
-                      console.log("row render",tableMeta)
-                      let rowIndex = (tableMeta.rowData[0])?Number(tableMeta.rowIndex) + 1: "";
-                      return ( <span>{rowIndex}</span> )
-                    },
-                    filter
+                    // customBodyRender:(value, tableMeta, update) => {
+                    //   console.log("row render",tableMeta)
+                    //   let rowIndex = (tableMeta.rowData[0])?Number(tableMeta.rowIndex) + 1: "";
+                    //   return ( <span>{rowIndex}</span> )
+                    // },
+              //       filterOptions: {
+              //         display: (filterList, onChange, index, column) =>   <FormControl variant='standard'>
+              //           {console.log("column",column,filterList)}
+              //         <InputLabel htmlFor="select-multiple-chip">No</InputLabel>
+              //             <Select
+              //                 // className ={class1.A}
+              //                 multiple
+              //                 value={filterList[index]}
+              //                 renderValue={(selected) => selected.join(", ")}
+              //                 onChange={(event) => {
+              //                 filterList[index] = event.target.value;
+              //                 onChange(filterList[index], index, column);
+              //             }}
+              //             >                                                     
+              //               <MenuItem key={index} selected={true} value={"All"}  >
+              //                    {"All"}
+              //                </MenuItem>
+              //             {[1,2,3,4,5,6,7,8,9,10,11,12,13].map((name, name2) =>(
+              //                 <MenuItem key={index} value={name} >
+              //                    {name2}
+              //                </MenuItem>
+              //            ))}
+              //       </Select>
+              //  </FormControl>,
+              //       },
+              //       filterType:"custom",
+  //                   filterOptions:{
+  //                     display: (filterList, onChange, index, column) => {
+  //       return (
+  //         index
+  //  )
+  //                 }
+  //                   }
                   }
                 },{
-                  name: "ODC ID",
-                  options:{
-                    customBodyRender:(value, tableMeta, update) => {
-                      let newValue = tableMeta.rowData[0]
-                      return ( <span>{newValue}</span> )
-                    }
-                  }
-                },{
-                  name: "ODC ID",
-                  options:{
-                    customBodyRender:(value, tableMeta, update) => {
-                      let newValue = tableMeta.rowData[0]
-                      return ( <span>{newValue}</span> )
-                    }
-                  }
-                },{
-                  name: "Kapasitas",
+                  name: "ODC Name",
                   options:{
                     customBodyRender:(value, tableMeta, update) => {
                       let newValue = tableMeta.rowData[1]
@@ -632,7 +816,7 @@ options={state.options} series={state.series} type="bar" width={600} height={350
                     }
                   }
                 },{
-                  name: "Feeder",
+                  name: "Regional",
                   options:{
                     customBodyRender:(value, tableMeta, update) => {
                       let newValue = tableMeta.rowData[2]
@@ -640,7 +824,7 @@ options={state.options} series={state.series} type="bar" width={600} height={350
                     }
                   }
                 },{
-                  name: "Distribusi",
+                  name: "WITEL",
                   options:{
                     customBodyRender:(value, tableMeta, update) => {
                       let newValue = tableMeta.rowData[3]
@@ -648,10 +832,91 @@ options={state.options} series={state.series} type="bar" width={600} height={350
                     }
                   }
                 },{
-                  name: "Aksi",
+                  name: "DATEL",
                   options:{
                     customBodyRender:(value, tableMeta, update) => {
                       let newValue = tableMeta.rowData[4]
+                      return ( <span>{newValue}</span> )
+                    }
+                  }
+                },{
+                  name: "STO",
+                  options:{
+                    customBodyRender:(value, tableMeta, update) => {
+                      let newValue = tableMeta.rowData[5]
+                      return ( <span>{newValue}</span> )
+                    }
+                  }
+                },{
+
+                  name: "Kapasitas",
+                  options:{
+                    customBodyRender:(value, tableMeta, update) => {
+                      let newValue = tableMeta.rowData[6]
+                      return ( <span>{newValue}</span> )
+                    }
+                  }
+                },{
+                  name: "Port Feeder Terminasi",
+                  options:{
+                    customBodyRender:(value, tableMeta, update) => {
+                      let newValue = tableMeta.rowData[7]
+                      return ( <span>{newValue}</span> )
+                    }
+                  }
+                },{
+                  name: "Core Feeder Idle",
+                  options:{
+                    customBodyRender:(value, tableMeta, update) => {
+                      let newValue = tableMeta.rowData[8]
+                      return ( <span>{newValue}</span> )
+                    }
+                  }
+                },{
+                  name: "Core Feeder Used",
+                  options:{
+                    customBodyRender:(value, tableMeta, update) => {
+                      let newValue = tableMeta.rowData[9]
+                      return ( <span>{newValue}</span> )
+                    }
+                  }
+                },{
+                  name: "Core Feeder Broken",
+                  options:{
+                    customBodyRender:(value, tableMeta, update) => {
+                      let newValue = tableMeta.rowData[10]
+                      return ( <span>{newValue}</span> )
+                    }
+                  }
+                },{
+                  name: "Core Distribusi Idle",
+                  options:{
+                    customBodyRender:(value, tableMeta, update) => {
+                      let newValue = tableMeta.rowData[11]
+                      return ( <span>{newValue}</span> )
+                    }
+                  }
+                },{
+                  name: "Core Distribusi Used",
+                  options:{
+                    customBodyRender:(value, tableMeta, update) => {
+                      let newValue = tableMeta.rowData[12]
+                      return ( <span>{newValue}</span> )
+                    }
+                  }
+                },{
+                  name: "Core Distribusi Broken",
+                  options:{
+                    customBodyRender:(value, tableMeta, update) => {
+                      let newValue = tableMeta.rowData[13]
+                      return ( <span>{newValue}</span> )
+                    }
+                  }
+                },{
+                  name: "Aksi",
+                  options:{
+                    customBodyRender:(value, tableMeta, update) => {
+                      let newValue = tableMeta.rowData[14]
                       return ( <span>{newValue}</span> )
                     }
                   }
@@ -668,17 +933,28 @@ options={state.options} series={state.series} type="bar" width={600} height={350
 }
 export const getServerSideProps = async (props) => wrapper.getServerSideProps(store => async ({req, res, ...etc}) => {
   store.dispatch(getODCsBox())
+  store.dispatch(getFeederGraph({ regional: '', witel: '', datel: '', sto: ''},req.cookies.token))
+  store.dispatch(getDistributionGraph({ regional: '', witel: '', datel: '', sto: ''},req.cookies.token))
   store.dispatch(END)
   await store.sagaTask.toPromise();
-  console.log("static props",store.getState())
+  console.log("feeder graph",store.getState().ODCs.graph_feeder)
+  console.log("token",req.cookies.token)
       return {
-        props:{data:store.getState().ODCs.odcsBox}
+        props:{data:store.getState().ODCs.odcsBox,
+          feederGraph: store.getState().ODCs.graph_feeder || {group:{idle:[],used:[],broken:[]},xaxis:[]},
+          distributionGraph: store.getState().ODCs.graph_distribution || {group:{idle:[],used:[],broken:[]},xaxis:[]}
+        }
       }
     })(props);
 const mapStateToProps = state => ({
+  feederGraphClient: state.ODCs.graph_feeder,
+  distributionGraphClient: state.ODCs.graph_distribution,
 });
 const mapFunctionToProps = {
 otpVerificationSuccessfull,
-getODCsBox
+getODCsBox,
+getFeederGraph,
+getDistributionGraph,
+// getDistributionGraph,
 }
 export default connect(mapStateToProps,mapFunctionToProps)(withAuth(ODC))
