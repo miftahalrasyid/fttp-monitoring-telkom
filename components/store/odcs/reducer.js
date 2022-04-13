@@ -13,7 +13,9 @@ import { GET_SPLITTER_DATA,
   GET_GRAPH_DISTRIBUTION,
   GET_GRAPH_DISTRIBUTION_SUCCESSFUL,
   GET_REGION_LIST,
-  GET_REGION_LIST_SUCCESSFUL
+  GET_REGION_LIST_SUCCESSFUL,
+  GET_WITEL_LIST,
+  GET_WITEL_LIST_SUCCESSFUL
 } from "./actionTypes";
 import { HYDRATE } from 'next-redux-wrapper';
 const INIT_STATE = {
@@ -23,9 +25,11 @@ const INIT_STATE = {
         update:false,
         getSplitter:false,
         getOdcSplitpanelStatus:false,
-        getRegionList:false
+        getRegionList:false,
+        getWitelList: false
     },
     region_list:"",
+    witel_list:"",
     graph_feeder:"",
     graph_distribution:"",
     coreFeederData:"",
@@ -211,6 +215,27 @@ const odcs = (state=INIT_STATE,action) => {
             getRegionList: false
           },
           region_list: action.payload
+
+        }
+      case GET_WITEL_LIST:
+
+        return{
+          ...state,
+          loading:{
+            ...state.loading,
+            getWitelList: true
+          }
+        }
+        
+        case GET_WITEL_LIST_SUCCESSFUL:
+          
+        return{
+          ...state,
+          loading:{
+            ...state.loading,
+            getWitelList: false
+          },
+          witel_list: action.payload
 
         }
   

@@ -10,6 +10,7 @@ import {
     GET_SELECTED_CORE_FEEDER,
     GET_ODC_SPLITPANEL_STATUS,
     GET_REGION_LIST,
+    GET_WITEL_LIST
 } from './actionTypes'
 export const getSplitterData = () =>({
     type: GET_SPLITTER_DATA,
@@ -50,5 +51,9 @@ export const getOcdSplitpanelStatus = (odcId) => ({
 });
 export const getRegionList = (token) => ({
     type: GET_REGION_LIST,
+    payload: {token}
+});
+export const getWitelList = (token) => ({
+    type: GET_WITEL_LIST,
     payload: {token}
 });

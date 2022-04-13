@@ -19,7 +19,8 @@ import {
   getODCsBox, 
   getFeederGraph,
   getDistributionGraph,
-  getRegionList
+  getRegionList,
+  getWitelList
 } from '../../components/store/odcs/actions';
 import {otpVerificationSuccessfull} from "../../components/store/login/actions";
 import withAuth from '../../components/Auth';
@@ -155,7 +156,9 @@ function ODC(props) {
     distributionGraph,
     distributionGraphClient,
     getRegionList,
-    regionList
+    regionList,
+    getWitelList,
+    witelList
   } = props
   console.log("data",data)
   const [open, setOpen] = React.useState(data.map(item=>({status:false})));
@@ -749,12 +752,12 @@ function ODC(props) {
                       onBlur={handleBlur}
                       data={[...[{label:"Regional",value:""}],...regionList?.data?.map(item=>({label:item.name,value:item.id}))] || []} 
                       name='regional'
-                    />
+                      />
                     <CustomSelect 
                       defaultValue={values.witel} 
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      data={witel} 
+                      data={[...[{label:"Witel",value:""}],...witelList?.data?.map(item=>({label:item.name,value:item.id}))] || []} 
                       name='witel'
                     />
                     <CustomSelect 
@@ -974,16 +977,19 @@ export const getServerSideProps = async (props) => wrapper.getServerSideProps(st
   store.dispatch(getFeederGraph({ regional: '', witel: '', datel: '', sto: ''},req.cookies.token))
   store.dispatch(getDistributionGraph({ regional: '', witel: '', datel: '', sto: ''},req.cookies.token))
   store.dispatch(getRegionList(req.cookies.token))
+  store.dispatch(getWitelList(req.cookies.token))
   store.dispatch(END)
   await store.sagaTask.toPromise();
   console.log("feeder graph",store.getState().ODCs.graph_feeder)
   console.log("region list",store.getState().ODCs.region_list)
+  console.log("region list",store.getState().ODCs.witel_list)
   console.log("token",req.cookies.token)
       return {
         props:{data:store.getState().ODCs.odcsBox,
           feederGraph: store.getState().ODCs.graph_feeder || {group:{idle:[],used:[],broken:[]},xaxis:[]},
           distributionGraph: store.getState().ODCs.graph_distribution || {group:{idle:[],used:[],broken:[]},xaxis:[]},
-          regionList: store.getState().ODCs.region_list || [{id:0,name:""}]
+          regionList: store.getState().ODCs.region_list || [{id:0,name:""}],
+          witelList: store.getState().ODCs.witel_list || [{id:0,region_id: 0,name:""}]
         }
       }
     })(props);
@@ -996,7 +1002,8 @@ otpVerificationSuccessfull,
 getODCsBox,
 getFeederGraph,
 getDistributionGraph,
-getRegionList
+getRegionList,
+getWitelList,
 // getDistributionGraph,
 }
 export default connect(mapStateToProps,mapFunctionToProps)(withAuth(ODC))

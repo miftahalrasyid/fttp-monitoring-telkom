@@ -36,7 +36,7 @@ function* checklogin({payload:{email,password,history,errorState}}){
         let res;
         if(typeof window !== 'undefined')
         // res = yield fetch("/api/feeder-status-graph?region=&witel=&datel=&sto",requestOptions).then(res=>res.json());
-        res = yield fetch(`/login`,requestOptions).then(res=>res.json());
+        res = yield fetch(`/login`,requestOptions)
         else
         res = yield fetch(`${process.env.NEXT_PUBLIC_API_HOST}/login`, {...requestOptions,body: formData})
         res

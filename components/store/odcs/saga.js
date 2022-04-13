@@ -204,7 +204,7 @@ function* getRegionList({payload:{token}}) {
     }
 }
 function* getWitelList({payload:{token}}) {
-    console.log("region list",token)
+    console.log("Witel list",token)
     var requestOptions = {
         method: 'GET',
         headers: {
@@ -223,7 +223,7 @@ function* getWitelList({payload:{token}}) {
         // console.log("get feeder graph response",res)
         yield put({type:GET_WITEL_LIST_SUCCESSFUL,payload:res})
     } catch (error) {
-        console.log("getRegionList",error)
+        console.log("getWitelList",error)
     }
 }
 
