@@ -722,7 +722,20 @@ function ODC(props) {
     const [witelListClient,setWitelListClient] = useState("");
     const [datelListClient,setDatelListClient] = useState("");
     const [stoListClient,setSTOListClient] = useState("");
-
+    const [feederChartName, setFeederChartName] = useState([]);
+    const feederChartRef = useRef(null);
+    const distribusiChartRef = useRef(null);
+    useEffect(()=>{
+      console.log(feederChartName)
+      console.log(Object.entries(feederChartName).map(([key,value])=>{
+        if(key == "regional" && value!==0)
+        return key+" "+regionList?.data.filter(item=>item.id.toString() == value)[0]?.name || ""
+        if(key == "witel" && value!==0)
+        return key+" "+witelList?.data.filter(item=>item.id.toString() == value)[0]?.name || ""
+        if(key == "datel" && value!==0)
+        return key+" "+datelList?.data.filter(item=>item.id.toString() == value)[0]?.name || ""
+      }))
+    },[feederChartName])
   return (<div className={styles.mainContent}>
           <div className={styles.cardWrapper}>
             <Card title='Total ODC' value='18.669' unit='unit' primaryFill={"#FF72BE"} secondaryFill={'#006ED3'}/>
@@ -738,6 +751,7 @@ function ODC(props) {
           <Formik 
           initialValues={{ regional: 0, witel: 0, datel: 0, sto: 0}}
           validate={(values)=>{
+            setFeederChartName(values)
               setWitelListClient(witelList?.data?.filter(item=>(values.regional == "0") ? item.region_id.toString() !== values.regional:item.region_id.toString() === values.regional))
               setDatelListClient(datelList?.data?.filter(item=>(values.regional == "0") ? item.region_id.toString() !== values.regional:item.region_id.toString() === values.regional)
               .filter(item=>(values.witel == "0") ? item.witel_id.toString() !== values.witel:item.witel_id.toString() === values.witel))
@@ -753,6 +767,23 @@ function ODC(props) {
             // console.log("cookie",document.cookie.split(" "))
             getFeederGraph(values || { regional: '', witel: '', datel: '', sto: ''},getCookie("token"))
             getDistributionGraph(values || { regional: '', witel: '', datel: '', sto: ''},getCookie("token"))
+
+            feederChartRef.current.innerHTML = "Feeder Mapping - "+ Object.entries(feederChartName).map(([key,value])=>{
+              if(key == "regional" && value!==0)
+              return key+" "+regionList?.data.filter(item=>item.id.toString() == value)[0]?.name || ""
+              if(key == "witel" && value!==0)
+              return key+" "+witelList?.data.filter(item=>item.id.toString() == value)[0]?.name || ""
+              if(key == "datel" && value!==0)
+              return key+" "+datelList?.data.filter(item=>item.id.toString() == value)[0]?.name || ""
+            }).filter(x=>x!==undefined).join(" - ");
+            distribusiChartRef.current.innerHTML = "Distribution Mapping - "+ Object.entries(feederChartName).map(([key,value])=>{
+              if(key == "regional" && value!==0)
+              return key+" "+regionList?.data.filter(item=>item.id.toString() == value)[0]?.name || ""
+              if(key == "witel" && value!==0)
+              return key+" "+witelList?.data.filter(item=>item.id.toString() == value)[0]?.name || ""
+              if(key == "datel" && value!==0)
+              return key+" "+datelList?.data.filter(item=>item.id.toString() == value)[0]?.name || ""
+            }).filter(x=>x!==undefined).join(" - ");
           }}
           >
           {({
@@ -803,13 +834,13 @@ function ODC(props) {
 
         <div className={styles.charts}>
           <div>
-            <h2>Feeder Chart</h2>
+            <h4 ref={feederChartRef} style={{textTransform:"capitalize",width:"600px"}}>{`Feeder Mapping `}</h4>
         {((graph.feeder?.series[0]?.data || false) ||  (graph.feeder?.series[0]?.data?.length === 0)) ? <ApexChart
 options={graph.feeder.options} series={graph.feeder.series} type="bar" width={600} height={350}
             />: <h2>No Data</h2>}
           </div>
           <div>
-            <h2>Distribution Chart</h2>
+            <h4  ref={distribusiChartRef} style={{textTransform:"capitalize",width:"600px"}}>Distribution Mapping</h4>
             {((graph.distribution?.series[0]?.data || false) ||  (graph.distribution?.series[0]?.data?.length === 0)) ? <ApexChart
 options={graph.distribution.options} series={graph.distribution.series} type="bar" width={600} height={350}
             />: <h2>No Data</h2>}
