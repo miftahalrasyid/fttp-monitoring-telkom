@@ -10,6 +10,10 @@ module.exports = {
         source: '/login',
         destination: process.env.NEXT_PUBLIC_API_HOST+'/login',
       },
+      {
+        source: '/verify-otp',
+        destination: process.env.NEXT_PUBLIC_API_HOST+'/verify-otp',
+      },
     ]
   },
 }

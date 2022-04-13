@@ -48,7 +48,7 @@ function Index_evolve(props) {
   const useStyles = makeStyles(theme => ({
     grid: {
       backgroundColor: "grey",
-      height: "50vh",
+      height: "46vh",
       textAlign: "center"
     },
     avatar: {

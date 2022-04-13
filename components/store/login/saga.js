@@ -77,14 +77,20 @@ function* checklogin({payload:{email,password,history,errorState}}){
 }
 
 function* otpVerify({payload:{value,history}}){
-    // console.log("otpVerify")
-
-
+    
+    
     try {
+        console.log("otpVerify")
         var formData = new FormData();
         formData.append("otp",value);
         // console.log(email)
-        const res = yield fetch(`${process.env.NEXT_PUBLIC_API_HOST}/verify-otp`, {...requestOptions,body:formData})
+        let res;
+        if(typeof window !== 'undefined')
+        // res = yield fetch("/api/feeder-status-graph?region=&witel=&datel=&sto",requestOptions).then(res=>res.json());
+        res = yield fetch(`/verify-otp`, {...requestOptions,body:formData}).then(response => response.json())
+        .catch(error => console.log('error', error));
+        else
+        res = yield fetch(`${process.env.NEXT_PUBLIC_API_HOST}/verify-otp`, {...requestOptions,body:formData})
         .then(response => response.json())
         .catch(error => console.log('error', error));
         console.log("otp verify",res)
@@ -97,7 +103,7 @@ function* otpVerify({payload:{value,history}}){
             // throw error msg to user
         }
     } catch (error) {
-        
+        console.log("otp verify error ",error)
     }
 }
 function* userVerify({payload:{status,errorCon}}){
