@@ -22,6 +22,7 @@ const DynamicMUIDataTable = dynamic(() => import('mui-datatables'),{ ssr: false 
 import {styled } from '@mui/material/styles';
 import {
   Button,
+  NativeSelect,
   Box,
   Modal,
   Typography
@@ -198,7 +199,8 @@ function ODC(props) {
     {label: "2",value:2},
   ]
   const CustomButtonModal = styled(Button)(({ theme, btnType }) => ({
-    background: btnType == 'submit' ? '#1ebc51!important':theme.status.primary,
+    background: btnType == 'submit' ? theme.status.success:theme.status.primary,
+    // background: btnType == 'submit' ? '#1ebc51!important':theme.status.primary,
   }));
   const getMuiTheme = () =>
   createTheme({
@@ -402,7 +404,23 @@ function ODC(props) {
                                   <CustomTextField id="standard-basic" label="Merek" variant="standard" defaultValue={item.merk}/>
                                 </div>
                                 <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                  <CustomTextField id="standard-basic" label="Splitter Position" variant="standard" defaultValue={item.merk}/>
+                                  <InputLabel variant="standard" htmlFor="uncontrolled-native">
+                                    Splitter Position
+                                  </InputLabel>
+                                  <NativeSelect
+                                    defaultValue={10}
+                                    inputProps={{
+                                      name: 'age',
+                                      id: 'uncontrolled-native',
+                                    }}
+                                  >
+                                    <option value={10}>top left</option>
+                                    <option value={20}>top right</option>
+                                    <option value={30}>top center</option>
+                                    <option value={40}>bottom center</option>
+                                    <option value={50}>bottom left</option>
+                                    <option value={60}>bottom right</option>
+                                  </NativeSelect>
                                 </div>
                                 {/* {item.merek} */}
                                 {/* merk

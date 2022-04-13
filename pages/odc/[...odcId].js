@@ -473,8 +473,8 @@ function Odc({
                                 focused
                               </div>
                               <div className='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
-                                <MdOutlineViewSidebar fill='#ffda00'/>
-                                
+                                <div className={styles.portBorder} style={{borderColor:'#ffda00'}}>
+                                </div>
                               </div>
                             </div>
                           </div>
@@ -484,7 +484,9 @@ function Odc({
                                 priority
                               </div>
                               <div className='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
-                              <MdOutlineViewSidebar fill='#ee2d24'/>
+                              {/* <MdOutlineViewSidebar fill='#ee2d24'/> */}
+                              <div className={styles.portBorder} style={{borderColor:'#ee2d24'}}>
+                                </div>
                               </div>
                             </div>
                           </div>
@@ -498,7 +500,9 @@ function Odc({
                             used
                             </div>
                             <div className='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
-                              <MdOutlineViewSidebar fill='blue'/>
+                              {/* <MdOutlineViewSidebar fill='blue'/> */}
+                              <div className={styles.portBorder} style={{borderColor:'blue'}}>
+                                </div>
                             </div>
                           </div>
                         </div>
@@ -508,7 +512,9 @@ function Odc({
                             idle
                             </div>
                             <div className='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
-                              <MdOutlineViewSidebar />
+                              {/* <MdOutlineViewSidebar /> */}
+                              <div className={styles.portBorder} style={{borderColor:'gray'}}>
+                                </div>
                             </div>
                           </div>
                         </div>
@@ -520,7 +526,9 @@ function Odc({
                             broken
                             </div>
                             <div className='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
-                              <MdOutlineViewSidebar fill='black'/>
+                              {/* <MdOutlineViewSidebar fill='black'/> */}
+                              <div className={styles.portBorder} style={{borderColor:'black'}}>
+                                </div>
                             </div>
                           </div>
                         </div>

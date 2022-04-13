@@ -9,9 +9,11 @@ import {
 } from "@mui/material/styles";
 const tema = createThemeCustom({
   status: {
-    primary: "#ee2d24!important",
+    // primary: "#ee2d24!important",
+    primary: "#B10040!important",
     warning: "#fb8c00!important",
-    success: "#43a047!important",
+    // success: "#43a047!important",
+    success: "#009873!important",
     darkgray: "darkgray!important",
     info: "#1976d2!important"
   },

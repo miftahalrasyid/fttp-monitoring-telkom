@@ -26,7 +26,7 @@ import {
 import TextField from '@mui/material/TextField';
 
 const CustomButtonModal = styledCustom(Button)(({ theme, btnType }) => ({
-  background: btnType == 'submit' ? '#1ebc51!important':theme.status.primary,
+  background: btnType == 'submit' ? theme.status.success:theme.status.primary,
   color:"white !important",
 }));
 

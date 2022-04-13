@@ -12,6 +12,8 @@ import styles from './sidebar_evolve.module.css';
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 import jwt from 'jwt-decode';
 import {
+  NativeSelect,
+  InputLabel,
   Button,
   Box,
   Modal
@@ -90,9 +92,6 @@ function Index_evolve() {
         },50)
       },[open])
       const getCookie = (cname)=> {
-        if(typeof window !== "undefined"){
-          
-        }
         let name = cname + "=";
         let decodedCookie = (typeof window !== "undefined") ? decodeURIComponent(document.cookie) : "";
         let ca = decodedCookie.split(';');
@@ -107,7 +106,13 @@ function Index_evolve() {
         }
         return "";
       }
-      const {role_name} = jwt(getCookie("token"));
+      if(typeof window !== 'undefined' && typeof document !== 'undefined'){
+        console.log("document",typeof document)
+
+        console.log("token",document.cookie)
+      }
+      const {role_name} = (typeof window !== 'undefined') ? jwt(getCookie("token")): { role_name: ""}
+      // const {role_name} = jwt(getCookie("token"));
   return (
     <div className={`${styles.verticalMenu}`}>
     <div className={styles.sidebarLogo}>
@@ -240,7 +245,24 @@ function Index_evolve() {
                                   <CustomTextField id="standard-basic" label="Merek" variant="standard" />
                                 </div>
                                 <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                  <CustomTextField id="standard-basic" label="Splitter Position" variant="standard" />
+                                <InputLabel variant="standard" htmlFor="uncontrolled-native">
+                                    Splitter Position
+                                  </InputLabel>
+                                  <NativeSelect
+                                    defaultValue={10}
+                                    inputProps={{
+                                      name: 'age',
+                                      id: 'uncontrolled-native',
+                                    }}
+                                  >
+                                    <option value={10}>top left</option>
+                                    <option value={20}>top right</option>
+                                    <option value={30}>top center</option>
+                                    <option value={40}>bottom center</option>
+                                    <option value={50}>bottom left</option>
+                                    <option value={60}>bottom right</option>
+                                  </NativeSelect>
+                                  {/* <CustomTextField id="standard-basic" label="Splitter Position" variant="standard" /> */}
                                 </div>
                                 {/* {item.merek} */}
                                 {/* merk
