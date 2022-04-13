@@ -15,7 +15,11 @@ import {
     SET_SELECTED_CORE_FEEDER,
     GET_SELECTED_CORE_FEEDER,
     GET_ODC_SPLITPANEL_STATUS,
-    GET_ODC_SPLITPANEL_STATUS_SUCCESSFUL
+    GET_ODC_SPLITPANEL_STATUS_SUCCESSFUL,
+    GET_REGION_LIST,
+    GET_REGION_LIST_SUCCESSFUL,
+    GET_WITEL_LIST,
+    GET_WITEL_LIST_SUCCESSFUL,
 } from './actionTypes';
 // import firebase from '../../Firebase';
 
@@ -173,7 +177,53 @@ function* getDistributionGraph({payload:{data,token}}){
         // console.log("get feeder graph response",res)
         yield put({type:GET_GRAPH_DISTRIBUTION_SUCCESSFUL,payload:res})
     } catch (error) {
-        console.log("getfeedergraph",error)
+        console.log("getDistributionGraph",error)
+    }
+}
+function* getRegionList({payload:{token}}) {
+    console.log("region list",token)
+    var requestOptions = {
+        method: 'GET',
+        headers: {
+            "Authorization": "Bearer "+token,
+            "Content-Type":"application/json",
+        },
+        redirect: 'follow'
+      };
+    try {
+        let res;
+        if(typeof window !== 'undefined')
+        // res = yield fetch("/api/feeder-status-graph?region=&witel=&datel=&sto",requestOptions).then(res=>res.json());
+        res = yield fetch(`/api/list-region`,requestOptions).then(res=>res.json());
+        else
+        res = yield fetch(`${process.env.NEXT_PUBLIC_API_HOST}/api/list-region`,requestOptions).then(res=>res.json());
+        // console.log("get feeder graph response",res)
+        yield put({type:GET_REGION_LIST_SUCCESSFUL,payload:res})
+    } catch (error) {
+        console.log("getRegionList",error)
+    }
+}
+function* getWitelList({payload:{token}}) {
+    console.log("region list",token)
+    var requestOptions = {
+        method: 'GET',
+        headers: {
+            "Authorization": "Bearer "+token,
+            "Content-Type":"application/json",
+        },
+        redirect: 'follow'
+      };
+    try {
+        let res;
+        if(typeof window !== 'undefined')
+        // res = yield fetch("/api/feeder-status-graph?region=&witel=&datel=&sto",requestOptions).then(res=>res.json());
+        res = yield fetch(`/api/list-witel?region=`,requestOptions).then(res=>res.json());
+        else
+        res = yield fetch(`${process.env.NEXT_PUBLIC_API_HOST}/api/list-witel?region=`,requestOptions).then(res=>res.json());
+        // console.log("get feeder graph response",res)
+        yield put({type:GET_WITEL_LIST_SUCCESSFUL,payload:res})
+    } catch (error) {
+        console.log("getRegionList",error)
     }
 }
 
@@ -190,6 +240,8 @@ function* watchODCsData(){
 
     yield takeEvery(GET_ODC_SPLITPANEL_STATUS,fetchStatus)
     
+    yield takeEvery(GET_REGION_LIST,getRegionList)
+    yield takeEvery(GET_WITEL_LIST,getWitelList)
 }
 
 function* odcsSaga() {

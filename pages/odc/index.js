@@ -15,7 +15,12 @@ import {
 } from 'react-icons/md';
 import {END} from 'redux-saga';
 import { wrapper,makeStore } from "../../components/store";
-import { getODCsBox, getFeederGraph,getDistributionGraph } from '../../components/store/odcs/actions';
+import { 
+  getODCsBox, 
+  getFeederGraph,
+  getDistributionGraph,
+  getRegionList
+} from '../../components/store/odcs/actions';
 import {otpVerificationSuccessfull} from "../../components/store/login/actions";
 import withAuth from '../../components/Auth';
 const DynamicMUIDataTable = dynamic(() => import('mui-datatables'),{ ssr: false });
@@ -65,6 +70,7 @@ const CustomButton = styled(Button)(({theme})=>({
     // borderRadius:"2rem!important"
 }))
 function CustomSelect({defaultValue,data,name,onChange,onBlur}){
+  
   return <div className={styles.witel}>
       <select value={defaultValue} onChange={onChange} onBlur={onBlur} name={name}>
         {data.map(item=><option key={name+item.value} value={item.value}>{item.label}</option> )}
@@ -140,7 +146,17 @@ function a11yProps(index) {
 function ODC(props) {
   // if(typeof window !== 'undefined')
   // console.log("cookie",document.cookie.replace(/token=(\w+)/,))
-  const {data,otpVerificationSuccessfull,getFeederGraph,getDistributionGraph,feederGraph,feederGraphClient,distributionGraph,distributionGraphClient} = props
+  const {data,
+    otpVerificationSuccessfull,
+    getFeederGraph,
+    getDistributionGraph,
+    feederGraph,
+    feederGraphClient,
+    distributionGraph,
+    distributionGraphClient,
+    getRegionList,
+    regionList
+  } = props
   console.log("data",data)
   const [open, setOpen] = React.useState(data.map(item=>({status:false})));
   // const [open, setOpen] = React.useState(false);
@@ -711,7 +727,11 @@ function ODC(props) {
             // console.log("cookie",document.cookie.split(" "))
             getFeederGraph(values || { regional: '', witel: '', datel: '', sto: ''},getCookie("token"))
             getDistributionGraph(values || { regional: '', witel: '', datel: '', sto: ''},getCookie("token"))
-          }}>
+          }}
+          onChange={(values)=>{
+            console.log(values)
+          }}
+          >
           {({
             values,
             errors,
@@ -727,7 +747,7 @@ function ODC(props) {
                       defaultValue={values.regional} 
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      data={regional} 
+                      data={[...[{label:"Regional",value:""}],...regionList?.data?.map(item=>({label:item.name,value:item.id}))] || []} 
                       name='regional'
                     />
                     <CustomSelect 
@@ -953,14 +973,17 @@ export const getServerSideProps = async (props) => wrapper.getServerSideProps(st
   store.dispatch(getODCsBox())
   store.dispatch(getFeederGraph({ regional: '', witel: '', datel: '', sto: ''},req.cookies.token))
   store.dispatch(getDistributionGraph({ regional: '', witel: '', datel: '', sto: ''},req.cookies.token))
+  store.dispatch(getRegionList(req.cookies.token))
   store.dispatch(END)
   await store.sagaTask.toPromise();
   console.log("feeder graph",store.getState().ODCs.graph_feeder)
+  console.log("region list",store.getState().ODCs.region_list)
   console.log("token",req.cookies.token)
       return {
         props:{data:store.getState().ODCs.odcsBox,
           feederGraph: store.getState().ODCs.graph_feeder || {group:{idle:[],used:[],broken:[]},xaxis:[]},
-          distributionGraph: store.getState().ODCs.graph_distribution || {group:{idle:[],used:[],broken:[]},xaxis:[]}
+          distributionGraph: store.getState().ODCs.graph_distribution || {group:{idle:[],used:[],broken:[]},xaxis:[]},
+          regionList: store.getState().ODCs.region_list || [{id:0,name:""}]
         }
       }
     })(props);
@@ -973,6 +996,7 @@ otpVerificationSuccessfull,
 getODCsBox,
 getFeederGraph,
 getDistributionGraph,
+getRegionList
 // getDistributionGraph,
 }
 export default connect(mapStateToProps,mapFunctionToProps)(withAuth(ODC))

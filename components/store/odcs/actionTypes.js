@@ -17,3 +17,8 @@ export const GET_GRAPH_FEEDER_SUCCESSFUL = "get_odc_graph_feeder_successful";
 
 export const GET_GRAPH_DISTRIBUTION = "get_odc_graph_distribution";
 export const GET_GRAPH_DISTRIBUTION_SUCCESSFUL = "get_odc_graph_distribution_successful";
+
+export const GET_REGION_LIST = "get_region_list";
+export const GET_REGION_LIST_SUCCESSFUL = "get_region_list_successful";
+export const GET_WITEL_LIST = "get_witel_list";
+export const GET_WITEL_LIST_SUCCESSFUL = "get_witel_list_successful";
