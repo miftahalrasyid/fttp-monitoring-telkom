@@ -36,11 +36,7 @@ function* checklogin({payload:{email,password,history,errorState}}){
         let res;
         if(typeof window !== 'undefined')
         // res = yield fetch("/api/feeder-status-graph?region=&witel=&datel=&sto",requestOptions).then(res=>res.json());
-        res = yield fetch(`/login`,requestOptions)
-        else
-        res = yield fetch(`${process.env.NEXT_PUBLIC_API_HOST}/login`, {...requestOptions,body: formData})
-        res
-        .then(response => response.json())
+        res = yield fetch(`/login`,{...requestOptions,body: formData}).then(response => response.json())
         .then(result => {
             console.log("result", result)
             if(!result.success)
@@ -52,13 +48,22 @@ function* checklogin({payload:{email,password,history,errorState}}){
             return result
             // put(verifyUser(res.success))
         })
-        // .catch(error => {
-        //     errorState({status:true,msg: result.msg})
-        //     // put(verifyUser(false)); 
-        //     console.log('error', error)});
+        else
+        res = yield fetch(`${process.env.NEXT_PUBLIC_API_HOST}/login`, {...requestOptions,body: formData}).then(response => response.json())
+        .then(result => {
+            console.log("result", result)
+            if(!result.success)
+            errorState({status:true,msg: result.msg});
+            else
+            errorState({status:false,msg: result?.msg || ""});
+            // console.log(result);
+            // verifyUser(res.success)
+            return result
+            // put(verifyUser(res.success))
+        })
 
 
-        console.log("user saga login ",res)
+        // console.log("user saga login ",res)
         
         // yield put(verifyUser(email))
         /** dummy */
