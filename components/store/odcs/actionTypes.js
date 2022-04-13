@@ -22,3 +22,7 @@ export const GET_REGION_LIST = "get_region_list";
 export const GET_REGION_LIST_SUCCESSFUL = "get_region_list_successful";
 export const GET_WITEL_LIST = "get_witel_list";
 export const GET_WITEL_LIST_SUCCESSFUL = "get_witel_list_successful";
+export const GET_DATEL_LIST = "get_datel_list";
+export const GET_DATEL_LIST_SUCCESSFUL = "get_datel_list_successful";
+export const GET_STO_LIST = "get_sto_list";
+export const GET_STO_LIST_SUCCESSFUL = "get_sto_list_successful";

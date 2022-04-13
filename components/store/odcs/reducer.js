@@ -15,7 +15,11 @@ import { GET_SPLITTER_DATA,
   GET_REGION_LIST,
   GET_REGION_LIST_SUCCESSFUL,
   GET_WITEL_LIST,
-  GET_WITEL_LIST_SUCCESSFUL
+  GET_WITEL_LIST_SUCCESSFUL,
+  GET_DATEL_LIST,
+  GET_DATEL_LIST_SUCCESSFUL,
+  GET_STO_LIST,
+  GET_STO_LIST_SUCCESSFUL,
 } from "./actionTypes";
 import { HYDRATE } from 'next-redux-wrapper';
 const INIT_STATE = {
@@ -26,8 +30,12 @@ const INIT_STATE = {
         getSplitter:false,
         getOdcSplitpanelStatus:false,
         getRegionList:false,
-        getWitelList: false
+        getWitelList: false,
+        getDatelList: false,
+        getSTOList: false,
     },
+    sto_list:"",
+    datel_list:"",
     region_list:"",
     witel_list:"",
     graph_feeder:"",
@@ -236,6 +244,48 @@ const odcs = (state=INIT_STATE,action) => {
             getWitelList: false
           },
           witel_list: action.payload
+
+        }
+      case GET_DATEL_LIST:
+
+        return{
+          ...state,
+          loading:{
+            ...state.loading,
+            getDatelList: true
+          }
+        }
+        
+        case GET_DATEL_LIST_SUCCESSFUL:
+          
+        return{
+          ...state,
+          loading:{
+            ...state.loading,
+            getDatelList: false
+          },
+          datel_list: action.payload
+
+        }
+      case GET_STO_LIST:
+
+        return{
+          ...state,
+          loading:{
+            ...state.loading,
+            getSTOList: true
+          }
+        }
+        
+        case GET_STO_LIST_SUCCESSFUL:
+          
+        return{
+          ...state,
+          loading:{
+            ...state.loading,
+            getSTOList: false
+          },
+          sto_list: action.payload
 
         }
   

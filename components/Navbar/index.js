@@ -203,7 +203,10 @@ function Navbar(props) {
                   // {typeof odcId !== 'object' || typeof userPath !== 'object'? 
               <Link href={"/"} passHref>
                 <a className={indexStyles.logo}>
+                    {(!odcId && router.pathname.replace(/(\/.*)?\/(\S+)/,"$2") === "odc")?
+                    <span className={indexStyles.logoTxtOdc}> {`Hello, ${email.slice(0,5)}`}</span>:
                     <span className={indexStyles.logoTxt}> {(!odcId)?router.pathname.replace(/(\/.*)?\/(\S+)/,"$2").toUpperCase():odcId[0].toUpperCase()}</span>
+                    }
                     {/* <span className={indexStyles.logoTxt}> {(!odcId)?router.pathname.replace(/(\/.*)?\/(\S+)/,"$2").toUpperCase():odcId.toUpperCase()}</span> */}
                 </a>
               </Link>

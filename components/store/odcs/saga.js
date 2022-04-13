@@ -20,6 +20,10 @@ import {
     GET_REGION_LIST_SUCCESSFUL,
     GET_WITEL_LIST,
     GET_WITEL_LIST_SUCCESSFUL,
+    GET_DATEL_LIST,
+    GET_DATEL_LIST_SUCCESSFUL,
+    GET_STO_LIST,
+    GET_STO_LIST_SUCCESSFUL
 } from './actionTypes';
 // import firebase from '../../Firebase';
 
@@ -226,6 +230,52 @@ function* getWitelList({payload:{token}}) {
         console.log("getWitelList",error)
     }
 }
+function* getDatelList({payload:{token}}) {
+    console.log("Datel list",token)
+    var requestOptions = {
+        method: 'GET',
+        headers: {
+            "Authorization": "Bearer "+token,
+            "Content-Type":"application/json",
+        },
+        redirect: 'follow'
+      };
+    try {
+        let res;
+        if(typeof window !== 'undefined')
+        // res = yield fetch("/api/feeder-status-graph?region=&witel=&datel=&sto",requestOptions).then(res=>res.json());
+        res = yield fetch(`/api/list-datel?witel=`,requestOptions).then(res=>res.json());
+        else
+        res = yield fetch(`${process.env.NEXT_PUBLIC_API_HOST}/api/list-datel?witel=`,requestOptions).then(res=>res.json());
+        // console.log("get feeder graph response",res)
+        yield put({type:GET_DATEL_LIST_SUCCESSFUL,payload:res})
+    } catch (error) {
+        console.log("getDatelList",error)
+    }
+}
+function* getSTOList({payload:{token}}) {
+    console.log("STO list",token)
+    var requestOptions = {
+        method: 'GET',
+        headers: {
+            "Authorization": "Bearer "+token,
+            "Content-Type":"application/json",
+        },
+        redirect: 'follow'
+      };
+    try {
+        let res;
+        if(typeof window !== 'undefined')
+        // res = yield fetch("/api/feeder-status-graph?region=&witel=&datel=&sto",requestOptions).then(res=>res.json());
+        res = yield fetch(`/api/list-sto?datel=`,requestOptions).then(res=>res.json());
+        else
+        res = yield fetch(`${process.env.NEXT_PUBLIC_API_HOST}/api/list-sto?datel=`,requestOptions).then(res=>res.json());
+        // console.log("get feeder graph response",res)
+        yield put({type:GET_STO_LIST_SUCCESSFUL,payload:res})
+    } catch (error) {
+        console.log("getSTOList",error)
+    }
+}
 
 function* watchODCsData(){
     yield takeEvery(GET_GRAPH_FEEDER,getFeederGraph)
@@ -242,6 +292,8 @@ function* watchODCsData(){
     
     yield takeEvery(GET_REGION_LIST,getRegionList)
     yield takeEvery(GET_WITEL_LIST,getWitelList)
+    yield takeEvery(GET_DATEL_LIST,getDatelList)
+    yield takeEvery(GET_STO_LIST,getSTOList)
 }
 
 function* odcsSaga() {

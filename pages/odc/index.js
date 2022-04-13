@@ -20,7 +20,9 @@ import {
   getFeederGraph,
   getDistributionGraph,
   getRegionList,
-  getWitelList
+  getWitelList,
+  getDatelList,
+  getSTOList,
 } from '../../components/store/odcs/actions';
 import {otpVerificationSuccessfull} from "../../components/store/login/actions";
 import withAuth from '../../components/Auth';
@@ -40,6 +42,7 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import TextField from '@mui/material/TextField';
 import { Formik } from 'formik';
+import { map } from '@firebase/util';
 const CustomTextField = styled(TextField)(({ theme }) => ({
   color: theme.status.primary,
   '.MuiInputLabel-root.Mui-focused': {
@@ -158,7 +161,11 @@ function ODC(props) {
     getRegionList,
     regionList,
     getWitelList,
-    witelList
+    witelList,
+    getDatelList,
+    datelList,
+    getSTOList,
+    stoList
   } = props
   console.log("data",data)
   const [open, setOpen] = React.useState(data.map(item=>({status:false})));
@@ -711,6 +718,11 @@ function ODC(props) {
       return "";
     }
 
+    const [regionListClient,setRegionListClient] = useState("");
+    const [witelListClient,setWitelListClient] = useState("");
+    const [datelListClient,setDatelListClient] = useState("");
+    const [stoListClient,setSTOListClient] = useState("");
+
   return (<div className={styles.mainContent}>
           <div className={styles.cardWrapper}>
             <Card title='Total ODC' value='18.669' unit='unit' primaryFill={"#FF72BE"} secondaryFill={'#006ED3'}/>
@@ -724,15 +736,23 @@ function ODC(props) {
           <p className={styles.last_update}>Last Update : Minggu, 03 April 2022 - 14.30 WIB</p>
 
           <Formik 
-          initialValues={{ regional: '', witel: '', datel: '', sto: ''}}
+          initialValues={{ regional: 0, witel: 0, datel: 0, sto: 0}}
+          validate={(values)=>{
+              setWitelListClient(witelList?.data?.filter(item=>(values.regional == "0") ? item.region_id.toString() !== values.regional:item.region_id.toString() === values.regional))
+              setDatelListClient(datelList?.data?.filter(item=>(values.regional == "0") ? item.region_id.toString() !== values.regional:item.region_id.toString() === values.regional)
+              .filter(item=>(values.witel == "0") ? item.witel_id.toString() !== values.witel:item.witel_id.toString() === values.witel))
+              setSTOListClient(stoList?.data?.filter(item=>(values.regional == "0") ? item.region_id.toString() !== values.regional:item.region_id.toString() === values.regional)
+              .filter(item=>(values.witel == "0") ? item.witel_id.toString() !== values.witel:item.witel_id.toString() === values.witel)
+              .filter(item=>(values.datel == "0") ? item.datel_id.toString() !== values.datel:item.datel_id.toString() === values.datel))
+
+            // return values
+          }}
+          validateOnChange={"true"}
           onSubmit={(values)=>{
             console.log("on filter submit",values)
             // console.log("cookie",document.cookie.split(" "))
             getFeederGraph(values || { regional: '', witel: '', datel: '', sto: ''},getCookie("token"))
             getDistributionGraph(values || { regional: '', witel: '', datel: '', sto: ''},getCookie("token"))
-          }}
-          onChange={(values)=>{
-            console.log(values)
           }}
           >
           {({
@@ -750,28 +770,28 @@ function ODC(props) {
                       defaultValue={values.regional} 
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      data={[...[{label:"Regional",value:""}],...regionList?.data?.map(item=>({label:item.name,value:item.id}))] || []} 
+                      data={[...[{label:"Regional",value:0}],...regionList?.data?.map(item=>({label:item.name,value:item.id}))] || []} 
                       name='regional'
                       />
                     <CustomSelect 
                       defaultValue={values.witel} 
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      data={[...[{label:"Witel",value:""}],...witelList?.data?.map(item=>({label:item.name,value:item.id}))] || []} 
+                      data={[{label:"Witel",value:0}].concat((witelListClient )?witelListClient?.map(item=>({label:item.name,value:item.id})):witelList?.data?.map(item=>({label:item.name,value:item.id}))) || []} 
                       name='witel'
-                    />
+                      />
                     <CustomSelect 
                       defaultValue={values.datel} 
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      data={datel} 
+                      data={[{label:"Datel",value:0}].concat((datelListClient)?datelListClient?.map(item=>({label:item.name,value:item.id})):datelList?.data?.map(item=>({label:item.name,value:item.id}))) || []} 
                       name='datel'
-                    />
+                      />
                     <CustomSelect 
                       defaultValue={values.sto} 
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      data={sto} 
+                      data={[{label:"STO",value:0}].concat((stoListClient)?stoListClient?.map(item=>({label:item.name,value:item.id})):stoList?.data?.map(item=>({label:item.name,value:item.id}))) || []} 
                       name='sto'
                     />
                     <CustomButton className={classes.green} type="submit">Submit</CustomButton>
@@ -978,18 +998,24 @@ export const getServerSideProps = async (props) => wrapper.getServerSideProps(st
   store.dispatch(getDistributionGraph({ regional: '', witel: '', datel: '', sto: ''},req.cookies.token))
   store.dispatch(getRegionList(req.cookies.token))
   store.dispatch(getWitelList(req.cookies.token))
+  store.dispatch(getDatelList(req.cookies.token))
+  store.dispatch(getSTOList(req.cookies.token))
   store.dispatch(END)
   await store.sagaTask.toPromise();
   console.log("feeder graph",store.getState().ODCs.graph_feeder)
   console.log("region list",store.getState().ODCs.region_list)
-  console.log("region list",store.getState().ODCs.witel_list)
+  console.log("witel list",store.getState().ODCs.witel_list)
+  console.log("datel list",store.getState().ODCs.datel_list)
+  console.log("sto list",store.getState().ODCs.sto_list)
   console.log("token",req.cookies.token)
       return {
         props:{data:store.getState().ODCs.odcsBox,
           feederGraph: store.getState().ODCs.graph_feeder || {group:{idle:[],used:[],broken:[]},xaxis:[]},
           distributionGraph: store.getState().ODCs.graph_distribution || {group:{idle:[],used:[],broken:[]},xaxis:[]},
           regionList: store.getState().ODCs.region_list || [{id:0,name:""}],
-          witelList: store.getState().ODCs.witel_list || [{id:0,region_id: 0,name:""}]
+          witelList: store.getState().ODCs.witel_list || [{id:0,region_id: 0,name:""}],
+          datelList: store.getState().ODCs.datel_list || [{id:0,region_id: 0,witel_id: 0,name:""}],
+          stoList: store.getState().ODCs.sto_list || [{id:0,region_id: 0,witel_id: 0,datel_id: 0, name:""}]
         }
       }
     })(props);
@@ -1004,6 +1030,8 @@ getFeederGraph,
 getDistributionGraph,
 getRegionList,
 getWitelList,
+getDatelList,
+getSTOList,
 // getDistributionGraph,
 }
 export default connect(mapStateToProps,mapFunctionToProps)(withAuth(ODC))
