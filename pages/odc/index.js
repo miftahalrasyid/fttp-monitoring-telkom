@@ -13,6 +13,7 @@ import {
   MdOutlineClose,
   MdDeleteForever
 } from 'react-icons/md';
+import jwt from 'jwt-decode'
 import {END} from 'redux-saga';
 import { wrapper,makeStore } from "../../components/store";
 import { 
@@ -23,8 +24,9 @@ import {
   getWitelList,
   getDatelList,
   getSTOList,
+  changeODCPage
 } from '../../components/store/odcs/actions';
-import {otpVerificationSuccessfull} from "../../components/store/login/actions";
+import {otpVerificationSuccessfull} from "../../components/store/auth/actions";
 import withAuth from '../../components/Auth';
 const DynamicMUIDataTable = dynamic(() => import('mui-datatables'),{ ssr: false });
 import {styled } from '@mui/material/styles';
@@ -37,11 +39,13 @@ import {
   } from "@material-ui/core";
 // import { makeStyles } from '@material-ui/styles';
 import { createTheme, MuiThemeProvider,makeStyles } from "@material-ui/core/styles";
+import {createTheme as customCreateTheme, ThemeProvider} from "@mui/material/styles";
 import { Select,MenuItem, FormControl, InputLabel, Checkbox, ListItemText } from '@mui/material';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import TextField from '@mui/material/TextField';
 import { Formik } from 'formik';
+import { toast } from 'react-toastify';
 import { map } from '@firebase/util';
 const CustomTextField = styled(TextField)(({ theme }) => ({
   color: theme.status.primary,
@@ -67,9 +71,12 @@ const CustomTabs = styled(Tabs)(({theme})=>({
     backgroundColor: theme.status.primary,
   },
 }))
-const CustomButton = styled(Button)(({theme})=>({
-    // backgroundColor:"#00C092!important",
-    // padding: "6px 16px!important",
+const CustomButton = styled(Button)(({theme,btntype})=>({
+  background:btntype=="green"?theme.status.success:"transparent",
+  color:"white!important",
+  padding:"6px 16px !important",
+  borderRadius:"1rem!important"
+    // backgroundColor:"#009873!important",
     // color:"white!important",
     // borderRadius:"2rem!important"
 }))
@@ -150,7 +157,7 @@ function a11yProps(index) {
 function ODC(props) {
   // if(typeof window !== 'undefined')
   // console.log("cookie",document.cookie.replace(/token=(\w+)/,))
-  const {data,
+  const {odc_list,
     otpVerificationSuccessfull,
     getFeederGraph,
     getDistributionGraph,
@@ -165,14 +172,16 @@ function ODC(props) {
     getDatelList,
     datelList,
     getSTOList,
-    stoList
+    stoList,
+    token,
+    changeODCPage
   } = props
-  console.log("data",data)
-  const [open, setOpen] = React.useState(data.map(item=>({status:false})));
+  console.log("data",odc_list)
+  const [open, setOpen] = React.useState(odc_list.data.map(item=>({status:false})));
   // const [open, setOpen] = React.useState(false);
   console.log("modal edit",open)
   // const [openDeleteRowModal, setOpenDeleteRowModal] = React.useState(false);
-  const [openDeleteRowModal, setOpenDeleteRowModal] = React.useState(data.map(item=>({status:false})));
+  const [openDeleteRowModal, setOpenDeleteRowModal] = React.useState(odc_list.data.map(item=>({status:false})));
   const [value, setValue] = React.useState(0);
 
   const handleOpen = useCallback((row)=>{
@@ -229,87 +238,162 @@ function ODC(props) {
     // background: btnType == 'submit' ? '#1ebc51!important':theme.status.primary,
   }));
   const getMuiTheme = () =>
+  customCreateTheme({
+    status: {
+      primary: "#ee2d24!important",
+      darkgray: "darkgray!important"
+    },
+    components:{
+      MuiPaper:{
+        styleOverrides:{
+          root:{
+            // margin:"1rem 0",
+            // background: 'rgba(255,255,255,0.3)',
+            background: 'transparent',
+            // padding:'0 1rem',
+            boxShadow:"none",
+            '[class*="MUIDataTable-responsiveBase"]':{
+              padding: "0 2rem"
+            }
+          }
+        }
+      },
+      MuiPopover:{
+        styleOverrides:{
+          paper:{
+            background:"white",
+            boxShadow:"0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%)"
+          }
+        }
+      },
+      // MuiTable:{
+      //   styleOverrides:{
+      //     root:{
+      //       width: "calc(100% - 2rem)",
+      //       marginLeft: "1rem"
+      //     }
+      //   }
+      // },
+      MuiOutlinedInput:{
+        styleOverrides:{
+          root:{
+            color: "#ee2d24!important"
+          }
+        }
+      },
+      MuiTypography:{
+        styleOverrides:{
+          root:{
+            fontFamily:"'GothamRounded-Book' !important"
+          }
+        }
+      },
+      MuiButtonBase:{
+        styleOverrides:{
+          root:{
+            fontFamily:"'GothamRounded-Book' !important"
+          }
+        }
+      },
+      MuiTableRow:{
+        styleOverrides:{
+          root:{
+            color:"#ee2d24",
+            backgroundColor:"transparent"
+            // background:"rgba(255,255,255,0.3)"
+          },
+          "head":{
+            backgroundImage:"linear-gradient(to right,rgba(178,98,98,0.3),rgb(255 228 228 / 30%))",
+            backgroundImage:"linear-gradient(to right,rgb(237 167 88 / 30%),rgb(253 243 236 / 30%))",
+          },
+        }
+      },
+      MuiTableCell:{
+        styleOverrides:{
+          root:{
+            "span":{
+              display:"flex",
+              justifyContent:"center",
+            },
+          },
+          head:{
+            backgroundColor:"transparent !important",
+          }
+        }
+      },
+      MuiMenu:{
+        styleOverrides:{
+          paper:{
+            boxShadow:"0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%) !important"
+          },
+          list:{
+            background:"white",
+          }
+        }
+      },
+      MuiInput:{
+        styleOverrides:{
+          underline:{'&:after':{borderBottomColor:"#ee2d24!important"}}
+        }
+      },
+      MuiButton:{
+        styleOverrides:{
+          textPrimary:{
+            color: "#ee2d24!important"
+          }
+        }
+      },
+      MuiCheckbox:{
+        styleOverrides:{
+          colorPrimary:{
+            color:"#ee2d24!important"
+          }
+        }
+      },
+      MuiIconButton:{
+        styleOverrides:{
+          root:{
+            flex:" 0 0 auto !important",
+            color: "rgba(0, 0, 0, 0.54) !important",
+            padding:" 12px !important",
+            overflow: "visible !important",
+            fontSize: "1.5rem !important",
+            textAlign: "center !important",
+            transition: "background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms !important",
+            borderRadius:" 50% !important",
+            '&:hover': {color: '#ee2d24 !important'},
+            '&[class*="iconActive"]':{
+              color: '#ee2d24 !important'
+            }
+          },
+          
+        }
+      },
+      MuiToolbar:{
+        styleOverrides:{
+          root:{
+            
+          },
+        }
+      },
+    }
+  });
+  const getMuiThemea = () =>
   createTheme({
     status: {
       primary: "#ee2d24!important",
       darkgray: "darkgray!important"
     },
     overrides: {
-      MUIDataTable:{
-        paper:{
-          // position:'relative',
-          // top:"250px",
-          margin:"1rem 0",
-          // background: 'rgba(255,255,255,0.3)',
-          background: 'transparent',
-          padding:'0 1rem',
-          // background: 'black'
-        }
-      },
-
-      MuiOutlinedInput:{
-        root:{
-          color: "#ee2d24!important"
-        }
-      },
-      MuiTypography:{
-        root:{
-
-          fontFamily:"'GothamRounded-Book' !important"
-        }
-      },
-      MuiButtonBase:{
-        root:{
-          fontFamily:"'GothamRounded-Book' !important"
-
-        }
-      },
-      MuiTableRow:{
-        color:"#ee2d24",
-        root:{
-          backgroundColor:"transparent"
-          // background:"rgba(255,255,255,0.3)"
-        }
-      },
-      MUIDataTableHeadRow:{
-        root:{
-          backgroundImage:"linear-gradient(to right,rgba(178,98,98,0.3),rgb(255 228 228 / 30%))",
-          backgroundImage:"linear-gradient(to right,rgb(237 167 88 / 30%),rgb(253 243 236 / 30%))",
-        }
-      },
       MUIDataTableHeadCell:{
-        fixedHeader:{
-          // backgroundImage:"linear-gradient(to right,rgba(178,98,98,0.3),rgba(255,255,255,0.3))"
-
-          backgroundColor:"transparent",
-          // backgroundColor:"linear-gradient(rgba(178,98,98,0.3),rgba(255,255,255,0.3))"
-        },
         toolButton:{
           justifyContent:"center"
 
         }
       },
-      MuiInput:{
-        underline:{'&:after':{borderBottomColor:"#ee2d24!important"}}
-      },
-      MuiButton:{
-        textPrimary:{
-          color: "#ee2d24!important"
-        }
-      },
-      MuiCheckbox:{
-        colorPrimary:{
-          color:"#ee2d24!important"
-        }
-      },
       MUIDataTableToolbar:{
         icon:{'&:hover': {color: '#ee2d24'}},
         iconActive:{color:'#ee2d24'}
-      },
-      MuiPaper:{
-        root:{
-          boxShadow:"none!important"
-        }
       },
       MUIDataTableBodyCell: {
         root: {
@@ -329,17 +413,21 @@ function ODC(props) {
           if(document.querySelector('[itemref="odcDeleteModal"]'))
           document.querySelector('[itemref="odcDeleteModal"]').style.top = "50%";
         },50)
-      setDatatable(data.map((item,idx)=>([
+      setDatatable(odc_list.data.map((item,idx)=>([
         idx+1,
-        item.name,item.regional,item.witel,item.datel,item.sto,
+        item.name,
+        item.region,
+        item.witel,
+        item.datel,
+        item.sto,
         item.kapasitas,
         item.port_feeder_terminasi,
         item.core_feeder_idle,
         item.core_feeder_used,
         item.core_feeder_broken,
-        item.core_distribusi_idle,
-        item.core_distribusi_used,
-        item.core_distribusi_broken,
+        item.core_distribution_idle,
+        item.core_distribution_used,
+        item.core_distribution_broken,
         <div key={0} className={styles.tableAction}>
               <Link href={`/odc/${item.name}`} passHref>
               <a>
@@ -765,8 +853,8 @@ function ODC(props) {
           onSubmit={(values)=>{
             console.log("on filter submit",values)
             // console.log("cookie",document.cookie.split(" "))
-            getFeederGraph(values || { regional: '', witel: '', datel: '', sto: ''},getCookie("token"))
-            getDistributionGraph(values || { regional: '', witel: '', datel: '', sto: ''},getCookie("token"))
+            getFeederGraph(values || { regional: '', witel: '', datel: '', sto: ''},token)
+            getDistributionGraph(values || { regional: '', witel: '', datel: '', sto: ''},token)
 
             feederChartRef.current.innerHTML = "Feeder Mapping - "+ Object.entries(feederChartName).map(([key,value])=>{
               if(key == "regional" && value!==0)
@@ -825,7 +913,7 @@ function ODC(props) {
                       data={[{label:"STO",value:0}].concat((stoListClient)?stoListClient?.map(item=>({label:item.name,value:item.id})):stoList?.data?.map(item=>({label:item.name,value:item.id}))) || []} 
                       name='sto'
                     />
-                    <CustomButton className={classes.green} type="submit">Submit</CustomButton>
+                    <CustomButton btntype={"green"} type="submit">Submit</CustomButton>
                     {/* <CustomButton className={classes.green} type="submit" disabled={isSubmitting}>Submit</CustomButton> */}
                 </div>
                   </form>
@@ -846,177 +934,200 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
             />: <h2>No Data</h2>}
           </div>
         </div>
-        <MuiThemeProvider theme={getMuiTheme()}>
-              {/* <ThemeProvider theme={getMuiTheme()}> */}
-              {datatable ? <DynamicMUIDataTable 
-                // title={"Employee List"}
-                // options={options}
-                options={{
-                  selectableRows:false,
-                  print: false,
-                }}
-                checkboxSelection={false} 
-                data={datatable}
-                columns={[{
-                  name: "No",
-                  options:{
-                    // customBodyRender:(value, tableMeta, update) => {
-                    //   console.log("row render",tableMeta)
-                    //   let rowIndex = (tableMeta.rowData[0])?Number(tableMeta.rowIndex) + 1: "";
-                    //   return ( <span>{rowIndex}</span> )
-                    // },
-              //       filterOptions: {
-              //         display: (filterList, onChange, index, column) =>   <FormControl variant='standard'>
-              //           {console.log("column",column,filterList)}
-              //         <InputLabel htmlFor="select-multiple-chip">No</InputLabel>
-              //             <Select
-              //                 // className ={class1.A}
-              //                 multiple
-              //                 value={filterList[index]}
-              //                 renderValue={(selected) => selected.join(", ")}
-              //                 onChange={(event) => {
-              //                 filterList[index] = event.target.value;
-              //                 onChange(filterList[index], index, column);
-              //             }}
-              //             >                                                     
-              //               <MenuItem key={index} selected={true} value={"All"}  >
-              //                    {"All"}
-              //                </MenuItem>
-              //             {[1,2,3,4,5,6,7,8,9,10,11,12,13].map((name, name2) =>(
-              //                 <MenuItem key={index} value={name} >
-              //                    {name2}
-              //                </MenuItem>
-              //            ))}
-              //       </Select>
-              //  </FormControl>,
-              //       },
-              //       filterType:"custom",
-  //                   filterOptions:{
-  //                     display: (filterList, onChange, index, column) => {
-  //       return (
-  //         index
-  //  )
-  //                 }
-  //                   }
+        {/* <MuiThemeProvider theme={getMuiTheme()}> */}
+        <div className={styles.table}>
+            <ThemeProvider theme={getMuiTheme()}>
+            {datatable ? <DynamicMUIDataTable 
+              // title={"Employee List"}
+              // options={options}
+              options={{
+                selectableRows:"none",
+                print: false,
+                rowsPerPage: 5,
+                rowsPerPageOptions:[5,10,25,50,100],
+                onTableChange: (action, tableState) => {
+                  console.log(action, tableState);
+          
+                  // a developer could react to change on an action basis or
+                  // examine the state as a whole and do whatever they want
+          
+                  switch (action) {
+                    case 'changePage':
+                      changeODCPage(tableState.page,tableState.rowsPerPage, tableState.sortOrder,token,toast)
+                      // this.changePage(tableState.page, tableState.sortOrder);
+                      break;
+                    case 'sort':
+                      // this.sort(tableState.page, tableState.sortOrder);
+                      break;
+                    default:
+                      console.log('action not handled.');
                   }
-                },{
-                  name: "ODC Name",
-                  options:{
-                    customBodyRender:(value, tableMeta, update) => {
-                      let newValue = tableMeta.rowData[1]
-                      return ( <span>{newValue}</span> )
-                    }
+                },
+              }}
+              checkboxSelection={false} 
+              data={datatable}
+              columns={[{
+                name: "No",
+                options:{
+                  // customBodyRender:(value, tableMeta, update) => {
+                  //   console.log("row render",tableMeta)
+                  //   let rowIndex = (tableMeta.rowData[0])?Number(tableMeta.rowIndex) + 1: "";
+                  //   return ( <span>{rowIndex}</span> )
+                  // },
+            //       filterOptions: {
+            //         display: (filterList, onChange, index, column) =>   <FormControl variant='standard'>
+            //           {console.log("column",column,filterList)}
+            //         <InputLabel htmlFor="select-multiple-chip">No</InputLabel>
+            //             <Select
+            //                 // className ={class1.A}
+            //                 multiple
+            //                 value={filterList[index]}
+            //                 renderValue={(selected) => selected.join(", ")}
+            //                 onChange={(event) => {
+            //                 filterList[index] = event.target.value;
+            //                 onChange(filterList[index], index, column);
+            //             }}
+            //             >                                                     
+            //               <MenuItem key={index} selected={true} value={"All"}  >
+            //                    {"All"}
+            //                </MenuItem>
+            //             {[1,2,3,4,5,6,7,8,9,10,11,12,13].map((name, name2) =>(
+            //                 <MenuItem key={index} value={name} >
+            //                    {name2}
+            //                </MenuItem>
+            //            ))}
+            //       </Select>
+            //  </FormControl>,
+            //       },
+            //       filterType:"custom",
+//                   filterOptions:{
+//                     display: (filterList, onChange, index, column) => {
+//       return (
+//         index
+//  )
+//                 }
+//                   }
+                }
+              },{
+                name: "ODC Name",
+                options:{
+                  customBodyRender:(value, tableMeta, update) => {
+                    let newValue = tableMeta.rowData[1]
+                    return ( <span style={{whiteSpace:"nowrap"}}>{newValue}</span>)
                   }
-                },{
-                  name: "Regional",
-                  options:{
-                    customBodyRender:(value, tableMeta, update) => {
-                      let newValue = tableMeta.rowData[2]
-                      return ( <span>{newValue}</span> )
-                    }
+                }
+              },{
+                name: "Regional",
+                options:{
+                  customBodyRender:(value, tableMeta, update) => {
+                    let newValue = tableMeta.rowData[2]
+                    return ( <span>{newValue}</span> )
                   }
-                },{
-                  name: "WITEL",
-                  options:{
-                    customBodyRender:(value, tableMeta, update) => {
-                      let newValue = tableMeta.rowData[3]
-                      return ( <span>{newValue}</span> )
-                    }
+                }
+              },{
+                name: "WITEL",
+                options:{
+                  customBodyRender:(value, tableMeta, update) => {
+                    let newValue = tableMeta.rowData[3]
+                    return ( <span>{newValue}</span> )
                   }
-                },{
-                  name: "DATEL",
-                  options:{
-                    customBodyRender:(value, tableMeta, update) => {
-                      let newValue = tableMeta.rowData[4]
-                      return ( <span>{newValue}</span> )
-                    }
+                }
+              },{
+                name: "DATEL",
+                options:{
+                  customBodyRender:(value, tableMeta, update) => {
+                    let newValue = tableMeta.rowData[4]
+                    return ( <span>{newValue}</span> )
                   }
-                },{
-                  name: "STO",
-                  options:{
-                    customBodyRender:(value, tableMeta, update) => {
-                      let newValue = tableMeta.rowData[5]
-                      return ( <span>{newValue}</span> )
-                    }
+                }
+              },{
+                name: "STO",
+                options:{
+                  customBodyRender:(value, tableMeta, update) => {
+                    let newValue = tableMeta.rowData[5]
+                    return ( <span>{newValue}</span> )
                   }
-                },{
+                }
+              },{
 
-                  name: "Kapasitas",
-                  options:{
-                    customBodyRender:(value, tableMeta, update) => {
-                      let newValue = tableMeta.rowData[6]
-                      return ( <span>{newValue}</span> )
-                    }
+                name: "Kapasitas",
+                options:{
+                  customBodyRender:(value, tableMeta, update) => {
+                    let newValue = tableMeta.rowData[6]
+                    return ( <span>{newValue}</span> )
                   }
-                },{
-                  name: "Port Feeder Terminasi",
-                  options:{
-                    customBodyRender:(value, tableMeta, update) => {
-                      let newValue = tableMeta.rowData[7]
-                      return ( <span>{newValue}</span> )
-                    }
+                }
+              },{
+                name: "Port Feeder Terminasi",
+                options:{
+                  customBodyRender:(value, tableMeta, update) => {
+                    let newValue = tableMeta.rowData[7]
+                    return ( <span>{newValue}</span> )
                   }
-                },{
-                  name: "Core Feeder Idle",
-                  options:{
-                    customBodyRender:(value, tableMeta, update) => {
-                      let newValue = tableMeta.rowData[8]
-                      return ( <span>{newValue}</span> )
-                    }
+                }
+              },{
+                name: "Core Feeder Idle",
+                options:{
+                  customBodyRender:(value, tableMeta, update) => {
+                    let newValue = tableMeta.rowData[8]
+                    return ( <span>{newValue}</span> )
                   }
-                },{
-                  name: "Core Feeder Used",
-                  options:{
-                    customBodyRender:(value, tableMeta, update) => {
-                      let newValue = tableMeta.rowData[9]
-                      return ( <span>{newValue}</span> )
-                    }
+                }
+              },{
+                name: "Core Feeder Used",
+                options:{
+                  customBodyRender:(value, tableMeta, update) => {
+                    let newValue = tableMeta.rowData[9]
+                    return ( <span>{newValue}</span> )
                   }
-                },{
-                  name: "Core Feeder Broken",
-                  options:{
-                    customBodyRender:(value, tableMeta, update) => {
-                      let newValue = tableMeta.rowData[10]
-                      return ( <span>{newValue}</span> )
-                    }
+                }
+              },{
+                name: "Core Feeder Broken",
+                options:{
+                  customBodyRender:(value, tableMeta, update) => {
+                    let newValue = tableMeta.rowData[10]
+                    return ( <span>{newValue}</span> )
                   }
-                },{
-                  name: "Core Distribusi Idle",
-                  options:{
-                    customBodyRender:(value, tableMeta, update) => {
-                      let newValue = tableMeta.rowData[11]
-                      return ( <span>{newValue}</span> )
-                    }
+                }
+              },{
+                name: "Core Distribusi Idle",
+                options:{
+                  customBodyRender:(value, tableMeta, update) => {
+                    let newValue = tableMeta.rowData[11]
+                    return ( <span>{newValue}</span> )
                   }
-                },{
-                  name: "Core Distribusi Used",
-                  options:{
-                    customBodyRender:(value, tableMeta, update) => {
-                      let newValue = tableMeta.rowData[12]
-                      return ( <span>{newValue}</span> )
-                    }
+                }
+              },{
+                name: "Core Distribusi Used",
+                options:{
+                  customBodyRender:(value, tableMeta, update) => {
+                    let newValue = tableMeta.rowData[12]
+                    return ( <span>{newValue}</span> )
                   }
-                },{
-                  name: "Core Distribusi Broken",
-                  options:{
-                    customBodyRender:(value, tableMeta, update) => {
-                      let newValue = tableMeta.rowData[13]
-                      return ( <span>{newValue}</span> )
-                    }
+                }
+              },{
+                name: "Core Distribusi Broken",
+                options:{
+                  customBodyRender:(value, tableMeta, update) => {
+                    let newValue = tableMeta.rowData[13]
+                    return ( <span>{newValue}</span> )
                   }
-                },{
-                  name: "Aksi",
-                  options:{
-                    customBodyRender:(value, tableMeta, update) => {
-                      let newValue = tableMeta.rowData[14]
-                      return ( <span>{newValue}</span> )
-                    }
-                  }
-                }]}
-                />:null}
-                
-              {/* </ThemeProvider> */}
-              </MuiThemeProvider>
+                }
+              },{
+                name: "Aksi",
+                options:{
+                  customBodyRender:(value, tableMeta, update) => {
+                    let newValue = tableMeta.rowData[14]
+                    return ( <span>{newValue}</span> )
+                  },
+                  filter:false
+                }
+              }]}
+              />:null}
+              
+            </ThemeProvider>
+        </div>
+              {/* </MuiThemeProvider> */}
       <div className={styles.odcBackdrop}>
         <Image src={'/img/backdrop_odc.jpeg'} width={1440} height={1213} alt={"backdrop"}/>
       </div>
@@ -1024,7 +1135,15 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
   )
 }
 export const getServerSideProps = async (props) => wrapper.getServerSideProps(store => async ({req, res, ...etc}) => {
+  if(!req.cookies.token)
+  return {
+    redirect:{
+      permanent:false,
+      destination: "/"
+    }
+  }
   store.dispatch(getODCsBox())
+  store.dispatch(changeODCPage(1,10, {name:"",direction:"asc"},req.cookies.token,toast))
   store.dispatch(getFeederGraph({ regional: '', witel: '', datel: '', sto: ''},req.cookies.token))
   store.dispatch(getDistributionGraph({ regional: '', witel: '', datel: '', sto: ''},req.cookies.token))
   store.dispatch(getRegionList(req.cookies.token))
@@ -1038,9 +1157,15 @@ export const getServerSideProps = async (props) => wrapper.getServerSideProps(st
   console.log("witel list",store.getState().ODCs.witel_list)
   console.log("datel list",store.getState().ODCs.datel_list)
   console.log("sto list",store.getState().ODCs.sto_list)
+  console.log("odc page",store.getState().ODCs.odc_page)
   console.log("token",req.cookies.token)
       return {
-        props:{data:store.getState().ODCs.odcsBox,
+        props:{
+          odc_list:store.getState().ODCs.odc_page || {isLoading: false,page: 1, sortOrder: {name:"",direction:"asc"},data:[],count:0},
+          // data:store.getState().ODCs.odcsBox,
+          token: req.cookies.token,
+          email: jwt(req.cookies.token).email,
+          role_name: jwt(req.cookies.token).role_name,
           feederGraph: store.getState().ODCs.graph_feeder || {group:{idle:[],used:[],broken:[]},xaxis:[]},
           distributionGraph: store.getState().ODCs.graph_distribution || {group:{idle:[],used:[],broken:[]},xaxis:[]},
           regionList: store.getState().ODCs.region_list || [{id:0,name:""}],
@@ -1063,6 +1188,7 @@ getRegionList,
 getWitelList,
 getDatelList,
 getSTOList,
+changeODCPage,
 // getDistributionGraph,
 }
 export default connect(mapStateToProps,mapFunctionToProps)(withAuth(ODC))

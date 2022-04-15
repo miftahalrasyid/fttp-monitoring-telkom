@@ -126,7 +126,7 @@ function a11yProps(index) {
 
 function Navbar(props) {
   const odc_edit_modal = useRef(null);
-  const { dataClient,odcData } = props;
+  const { dataClient,odcData,email,role_name } = props;
   // console.log("raw data",dataClient,props)
   const router = useRouter();
   const {odcId,userPath} = router.query;
@@ -194,7 +194,7 @@ function Navbar(props) {
     }
     return "";
   }
-  const {email,role_name} = (typeof window !== "undefined") ? jwt(getCookie("token")) : {email:"",role_name:""};
+  // const {email,role_name} = (typeof window !== "undefined") ? jwt(getCookie("token")) : {email:"",role_name:""};
 // console.log("odcid",odcId)
   return  <nav id={indexStyles.topBar}>
       {/* <div className='container-fluid'></div> */}

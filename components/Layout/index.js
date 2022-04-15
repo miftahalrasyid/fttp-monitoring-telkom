@@ -14,7 +14,8 @@ export default function Layout(props) {
     //         <Footer/>
     //     </div>
     // }
-    const {children,data} = props;
+    const {children,data,getSTOList,email,role_name} = props;
+    console.log("email",email)
 
     const [closeState,setCloseState] = useState(true);
     const closeMenu = useCallback(event=>{
@@ -29,9 +30,9 @@ export default function Layout(props) {
     },[closeState])
   
     return <div className={styles.layoutWrapper}>
-        <Sidebar/>
+        <Sidebar odcProps={getSTOList}/>
         <div className={styles.topGap}>
-            <Navbar odcData={data}/>
+            <Navbar odcData={data} email={email} role_name={role_name}/>
 
             {children}
             <div className={styles.overlay} onClick={closeMenu}></div>

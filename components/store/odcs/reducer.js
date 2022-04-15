@@ -20,6 +20,9 @@ import { GET_SPLITTER_DATA,
   GET_DATEL_LIST_SUCCESSFUL,
   GET_STO_LIST,
   GET_STO_LIST_SUCCESSFUL,
+  GET_ODC_PAGE,
+  GET_ODC_PAGE_SUCCESSFUL,
+  GET_ODC_PAGE_FAILED
 } from "./actionTypes";
 import { HYDRATE } from 'next-redux-wrapper';
 const INIT_STATE = {
@@ -33,7 +36,9 @@ const INIT_STATE = {
         getWitelList: false,
         getDatelList: false,
         getSTOList: false,
+        getODCPage:false,
     },
+    odc_page:"",
     sto_list:"",
     datel_list:"",
     region_list:"",
@@ -286,6 +291,38 @@ const odcs = (state=INIT_STATE,action) => {
             getSTOList: false
           },
           sto_list: action.payload
+
+        }
+
+        case GET_ODC_PAGE:
+          
+        return{
+          ...state,
+          loading:{
+            ...state.loading,
+            getODCPage: true
+          }
+        }
+        
+        case GET_ODC_PAGE_SUCCESSFUL:
+          console.log("odc page successful")
+        return{
+          ...state,
+          loading:{
+            ...state.loading,
+            getODCPage: false
+          },
+          odc_page: {...action.payload,loading:state.loading.getODCPage}
+
+        }
+        case GET_ODC_PAGE_FAILED:
+          console.log("odc page failed")
+        return{
+          ...state,
+          loading:{
+            ...state.loading,
+            getODCPage: false
+          },
 
         }
   

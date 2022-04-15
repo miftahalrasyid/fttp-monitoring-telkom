@@ -12,7 +12,8 @@ import {
     GET_REGION_LIST,
     GET_WITEL_LIST,
     GET_DATEL_LIST,
-    GET_STO_LIST
+    GET_STO_LIST,
+    GET_ODC_PAGE
 } from './actionTypes'
 export const getSplitterData = () =>({
     type: GET_SPLITTER_DATA,
@@ -67,3 +68,7 @@ export const getSTOList = (token) => ({
     type: GET_STO_LIST,
     payload: {token}
 });
+export const changeODCPage = (page,rowsPerPage,sortOrder,token,toast) => ({
+    type: GET_ODC_PAGE,
+    payload: {page,rowsPerPage,sortOrder,token,toast}
+})

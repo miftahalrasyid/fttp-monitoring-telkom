@@ -133,6 +133,14 @@
     color:#e33e3e;
     margin-bottom: 0.5rem;
 }
+.validationOnSubmit{
+    color:#e33e3e;
+    text-align: center;
+    height: 15px;
+    margin-top: -1rem;
+    padding-bottom:2rem;
+    box-sizing: border-box;
+}
 .inputLabel{
     margin:0.5rem 0;
 }

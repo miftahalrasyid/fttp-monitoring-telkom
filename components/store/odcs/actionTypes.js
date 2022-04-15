@@ -26,3 +26,7 @@ export const GET_DATEL_LIST = "get_datel_list";
 export const GET_DATEL_LIST_SUCCESSFUL = "get_datel_list_successful";
 export const GET_STO_LIST = "get_sto_list";
 export const GET_STO_LIST_SUCCESSFUL = "get_sto_list_successful";
+
+export const GET_ODC_PAGE = "get_odc_page";
+export const GET_ODC_PAGE_SUCCESSFUL = "get_odc_page_successful";
+export const GET_ODC_PAGE_FAILED = "get_odc_page_failed";

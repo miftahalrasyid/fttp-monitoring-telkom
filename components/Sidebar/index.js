@@ -43,7 +43,11 @@ const CustomTabs = styled(Tabs)(({theme})=>({
     backgroundColor: theme.status.primary,
   },
 }))
-const CustomButton = styled(Button)(({theme})=>({
+const CustomButton = styled(Button)(({theme,btntype})=>({
+  background:btntype=="green"?theme.status.success:theme.status.primary,
+  color:"white!important",
+  width:"170px",
+  borderRadius:"1rem!important"
     // backgroundColor:"#009873!important",
     // color:"white!important",
     // borderRadius:"2rem!important"
@@ -57,7 +61,8 @@ const CustomButtonModal = styled(Button)(({ theme, btnType }) => ({
       'aria-controls': `simple-tabpanel-${index}`,
     };
   }
-function Index_evolve() {
+function Index_evolve({odcProps}) {
+    console.log("odc props",odcProps)
     const router = useRouter();
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
@@ -66,7 +71,10 @@ function Index_evolve() {
     const handleChange = (event, newValue) => {
         setValue(newValue);
       };
-      
+    const handleLogout = () =>{
+      document.cookie = 'token=; Max-Age=0'
+      router.push("/")
+    }
     const useStyles = makeStyles(theme => ({
         green: {
             backgroundColor:"#009873!important",
@@ -111,7 +119,12 @@ function Index_evolve() {
 
         console.log("token",document.cookie)
       }
-      const {role_name} = (typeof window !== 'undefined') ? jwt(getCookie("token")): { role_name: ""}
+      const [role_name,setRole] = useState("")
+      useEffect(()=>{
+        setRole(jwt(getCookie("token")).role_name)
+        
+      },[])
+      // const {role_name} = (typeof window !== 'undefined') ? jwt(getCookie("token")): { role_name: ""}
       // const {role_name} = jwt(getCookie("token"));
   return (
     <div className={`${styles.verticalMenu}`}>
@@ -172,7 +185,7 @@ function Index_evolve() {
 
           <p>
 
-            <CustomButton className={classes.green} onClick={handleOpen} variant='contained' > Tambah ODC</CustomButton>
+            <CustomButton btntype={"green"} onClick={handleOpen} variant='contained' > Tambah ODC</CustomButton>
             <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description">
                  <div>
@@ -220,6 +233,9 @@ function Index_evolve() {
                         aria-labelledby={`simple-tab-${0}`}
                         // {...other}
                       >
+                        {/* <Formik >
+
+                        </Formik> */}
                         {value === 0 && (
                           <div className='row'>
                             {/* <Typography> */}
@@ -244,7 +260,7 @@ function Index_evolve() {
                                 <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
                                   <CustomTextField id="standard-basic" label="Merek" variant="standard" />
                                 </div>
-                                <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                {/* <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
                                 <InputLabel variant="standard" htmlFor="uncontrolled-native">
                                     Splitter Position
                                   </InputLabel>
@@ -262,8 +278,8 @@ function Index_evolve() {
                                     <option value={50}>bottom left</option>
                                     <option value={60}>bottom right</option>
                                   </NativeSelect>
+                                </div> */}
                                   {/* <CustomTextField id="standard-basic" label="Splitter Position" variant="standard" /> */}
-                                </div>
                                 {/* {item.merek} */}
                                 {/* merk
                                   deploymentDate
@@ -338,9 +354,7 @@ function Index_evolve() {
               </Modal>
         </p>
         <p>
-            <CustomButton className={classes.red} onClick={()=>{
-                    router.push("/")
-                    }} variant='contained' > Sign Out</CustomButton>
+            <CustomButton onClick={handleLogout} variant='contained' > Sign Out</CustomButton>
         </p>
           </div>
       </div>
@@ -351,5 +365,11 @@ function Index_evolve() {
 </div>
   )
 }
+const mapStateToProps = state =>({
+
+});
+const mapDispatchToProps = {
+
+};
 
 export default Index_evolve

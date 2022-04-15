@@ -22,7 +22,7 @@ const INIT_STATE = {
     openOtpService: false,
     openConfirmationPage:false
 }
-const login = (state=INIT_STATE,action)=>{
+const auth = (state=INIT_STATE,action)=>{
     switch (action.type) {
         case LOGIN_CHECK:
             
@@ -131,4 +131,4 @@ const login = (state=INIT_STATE,action)=>{
             return state;
     }
 }
-export default login;
+export default auth;

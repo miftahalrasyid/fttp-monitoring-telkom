@@ -23,7 +23,10 @@ import {
     GET_DATEL_LIST,
     GET_DATEL_LIST_SUCCESSFUL,
     GET_STO_LIST,
-    GET_STO_LIST_SUCCESSFUL
+    GET_STO_LIST_SUCCESSFUL,
+    GET_ODC_PAGE,
+    GET_ODC_PAGE_SUCCESSFUL,
+    GET_ODC_PAGE_FAILED
 } from './actionTypes';
 // import firebase from '../../Firebase';
 
@@ -277,6 +280,52 @@ function* getSTOList({payload:{token}}) {
     }
 }
 
+function* getODCPage({payload:{page,rowsPerPage,sortOrder,token,toast}}) {
+    var requestOptions = {
+        method: 'GET',
+        headers: {
+            "Authorization": "Bearer "+token,
+            "Content-Type":"application/json",
+        },
+        redirect: 'follow'
+      };
+    try {
+        let res;
+        res = yield fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/api/odc-paginate?limit=${rowsPerPage}&offset=${page!==0?page:1}&region=&witel&datel&sto`,requestOptions).then(res=>res.json()).then(result => {
+            // console.log("result true", result.data)
+            if(!result.success){
+                console.log("result false", result)
+                put({type:GET_ODC_PAGE_FAILED,payload:result.msg})
+                toast.error(result.msg, {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
+            }
+            else if(result.success){
+                console.log("result true", result.data)
+                return {success:result.success,data:result.data,count:result.data.length,sortOrder,page}
+            }
+        });
+        if(res.success)
+        yield put({type:GET_ODC_PAGE_SUCCESSFUL,payload:res})
+    } catch (error) {
+        toast.error("Maaf, ada kesalahan teknis", {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+        });
+    }
+}
+
 function* watchODCsData(){
     yield takeEvery(GET_GRAPH_FEEDER,getFeederGraph)
     yield takeEvery(GET_GRAPH_DISTRIBUTION,getDistributionGraph)
@@ -294,6 +343,8 @@ function* watchODCsData(){
     yield takeEvery(GET_WITEL_LIST,getWitelList)
     yield takeEvery(GET_DATEL_LIST,getDatelList)
     yield takeEvery(GET_STO_LIST,getSTOList)
+    
+    yield takeEvery(GET_ODC_PAGE,getODCPage)
 }
 
 function* odcsSaga() {

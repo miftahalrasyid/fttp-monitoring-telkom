@@ -764,7 +764,7 @@ export const getServerSideProps = async (props) => wrapper.getServerSideProps(st
     // const { token } = /authUserToken=(?<token>\S+)/g.exec(req.headers.cookie)?.groups || {token: ""} ;
     const {params:{odcId=[]}} = props;
     store.dispatch(getOcdSplitpanelStatus(odcId[0]))
-    store.dispatch(getUserData())
+    // store.dispatch(getUserData())
     store.dispatch(END)
     await store.sagaTask.toPromise();
     console.log("user data",store.getState().Users)
