@@ -1,4 +1,4 @@
-import React from 'react'
+import React,{useCallback, useState, useEffect} from 'react'
 import withAuth from '../../components/Auth';
 import {Modal,Box,FormControl,InputLabel,NativeSelect, Typography} from '@material-ui/core';
 import { createTheme, MuiThemeProvider,styled } from "@material-ui/core/styles";
@@ -8,7 +8,8 @@ import jwt from 'jwt-decode';
 import { 
   styled as styledCustom
 } from "@mui/material/styles";
-import { toast } from 'react-toastify';
+import {ToastContainer, toast } from 'react-toastify';
+
 const DynamicMUIDataTable = dynamic(() => import('mui-datatables'),{ ssr: false });
 import {
   MdOutlineDateRange,
@@ -19,7 +20,7 @@ import {
 } from 'react-icons/md';
 import {connect} from 'react-redux';
 import odcStyles from '../odc/odc.module.css';
-import {getUserData} from '../../components/store/users/actions'
+import {getUserData,addNewUser} from '../../components/store/users/actions'
 import { wrapper } from '../../components/store';
 import { END } from 'redux-saga';
 import {
@@ -27,6 +28,7 @@ import {
   } from "@material-ui/core";
 // import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
+import { Formik } from 'formik';
 
 const CustomButtonModal = styledCustom(Button)(({ theme, btnType }) => ({
   background: btnType == 'submit' ? theme.status.success:theme.status.primary,
@@ -80,9 +82,15 @@ customCreateTheme({
           background: 'transparent',
           // padding:'0 1rem',
           boxShadow:"none",
-          // '[class*="MUIDataTable-responsiveBase"]':{
-          //   padding: "0 0.5rem"
-          // }
+          ".MuiList-root":{
+            width: "100%"
+          },
+          ".MuiMenuItem-root":{
+            width: "100%",
+            display: "flex",
+            paddingTop: "8px",
+            paddingBottom: "8px",
+          }
         }
       }
     },
@@ -209,13 +217,34 @@ customCreateTheme({
 
 function User({user_list}) {
   const [datatable, setDatatable] = React.useState([[]])
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  var [error, setError] = useState({status:false,msg:""});
+  const [open, setOpen] = React.useState(user_list.data.map(item=>({status:false})));
+  const handleOpen = useCallback((row)=>{
+    setOpen(prev=>{
+      prev[row].status = true;
+      return {...prev}
+    });
+  },[setOpen])
+  const handleClose = useCallback((row)=>{
+    setOpen(prev=>{
+      prev[row].status = false;
+      return {...prev}
+    });
+  },[setOpen])
 
-  const [openDeleteRowModal, setOpenDeleteRowModal] = React.useState(false);
-  const deleteRowHandleOpen = () => setOpenDeleteRowModal(true);
-  const deleteRowHandleClose = () => setOpenDeleteRowModal(false);
+  const [openDeleteRowModal, setOpenDeleteRowModal] = React.useState(user_list.data.map(item=>({status:false})));
+  const deleteRowHandleOpen = useCallback((row)=>{
+    setOpenDeleteRowModal(prev=>{
+      prev[row].status = true;
+      return {...prev}
+    })
+  },[setOpenDeleteRowModal])
+  const deleteRowHandleClose = useCallback((row)=>{
+    setOpenDeleteRowModal(prev=>{
+      prev[row].status = false;
+      return {...prev}
+    })
+  },[setOpenDeleteRowModal])
 
   React.useEffect(()=>{
     setTimeout(()=>{
@@ -224,18 +253,18 @@ function User({user_list}) {
       if(document.querySelector('[itemref="userDeleteModal"]'))
       document.querySelector('[itemref="userDeleteModal"]').style.top = "50%";
     },50);
-  setDatatable(user_list?.data?.map(item=>([
+  setDatatable(user_list?.data?.map((item,idx)=>([
     item.email,
     item.role_name,
     item.user_status,
     <div key={0} className={odcStyles.tableAction}>
-        <CustomButton onClick={handleOpen} variant='text'>
+        <CustomButton onClick={()=>handleOpen(idx)} variant='text'>
           <MdRemoveRedEye fill='#3124c1'/>
         </CustomButton>
-        <CustomButton onClick={deleteRowHandleOpen} variant='text'>
+        <CustomButton onClick={()=>deleteRowHandleOpen(idx)} variant='text'>
            <MdDeleteForever fill='#B10040'/>
         </CustomButton>
-        <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title"
+        <Modal open={open[idx].status} onClose={()=>handleClose(idx)} aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description">
                                   <div>
               <div className={odcStyles.closebtn}>
@@ -269,6 +298,7 @@ function User({user_list}) {
                       </div>
                     </div>
                     <div className={`${odcStyles.cardBody} card-body row ${odcStyles.customCardBodyUser}`}>
+                      <Formik>
                       <div className={`row ${odcStyles.formGap}`}>
                         {/* <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
                           <CustomTextField id="standard-basic" label="Name" variant="standard" defaultValue={item.name} />
@@ -314,6 +344,8 @@ function User({user_list}) {
                             defaultValue={item.status} />
                         </div> */}
                       </div>
+
+                      </Formik>
                     <div className={odcStyles.actionContainer}>
                       <div className='col-md-6'>
                         <div className='row'>
@@ -324,7 +356,7 @@ function User({user_list}) {
                               </CustomButtonModal>
                             </div>
                             <div className={`col-md-12 col-lg-4 `}>
-                              <CustomButtonModal onClick={()=>handleClose()}>
+                              <CustomButtonModal onClick={()=>handleClose(idx)}>
                                 {"Cancel"}
                               </CustomButtonModal>
                             </div>
@@ -336,7 +368,7 @@ function User({user_list}) {
                   </Box>
               </div>
         </Modal>
-        <Modal open={openDeleteRowModal} onClose={deleteRowHandleClose} >
+        <Modal open={openDeleteRowModal[idx].status} onClose={()=>deleteRowHandleClose(idx)} >
         <div>
               <div className={odcStyles.closebtn}>
                 <MdOutlineClose/>
@@ -381,7 +413,7 @@ function User({user_list}) {
                                 </CustomButtonModal>
                               </div>
                               <div >
-                                <CustomButtonModal onClick={()=>deleteRowHandleClose()}>
+                                <CustomButtonModal onClick={()=>deleteRowHandleClose(idx)} >
                                   {"Cancel"}
                                 </CustomButtonModal>
                               </div>
@@ -398,18 +430,34 @@ function User({user_list}) {
         </Modal>
       </div>
   ])))
+
 },[user_list,open,openDeleteRowModal])
+/** error condition */
+useEffect(()=>{
+  console.log("user_liset",user_list)
+  if(!user_list.success){
+    console.log(user_list.msg)
+    console.log(toast)
+    toast.error(user_list.msg, {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
+  }
+},[user_list]);
   return (<div className={odcStyles.mainContent}>
+    {/* <ToastContainer/> */}
     {/* <div className={`container-fluid`}>
       <div className='row'>
         <div className="col-lg-12 col-md-12">
           <div className={`${odcStyles.card}`}> */}
-            <div className={`${odcStyles.cardHeader} ${odcStyles.cardHeaderPrimary}`}>
+            {/* <div className={`${odcStyles.cardHeader} ${odcStyles.cardHeaderPrimary}`}>
               <h4 className={odcStyles.cardTitle}>User Management</h4>
-              {/* <div className={odcStyles.stats}>
-                <MdOutlineDateRange width={16} height={"auto"} /> Last 24 Hours
-              </div> */}
-            </div>
+            </div> */}
             
             <div className="card-body table-responsive">
             <ThemeProvider theme={getMuiTheme()}>
@@ -425,7 +473,7 @@ function User({user_list}) {
             
                     switch (action) {
                       case 'changePage':
-                        getUserData(tableState.page,tableState.rowsPerPage, tableState.sortOrder,token,toast)
+                        getUserData(tableState.page,tableState.rowsPerPage, tableState.sortOrder,token)
                         // this.changePage(tableState.page, tableState.sortOrder);
                         break;
                       case 'sort':
@@ -503,7 +551,7 @@ export const getServerSideProps = async (props) => wrapper.getServerSideProps(st
       destination: "/"
     }
   }
-  store.dispatch(getUserData(1,10, {name:"",direction:"asc"},req.cookies.token,toast))
+  store.dispatch(getUserData(1,10, {name:"",direction:"asc"},req.cookies.token))
   store.dispatch(END)
   await store.sagaTask.toPromise();
 
@@ -517,11 +565,21 @@ export const getServerSideProps = async (props) => wrapper.getServerSideProps(st
     }
   //     }
   //     else{
+    console.log("user list",store.getState()?.Users?.userData)
           return {
-              props:{ user_list: store.getState().Users.userData},
+              props:{ 
+                user_list: store.getState()?.Users?.userData || {data:[],count:0,sortOrder:{name:"",direction:"asc"},page:1},
+                token: req.cookies.token
+              },
           } 
 
       // }
     })(props);
+const mapStateToProps = state =>({
 
-export default withAuth(User)
+})
+
+const mapDispatchToProps = {
+  addNewUser
+}
+export default connect(mapStateToProps,mapDispatchToProps)(withAuth(User))

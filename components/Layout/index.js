@@ -14,7 +14,7 @@ export default function Layout(props) {
     //         <Footer/>
     //     </div>
     // }
-    const {children,data,getSTOList,email,role_name} = props;
+    const {children,data,getSTOList,email,role_name,token} = props;
     console.log("email",email)
 
     const [closeState,setCloseState] = useState(true);
@@ -32,7 +32,7 @@ export default function Layout(props) {
     return <div className={styles.layoutWrapper}>
         <Sidebar odcProps={getSTOList}/>
         <div className={styles.topGap}>
-            <Navbar odcData={data} email={email} role_name={role_name}/>
+            <Navbar odcData={data} email={email} role_name={role_name} token={token}/>
 
             {children}
             <div className={styles.overlay} onClick={closeMenu}></div>

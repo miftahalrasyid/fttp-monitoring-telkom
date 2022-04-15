@@ -254,6 +254,15 @@ function ODC(props) {
             boxShadow:"none",
             '[class*="MUIDataTable-responsiveBase"]':{
               padding: "0 2rem"
+            },
+            ".MuiList-root":{
+              width: "100%"
+            },
+            ".MuiMenuItem-root":{
+              width: "100%",
+              display: "flex",
+              paddingTop: "8px",
+              paddingBottom: "8px",
             }
           }
         }

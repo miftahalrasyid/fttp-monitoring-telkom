@@ -72,6 +72,10 @@
 .userContainer .userDetail span{
     font-size: 0.8rem;
 }
+.validation{
+    color:#e33e3e;
+    margin-bottom: 0.5rem;
+}
 @media (max-width: 1080px){
 .userContainer{
     display:none;
