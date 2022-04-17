@@ -29,6 +29,7 @@ import Button from '@mui/material/Button';
 //     MdDeleteForever
 //   } from 'react-icons/md';
   import { createTheme, MuiThemeProvider,styled } from "@material-ui/core/styles";
+  import {createTheme as customCreateTheme, ThemeProvider} from "@mui/material/styles";
   const DynamicMUIDataTable = dynamic(() => import('mui-datatables'),{ ssr: false });
 import {
     getOcdSplitpanelStatus
@@ -54,50 +55,199 @@ import {
 //     },
 //   }))
 
+  // const getMuiTheme = () =>
+  // createTheme({
+  //   CustomButtonActivityLog: {
+  //     primary: "#ee2d24!important",
+  //     darkgray: "darkgray!important"
+  //   },
+  //   overrides: {
+  //     MuiOutlinedInput:{
+  //       root:{
+  //         color: "#ee2d24!important"
+  //       }
+  //     },
+  //     MuiTableRow:{
+  //       color:"#ee2d24",
+  //     },
+  //     MuiInput:{
+  //       underline:{'&:after':{borderBottomColor:"#ee2d24!important"}}
+  //     },
+  //     MuiButton:{
+  //       textPrimary:{
+  //         color: "#ee2d24!important"
+  //       }
+  //     },
+  //     MuiCheckbox:{
+  //       colorPrimary:{
+  //         color:"#ee2d24!important"
+  //       }
+  //     },
+  //     MUIDataTableToolbar:{
+  //       icon:{'&:hover': {color: '#ee2d24'}},
+  //       iconActive:{color:'#ee2d24'}
+  //     },
+  //     MuiPaper:{
+  //       root:{
+  //         boxShadow:"none!important"
+  //       }
+  //     },
+  //     MUIDataTableBodyCell: {
+  //       root: {
+  //         whiteSpace: "nowrap"
+  //       },
+  //     },
+  //   },
+  // });
+
   const getMuiTheme = () =>
-  createTheme({
-    CustomButtonActivityLog: {
-      primary: "#ee2d24!important",
-      darkgray: "darkgray!important"
+customCreateTheme({
+  status: {
+    success: "#009873!important",
+    primary: "#B10040!important",
+    darkgray: "darkgray!important"
+  },
+  components:{
+    MuiPaper:{
+      styleOverrides:{
+        root:{
+          // margin:"1rem 0",
+          // background: 'rgba(255,255,255,0.3)',
+          background: 'transparent',
+          // padding:'0 1rem',
+          boxShadow:"none",
+          ".MuiList-root":{
+            width: "100%"
+          },
+          ".MuiMenuItem-root":{
+            width: "100%",
+            display: "flex",
+            paddingTop: "8px",
+            paddingBottom: "8px",
+          }
+        }
+      }
     },
-    overrides: {
-      MuiOutlinedInput:{
+      MuiPopover:{
+        styleOverrides:{
+          paper:{
+            background:"white",
+            boxShadow:"0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%)"
+          }
+        }
+      },
+    // MuiTable:{
+    //   styleOverrides:{
+    //     root:{
+    //       width: "calc(100% - 2rem)",
+    //       marginLeft: "1rem"
+    //     }
+    //   }
+    // },
+    MuiOutlinedInput:{
+      styleOverrides:{
         root:{
           color: "#ee2d24!important"
         }
+      }
+    },
+    MuiTypography:{
+      styleOverrides:{
+        root:{
+          fontFamily:"'GothamRounded-Book' !important"
+        }
+      }
+    },
+    MuiButtonBase:{
+      styleOverrides:{
+        root:{
+          fontFamily:"'GothamRounded-Book' !important"
+        }
+      }
+    },
+    MuiTableRow:{
+      styleOverrides:{
+        root:{
+          color:"#ee2d24",
+          backgroundColor:"transparent"
+          // background:"rgba(255,255,255,0.3)"
+        },
+        "head":{
+          backgroundImage:"linear-gradient(to right,rgba(178,98,98,0.3),rgb(255 228 228 / 30%))",
+          backgroundImage:"linear-gradient(to right,rgb(237 167 88 / 30%),rgb(253 243 236 / 30%))",
+        },
+      }
+    },
+    MuiTableCell:{
+      styleOverrides:{
+        root:{
+          "span":{
+            display:"flex",
+            justifyContent:"center",
+          },
+        },
+        head:{
+          backgroundColor:"transparent !important",
+        }
+      }
+    },
+      MuiMenu:{
+        styleOverrides:{
+          paper:{
+            boxShadow:"0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%) !important"
+          },
+          list:{
+            background:"white",
+          }
+        }
       },
-      MuiTableRow:{
-        color:"#ee2d24",
-      },
-      MuiInput:{
+    MuiInput:{
+      styleOverrides:{
         underline:{'&:after':{borderBottomColor:"#ee2d24!important"}}
-      },
-      MuiButton:{
+      }
+    },
+    MuiButton:{
+      styleOverrides:{
         textPrimary:{
           color: "#ee2d24!important"
         }
-      },
-      MuiCheckbox:{
+      }
+    },
+    MuiCheckbox:{
+      styleOverrides:{
         colorPrimary:{
           color:"#ee2d24!important"
         }
-      },
-      MUIDataTableToolbar:{
-        icon:{'&:hover': {color: '#ee2d24'}},
-        iconActive:{color:'#ee2d24'}
-      },
-      MuiPaper:{
-        root:{
-          boxShadow:"none!important"
-        }
-      },
-      MUIDataTableBodyCell: {
-        root: {
-          whiteSpace: "nowrap"
-        },
-      },
+      }
     },
-  });
+    MuiIconButton:{
+      styleOverrides:{
+        root:{
+          flex:" 0 0 auto !important",
+          color: "rgba(0, 0, 0, 0.54) !important",
+          padding:" 12px !important",
+          overflow: "visible !important",
+          fontSize: "1.5rem !important",
+          textAlign: "center !important",
+          transition: "background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms !important",
+          borderRadius:" 50% !important",
+          '&:hover': {color: '#ee2d24 !important'},
+          '&[class*="iconActive"]':{
+            color: '#ee2d24 !important'
+          }
+        },
+        
+      }
+    },
+    MuiToolbar:{
+      styleOverrides:{
+        root:{
+          
+        },
+      }
+    },
+  }
+});
 function Odc({
     data:ODCData,
     userData
@@ -685,8 +835,8 @@ function Odc({
                               </div> */}
                           </div>
                               <div className="card-body table-responsive">
-                                  <MuiThemeProvider theme={getMuiTheme()}>
-                                  {/* <ThemeProvider theme={getMuiTheme()}> */}
+                                  {/* <MuiThemeProvider theme={getMuiTheme()}> */}
+                                  <ThemeProvider theme={getMuiTheme()}>
                                   {datatable ? <DynamicMUIDataTable 
                                       // title={"Employee List"}
                                       // options={options}
@@ -748,8 +898,8 @@ function Odc({
                                         }]}
                                       />:null}
                                       
-                                  {/* </ThemeProvider> */}
-                                  </MuiThemeProvider>
+                                  </ThemeProvider>
+                                  {/* </MuiThemeProvider> */}
                               </div>
                       </div>
                   </div>
@@ -764,7 +914,7 @@ export const getServerSideProps = async (props) => wrapper.getServerSideProps(st
     // const { token } = /authUserToken=(?<token>\S+)/g.exec(req.headers.cookie)?.groups || {token: ""} ;
     const {params:{odcId=[]}} = props;
     store.dispatch(getOcdSplitpanelStatus(odcId[0]))
-    // store.dispatch(getUserData())
+    store.dispatch(getUserData())
     store.dispatch(END)
     await store.sagaTask.toPromise();
     console.log("user data",store.getState().Users)
@@ -784,7 +934,7 @@ export const getServerSideProps = async (props) => wrapper.getServerSideProps(st
         }
         else{
             return {
-                props:{ data: selectedOdcSplitpanelStatus, userData: store.getState().Users.userData},
+                props:{ data: selectedOdcSplitpanelStatus, userData: store.getState().Users.userData.data},
                 // props:{ data: odcsBox,splitterData,coreFeederData},
                 // revalidate:60,
             } 

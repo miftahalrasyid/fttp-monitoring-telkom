@@ -824,12 +824,12 @@ function ODC(props) {
     const distribusiChartRef = useRef(null);
     useEffect(()=>{
       console.log(feederChartName)
-      console.log(Object.entries(feederChartName).map(([key,value])=>{
-        if(key == "regional" && value!==0)
+      console.log("filter change",Object.entries(feederChartName).map(([key,value])=>{
+        if(key == "regional" && value!=0)
         return key+" "+regionList?.data.filter(item=>item.id.toString() == value)[0]?.name || ""
-        if(key == "witel" && value!==0)
+        if(key == "witel" && value!=0)
         return key+" "+witelList?.data.filter(item=>item.id.toString() == value)[0]?.name || ""
-        if(key == "datel" && value!==0)
+        if(key == "datel" && value!=0)
         return key+" "+datelList?.data.filter(item=>item.id.toString() == value)[0]?.name || ""
       }))
     },[feederChartName])
@@ -866,19 +866,19 @@ function ODC(props) {
             getDistributionGraph(values || { regional: '', witel: '', datel: '', sto: ''},token)
 
             feederChartRef.current.innerHTML = "Feeder Mapping - "+ Object.entries(feederChartName).map(([key,value])=>{
-              if(key == "regional" && value!==0)
+              if(key == "regional" && value!=0)
               return key+" "+regionList?.data.filter(item=>item.id.toString() == value)[0]?.name || ""
-              if(key == "witel" && value!==0)
+              if(key == "witel" && value!=0)
               return key+" "+witelList?.data.filter(item=>item.id.toString() == value)[0]?.name || ""
-              if(key == "datel" && value!==0)
+              if(key == "datel" && value!=0)
               return key+" "+datelList?.data.filter(item=>item.id.toString() == value)[0]?.name || ""
             }).filter(x=>x!==undefined).join(" - ");
             distribusiChartRef.current.innerHTML = "Distribution Mapping - "+ Object.entries(feederChartName).map(([key,value])=>{
-              if(key == "regional" && value!==0)
+              if(key == "regional" && value!=0)
               return key+" "+regionList?.data.filter(item=>item.id.toString() == value)[0]?.name || ""
-              if(key == "witel" && value!==0)
+              if(key == "witel" && value!=0)
               return key+" "+witelList?.data.filter(item=>item.id.toString() == value)[0]?.name || ""
-              if(key == "datel" && value!==0)
+              if(key == "datel" && value!=0)
               return key+" "+datelList?.data.filter(item=>item.id.toString() == value)[0]?.name || ""
             }).filter(x=>x!==undefined).join(" - ");
           }}

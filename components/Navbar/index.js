@@ -189,28 +189,28 @@ function Navbar(props) {
   /** add users confirmation */
   const [error,setError] = useState();
   useEffect(()=>{
-    console.log("error",error)
-    if(!error?.success)
-    toast.error(error?.msg, {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
-    else{
-      toast.success(add_user_confirmation.msg, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-    }
+    console.log("error",error,add_user_confirmation)
+    // if(!error?.success)
+    // toast.error(error?.msg, {
+    //   position: "top-right",
+    //   autoClose: 5000,
+    //   hideProgressBar: false,
+    //   closeOnClick: true,
+    //   pauseOnHover: true,
+    //   draggable: true,
+    //   progress: undefined,
+    // });
+    // if(add_user_confirmation.success){
+    //   toast.success(add_user_confirmation.msg, {
+    //     position: "top-right",
+    //     autoClose: 5000,
+    //     hideProgressBar: false,
+    //     closeOnClick: true,
+    //     pauseOnHover: true,
+    //     draggable: true,
+    //     progress: undefined,
+    //   });
+    // }
     // document.body.append(<ToastContainer style={{zIndex:"99999999999"}}/>)
   },[error])
   // const {email,role_name} = (typeof window !== "undefined") ? jwt(getCookie("token")) : {email:"",role_name:""};
@@ -524,7 +524,7 @@ function Navbar(props) {
                         return errors;
                       }}
                       onSubmit={(values,{setSubmitting})=>{
-                        addNewUser(values.email,values.password,values.role,token,setSubmitting,setError)
+                        addNewUser(values.email,values.password,values.role,token,setSubmitting,handleAddUserClose,toast)
                       }}
                       >
                         {({
@@ -558,6 +558,7 @@ function Navbar(props) {
                         id="standard-basic" 
                         label="Password" 
                         onChange={handleChange}
+                        type={"password"}
                         onBlur={handleBlur} 
                         name="password" 
                         variant="standard" 

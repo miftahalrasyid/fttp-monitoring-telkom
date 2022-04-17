@@ -4,16 +4,21 @@ import {
     GET_USER_DATA_SUCCESSFUL,
     ADD_USER_DATA,
     ADD_USER_DATA_SUCCESSFUL,
-    ADD_USER_DATA_FAILED
+    ADD_USER_DATA_FAILED,
+    DELETE_USER_DATA,
+    DELETE_USER_DATA_SUCCESSFUL,
+    DELETE_USER_DATA_FAILED
 } from './actionTypes'
 import { HYDRATE } from 'next-redux-wrapper';
 const INIT_STATE = {
     loading:{
         getUser:false,
-        addUser:false
+        addUser:false,
+        deleteUser:false
     },
     userData:"",
-    add_user:""
+    add_user:"",
+    delete_user:""
 }
 
 const user = (state=INIT_STATE,action) => {
@@ -31,7 +36,8 @@ const user = (state=INIT_STATE,action) => {
                 loading: {
                     ...state.loading,
                     getUser:true
-                }
+                },
+                userData:"",
             };
         case GET_USER_DATA_SUCCESSFUL:
             
@@ -79,6 +85,34 @@ const user = (state=INIT_STATE,action) => {
                     addUser:false
                 },
                 add_user: action.payload
+            };
+        case DELETE_USER_DATA:
+            
+            return {
+                ...state,
+                loading: {
+                    ...state.loading,
+                    deleteUser:true
+                }
+            };
+        case DELETE_USER_DATA_SUCCESSFUL:
+            
+            return {
+                ...state,
+                loading: {
+                    ...state.loading,
+                    deleteUser:false
+                },
+                delete_user: action.payload
+            };
+        case DELETE_USER_DATA_FAILED:
+            return {
+                ...state,
+                loading: {
+                    ...state.loading,
+                    deleteUser:false
+                },
+                delete_user: action.payload
             };
     
         default:

@@ -5,6 +5,8 @@
     overflow: scroll;
     width: 100%;
     min-height: calc(100vh - 123px);
+    overflow: scroll;
+    height: calc(100vh - 120px);
 }
 .content{
     width: 1323px;
