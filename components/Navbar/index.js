@@ -167,6 +167,7 @@ function Navbar(props) {
  const handleClose = () => setOpen(false);
  const [value, setValue] = React.useState(0);
  const handleChange = (event, newValue) => {
+   console.log("new value",newValue)
    setValue(newValue);
   };
   useEffect(()=>{
@@ -319,116 +320,129 @@ function Navbar(props) {
                     </div>
                     <div className={odcStyles.tabLink}>
                     </div>
-                    <div
-                      role="tabpanel"
-                      hidden={value !== 0}
-                      id={`simple-tabpanel-${0}`}
-                      aria-labelledby={`simple-tab-${0}`}
+                    <Formik
+                    initialValues={{}}
                     >
-                      {value === 0 && (
-                        <div className={`row ${odcStyles.formGap}`}>
-                            <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
-                              <CustomTextField id="odcName" label="Nama ODC" variant="standard" defaultValue={odcData.odc_id}/>
-                            </div>
-                            <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                              <CustomTextField id="standard-basic" label="Regional" variant="standard" />
-                            </div>
-                            <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                              <CustomTextField id="standard-basic" label="WITEL" variant="standard" />
-                            </div>
-                            <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                              <CustomTextField id="standard-basic" label="DATEL" variant="standard" />
-                            </div>
-                            <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                              <CustomTextField id="standard-basic" label="STO" variant="standard" />
-                            </div>
-                            <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
-                              <CustomTextField id="standard-basic" label="Kapasitas" variant="standard" defaultValue={odcData.capacity}/>
-                            </div>
-                            <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
-                              <CustomTextField id="standard-basic" label="Merek" variant="standard" defaultValue={odcData.merek}/>
-                            </div>
-                            
-                                <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                <InputLabel variant="standard" htmlFor="uncontrolled-native">
-                                    Splitter Position
-                                  </InputLabel>
-                                  <NativeSelect
-                                    defaultValue={10}
-                                    inputProps={{
-                                      name: 'age',
-                                      id: 'uncontrolled-native',
-                                    }}
-                                  >
-                                    <option value={10}>top left</option>
-                                    <option value={20}>top right</option>
-                                    <option value={30}>top center</option>
-                                    <option value={40}>bottom center</option>
-                                    <option value={50}>bottom left</option>
-                                    <option value={60}>bottom right</option>
-                                  </NativeSelect>
-                                  {/* <CustomTextField id="standard-basic" label="Splitter Position" variant="standard" /> */}
-                                </div>
-                                {/* {item.merek} */}
-                                {/* merk
-                                  deploymentDate
-                                  core
-                                  rakOa
-                                  panelOa
-                                  port */}
+                      {({
+                        values,
+                        handleSubmit,
+                        handleChange,
+                        handleBlur
+                      })=>(
+                        <form className={odcStyles.form} onSubmit={handleSubmit}>
+                        <div
+                          role="tabpanel"
+                          hidden={value !== 0}
+                          id={`simple-tabpanel-${0}`}
+                          aria-labelledby={`simple-tab-${0}`}
+                        >
+                          {value === 0 && (
+                            <div className={`row ${odcStyles.formGap}`}>
                                 <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
-                                  <CustomTextField id="standard-basic" label="Deployment Date" color='primary'
-                                    variant="standard" defaultValue={odcData.deployment_date}/>
+                                  <CustomTextField id="odcName" label="Nama ODC" variant="standard" defaultValue={odcData.odc_id}/>
                                 </div>
-                            
+                                <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                  <CustomTextField id="standard-basic" label="Regional" variant="standard" />
+                                </div>
+                                <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                  <CustomTextField id="standard-basic" label="WITEL" variant="standard" />
+                                </div>
+                                <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                  <CustomTextField id="standard-basic" label="DATEL" variant="standard" />
+                                </div>
+                                <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                  <CustomTextField id="standard-basic" label="STO" variant="standard" />
+                                </div>
+                                <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
+                                  <CustomTextField id="standard-basic" label="Kapasitas" variant="standard" defaultValue={odcData.capacity}/>
+                                </div>
+                                <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
+                                  <CustomTextField id="standard-basic" label="Merek" variant="standard" defaultValue={odcData.merek}/>
+                                </div>
+                                
+                                    {/* <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                    <InputLabel variant="standard" htmlFor="uncontrolled-native">
+                                        Splitter Position
+                                      </InputLabel>
+                                      <NativeSelect
+                                        defaultValue={10}
+                                        inputProps={{
+                                          name: 'age',
+                                          id: 'uncontrolled-native',
+                                        }}
+                                      >
+                                        <option value={10}>top left</option>
+                                        <option value={20}>top right</option>
+                                        <option value={30}>top center</option>
+                                        <option value={40}>bottom center</option>
+                                        <option value={50}>bottom left</option>
+                                        <option value={60}>bottom right</option>
+                                      </NativeSelect>
+                                    </div> */}
+
+                                      {/* <CustomTextField id="standard-basic" label="Splitter Position" variant="standard" /> */}
+                                    {/* {item.merek} */}
+                                    {/* merk
+                                      deploymentDate
+                                      core
+                                      rakOa
+                                      panelOa
+                                      port */}
+                                    <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
+                                      <CustomTextField id="standard-basic" label="Deployment Date" color='primary'
+                                        variant="standard" defaultValue={odcData.deployment_date}/>
+                                    </div>
+                                
+                            </div>
+                          )}
                         </div>
+                        <div
+                          role="tabpanel"
+                          hidden={value !== 1}
+                          id={`simple-tabpanel-${1}`}
+                          aria-labelledby={`simple-tab-${1}`}
+                        >
+                          {value === 1 && (
+                            <div className={`row ${odcStyles.formGap}`}>
+                              <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                <CustomTextField id="standard-basic" label="Port Feeder Terminasi" variant="standard" defaultValue={odcData.core}/>
+                              </div>
+                              <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
+                                <CustomTextField id="standard-basic" label="Rak OA" variant="standard" defaultValue={odcData.rak_oa}/>
+                              </div>
+                              <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
+                                <CustomTextField id="standard-basic" label="Panel" variant="standard" defaultValue={odcData.panel_oa}/>
+                              </div>
+                              <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
+                                <CustomTextField id="standard-basic" label="Port" color='primary'
+                                  variant="standard" defaultValue={odcData.port}/>
+                              </div>
+                          </div>
+                          )}
+                        </div>
+                        </form>
                       )}
-                    </div>
-                    <div
-                      role="tabpanel"
-                      hidden={value !== 1}
-                      id={`simple-tabpanel-${1}`}
-                      aria-labelledby={`simple-tab-${1}`}
-                    >
-                      {value === 1 && (
-                        <div className={`row ${odcStyles.formGap}`}>
-                          <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                            <CustomTextField id="standard-basic" label="Port Feeder Terminasi" variant="standard" defaultValue={odcData.core}/>
-                          </div>
-                          <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
-                            <CustomTextField id="standard-basic" label="Rak OA" variant="standard" defaultValue={odcData.rak_oa}/>
-                          </div>
-                          <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
-                            <CustomTextField id="standard-basic" label="Panel" variant="standard" defaultValue={odcData.panel_oa}/>
-                          </div>
-                          <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
-                            <CustomTextField id="standard-basic" label="Port" color='primary'
-                              variant="standard" defaultValue={odcData.port}/>
-                          </div>
-                      </div>
-                      )}
-                    </div>
-                    
+                    </Formik>
                     </div>
                     <div className={odcStyles.actionContainer}>
-                    <CustomButtonModal onClick={(ev)=>handleChange(ev,value-1)} style={{visibility:(value<=0)?"hidden":"visible"}} variant="contained" color='primary' size="large">
+                    <CustomButtonModal onClick={(ev)=>handleChange(ev,value-1)} style={{visibility:(value<=0)?"hidden":"visible"}} variant="contained" color='primary' size="medium">
                     Prev
                   </CustomButtonModal>
                   <div className='row'>
                     <div className='col-md-12 col-lg-6'> 
-                    {(value>0) && <CustomButtonModal btntype={'submit'} onClick={(ev)=>(value>0)?handleOpen:handleChange(ev,value+1)}  variant="contained" color='primary' size="large">
+                    {(value>0) && <CustomButtonModal btntype={'submit'} onClick={(ev)=>(value>0)?handleOpen:handleChange(ev,value+1)}  variant="contained" color='primary' size="medium">
                       Submit
                       </CustomButtonModal>}
                     </div>
                     <div className='col-md-12 col-lg-6'> 
-                    {(value>0) && <CustomButtonModal onClick={()=>handleClose()}  variant="contained" color='primary' size="large">
+                    {(value>0) && <CustomButtonModal onClick={()=>handleClose()}  variant="contained" color='primary' size="medium">
                         Cancel
                         </CustomButtonModal>}
                     </div>
                   </div>
                   <div>
 
-                   <CustomButtonModal style={{visibility: (value>0)?"hidden":"visible"}} onClick={(ev)=>(value>0)?handleOpen:handleChange(ev,value+1)}  variant="contained" color='primary' size="large">
+                   <CustomButtonModal style={{visibility: (value>0)?"hidden":"visible"}} onClick={(ev)=>(value>0)?handleOpen:handleChange(ev,value+1)}  variant="contained" color='primary' size="medium">
                    {(value<=0)? "Next":""}
                   </CustomButtonModal>
                   </div>

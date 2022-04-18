@@ -37,10 +37,13 @@ import {
   Modal,
   Typography
   } from "@material-ui/core";
+import {
+  Button as newButton
+} from '@mui/material'
 // import { makeStyles } from '@material-ui/styles';
 import { createTheme, MuiThemeProvider,makeStyles } from "@material-ui/core/styles";
 import {createTheme as customCreateTheme, ThemeProvider} from "@mui/material/styles";
-import { Select,MenuItem, FormControl, InputLabel, Checkbox, ListItemText } from '@mui/material';
+// import { Select,MenuItem, FormControl, InputLabel, Checkbox, ListItemText } from '@mui/material';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import TextField from '@mui/material/TextField';
@@ -174,6 +177,7 @@ function ODC(props) {
     getSTOList,
     stoList,
     token,
+    odc_list_client,
     changeODCPage
   } = props
   console.log("data",odc_list)
@@ -210,8 +214,9 @@ function ODC(props) {
   },[setOpenDeleteRowModal])
   // const deleteRowHandleOpen = () => setOpenDeleteRowModal(true);
   // const deleteRowHandleClose = () => setOpenDeleteRowModal(false);
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
+  const handleOnChange = (event,newValue,setValues) => {
+    setValues(prev=>({...prev,tabs: newValue}));
+    // handleChange(event,newValue)
   };
   const useStyles = makeStyles(theme => ({
     green: {
@@ -233,15 +238,21 @@ function ODC(props) {
     {label: "4",value:1},
     {label: "2",value:2},
   ]
-  const CustomButtonModal = styled(Button)(({ theme, btnType }) => ({
-    background: btnType == 'submit' ? theme.status.success:theme.status.primary,
-    // background: btnType == 'submit' ? '#1ebc51!important':theme.status.primary,
-  }));
+  const CustomButtonModal = styled(newButton)(({ theme, btntype }) => {
+    // console.log("custom button modal", theme, etc)
+    return {
+    background: btntype == 'submit' ? theme.status.success:theme.status.primary,
+    color:"white!important",
+  }});
   const getMuiTheme = () =>
   customCreateTheme({
     status: {
-      primary: "#ee2d24!important",
-      darkgray: "darkgray!important"
+      primary: "#B10040!important",
+      warning: "#fb8c00!important",
+      // success: "#43a047!important",
+      success: "#009873!important",
+      darkgray: "darkgray!important",
+      info: "#1976d2!important"
     },
     components:{
       MuiPaper:{
@@ -437,249 +448,40 @@ function ODC(props) {
         item.core_distribution_idle,
         item.core_distribution_used,
         item.core_distribution_broken,
-        <div key={0} className={styles.tableAction}>
-              <Link href={`/odc/${item.name}`} passHref>
-              <a>
-            <CustomButton>
-                <MdOpenInBrowser fill='#009873' />
-            </CustomButton>
-              </a>
-              </Link>
-            <CustomButton onClick={()=>handleOpen(idx)} variant='text'>
-              <MdRemoveRedEye fill='#3124c1'/>
-            </CustomButton>
-            <CustomButton onClick={()=>deleteRowHandleOpen(idx)} variant='text'>
-              <MdDeleteForever fill='#B10040'/>
-            </CustomButton>
-            {/* <CustomButton onClick={()=>deleteRow(item.id)} variant='text'>
-              <MdDeleteForever />
-            </CustomButton> */}
-            <Modal open={open[idx].status} onClose={()=>handleClose(idx)} aria-labelledby="modal-modal-title"
-                    aria-describedby="modal-modal-description">
-                                      <div>
-                  <div className={styles.closebtn}>
-                    <MdOutlineClose/>
-                  </div>
-                    <Box itemRef='odcDetailModal' sx={{
-                      position: "absolute",
-                      top: "48%",
-                      left: "50%",
-                      transition: 'all 0.3s ease-out',
-                      transform: "translate(-50%, -50%)",
-                      border: 0,
-                      /* margin-bottom: 30px;
-                      margin-top: 30px; */
-                      borderRadius: "6px",
-                      color: "#333",
-                      // background: "#fff",
-                      width:"90%",
-                      maxWidth: "600px",
-                      boxShadow: "0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 20%), 0 1px 5px 0 rgb(0 0 0 / 12%)",
-                      boxShadow: "0 1px 4px 0 rgb(0 0 0 / 14%)",
-                    }}>
-                    {/* <Box sx={styles.card}> */}
-                      <div className={`${styles.card}  ${styles.cardStats}`}>
-                        <div className={`${styles.cardHeader} ${styles.cardHeaderPrimary}`}>
-                          <h4 className={styles.cardTitle}>{item.name.toUpperCase()}</h4>
-                          <div className={styles.stats}>
-                            {/* <MdOutlineDateRange width={16} height={"auto"} />  */}
-                            lengkapi semua isian yang ada
-                          </div>
-                        </div>
-                        <div className={`${styles.cardBody} card-body row`}>
-                        <div className={styles.tabLink}>
-                          <CustomTabs value={value} onChange={handleChange} aria-label="basic tabs example">
-                            <CustomTab label="ODC" {...a11yProps(0)} />
-                            <CustomTab label="OA" {...a11yProps(1)} />
-                          </CustomTabs>
-                        </div>
-                        <div className={styles.tabLink}>
-                        </div>
-                        <div
-                          role="tabpanel"
-                          hidden={value !== 0}
-                          id={`simple-tabpanel-${0}`}
-                          aria-labelledby={`simple-tab-${0}`}
-                          // {...other}
-                        >
-                          {value === 0 && (
-                            <div className={`row ${styles.formGap}`}>
-                              {/* <Typography> */}
-                                <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                  <CustomTextField id="standard-basic" label="Nama ODC" variant="standard" defaultValue={item.name}/>
-                                </div>
-                                <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                  <CustomTextField id="standard-basic" label="Regional" variant="standard" defaultValue={item.regional}/>
-                                </div>
-                                <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                  <CustomTextField id="standard-basic" label="WITEL" variant="standard" defaultValue={item.witel}/>
-                                </div>
-                                <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                  <CustomTextField id="standard-basic" label="DATEL" variant="standard" defaultValue={item.datel}/>
-                                </div>
-                                <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                  <CustomTextField id="standard-basic" label="STO" variant="standard" defaultValue={item.sto}/>
-                                </div>
-                                <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                  <CustomTextField id="standard-basic" label="Kapasitas" variant="standard" defaultValue={item.kapasitas}/>
-                                </div>
-                                <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                  <CustomTextField id="standard-basic" label="Merek" variant="standard" defaultValue={item.merk}/>
-                                </div>
-                                <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                  <InputLabel variant="standard" htmlFor="uncontrolled-native">
-                                    Splitter Position
-                                  </InputLabel>
-                                  <NativeSelect
-                                    defaultValue={10}
-                                    inputProps={{
-                                      name: 'age',
-                                      id: 'uncontrolled-native',
-                                    }}
-                                  >
-                                    <option value={10}>top left</option>
-                                    <option value={20}>top right</option>
-                                    <option value={30}>top center</option>
-                                    <option value={40}>bottom center</option>
-                                    <option value={50}>bottom left</option>
-                                    <option value={60}>bottom right</option>
-                                  </NativeSelect>
-                                </div>
-                                {/* {item.merek} */}
-                                {/* merk
-                                  deploymentDate
-                                  core
-                                  rakOa
-                                  panelOa
-                                  port */}
-                                <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                  <CustomTextField id="standard-basic" label="Deployment Date" color='primary'
-                                    variant="standard" defaultValue={item.deploymentDate}/>
-                                </div>
-                              {/* </Typography> */}
-                            </div>
-                          )}
-                        </div>
-                        <div
-                          role="tabpanel"
-                          hidden={value !== 1}
-                          id={`simple-tabpanel-${1}`}
-                          aria-labelledby={`simple-tab-${1}`}
-                          // {...other}
-                        >
-                          {value === 1 && (
-                            <div className={`row ${styles.formGap}`}>
-                            {/* <Typography> */}
-                              <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                <CustomTextField id="standard-basic" label="Port Feeder Terminasi" variant="standard" defaultValue={item.port_feeder_terminasi}/>
-                              </div>
-                              <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                <CustomTextField id="standard-basic" label="Rak OA" variant="standard" defaultValue={item.rak_OA}/>
-                              </div>
-                              <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                <CustomTextField id="standard-basic" label="Panel" variant="standard" defaultValue={item.panel}/>
-                              </div>
-                              <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                <CustomTextField id="standard-basic" label="Port" color='primary'
-                                  variant="standard" defaultValue={item.port}/>
-                              </div>
-                            {/* </Typography> */}
-                          </div>
-                          )}
-                        </div>
-                        
-                        </div>
-                        <div className={styles.actionContainer}>
-                          <CustomButtonModal onClick={(ev)=>handleChange(ev,value-1)}
-                            style={{visibility:(value<=0)?"hidden":"visible"}} variant="contained" color='primary'
-                            size="large">
-                            Prev
-                          </CustomButtonModal>
-                          <div className='row'>
-                            <div className='col-md-12 col-lg-6'>
-                              {(value>0) && <CustomButtonModal btnType={"submit"} onClick={(ev)=>
-                                (value>0)?handleOpen:handleChange(ev,value+1)} variant="contained" color='primary'
-                                size="large">
-                                Submit
-                              </CustomButtonModal>}
-                            </div>
-                            <div className='col-md-12 col-lg-6'>
-                              {(value>0) && <CustomButtonModal onClick={()=>handleClose(idx)} variant="contained"
-                                color='primary' size="large">
-                                Cancel
-                              </CustomButtonModal>}
-                            </div>
-                          </div>
-                          <CustomButtonModal style={{visibility: (value>0)?"hidden":"visible"}} onClick={(ev)=>(value>0)?handleOpen:handleChange(ev,value+1)}  variant="contained" color='primary' size="large">
-                          {(value<=0)? "Next":""}
-                          </CustomButtonModal>
-                        </div>
-                      </div>
-                    </Box>
-                  </div>
-                  </Modal>
-            <Modal open={openDeleteRowModal[idx].status} onClose={()=>deleteRowHandleClose(idx)} >
-            <div>
-                  <div className={styles.closebtn}>
-                    <MdOutlineClose/>
-                  </div>
-                    <Box itemRef='odcDeleteModal' sx={{
-                      position: "absolute",
-                      top: "48%",
-                      left: "50%",
-                      transition: 'all 0.3s ease-out',
-                      transform: "translate(-50%, -50%)",
-                      border: 0,
-                      /* margin-bottom: 30px;
-                      margin-top: 30px; */
-                      borderRadius: "6px",
-                      color: "#333",
-                      // background: "#fff",
-                      width:"90%",
-                      maxWidth: "480px",
-                      boxShadow: "0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 20%), 0 1px 5px 0 rgb(0 0 0 / 12%)",
-                      boxShadow: "0 1px 4px 0 rgb(0 0 0 / 14%)",
-                    }}>
-                      <div className={`${styles.card}  ${styles.cardStats}`}>
-                        <div className={`${styles.cardHeader} ${styles.cardHeaderPrimary}`}>
-                          <h4 className={styles.cardTitle}>{"Konfirmasi Delete"}</h4>
-                          <div className={styles.stats}>
-                            proses ini akan menghapus data odc secara permanen. mohon di cek kembali
-                          </div>
-                        </div>
-                        <div className={`${styles.cardBody} card-body row`}>
-                          <div className={styles.confirmationWrapper}>
-                            <div className={`col-md-12`}>
-                            <Typography variant='h6' className={styles.confirmationTitle}>
-                              Anda yakin akan menghapus {item.name} ?
-                            </Typography>
-                            </div>
-                            <div className={styles.actionContainer}>
+        item.merek,
+        item.deployment_date,
+        item.rak_OA,
+        item.panel,
+        item.port,
 
-                                  <div >
-                                    <CustomButtonModal btnType={'submit'}>
-                                      {"Submit"}
-                                    </CustomButtonModal>
-                                  </div>
-                                  <div >
-                                    <CustomButtonModal onClick={()=>deleteRowHandleClose(idx)}>
-                                      {"Cancel"}
-                                    </CustomButtonModal>
-                                  </div>
-                            </div>
-                          </div>
-
-
-                        
-                        </div>
-
-                      </div>
-                    </Box>
-                  </div>
-            </Modal>
-          </div>
       ])))
-    },[rawData,open,value,openDeleteRowModal])
+    },[rawData,open,openDeleteRowModal])
+    useEffect(()=>{
+      console.log("odc list client use effect",odc_list_client.success)
+      if(odc_list_client?.success || false)
+      setDatatable(odc_list_client.data.map((item,idx)=>([
+        idx+1,
+        item.name,
+        item.region,
+        item.witel,
+        item.datel,
+        item.sto,
+        item.kapasitas,
+        item.port_feeder_terminasi,
+        item.core_feeder_idle,
+        item.core_feeder_used,
+        item.core_feeder_broken,
+        item.core_distribution_idle,
+        item.core_distribution_used,
+        item.core_distribution_broken,
+        item.merek,
+        item.deployment_date,
+        item.rak_OA,
+        item.panel,
+        item.port,
+      ])))
+    },[odc_list_client])
+    // },[rawData,open,value,openDeleteRowModal])
     const graph = {
       feeder:{
         series: [{
@@ -816,6 +618,7 @@ function ODC(props) {
     }
 
     const [regionListClient,setRegionListClient] = useState("");
+    const [submittedFilter,setSubmittedFilter] = useState("");
     const [witelListClient,setWitelListClient] = useState("");
     const [datelListClient,setDatelListClient] = useState("");
     const [stoListClient,setSTOListClient] = useState("");
@@ -862,8 +665,10 @@ function ODC(props) {
           onSubmit={(values)=>{
             console.log("on filter submit",values)
             // console.log("cookie",document.cookie.split(" "))
-            getFeederGraph(values || { regional: '', witel: '', datel: '', sto: ''},token)
-            getDistributionGraph(values || { regional: '', witel: '', datel: '', sto: ''},token)
+            getFeederGraph(values || { regional: '', witel: '', datel: '', sto: ''},token);
+            getDistributionGraph(values || { regional: '', witel: '', datel: '', sto: ''},token);
+
+            setSubmittedFilter(values || { regional: '', witel: '', datel: '', sto: ''});
 
             feederChartRef.current.innerHTML = "Feeder Mapping - "+ Object.entries(feederChartName).map(([key,value])=>{
               if(key == "regional" && value!=0)
@@ -952,6 +757,8 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
               options={{
                 selectableRows:"none",
                 print: false,
+                serverSide:true,
+                count: odc_list?.count,
                 rowsPerPage: 5,
                 rowsPerPageOptions:[5,10,25,50,100],
                 onTableChange: (action, tableState) => {
@@ -962,7 +769,7 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
           
                   switch (action) {
                     case 'changePage':
-                      changeODCPage(tableState.page,tableState.rowsPerPage, tableState.sortOrder,token,toast)
+                      changeODCPage(tableState.page+1,tableState.rowsPerPage, tableState.sortOrder,token,toast)
                       // this.changePage(tableState.page, tableState.sortOrder);
                       break;
                     case 'sort':
@@ -978,10 +785,10 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
               columns={[{
                 name: "No",
                 options:{
-                  // customBodyRender:(value, tableMeta, update) => {
+                  customBodyRender:(value, tableMeta, update) => {
                   //   console.log("row render",tableMeta)
-                  //   let rowIndex = (tableMeta.rowData[0])?Number(tableMeta.rowIndex) + 1: "";
-                  //   return ( <span>{rowIndex}</span> )
+                  let newNumber = tableMeta.tableState.page*tableMeta.tableState.rowsPerPage+tableMeta.rowData[0]
+                  return ( <span>{newNumber}</span> )
                   // },
             //       filterOptions: {
             //         display: (filterList, onChange, index, column) =>   <FormControl variant='standard'>
@@ -1015,7 +822,7 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
 //         index
 //  )
 //                 }
-//                   }
+                  }
                 }
               },{
                 name: "ODC Name",
@@ -1023,7 +830,8 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                   customBodyRender:(value, tableMeta, update) => {
                     let newValue = tableMeta.rowData[1]
                     return ( <span style={{whiteSpace:"nowrap"}}>{newValue}</span>)
-                  }
+                  },
+                  filter:false
                 }
               },{
                 name: "Regional",
@@ -1031,7 +839,8 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                   customBodyRender:(value, tableMeta, update) => {
                     let newValue = tableMeta.rowData[2]
                     return ( <span>{newValue}</span> )
-                  }
+                  },
+                  filter:false
                 }
               },{
                 name: "WITEL",
@@ -1039,7 +848,8 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                   customBodyRender:(value, tableMeta, update) => {
                     let newValue = tableMeta.rowData[3]
                     return ( <span>{newValue}</span> )
-                  }
+                  },
+                  filter:false
                 }
               },{
                 name: "DATEL",
@@ -1047,7 +857,8 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                   customBodyRender:(value, tableMeta, update) => {
                     let newValue = tableMeta.rowData[4]
                     return ( <span>{newValue}</span> )
-                  }
+                  },
+                  filter:false
                 }
               },{
                 name: "STO",
@@ -1055,7 +866,8 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                   customBodyRender:(value, tableMeta, update) => {
                     let newValue = tableMeta.rowData[5]
                     return ( <span>{newValue}</span> )
-                  }
+                  },
+                  filter:false
                 }
               },{
 
@@ -1072,7 +884,7 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                   customBodyRender:(value, tableMeta, update) => {
                     let newValue = tableMeta.rowData[7]
                     return ( <span>{newValue}</span> )
-                  }
+                  },
                 }
               },{
                 name: "Core Feeder Idle",
@@ -1080,7 +892,8 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                   customBodyRender:(value, tableMeta, update) => {
                     let newValue = tableMeta.rowData[8]
                     return ( <span>{newValue}</span> )
-                  }
+                  },
+                  filter:false
                 }
               },{
                 name: "Core Feeder Used",
@@ -1088,7 +901,8 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                   customBodyRender:(value, tableMeta, update) => {
                     let newValue = tableMeta.rowData[9]
                     return ( <span>{newValue}</span> )
-                  }
+                  },
+                  filter:false
                 }
               },{
                 name: "Core Feeder Broken",
@@ -1096,7 +910,8 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                   customBodyRender:(value, tableMeta, update) => {
                     let newValue = tableMeta.rowData[10]
                     return ( <span>{newValue}</span> )
-                  }
+                  },
+                  filter:false
                 }
               },{
                 name: "Core Distribusi Idle",
@@ -1104,7 +919,8 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                   customBodyRender:(value, tableMeta, update) => {
                     let newValue = tableMeta.rowData[11]
                     return ( <span>{newValue}</span> )
-                  }
+                  },
+                  filter:false
                 }
               },{
                 name: "Core Distribusi Used",
@@ -1112,7 +928,8 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                   customBodyRender:(value, tableMeta, update) => {
                     let newValue = tableMeta.rowData[12]
                     return ( <span>{newValue}</span> )
-                  }
+                  },
+                  filter:false
                 }
               },{
                 name: "Core Distribusi Broken",
@@ -1120,14 +937,309 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                   customBodyRender:(value, tableMeta, update) => {
                     let newValue = tableMeta.rowData[13]
                     return ( <span>{newValue}</span> )
-                  }
+                  },
+                  filter:false
+                }
+              },{
+                name: "deployment_date",
+                
+                options:{
+                  customBodyRender:(value, tableMeta, update) => {
+                    let newValue = tableMeta.rowData[13]
+                    return ( <span>{newValue}</span> )
+                  },
+                  filter:false,
+                  display:false,
+                }
+              },{
+                name: "rak_OA",
+                options:{
+                  customBodyRender:(value, tableMeta, update) => {
+                    let newValue = tableMeta.rowData[13]
+                    return ( <span>{newValue}</span> )
+                  },
+                  filter:false,
+                  display:false,
+                }
+              },{
+                name: "panel",
+                options:{
+                  customBodyRender:(value, tableMeta, update) => {
+                    let newValue = tableMeta.rowData[13]
+                    return ( <span>{newValue}</span> )
+                  },
+                  filter:false,
+                  display:false,
+                }
+              },{
+                name: "port",
+                options:{
+                  customBodyRender:(value, tableMeta, update) => {
+                    let newValue = tableMeta.rowData[13]
+                    return ( <span>{newValue}</span> )
+                  },
+                  filter:false,
+                  display:false,
                 }
               },{
                 name: "Aksi",
                 options:{
                   customBodyRender:(value, tableMeta, update) => {
+                    console.log("custom aksi ",tableMeta)
                     let newValue = tableMeta.rowData[14]
-                    return ( <span>{newValue}</span> )
+                    return (         <div key={0} className={styles.tableAction}>
+                      <Link href={`/odc/${tableMeta.rowData[1]}`} passHref>
+                      <a>
+                    <CustomButton>
+                        <MdOpenInBrowser fill='#009873' />
+                    </CustomButton>
+                      </a>
+                      </Link>
+                    <CustomButton onClick={()=>handleOpen(tableMeta.rowData[0]-1)} variant='text'>
+                      <MdRemoveRedEye fill='#3124c1'/>
+                    </CustomButton>
+                    <CustomButton onClick={()=>deleteRowHandleOpen(tableMeta.rowData[0]-1)} variant='text'>
+                      <MdDeleteForever fill='#B10040'/>
+                    </CustomButton>
+                    {/* <CustomButton onClick={()=>deleteRow(item.id)} variant='text'>
+                      <MdDeleteForever />
+                    </CustomButton> */}
+                    <Modal open={open[tableMeta.rowData[0]-1]?.status} onClose={()=>handleClose(tableMeta.rowData[0]-1)} aria-labelledby="modal-modal-title"
+                            aria-describedby="modal-modal-description">
+                      <div>
+                        <div className={styles.closebtn}>
+                          <MdOutlineClose/>
+                        </div>
+                        <Box itemRef='odcDetailModal' sx={{
+                          position: "absolute",
+                          top: "48%",
+                          left: "50%",
+                          transition: 'all 0.3s ease-out',
+                          transform: "translate(-50%, -50%)",
+                          border: 0,
+                          /* margin-bottom: 30px;
+                          margin-top: 30px; */
+                          borderRadius: "6px",
+                          color: "#333",
+                          // background: "#fff",
+                          width:"90%",
+                          maxWidth: "600px",
+                          boxShadow: "0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 20%), 0 1px 5px 0 rgb(0 0 0 / 12%)",
+                          boxShadow: "0 1px 4px 0 rgb(0 0 0 / 14%)",
+                        }}>
+                            {/* <Box sx={styles.card}> */}
+                          <div className={`${styles.card}  ${styles.cardStats}`}>
+                            <div className={`${styles.cardHeader} ${styles.cardHeaderPrimary}`}>
+                              <h4 className={styles.cardTitle}>{tableMeta.rowData[1]?.toUpperCase()}</h4>
+                              <div className={styles.stats}>
+                                {/* <MdOutlineDateRange width={16} height={"auto"} />  */}
+                                lengkapi semua isian yang ada
+                              </div>
+                            </div>
+                              <Formik
+                              initialValues={{
+                                tabs:0,
+                                nama_odc: tableMeta.rowData[1],
+                                regional: tableMeta.rowData[2],
+                                witel: tableMeta.rowData[3],
+                                datel: tableMeta.rowData[4],
+                                sto: tableMeta.rowData[5],
+                                kapasitas: tableMeta.rowData[6],
+                                port_feeder_terminasi: tableMeta.rowData[7],
+                                merek: tableMeta.rowData[14],
+                                deployment_date: tableMeta.rowData[15],
+                                rak_OA: tableMeta.rowData[16],
+                                panel: tableMeta.rowData[17],
+                                port: tableMeta.rowData[18]
+                              }}
+                              validateOnChange={"true"}
+                                validate={(value)=>{
+                                  console.log("new value",value.tabs)
+                                }}
+                                
+                              >
+                                {({
+                                  values,
+                                  setValues,
+                                  handleSubmit,
+                                  handleChange,
+                                  handleBlur
+                                })=>(
+                                <form className={styles.form} onSubmit={handleSubmit} >
+                                  <div className={`${styles.cardBody} card-body row`}>
+                                  <div className={styles.tabLink}>
+                                    <CustomTabs value={values.tabs} onChange={(ev,newValue)=>handleOnChange(ev,newValue,setValues)} onBlur={handleBlur} aria-label="basic tabs example">
+                                      <CustomTab label="ODC" {...a11yProps(0)} />
+                                      <CustomTab label="OA" {...a11yProps(1)} />
+                                    </CustomTabs>
+                                  </div>
+                                  <div
+                                    role="tabpanel"
+                                    hidden={values.tabs !== 0}
+                                    id={`simple-tabpanel-${0}`}
+                                    aria-labelledby={`simple-tab-${0}`}
+                                    // {...other}
+                                  >
+                                    {values.tabs === 0 && (
+                                      <div className={`row ${styles.formGap}`}>
+                                        {/* <Typography> */}
+                                          <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                            <CustomTextField id="standard-basic" label="Nama ODC" onChange={handleChange} onBlur={handleBlur} variant="standard" defaultValue={values.nama_odc}/>
+                                          </div>
+                                          <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                            <CustomTextField id="standard-basic" label="Regional" onChange={handleChange} onBlur={handleBlur} variant="standard" defaultValue={values.regional}/>
+                                          </div>
+                                          <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                            <CustomTextField id="standard-basic" label="WITEL" onChange={handleChange} onBlur={handleBlur} variant="standard" defaultValue={values.witel}/>
+                                          </div>
+                                          <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                            <CustomTextField id="standard-basic" label="DATEL" onChange={handleChange} onBlur={handleBlur} variant="standard" defaultValue={values.datel}/>
+                                          </div>
+                                          <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                            <CustomTextField id="standard-basic" label="STO" onChange={handleChange} onBlur={handleBlur} variant="standard" defaultValue={values.sto}/>
+                                          </div>
+                                          <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                            <CustomTextField id="standard-basic" label="Kapasitas" onChange={handleChange} onBlur={handleBlur} variant="standard" defaultValue={values.kapasitas}/>
+                                          </div>
+                                          <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                            <CustomTextField id="standard-basic" label="Merek" variant="standard" onChange={handleChange} onBlur={handleBlur} defaultValue={values.merek}/>
+                                          </div>
+                                          {/* {item.merek} */}
+                                          {/* merk
+                                            deploymentDate
+                                            core
+                                            rakOa
+                                            panelOa
+                                            port */}
+                                          <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                            <CustomTextField id="standard-basic" label="Deployment Date" color='primary'
+                                              variant="standard" onChange={handleChange} onBlur={handleBlur} defaultValue={values.deployment_date}/>
+                                          </div>
+                                        {/* </Typography> */}
+                                      </div>
+                                    )}
+                                  </div>
+                                  <div
+                                    role="tabpanel"
+                                    hidden={values.tabs !== 1}
+                                    id={`simple-tabpanel-${1}`}
+                                    aria-labelledby={`simple-tab-${1}`}
+                                    // {...other}
+                                  >
+                                    {values.tabs === 1 && (
+                                      <div className={`row ${styles.formGap}`}>
+                                      {/* <Typography> */}
+                                        <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                          <CustomTextField id="standard-basic" onChange={handleChange} onBlur={handleBlur} label="Port Feeder Terminasi" variant="standard" defaultValue={values.port_feeder_terminasi}/>
+                                        </div>
+                                        <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                          <CustomTextField id="standard-basic" onChange={handleChange} onBlur={handleBlur} label="Rak OA" variant="standard" defaultValue={values.rak_OA}/>
+                                        </div>
+                                        <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                          <CustomTextField id="standard-basic" onChange={handleChange} onBlur={handleBlur} label="Panel" variant="standard" defaultValue={values.panel}/>
+                                        </div>
+                                        <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                          <CustomTextField id="standard-basic" onChange={handleChange} onBlur={handleBlur} label="Port" color='primary'
+                                            variant="standard" defaultValue={values.port}/>
+                                        </div>
+                                      {/* </Typography> */}
+                                    </div>
+                                    )}
+                                  </div>
+                                  
+                                  </div>
+                                  <div className={styles.actionContainer}>
+                                    <CustomButtonModal btntype={"prev"} onClick={(ev)=>setValues(prev=>({...prev,tabs:values.tabs-1}))}
+                                      style={{visibility:(values.tabs<=0)?"hidden":"visible"}} variant="contained" color='primary'
+                                      size="medium">
+                                      Prev
+                                    </CustomButtonModal>
+                                    <div className='row'>
+                                      <div className='col-md-12 col-lg-6'>
+                                        {(values.tabs>0) && <CustomButtonModal btntype={"submit"} onClick={(ev)=>
+                                          (values.tabs>0)?handleOpen:setValues(prev=>({...prev,tabs:values.tabs+1}))} variant="contained" color='primary'
+                                          size="medium">
+                                          Submit
+                                        </CustomButtonModal>}
+                                      </div>
+                                      <div className='col-md-12 col-lg-6'>
+                                        {(values.tabs>0) && <CustomButtonModal onClick={()=>handleClose(tableMeta.rowData[0]-1)} variant="contained"
+                                          color='primary' size="medium">
+                                          Cancel
+                                        </CustomButtonModal>}
+                                      </div>
+                                    </div>
+                                    <CustomButtonModal style={{visibility: (values.tabs>0)?"hidden":"visible"}} onClick={(ev)=>(values.tabs>0)?handleOpen:setValues(prev=>({...prev,tabs:values.tabs+1}))}  variant="contained" color='primary' size="medium">
+                                    {(values.tabs<=0)? "Next":""}
+                                    </CustomButtonModal>
+                                  </div>
+                                </form>
+                                )}
+                              </Formik>
+                          </div>
+                        </Box>
+                      </div>
+                    </Modal>
+                    <Modal open={openDeleteRowModal[tableMeta.rowData[0]-1]?.status} onClose={()=>deleteRowHandleClose(tableMeta.rowData[0]-1)} >
+                    <div>
+                          <div className={styles.closebtn}>
+                            <MdOutlineClose/>
+                          </div>
+                            <Box itemRef='odcDeleteModal' sx={{
+                              position: "absolute",
+                              top: "48%",
+                              left: "50%",
+                              transition: 'all 0.3s ease-out',
+                              transform: "translate(-50%, -50%)",
+                              border: 0,
+                              /* margin-bottom: 30px;
+                              margin-top: 30px; */
+                              borderRadius: "6px",
+                              color: "#333",
+                              // background: "#fff",
+                              width:"90%",
+                              maxWidth: "480px",
+                              boxShadow: "0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 20%), 0 1px 5px 0 rgb(0 0 0 / 12%)",
+                              boxShadow: "0 1px 4px 0 rgb(0 0 0 / 14%)",
+                            }}>
+                              <div className={`${styles.card}  ${styles.cardStats}`}>
+                                <div className={`${styles.cardHeader} ${styles.cardHeaderPrimary}`}>
+                                  <h4 className={styles.cardTitle}>{"Konfirmasi Delete"}</h4>
+                                  <div className={styles.stats}>
+                                    proses ini akan menghapus data odc secara permanen. mohon di cek kembali
+                                  </div>
+                                </div>
+                                <div className={`${styles.cardBody} card-body row`}>
+                                  <div className={styles.confirmationWrapper}>
+                                    <div className={`col-md-12`}>
+                                    <Typography variant='h6' className={styles.confirmationTitle}>
+                                      Anda yakin akan menghapus {tableMeta.rowData[1]} ?
+                                    </Typography>
+                                    </div>
+                                    <div className={styles.actionContainer}>
+        
+                                          <div >
+                                            <CustomButtonModal btntype={'submit'}>
+                                              {"Submit"}
+                                            </CustomButtonModal>
+                                          </div>
+                                          <div >
+                                            <CustomButtonModal onClick={()=>deleteRowHandleClose(tableMeta.rowData[0]-1)}>
+                                              {"Cancel"}
+                                            </CustomButtonModal>
+                                          </div>
+                                    </div>
+                                  </div>
+        
+        
+                                
+                                </div>
+        
+                              </div>
+                            </Box>
+                          </div>
+                    </Modal>
+                  </div> )
                   },
                   filter:false
                 }
@@ -1152,7 +1264,7 @@ export const getServerSideProps = async (props) => wrapper.getServerSideProps(st
     }
   }
   store.dispatch(getODCsBox())
-  store.dispatch(changeODCPage(1,10, {name:"",direction:"asc"},req.cookies.token,toast))
+  store.dispatch(changeODCPage(1,5, {name:"",direction:"asc"},req.cookies.token,toast))
   store.dispatch(getFeederGraph({ regional: '', witel: '', datel: '', sto: ''},req.cookies.token))
   store.dispatch(getDistributionGraph({ regional: '', witel: '', datel: '', sto: ''},req.cookies.token))
   store.dispatch(getRegionList(req.cookies.token))
@@ -1185,6 +1297,7 @@ export const getServerSideProps = async (props) => wrapper.getServerSideProps(st
       }
     })(props);
 const mapStateToProps = state => ({
+  odc_list_client: state.ODCs.odc_page,
   feederGraphClient: state.ODCs.graph_feeder,
   distributionGraphClient: state.ODCs.graph_distribution,
 });

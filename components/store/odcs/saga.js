@@ -26,7 +26,9 @@ import {
     GET_STO_LIST_SUCCESSFUL,
     GET_ODC_PAGE,
     GET_ODC_PAGE_SUCCESSFUL,
-    GET_ODC_PAGE_FAILED
+    GET_ODC_PAGE_FAILED,
+    ADD_ODC_DATA,
+    ADD_ODC_DATA_FAILED
 } from './actionTypes';
 // import firebase from '../../Firebase';
 
@@ -289,6 +291,7 @@ function* getODCPage({payload:{page,rowsPerPage,sortOrder,token,toast}}) {
         },
         redirect: 'follow'
       };
+      console.log("on odc page change",page,rowsPerPage,sortOrder)
     try {
         let res;
         res = yield fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/api/odc-paginate?limit=${rowsPerPage}&offset=${page!==0?page:1}&region=&witel&datel&sto`,requestOptions).then(res=>res.json()).then(result => {
@@ -307,8 +310,9 @@ function* getODCPage({payload:{page,rowsPerPage,sortOrder,token,toast}}) {
                 });
             }
             else if(result.success){
-                console.log("result true", result.data)
-                return {success:result.success,data:result.data,count:result.data.length,sortOrder,page}
+                // console.log("result true", result.data)
+                return {success:result.success,data:result.data,count:result.total_rows,sortOrder,page:page-1}
+                // return {success:result.success,data:result.data,count:result.data.length,sortOrder,page}
             }
         });
         if(res.success)
@@ -325,6 +329,128 @@ function* getODCPage({payload:{page,rowsPerPage,sortOrder,token,toast}}) {
         });
     }
 }
+
+function* addODCData({payload:{
+    name,
+    merk_id,
+    port_feeder_terminasi,
+    deployment_date,
+    capacity,
+    notes,
+    panel_oa,
+    rak_oa,
+    port,
+    odc_code,
+    region_id,
+    witel_id,
+    datel_id,
+    sto_id
+}}){
+    try {
+        if(!navigator.onLine) {
+            setSubmitting(false);
+            toast.error("Anda tidak terhubung dengan internet", {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+              });
+              setSubmitting(false);
+            return; 
+        }
+        var myHeaders = new Headers();
+        myHeaders.append("Authorization", "Bearer "+token);
+        console.log("if password kosong",!password || false)
+        var formdata = new FormData();
+        formdata.append("name", name);
+        formdata.append("merk_id", merk_id);
+        formdata.append("port_feeder_terminasi", port_feeder_terminasi);
+        formdata.append("deployment_date", deployment_date);
+        formdata.append("capacity", capacity);
+        formdata.append("notes", notes);
+        formdata.append("panel_oa", panel_oa);
+        formdata.append("rak_oa", rak_oa);
+        formdata.append("port", port);
+        formdata.append("odc_code", odc_code);
+        formdata.append("region_id", region_id);
+        formdata.append("witel_id", witel_id);
+        formdata.append("datel_id", datel_id);
+        formdata.append("sto_id", sto_id);
+
+        var requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: formdata,
+        redirect: 'follow'
+        };
+        const res = yield fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/api/add-odc`,requestOptions)
+        .then(res=>res.json())
+        .then(result=>{
+            // console.log("error sgga",result)
+            if(!result.success){
+                setSubmitting(false);
+                if(result.msg=='Method must be one of: OPTIONS'){
+                    toast.error("Gagal memanggil API", {
+                        position: "top-right",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                      });
+                    return put({type:ADD_USER_DATA_FAILED,payload:{success:false,data:[],msg:"Gagal memanggil API"}})
+                }
+                else{
+                    toast.error(result.msg, {
+                        position: "top-right",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                      });
+                    return put({type:ADD_USER_DATA_FAILED,payload:{success:result.success,data:[],msg:result.msg || result.message}})
+
+                }
+            }
+            else {
+                return {success:result.success,data:result.data}
+            }
+        });        
+        if(res.success){
+            console.log("success added")
+            setSubmitting(false)
+            handleAddUserClose();
+            toast.success(res.data.email+" berhasil ditambahkan", {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+              });
+            yield put({type:GET_USER_DATA,payload:{page:0,rowsPerPage:10,sortOrder:{name:"",direction:"asc"},token,errorState:""}})
+        }
+    } catch (error) {
+        toast.error("terjadi kesalahan server", {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
+
+    }
+}
+
 
 function* watchODCsData(){
     yield takeEvery(GET_GRAPH_FEEDER,getFeederGraph)

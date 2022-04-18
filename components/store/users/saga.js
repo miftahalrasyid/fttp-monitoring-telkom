@@ -306,7 +306,7 @@ function* updateUserData({
 
         var myHeaders = new Headers();
         myHeaders.append("Authorization", "Bearer "+token);
-
+        console.log("if password kosong",!password || false)
         var formdata = new FormData();
         formdata.append("email", email);
         if(!password || false)

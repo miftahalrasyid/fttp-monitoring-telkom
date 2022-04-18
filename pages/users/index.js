@@ -290,8 +290,10 @@ if(!user_list_client.success)
   setDatatable(user_list?.data?.map((item,idx)=>([
     idx+1,
     item.email,
-    {role:item.role,role_name:item.role_name},
-    {status:item.status,user_status:item.user_status}
+    item.role_name,
+    item.user_status,
+    item.role,
+    item.status,
 ])))
 
 },[user_list?.data,open,openDeleteRowModal,user_list_client?.success])
@@ -304,8 +306,10 @@ useEffect(()=>{
     setDatatable(user_list_client?.data?.map((item,idx)=>([
       idx+1,
       item.email,
-      {role:item.role,role_name:item.role_name},
-      {status:item.status,user_status:item.user_status}
+      item.role_name,
+      item.user_status,
+      item.role,
+      item.status,
 
     ])))
   }
@@ -432,8 +436,7 @@ useEffect(()=>{
                   name: "Role",
                   options:{
                     customBodyRender:(value, tableMeta, update) => {
-                      console.log("role row",tableMeta.rowData[2])
-                      let newValue = tableMeta.rowData[2].role_name
+                      let newValue = tableMeta.rowData[2]
                       return ( <span>{newValue}</span> )
                     }
                   }
@@ -441,7 +444,7 @@ useEffect(()=>{
                   name: "Status",
                   options:{
                     customBodyRender:(value, tableMeta, update) => {
-                      let newValue = tableMeta.rowData[3].user_status
+                      let newValue = tableMeta.rowData[3]
                       return ( <span>{newValue}</span> )
                     }
                   }
@@ -449,7 +452,7 @@ useEffect(()=>{
                   name: "Aksi",
                   options:{
                     customBodyRender:(value, tableMeta, update) => {
-
+                      // console.log("aksi",tableMeta.rowData[3])
                       let newValue = tableMeta.rowData[4]
                       return (       <div key={0} className={odcStyles.tableAction}>
                         <CustomButton onClick={()=>handleOpen(tableMeta.rowData[0]-1)} variant='text'>
@@ -496,8 +499,8 @@ useEffect(()=>{
                                         initialValues={{
                                           email:tableMeta.rowData[1],
                                           password:"",
-                                          role:tableMeta.rowData[2].role,
-                                          status:tableMeta.rowData[3].status,
+                                          role:tableMeta.rowData[4] || "",
+                                          status:tableMeta.rowData[5] ? "true":"false",
                                         }}
                                         validate={values => {
                                           const errors = {};
@@ -511,6 +514,7 @@ useEffect(()=>{
                                           return errors;
                                         }}
                                         onSubmit={(values,{setSubmitting})=>{
+                                          console.log(values)
                                           updateUserData(
                                             values.email,
                                             values.password,
@@ -562,7 +566,7 @@ useEffect(()=>{
                                               <FormControl key={"status"} variant="standard" sx={{ m: 1, minWidth: 124 }}>
                                               <CustomInputLabel  id="demo-simple-select-standard-label">Status</CustomInputLabel>
                       
-                                              <CustomNativeSelect onChange={handleChange} onBlur={handleBlur} defaultValue={values.status} inputProps={{
+                                              <CustomNativeSelect onChange={handleChange} onBlur={handleBlur} defaultValue={values.status.toString()} inputProps={{
                                                   name: 'status',
                                                   id: 'uncontrolled-native',
                                                   }}>
