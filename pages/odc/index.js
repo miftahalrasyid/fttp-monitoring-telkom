@@ -24,7 +24,11 @@ import {
   getWitelList,
   getDatelList,
   getSTOList,
-  changeODCPage
+  getMerekList,
+  changeODCPage,
+  addODCData,
+  updateODCData,
+  deleteODCData
 } from '../../components/store/odcs/actions';
 import {otpVerificationSuccessfull} from "../../components/store/auth/actions";
 import withAuth from '../../components/Auth';
@@ -83,7 +87,7 @@ const CustomButton = styled(Button)(({theme,btntype})=>({
     // color:"white!important",
     // borderRadius:"2rem!important"
 }))
-function CustomSelect({defaultValue,data,name,onChange,onBlur}){
+export function CustomSelect({defaultValue,data,name,onChange,onBlur}){
   
   return <div className={styles.witel}>
       <select value={defaultValue} onChange={onChange} onBlur={onBlur} name={name}>
@@ -1271,6 +1275,7 @@ export const getServerSideProps = async (props) => wrapper.getServerSideProps(st
   store.dispatch(getWitelList(req.cookies.token))
   store.dispatch(getDatelList(req.cookies.token))
   store.dispatch(getSTOList(req.cookies.token))
+  store.dispatch(getMerekList(req.cookies.token,toast))
   store.dispatch(END)
   await store.sagaTask.toPromise();
   console.log("feeder graph",store.getState().ODCs.graph_feeder)
@@ -1278,6 +1283,7 @@ export const getServerSideProps = async (props) => wrapper.getServerSideProps(st
   console.log("witel list",store.getState().ODCs.witel_list)
   console.log("datel list",store.getState().ODCs.datel_list)
   console.log("sto list",store.getState().ODCs.sto_list)
+  console.log("merek list",store.getState().ODCs.sto_list)
   console.log("odc page",store.getState().ODCs.odc_page)
   console.log("token",req.cookies.token)
       return {
@@ -1292,7 +1298,8 @@ export const getServerSideProps = async (props) => wrapper.getServerSideProps(st
           regionList: store.getState().ODCs.region_list || [{id:0,name:""}],
           witelList: store.getState().ODCs.witel_list || [{id:0,region_id: 0,name:""}],
           datelList: store.getState().ODCs.datel_list || [{id:0,region_id: 0,witel_id: 0,name:""}],
-          stoList: store.getState().ODCs.sto_list || [{id:0,region_id: 0,witel_id: 0,datel_id: 0, name:""}]
+          stoList: store.getState().ODCs.sto_list || [{id:0,region_id: 0,witel_id: 0,datel_id: 0, name:""}],
+          merekList: store.getState().ODCs.merek_list || [{id: "",name: "",splitter_position: "",splitter_capacity: ""}]
         }
       }
     })(props);
@@ -1311,6 +1318,9 @@ getWitelList,
 getDatelList,
 getSTOList,
 changeODCPage,
+addODCData,
+updateODCData,
+deleteODCData
 // getDistributionGraph,
 }
 export default connect(mapStateToProps,mapFunctionToProps)(withAuth(ODC))

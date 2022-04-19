@@ -22,7 +22,19 @@ import { GET_SPLITTER_DATA,
   GET_STO_LIST_SUCCESSFUL,
   GET_ODC_PAGE,
   GET_ODC_PAGE_SUCCESSFUL,
-  GET_ODC_PAGE_FAILED
+  GET_ODC_PAGE_FAILED,
+  ADD_ODC_DATA,
+  ADD_ODC_DATA_SUCCESSFUL,
+  ADD_ODC_DATA_FAILED,
+  UPDATE_ODC_DATA,
+  UPDATE_ODC_DATA_SUCCESSFUL,
+  UPDATE_ODC_DATA_FAILED,
+  DELETE_ODC_DATA,
+  DELETE_ODC_DATA_SUCCESSFUL,
+  DELETE_ODC_DATA_FAILED,
+  GET_MEREK_LIST,
+  GET_MEREK_LIST_FAILED,
+  GET_MEREK_LIST_SUCCESSFUL
 } from "./actionTypes";
 import { HYDRATE } from 'next-redux-wrapper';
 const INIT_STATE = {
@@ -36,9 +48,16 @@ const INIT_STATE = {
         getWitelList: false,
         getDatelList: false,
         getSTOList: false,
+        getMerekList: false,
         getODCPage:false,
+        addODCData: false,
+        updateODCData: false,
+        deleteODCData: false,
     },
+    add_odc_list:"",
+    delete_odc_list:"",
     odc_page:"",
+    merek_list:"",
     sto_list:"",
     datel_list:"",
     region_list:"",
@@ -293,6 +312,27 @@ const odcs = (state=INIT_STATE,action) => {
           sto_list: action.payload
 
         }
+      case GET_MEREK_LIST:
+
+        return{
+          ...state,
+          loading:{
+            ...state.loading,
+            getMerekList: true
+          }
+        }
+        
+        case GET_MEREK_LIST_SUCCESSFUL:
+          
+        return{
+          ...state,
+          loading:{
+            ...state.loading,
+            getMerekList: false
+          },
+          merek_list: action.payload
+
+        }
 
         case GET_ODC_PAGE:
           
@@ -301,7 +341,8 @@ const odcs = (state=INIT_STATE,action) => {
           loading:{
             ...state.loading,
             getODCPage: true
-          }
+          },
+          odc_page:""
         }
         
         case GET_ODC_PAGE_SUCCESSFUL:
@@ -325,7 +366,84 @@ const odcs = (state=INIT_STATE,action) => {
           },
 
         }
-  
+        case ADD_ODC_DATA:
+            
+          return {
+              ...state,
+              loading: {
+                  ...state.loading,
+                  addODCData:true
+              }
+          };
+        case ADD_ODC_DATA_SUCCESSFUL:
+          return {
+              ...state,
+              loading: {
+                  ...state.loading,
+                  addODCData:false
+              },
+          };
+        case ADD_ODC_DATA_FAILED:
+          return {
+              ...state,
+              loading: {
+                  ...state.loading,
+                  addODCData:false
+              },
+              add_odc_list: action.payload
+          };
+        case UPDATE_ODC_DATA:
+            
+          return {
+              ...state,
+              loading: {
+                  ...state.loading,
+                  updateODCData:true
+              }
+          };
+        case UPDATE_ODC_DATA_SUCCESSFUL:
+          return {
+              ...state,
+              loading: {
+                  ...state.loading,
+                  updateODCData:false
+              },
+          };
+        case UPDATE_ODC_DATA_FAILED:
+          return {
+              ...state,
+              loading: {
+                  ...state.loading,
+                  updateODCData:false
+              },
+          };
+          case DELETE_ODC_DATA:
+            
+            return {
+                ...state,
+                loading: {
+                    ...state.loading,
+                    deleteODCData:true
+                }
+            };
+        case DELETE_ODC_DATA_SUCCESSFUL:
+            return {
+                ...state,
+                loading: {
+                    ...state.loading,
+                    deleteODCData:false
+                }
+            };
+        case DELETE_ODC_DATA_FAILED:
+            return {
+                ...state,
+                loading: {
+                    ...state.loading,
+                    deleteODCData:false
+                },
+                delete_odc_list: action.payload
+            };
+    
       default:
           return state;
   }

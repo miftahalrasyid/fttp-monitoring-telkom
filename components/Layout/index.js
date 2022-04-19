@@ -14,7 +14,19 @@ export default function Layout(props) {
     //         <Footer/>
     //     </div>
     // }
-    const {children,data,getSTOList,email,role_name,token} = props;
+    const {
+        children,
+        data,
+        getSTOList,
+        email,
+        role_name,
+        token,
+        regionList,
+        witelList,
+        datelList,
+        stoList,
+        merekList
+    } = props;
     console.log("email",email)
 
     const [closeState,setCloseState] = useState(true);
@@ -30,7 +42,7 @@ export default function Layout(props) {
     },[closeState])
   
     return <div className={styles.layoutWrapper}>
-        <Sidebar odcProps={getSTOList}/>
+        <Sidebar odcProps={{regionList,witelList,datelList,stoList,merekList}} token={token}/>
         <div className={styles.topGap}>
             <Navbar odcData={data} email={email} role_name={role_name} token={token}/>
 

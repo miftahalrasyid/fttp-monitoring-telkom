@@ -13,7 +13,11 @@ import {
     GET_WITEL_LIST,
     GET_DATEL_LIST,
     GET_STO_LIST,
-    GET_ODC_PAGE
+    GET_MEREK_LIST,
+    GET_ODC_PAGE,
+    ADD_ODC_DATA,
+    UPDATE_ODC_DATA,
+    DELETE_ODC_DATA,
 } from './actionTypes'
 export const getSplitterData = () =>({
     type: GET_SPLITTER_DATA,
@@ -68,7 +72,87 @@ export const getSTOList = (token) => ({
     type: GET_STO_LIST,
     payload: {token}
 });
+export const getMerekList = (token,toast) => ({
+    type: GET_MEREK_LIST,
+    payload: {token,toast}
+});
 export const changeODCPage = (page,rowsPerPage,sortOrder,token,toast) => ({
     type: GET_ODC_PAGE,
     payload: {page,rowsPerPage,sortOrder,token,toast}
+})
+
+export const addODCData = (
+    name,
+    merek_id,
+    port_feeder_terminasi,
+    deployment_date,
+    capacity,
+    notes,
+    panel_oa,
+    rak_oa,
+    port,
+    odc_code,
+    region_id,
+    witel_id,
+    datel_id,
+    sto_id
+    ,token,setSubmitting,handleClose,toast) => ({
+    type: ADD_ODC_DATA,
+    payload: {
+        name,
+        merek_id,
+        port_feeder_terminasi,
+        deployment_date,
+        capacity,
+        notes,
+        panel_oa,
+        rak_oa,
+        port,
+        odc_code,
+        region_id,
+        witel_id,
+        datel_id,
+        sto_id
+        ,token,setSubmitting,handleClose,toast
+    }
+});
+
+export const deleteODCData = (odc_name,idx,odc_id,token,setSubmitting,deleteRowHandleClose,toast)=>({
+    type: DELETE_ODC_DATA,
+    payload: {odc_name,idx,odc_id,token,setSubmitting,deleteRowHandleClose,toast}
+})
+export const updateODCData = (
+    name,
+    merk_id,
+    port_feeder_terminasi,
+    deployment_date,
+    capacity,
+    notes,
+    panel_oa,
+    rak_oa,
+    port,
+    odc_code,
+    region_id,
+    witel_id,
+    datel_id,
+    sto_id
+    ,idx,user_id,token,setSubmitting,handleClose,toast)=>({
+    type: UPDATE_ODC_DATA,
+    payload: {
+        name,
+        merk_id,
+        port_feeder_terminasi,
+        deployment_date,
+        capacity,
+        notes,
+        panel_oa,
+        rak_oa,
+        port,
+        odc_code,
+        region_id,
+        witel_id,
+        datel_id,
+        sto_id
+        ,idx,user_id,token,setSubmitting,handleClose,toast
+    }
 })

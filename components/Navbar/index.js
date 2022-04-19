@@ -321,7 +321,20 @@ function Navbar(props) {
                     <div className={odcStyles.tabLink}>
                     </div>
                     <Formik
-                    initialValues={{}}
+                    initialValues={{
+                      name:"",
+                      merk_id:0,
+                      port_feeder_terminasi:"",
+                      deployment_date:"",
+                      capacity:0,
+                      panel_oa:"",
+                      rak_oa:"",
+                      port:"",
+                      region_id:"",
+                      witel_id:"",
+                      datel_id:"",
+                      sto_id:"",
+                    }}
                     >
                       {({
                         values,

@@ -6,23 +6,39 @@ import SimpleBar from 'simplebar-react';
 import 'simplebar/dist/simplebar.min.css';
 import odcStyles from '../../pages/odc/odc.module.css';
 import home from '../../public/img/Home.png';
+import {connect} from "react-redux";
 import {MdOutlineClose} from 'react-icons/md';
 import {IoPersonCircleOutline} from 'react-icons/io5';
+import { CustomSelect } from '../../pages/odc';
+import {
+  addODCData,
+} from '../store/odcs/actions';
+import {Formik} from 'formik';
 import styles from './sidebar_evolve.module.css';
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 import jwt from 'jwt-decode';
 import {
   NativeSelect,
-  InputLabel,
   Button,
   Box,
   Modal
-  } from "@material-ui/core";
-  import {useRouter} from 'next/router';
+} from "@material-ui/core";
+import {useRouter} from 'next/router';
 import { makeStyles } from '@material-ui/styles';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-import TextField from '@mui/material/TextField';
+import {
+  FormControl,
+  InputLabel,
+  Tabs,
+  Tab,
+  TextField,
+} from '@mui/material';
+import { toast } from 'react-toastify';
+const CustomInputLabel = styled(InputLabel)(({ theme }) => ({
+  '&.Mui-focused':{
+    color: theme.status.primary,
+
+  }
+}));
 const CustomTextField = styled(TextField)(({ theme }) => ({
     color: theme.status.primary,
     '.MuiInputLabel-root.Mui-focused': {
@@ -43,6 +59,16 @@ const CustomTabs = styled(Tabs)(({theme})=>({
     backgroundColor: theme.status.primary,
   },
 }))
+const CustomFormControl = styled(FormControl)(({theme})=>({
+  width: "calc(100% - 1rem)",
+  ".MuiInputLabel-root":{
+    transform:"translateY(-7px)"
+  },
+  ".MuiInputBase-root":{
+    padding: "7px 0 0px",
+    marginTop: "9px",
+  }
+}))
 const CustomButton = styled(Button)(({theme,btntype})=>({
   background:btntype=="green"?theme.status.success:theme.status.primary,
   color:"white!important",
@@ -53,7 +79,7 @@ const CustomButton = styled(Button)(({theme,btntype})=>({
     // borderRadius:"2rem!important"
 }))
 const CustomButtonModal = styled(Button)(({ theme, btnType }) => ({
-    background: btnType == 'submit' ? '#1ebc51!important':theme.status.primary,
+    background: btnType == 'submit' ? theme.status.success:theme.status.primary,
   }));
   function a11yProps(index) {
     return {
@@ -61,8 +87,14 @@ const CustomButtonModal = styled(Button)(({ theme, btnType }) => ({
       'aria-controls': `simple-tabpanel-${index}`,
     };
   }
-function Index_evolve({odcProps}) {
+function Index_evolve({odcProps,token,addODCData}) {
     console.log("odc props",odcProps)
+    const {  regionList,
+      witelList,
+      datelList,
+      stoList,
+      merekList
+    } = odcProps
     const router = useRouter();
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
@@ -126,6 +158,19 @@ function Index_evolve({odcProps}) {
       },[])
       // const {role_name} = (typeof window !== 'undefined') ? jwt(getCookie("token")): { role_name: ""}
       // const {role_name} = jwt(getCookie("token"));
+
+      /** tambah ODC use state */
+      const [regionListClient,setRegionListClient] = useState("");
+      const [witelListClient,setWitelListClient] = useState("");
+      const [datelListClient,setDatelListClient] = useState("");
+      const [stoListClient,setSTOListClient] = useState("");
+      useEffect(()=>{
+
+      },[witelListClient,datelListClient,stoListClient])
+      const handleOnChange = (event,newValue,setValues) => {
+        setValues(prev=>({...prev,tabs: newValue}));
+        // handleChange(event,newValue)
+      };
   return (
     <div className={`${styles.verticalMenu}`}>
     <div className={styles.sidebarLogo}>
@@ -218,47 +263,194 @@ function Index_evolve({odcProps}) {
                           lengkapi semua isian yang ada
                         </div>
                       </div>
+                      <Formik 
+                        initialValues={{
+                          tabs:0,
+                          name:"test",
+                          merek_id:merekList?.data[0].id.toString(),
+                          port_feeder_terminasi:"24",
+                          deployment_date:"mar-2022",
+                          capacity:144,
+                          panel_oa:"2",
+                          rak_oa:"2",
+                          port:"2",
+                          region_id:regionList?.data[0].id.toString(),
+                          witel_id:witelList?.data?.filter(item=>item.region_id.toString() === regionList.data[0].id.toString())[0].id.toString(),
+                          datel_id:datelList?.data?.filter(item=>item.region_id.toString() === regionList.data[0].id.toString())
+                          .filter(item=>item.witel_id.toString() == witelList?.data?.filter(item=>item.region_id.toString() === regionList.data[0].id.toString())[0].id.toString())[0].id.toString(),
+                          sto_id:stoList?.data?.filter(item=>item.region_id.toString() === regionList.data[0].id.toString())
+                          .filter(item=>item.witel_id.toString() == witelList?.data?.filter(item=>item.region_id.toString() === regionList.data[0].id.toString())[0].id.toString())
+                          .filter(item=>item.datel_id.toString() == datelList?.data?.filter(item=>item.region_id.toString() === regionList.data[0].id.toString())
+                          .filter(item=>item.witel_id.toString() == witelList?.data?.filter(item=>item.region_id.toString() === regionList.data[0].id.toString())[0].id.toString())[0].id.toString())[0].id.toString()
+                        }}
+                        validateOnChange={true}
+                        validateOnMount={true}
+                        validate={(values)=>{
+                          console.log("all values",values)
+                          // console.log("witel",values.witel,witelList?.data?.filter(item=>item.region_id.toString() === values.regional))
+                          // console.log("datel",values.datel,witelList?.data?.filter(item=>item.region_id.toString() === values.regional),datelList?.data?.filter(item=>item.region_id.toString() == values.regional)
+                          // .filter(item=>item.witel_id.toString() == witelList?.data?.filter(item=>item.region_id.toString() === values.regional).filter(item=>item.id==values.witel)[0]?.id.toString()))
+                          // console.log("sto",values.datel_id,stoList?.data?.filter(item=>item.region_id.toString() === values.region_id),stoList?.data?.filter(item=>item.region_id.toString() === values.region_id)
+                          // .filter(item=>item.witel_id.toString() == stoList?.data?.filter(item=>item.region_id.toString() === values.region_id).filter(item=>item.witel_id==values.witel_id)[0]?.id.toString()))
+                          // console.log("witel count",values.witel)
+
+                          setWitelListClient(witelList?.data?.filter(item=>item.region_id.toString() === values.region_id))
+                          // setDatelListClient(datelList?.data?.filter(item=>item.region_id.toString() == values.regional)
+                          // .filter(item=>item.witel_id.toString() == witelList?.data?.filter(item=>item.region_id.toString() === values.regional).filter(item=>item.id==values.witel)[0]?.id.toString()))
+                          setDatelListClient(datelList?.data?.filter(item=>item.region_id.toString() == values.region_id).filter(item=>item.witel_id.toString() == values.witel_id))
+                          if(datelList?.data?.filter(item=>item.region_id.toString() == values.region_id).length==1){
+                            setDatelListClient(datelList?.data?.filter(item=>item.region_id.toString() == values.region_id))
+                          }
+                          setSTOListClient(stoList?.data?.filter(item=>item.region_id.toString() === values.region_id).filter(item=>item.witel_id.toString() == values.witel_id).filter(item=>item.datel_id.toString() == values.datel_id))
+
+                          /* fungsi komparasi region witel datel (jika sama select option langsung ditentukan)*/
+                          for(var i =1; i < stoList?.data?.filter(item=>item.region_id.toString() === values.region_id).filter(item=>item.witel_id.toString() == values.witel_id).length; i++)
+                          { 
+                            let a = stoList?.data?.filter(item=>item.region_id.toString() === values.region_id).filter(item=>item.witel_id.toString() == values.witel_id)[i];
+                            let b = stoList?.data?.filter(item=>item.region_id.toString() === values.region_id).filter(item=>item.witel_id.toString() == values.witel_id)[i-1];
+                            let currentName = JSON.stringify({region:a.region_id,witel:a.witel_id,datel:a.datel_id}); 
+                            let firstName = JSON.stringify({region:b.region_id,witel:b.witel_id,datel:b.datel_id});
+                            if(firstName == currentName)
+                            {
+                              // return true;
+                              // console.log(stoList?.data?.filter(item=>item.region_id.toString() === values.regional).filter(item=>item.witel_id.toString() == values.witel).length,i+1)
+                              if(stoList?.data?.filter(item=>item.region_id.toString() === values.region_id).filter(item=>item.witel_id.toString() == values.witel_id).length==i+1)
+                              setSTOListClient(stoList?.data?.filter(item=>item.region_id.toString() === values.region_id).filter(item=>item.witel_id.toString() == values.witel_id))
+                            }
+                            else{
+                              break;
+                            }
+                          }     
+                          if(stoList?.data?.filter(item=>item.region_id.toString() === values.region_id).length==1 && stoList?.data?.filter(item=>item.region_id.toString() === values.region_id).filter(item=>item.witel_id.toString() == values.witel_id).length==0){
+                            setSTOListClient(stoList?.data?.filter(item=>item.region_id.toString() === values.region_id))
+                          }
+                          
+                          /** very important 
+                          if(stoList?.data?.filter(item=>item.region_id.toString() === values.regional).filter(item=>item.witel_id.toString() == values.witel)[0].region_id == stoList?.data?.filter(item=>item.region_id.toString() === values.regional).filter(item=>item.witel_id.toString() == values.witel)[1].region_id &&
+                          stoList?.data?.filter(item=>item.region_id.toString() === values.regional).filter(item=>item.witel_id.toString() == values.witel)[0].witel_id == stoList?.data?.filter(item=>item.region_id.toString() === values.regional).filter(item=>item.witel_id.toString() == values.witel)[1].witel_id && 
+                          stoList?.data?.filter(item=>item.region_id.toString() === values.regional).filter(item=>item.witel_id.toString() == values.witel)[0].datel_id == stoList?.data?.filter(item=>item.region_id.toString() === values.regional).filter(item=>item.witel_id.toString() == values.witel)[1].datel_id 
+                          ){
+                            setSTOListClient(stoList?.data?.filter(item=>item.region_id.toString() === values.regional).filter(item=>item.witel_id.toString() == values.witel))
+                          }
+                         */
+
+                        }}
+                        onSubmit={(values,{setSubmitting})=>{
+                          console.log("on submit",values)
+                          addODCData(values.name,values.merek_id,values.port_feeder_terminasi,values.deployment_date,values.capacity,null,values.panel_oa,values.rak_oa,values.port,values.name,values.region_id,values.witel_id,values.datel_id,values.sto_id,token,setSubmitting,handleClose,toast)
+                        }}
+                      >
+                        {({
+                          errors,
+                          values,
+                          touched,
+                          setValues,
+                          handleSubmit,
+                          handleChange,
+                          handleBlur,
+                          isSubmitting
+                        })=>(
+                          <form className={styles.form} onSubmit={handleSubmit}>
                       <div className={`${styles.cardBody} card-body row`}>
                       <div className={styles.tabLink}>
-                        <CustomTabs value={value} onChange={handleChange} aria-label="basic tabs example">
+                        <CustomTabs value={values.tabs} onChange={(ev,newValue)=>handleOnChange(ev,newValue,setValues)} onBlur={handleBlur} aria-label="basic tabs example">
                           <CustomTab label="ODC" {...a11yProps(0)} />
                           <CustomTab label="OA" {...a11yProps(1)} />
                         </CustomTabs>
                       </div>
+
                       <div
                         className={styles.spacer}
                         role="tabpanel"
-                        hidden={value !== 0}
+                        hidden={values.tabs !== 0}
                         id={`simple-tabpanel-${0}`}
                         aria-labelledby={`simple-tab-${0}`}
                         // {...other}
                       >
-                        {/* <Formik >
 
-                        </Formik> */}
-                        {value === 0 && (
+                        {values.tabs === 0 && (
                           <div className='row'>
                             {/* <Typography> */}
                             <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                  <CustomTextField id="standard-basic" label="Nama ODC" variant="standard" />
+                                  <CustomTextField id="standard-basic" name='name' value={values.name} onChange={handleChange} onBlur={handleBlur} label="Nama ODC" variant="standard" />
                                 </div>
                                 <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                  <CustomTextField id="standard-basic" label="Regional" variant="standard" />
+                                  {/* <CustomTextField id="standard-basic" onChange={handleChange} onBlur={handleBlur} value={values.name} label="Regional" variant="standard" /> */}
+                                  <CustomFormControl key='regional' variant="standard" >
+                                    <CustomInputLabel id="demo-simple-select-standard-label">Regional</CustomInputLabel>
+
+                                    <NativeSelect value={values.region_id} onChange={handleChange} onBlur={handleBlur} inputProps={{
+                                    name: 'region_id',
+                                    id: 'uncontrolled-native',
+                                    }}>
+                                      {(regionList?.data?.map(item=>({label:item.name,value:item.id})) || []).map(item=>(
+                                        <option key={"region-"+item.label} value={item.value}>{item.label}</option>
+                                      ))}
+                                    </NativeSelect>
+                                  </CustomFormControl>
                                 </div>
                                 <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                  <CustomTextField id="standard-basic" label="WITEL" variant="standard" />
+                                  {/* <CustomTextField id="standard-basic" onChange={handleChange} onBlur={handleBlur} label="WITEL" variant="standard" /> */}
+                                  <CustomFormControl key='witel' variant="standard" >
+                                    <CustomInputLabel id="demo-simple-select-standard-label">Witel</CustomInputLabel>
+
+                                    <NativeSelect value={values.witel_id} onChange={handleChange} onBlur={handleBlur} inputProps={{
+                                    name: 'witel_id',
+                                    id: 'uncontrolled-native',
+                                    }}>
+                                      {((witelListClient )?witelListClient?.map(item=>({label:item.name,value:item.id})):witelList?.data?.map(item=>({label:item.name,value:item.id})) || []).map(item=>(
+                                        <option key={"witel-"+item.label} value={item.value}>{item.label}</option>
+                                      ))}
+                                    </NativeSelect>
+                                  </CustomFormControl>
                                 </div>
                                 <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                  <CustomTextField id="standard-basic" label="DATEL" variant="standard" />
+                                  {/* <CustomTextField id="standard-basic" onChange={handleChange} onBlur={handleBlur} label="DATEL" variant="standard" /> */}
+                                  <CustomFormControl key='datel' variant="standard" >
+                                    <CustomInputLabel id="demo-simple-select-standard-label">Datel</CustomInputLabel>
+
+                                    <NativeSelect value={values.datel_id} onChange={handleChange} onBlur={handleBlur} inputProps={{
+                                    name: 'datel_id',
+                                    id: 'uncontrolled-native',
+                                    }}>
+                                      {((datelListClient)?datelListClient?.map(item=>({label:item.name,value:item.id})):datelList?.data?.map(item=>({label:item.name,value:item.id})) || []).map(item=>(
+                                        <option key={"datel-"+item.label} value={item.value}>{item.label}</option>
+                                      ))}
+                                    </NativeSelect>
+                                  </CustomFormControl>
                                 </div>
                                 <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                  <CustomTextField id="standard-basic" label="STO" variant="standard" />
+                                  {/* <CustomTextField id="standard-basic" onChange={handleChange} onBlur={handleBlur} label="STO" variant="standard" /> */}
+                                  <CustomFormControl key='sto' variant="standard" >
+                                    <CustomInputLabel id="demo-simple-select-standard-label">STO</CustomInputLabel>
+
+                                    <NativeSelect value={values.sto_id} onChange={handleChange} onBlur={handleBlur} inputProps={{
+                                    name: 'sto_id',
+                                    id: 'uncontrolled-native',
+                                    }}>
+                                      {((stoListClient)?stoListClient?.map(item=>({label:item.name,value:item.id})):stoList?.data?.map(item=>({label:item.name,value:item.id})) || []).map(item=>(
+                                        <option key={"sto-"+item.label} value={item.value}>{item.label}</option>
+                                      ))}
+                                    </NativeSelect>
+                                  </CustomFormControl>
                                 </div>
                                 <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                  <CustomTextField id="standard-basic" label="Kapasitas" variant="standard" />
+                                  <CustomTextField id="standard-basic" name='capacity' value={values.capacity} onChange={handleChange} onBlur={handleBlur} label="Kapasitas" variant="standard" />
                                 </div>
                                 <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                  <CustomTextField id="standard-basic" label="Merek" variant="standard" />
+                                  {/* <CustomTextField id="standard-basic" onChange={handleChange} onBlur={handleBlur} label="Merek" variant="standard" /> */}
+                                  <CustomFormControl key='merek' variant="standard" >
+                                    <CustomInputLabel id="demo-simple-select-standard-label">Merek</CustomInputLabel>
+
+                                    <NativeSelect value={values.merek_id} onChange={handleChange} onBlur={handleBlur} inputProps={{
+                                    name: 'merek_id',
+                                    id: 'uncontrolled-native',
+                                    }}>
+                                      {(merekList.data|| []).map(item=>({label:item.name,value:item.id})).map(item=>(
+                                        <option key={"merek-"+item.label} value={item.value}>{item.label}</option>
+                                      ))}
+                                    </NativeSelect>
+                                  </CustomFormControl>
                                 </div>
                                 {/* <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
                                 <InputLabel variant="standard" htmlFor="uncontrolled-native">
@@ -288,7 +480,7 @@ function Index_evolve({odcProps}) {
                                   panelOa
                                   port */}
                                 <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                  <CustomTextField id="standard-basic" label="Deployment Date" color='primary'
+                                  <CustomTextField id="standard-basic" name='deployment_date' value={values.deployment_date} onChange={handleChange} onBlur={handleBlur} label="Deployment Date" color='primary'
                                     variant="standard" />
                                 </div>
                             {/* </Typography> */}
@@ -298,56 +490,61 @@ function Index_evolve({odcProps}) {
                       <div
                         className={styles.spacer}
                         role="tabpanel"
-                        hidden={value !== 1}
+                        hidden={values.tabs !== 1}
                         id={`simple-tabpanel-${1}`}
                         aria-labelledby={`simple-tab-${1}`}
                         // {...other}
                       >
-                        {value === 1 && (
+                        {values.tabs === 1 && (
                           <div className='row'>
                           {/* <Typography> */}
                              <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                <CustomTextField id="standard-basic" label="Port Feeder Terminasi" variant="standard" />
+                                <CustomTextField id="standard-basic" name='port_feeder_terminasi' value={values.port_feeder_terminasi} onChange={handleChange} onBlur={handleBlur} label="Port Feeder Terminasi" variant="standard" />
                               </div>
                               <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                <CustomTextField id="standard-basic" label="Rak OA" variant="standard" />
+                                <CustomTextField id="standard-basic" name='rak_oa' value={values.rak_oa} onChange={handleChange} onBlur={handleBlur} label="Rak OA" variant="standard" />
                               </div>
                               <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                <CustomTextField id="standard-basic" label="Panel" variant="standard" />
+                                <CustomTextField id="standard-basic" name='panel_oa' value={values.panel_oa} onChange={handleChange} onBlur={handleBlur} label="Panel" variant="standard" />
                               </div>
                               <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                <CustomTextField id="standard-basic" label="Port" color='primary'
+                                <CustomTextField id="standard-basic" name='port' value={values.port} onChange={handleChange} onBlur={handleBlur} label="Port" color='primary'
                                   variant="standard"/>
                               </div>
                           {/* </Typography> */}
                         </div>
                         )}
                       </div>
+
+
                       
                       </div>
                       <div className={odcStyles.actionContainer}>
-                    <CustomButtonModal onClick={(ev)=>handleChange(ev,value-1)} style={{visibility:(value<=0)?"hidden":"visible"}} variant="contained" color='primary' size="large">
+                    <CustomButtonModal onClick={(ev)=>handleOnChange(ev,values.tabs-1,setValues)} style={{visibility:(values.tabs<=0)?"hidden":"visible"}} variant="contained" color='primary' size="large">
                     Prev
                   </CustomButtonModal>
                   <div className='row'>
                     <div className='col-md-12 col-lg-6'> 
-                    {(value>0) && <CustomButtonModal btnType={"submit"} onClick={(ev)=>(value>0)?handleOpen:handleChange(ev,value+1)}  variant="contained" color='primary' size="large">
+                    {(values.tabs>0) && <CustomButtonModal btnType={"submit"} type={"submit"} onClick={(ev)=>(values.tabs>0)?handleOpen:handleOnChange(ev,values.tabs+1,setValues)}  variant="contained" color='primary' size="large" disabled={isSubmitting}>
                       Submit
                       </CustomButtonModal>}
                     </div>
                     <div className='col-md-12 col-lg-6'> 
-                    {(value>0) && <CustomButtonModal onClick={()=>handleClose()}  variant="contained" color='primary' size="large">
+                    {(values.tabs>0) && <CustomButtonModal onClick={()=>handleClose()}  variant="contained" color='primary' size="large">
                         Cancel
                         </CustomButtonModal>}
                     </div>
                   </div>
                   <div>
 
-                   <CustomButtonModal style={{visibility: (value>0)?"hidden":"visible"}} onClick={(ev)=>(value>0)?handleOpen:handleChange(ev,value+1)}  variant="contained" color='primary' size="large">
-                    {(value<=0)? "Next":""}
+                   <CustomButtonModal style={{visibility: (values.tabs>0)?"hidden":"visible"}} onClick={(ev)=>(values.tabs>0)?handleOpen:handleOnChange(ev,values.tabs+1,setValues)}  variant="contained" color='primary' size="large">
+                    {(values.tabs<=0)? "Next":""}
                   </CustomButtonModal>
                   </div>
                     </div>
+                    </form>
+                        )}
+                      </Formik>
                     </div>
                   </Box>
                 </div>
@@ -369,7 +566,7 @@ const mapStateToProps = state =>({
 
 });
 const mapDispatchToProps = {
-
+  addODCData,
 };
 
-export default Index_evolve
+export default connect(mapStateToProps,mapDispatchToProps)(Index_evolve)
