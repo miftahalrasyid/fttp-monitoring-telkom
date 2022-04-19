@@ -1,5 +1,5 @@
 import React,{useEffect,useState} from 'react';
-import withAuth from '../../components/Auth';
+import withAuth from '../Auth';
 import Link from 'next/link';
 import {
   MdInventory,
@@ -13,8 +13,8 @@ import {
 } from 'react-icons/md';
 import { connect } from 'react-redux';
 import {END} from 'redux-saga';
-import { wrapper,makeStore } from "../../components/store";
-import { getODCsBox } from '../../components/store/odcs/actions'
+import { wrapper,makeStore } from "../store";
+import { getODCsBox } from '../store/odcs/actions'
 import dynamic from 'next/dynamic';
 const DynamicMUIDataTable = dynamic(() => import('mui-datatables'),{ ssr: false });
 // import MUIDataTable from "mui-datatables";

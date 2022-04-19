@@ -78,8 +78,8 @@ const CustomButton = styled(Button)(({theme,btntype})=>({
     // color:"white!important",
     // borderRadius:"2rem!important"
 }))
-const CustomButtonModal = styled(Button)(({ theme, btnType }) => ({
-    background: btnType == 'submit' ? theme.status.success:theme.status.primary,
+const CustomButtonModal = styled(Button)(({ theme, btntype }) => ({
+    background: btntype == 'submit' ? theme.status.success:theme.status.primary,
   }));
   function a11yProps(index) {
     return {
@@ -304,7 +304,7 @@ function Index_evolve({odcProps,token,addODCData}) {
                           setSTOListClient(stoList?.data?.filter(item=>item.region_id.toString() === values.region_id).filter(item=>item.witel_id.toString() == values.witel_id).filter(item=>item.datel_id.toString() == values.datel_id))
 
                           /* fungsi komparasi region witel datel (jika sama select option langsung ditentukan)*/
-                          for(var i =1; i < stoList?.data?.filter(item=>item.region_id.toString() === values.region_id).filter(item=>item.witel_id.toString() == values.witel_id).length; i++)
+                          for(var i = 1; i < stoList?.data?.filter(item=>item.region_id.toString() === values.region_id).filter(item=>item.witel_id.toString() == values.witel_id).length; i++)
                           { 
                             let a = stoList?.data?.filter(item=>item.region_id.toString() === values.region_id).filter(item=>item.witel_id.toString() == values.witel_id)[i];
                             let b = stoList?.data?.filter(item=>item.region_id.toString() === values.region_id).filter(item=>item.witel_id.toString() == values.witel_id)[i-1];
@@ -525,7 +525,7 @@ function Index_evolve({odcProps,token,addODCData}) {
                   </CustomButtonModal>
                   <div className='row'>
                     <div className='col-md-12 col-lg-6'> 
-                    {(values.tabs>0) && <CustomButtonModal btnType={"submit"} type={"submit"} onClick={(ev)=>(values.tabs>0)?handleOpen:handleOnChange(ev,values.tabs+1,setValues)}  variant="contained" color='primary' size="large" disabled={isSubmitting}>
+                    {(values.tabs>0) && <CustomButtonModal btntype={"submit"} type={"submit"} onClick={(ev)=>(values.tabs>0)?handleOpen:handleOnChange(ev,values.tabs+1,setValues)}  variant="contained" color='primary' size="large" disabled={isSubmitting}>
                       Submit
                       </CustomButtonModal>}
                     </div>

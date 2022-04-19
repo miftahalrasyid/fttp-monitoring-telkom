@@ -52,9 +52,9 @@ export const getSelectedCoreFeeder = (data) => ({
     type: GET_SELECTED_CORE_FEEDER,
     payload: data
 })
-export const getOcdSplitpanelStatus = (odcId) => ({
+export const getOcdSplitpanelStatus = (odcId,token,toast) => ({
     type: GET_ODC_SPLITPANEL_STATUS,
-    payload: {odcId}
+    payload: {odcId,token,toast}
 });
 export const getRegionList = (token) => ({
     type: GET_REGION_LIST,

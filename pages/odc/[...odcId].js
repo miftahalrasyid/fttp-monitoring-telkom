@@ -47,6 +47,7 @@ import NativeSelect from '@mui/material/NativeSelect';
 import { 
     styled as styledCustom
   } from "@mui/material/styles";
+import { toast } from 'react-toastify';
 
 // const CustomSelect = styledCustom(Select)(({theme})=>({
 //     '.MuiList-root': {
@@ -913,7 +914,7 @@ function Odc({
 export const getServerSideProps = async (props) => wrapper.getServerSideProps(store => async ({req, res, ...etc}) => {
     // const { token } = /authUserToken=(?<token>\S+)/g.exec(req.headers.cookie)?.groups || {token: ""} ;
     const {params:{odcId=[]}} = props;
-    store.dispatch(getOcdSplitpanelStatus(odcId[0]))
+    store.dispatch(getOcdSplitpanelStatus(odcId[0],req.cookies.token,toast))
     store.dispatch(getUserData())
     store.dispatch(END)
     await store.sagaTask.toPromise();

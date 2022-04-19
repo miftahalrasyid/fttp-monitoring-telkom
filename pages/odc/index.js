@@ -457,7 +457,7 @@ function ODC(props) {
         item.rak_OA,
         item.panel,
         item.port,
-
+        item.id
       ])))
     },[rawData,open,openDeleteRowModal])
     useEffect(()=>{
@@ -483,6 +483,7 @@ function ODC(props) {
         item.rak_OA,
         item.panel,
         item.port,
+        item.id
       ])))
     },[odc_list_client])
     // },[rawData,open,value,openDeleteRowModal])
@@ -762,7 +763,7 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                 selectableRows:"none",
                 print: false,
                 serverSide:true,
-                count: odc_list?.count,
+                count: odc_list_client?.count || odc_list?.count,
                 rowsPerPage: 5,
                 rowsPerPageOptions:[5,10,25,50,100],
                 onTableChange: (action, tableState) => {
@@ -980,6 +981,16 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                 options:{
                   customBodyRender:(value, tableMeta, update) => {
                     let newValue = tableMeta.rowData[13]
+                    return ( <span>{newValue}</span> )
+                  },
+                  filter:false,
+                  display:false,
+                }
+              },{
+                name: "odc_id",
+                options:{
+                  customBodyRender:(value, tableMeta, update) => {
+                    let newValue = tableMeta.rowData[14]
                     return ( <span>{newValue}</span> )
                   },
                   filter:false,

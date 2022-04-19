@@ -139,15 +139,34 @@ function* setSelectedCoreFeederSaga({payload:{elmId}}){
     }
 }
 
-function* fetchStatus({payload:{odcId}}){
+function* fetchStatus({payload:{odcId,token,toast}}){
     try {
-        // console.log("get fetch status");
+        var myHeaders = new Headers();
+        myHeaders.append("Authorization", "Bearer "+token);
+        var requestOptions = {
+            method: 'GET',
+            headers: myHeaders,
+            redirect: 'follow'
+          };
+        console.log("get fetch status");
+        const rest = yield fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/api/view-odc/${odcId}`,requestOptions).then(res=>res.json())
+
+        console.log("odc ktm fs",rest)
         const res = yield fetch("https://my-project-1550730936778.firebaseio.com/expOdcBox.json").then(res=>res.json());
         const filtered = yield res.filter(item=>item.odc_id===odcId);
         console.log("filtered", res, filtered[0],odcId)
         yield put({type:GET_ODC_SPLITPANEL_STATUS_SUCCESSFUL,payload:filtered[0]})
     } catch (error) {
         console.error(error)
+        toast.error("Maaf, ada kesalahan teknis", {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+        });
     }
 }
 function* getFeederGraph({payload:{data,token}}){
@@ -512,7 +531,7 @@ function* addODCData({payload:{
             console.log("success added")
             setSubmitting(false)
             handleClose();
-            toast.success(res.data.email+" berhasil ditambahkan", {
+            toast.success(name+" berhasil ditambahkan", {
                 position: "top-right",
                 autoClose: 5000,
                 hideProgressBar: false,
@@ -521,9 +540,10 @@ function* addODCData({payload:{
                 draggable: true,
                 progress: undefined,
               });
-            yield put({type:GET_ODC_PAGE,payload:{page:0,rowsPerPage:10,sortOrder:{name:"",direction:"asc"},token,errorState:""}})
+            yield put({type:GET_ODC_PAGE,payload:{page:1,rowsPerPage:10,sortOrder:{name:"",direction:"asc"},token}})
         }
     } catch (error) {
+        console.log("saga add odc error" ,error)
         toast.error("terjadi kesalahan server", {
             position: "top-right",
             autoClose: 5000,
@@ -653,6 +673,7 @@ function* updateODCData({payload:{
               yield put({type:GET_ODC_PAGE,payload:{page:0,rowsPerPage:10,sortOrder:{name:"",direction:"asc"},token,errorState:""}})
         }
     } catch (error) {
+        console.log("saga update odc error" ,error)
         toast.error("terjadi kesalahan server", {
             position: "top-right",
             autoClose: 5000,
@@ -750,6 +771,7 @@ function* deleteODCData({payload:{odc_name,idx,odc_id,token,setSubmitting,delete
             yield res
         }
     } catch (error) {
+        console.log("saga delete odc error" ,error)
         toast.error("terjadi kesalahan server", {
             position: "top-right",
             autoClose: 5000,
