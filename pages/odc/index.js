@@ -1003,7 +1003,7 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                     console.log("custom aksi ",tableMeta)
                     let newValue = tableMeta.rowData[14]
                     return (         <div key={0} className={styles.tableAction}>
-                      <Link href={`/odc/${tableMeta.rowData[1]}`} passHref>
+                      <Link href={`/odc/${tableMeta.rowData[19]}`} passHref>
                       <a>
                     <CustomButton>
                         <MdOpenInBrowser fill='#009873' />

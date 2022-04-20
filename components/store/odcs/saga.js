@@ -155,7 +155,8 @@ function* fetchStatus({payload:{odcId,token,toast}}){
         const res = yield fetch("https://my-project-1550730936778.firebaseio.com/expOdcBox.json").then(res=>res.json());
         const filtered = yield res.filter(item=>item.odc_id===odcId);
         console.log("filtered", res, filtered[0],odcId)
-        yield put({type:GET_ODC_SPLITPANEL_STATUS_SUCCESSFUL,payload:filtered[0]})
+        yield put({type:GET_ODC_SPLITPANEL_STATUS_SUCCESSFUL,payload:rest})
+        // yield put({type:GET_ODC_SPLITPANEL_STATUS_SUCCESSFUL,payload:filtered[0]})
     } catch (error) {
         console.error(error)
         toast.error("Maaf, ada kesalahan teknis", {

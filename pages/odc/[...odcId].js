@@ -266,7 +266,7 @@ function Odc({
      */
     const router = useRouter();
     const { odcId } = router.query;
-    const {splitter={data:[],position:{left:0,top:0}},panel={data:[],position:{left:375,top:0}}} = ODCData;
+    const {splitter={splitter:{position:""},data:[],position:{left:0,top:0}},panel={data:[],position:{left:375,top:0}}} = ODCData;
     const feederModal = useState(false);
     // const [feederFocus,setFeederFocus] = useState(false); 
     const [feederFocus,setFeederFocus] = useState(
@@ -526,10 +526,11 @@ function Odc({
           { ODCData &&
           <div className={styles.odcWrapper}>
             <div className={`row ${styles.odcDetail}`}>
+              <div>
               <div className='col-lg-3'>
                 <div className={styles.odcDetailItems}>
                   <Typography sx={{ whiteSpace: "nowrap"}}>Nama ODC : </Typography>
-                  <Typography sx={{textTransform: "uppercase", whiteSpace: "nowrap"}}>{ODCData.odc_id}</Typography>
+                  <Typography sx={{textTransform: "uppercase", whiteSpace: "nowrap"}}>{ODCData.odc_name}</Typography>
                 </div>
                 <div className={styles.odcDetailItems}>
                   <Typography>Kapasitas : </Typography>
@@ -540,7 +541,7 @@ function Odc({
               <div className='col-lg-3'>
                 <div className={styles.odcDetailItems}>
                   <Typography>Merek : </Typography>
-                  <Typography>{ODCData.mrek || ""}</Typography>
+                  <Typography>{ODCData.merek || ""}</Typography>
                 </div>
 
                 <div className={styles.odcDetailItems}>
@@ -568,17 +569,19 @@ function Odc({
                   <Typography>{ODCData.port || ""}</Typography>
                 </div>
               </div>
-
+              </div>
               <div className={styles.splitPanelWrapper} style={{height:"1000px"}}>
-                <Splitter x={splitter.position.left} y={splitter.position.top}>
+                <Splitter x={splitter.position.split(" ")[1] == "left" ? "0":""} y={splitter.position.split(" ")[0] == "top" ? "0":""}>
                   {splitter.data.map(s_item=>
                   <Eth from="splitter" key={"sp"+s_item.index} id={s_item.index} status={s_item.status}
                     columns={splitter.data.length} />
                   )}
                 </Splitter>
-                <Panel x={panel.position.left} y={panel.position.top}>
+                <Panel x={splitter.position.split(" ")[1] == "left" ? "375":""} y={splitter.position.split(" ")[0] == "top" ? "0":""}>
+                {/* <Panel x={panel.position.left} y={panel.position.top}> */}
                 {panel.data.map((r_item,idx)=>{
-                    return <Rak key={'r'+r_item.rak_level} last_feeder={panel.data.filter(item=>item.type==="feeder").length} level={r_item.rak_level} type={r_item.type} datalen={12}>
+                  // console.log("odc data panel",r_item.rak_index)
+                    return <Rak key={'r'+r_item.rak_level} distributor_level_id={r_item.rak_index} last_feeder={panel.data.filter(item=>item.type==="feeder").length} level={r_item.rak_level} type={r_item.type} datalen={12}>
                       {r_item.data.map(p_item=>
                       /** odd even to define 13-24 */
                         <Eth from={r_item.type} clickHandler={panelClickHandler} key={"port"+p_item.index} rak_level={r_item.rak_level} id={((idx+1)%2===0)?(p_item.index+12):p_item.index} status={p_item.status}
@@ -590,7 +593,7 @@ function Odc({
                 </Panel>
               </div>
               {/* <div className={styles.odcFiles}> */}
-                <div className={`${splitterStyle.videoWrapper}`} style={{left:"30px",top:"419px"}}>
+                <div className={`${splitterStyle.videoWrapper}`} style={{left: (splitter.position.split(" ")[1]=="left"? "30px":""),top:(splitter.position.split(" ")[0]=="top"? "639px":"")}}>
               {/* <div className={`${splitterStyle.splitWrapper}`} style={{top:"250px",left:"0px"}}> */}
                 <div className={`${splitterStyle.card}`}>
                   <div className={`${splitterStyle.cardHeader} ${splitterStyle.cardHeaderBlue}`} style={{zIndex:"1"}}>
@@ -606,7 +609,7 @@ function Odc({
                 </div>
               {/* </div> */}
               </div>
-              <div className={`${splitterStyle.legendWrapper}`} style={{left:"30px",top:"701px"}}>
+              <div className={`${splitterStyle.legendWrapper}`} style={{left: (splitter.position.split(" ")[1]=="left"? "30px":""),top:(splitter.position.split(" ")[0]=="top"? "921px":"")}}>
               {/* <div className={`${splitterStyle.splitWrapper}`} style={{top:"250px",left:"0px"}}> */}
                 <div className={`${splitterStyle.card}`}>
                   <div className={`${splitterStyle.cardHeader} ${splitterStyle.cardHeaderPurple}`} style={{zIndex:"1"}}>
@@ -791,6 +794,7 @@ function Odc({
               <div>
                   {ODCData.panel.data.map(item=>(<>
                     {item.data.map(distFeed=>{
+                      
                       return <FormControl key={distFeed.index} variant="standard" sx={{ m: 1, minWidth: 89 }}>
                      <InputLabel id="demo-simple-select-standard-label" className={styles.portLabel}> { ((item.rak_level)%2===0)?item.type+item.rak_index+" "+(distFeed.index+12):item.type+item.rak_index+" "+distFeed.index }</InputLabel>
                      {/* <InputLabel id="demo-simple-select-standard-label" className={styles.portLabel}> { ((item.rak_level)%2===0)?item.type+item.rak_index+" "+(distFeed.index+12):item.type+item.rak_index+" "+distFeed.index }</InputLabel> */}
@@ -914,6 +918,7 @@ function Odc({
 export const getServerSideProps = async (props) => wrapper.getServerSideProps(store => async ({req, res, ...etc}) => {
     // const { token } = /authUserToken=(?<token>\S+)/g.exec(req.headers.cookie)?.groups || {token: ""} ;
     const {params:{odcId=[]}} = props;
+    console.log("odc id",odcId[0])
     store.dispatch(getOcdSplitpanelStatus(odcId[0],req.cookies.token,toast))
     store.dispatch(getUserData())
     store.dispatch(END)

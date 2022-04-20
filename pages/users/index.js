@@ -449,6 +449,15 @@ useEffect(()=>{
                     }
                   }
                 },{
+                  name: "Status Id",
+                  options:{
+                    customBodyRender:(value, tableMeta, update) => {
+                      let newValue = tableMeta.rowData[3]
+                      return ( <span>{newValue}</span> )
+                    },
+                    display:"false"
+                  }
+                },{
                   name: "Aksi",
                   options:{
                     customBodyRender:(value, tableMeta, update) => {
@@ -500,7 +509,7 @@ useEffect(()=>{
                                           email:tableMeta.rowData[1],
                                           password:"",
                                           role:tableMeta.rowData[4] || "",
-                                          status:tableMeta.rowData[5] ? true:false,
+                                          status:tableMeta.rowData[5],
                                         }}
                                         validate={values => {
                                           const errors = {};
@@ -567,12 +576,12 @@ useEffect(()=>{
                                               <FormControl key={"status"} variant="standard" sx={{ m: 1, minWidth: 124 }}>
                                               <CustomInputLabel  id="demo-simple-select-standard-label">Status</CustomInputLabel>
                       
-                                              <CustomNativeSelect onChange={handleChange} onBlur={handleBlur} defaultValue={values.status} inputProps={{
+                                              <CustomNativeSelect onChange={handleChange} onBlur={handleBlur} defaultValue={values.status.toString()} inputProps={{
                                                   name: 'status',
                                                   id: 'uncontrolled-native',
                                                   }}>
-                                                    <option key={"status-active"} value={true}> Active </option>
-                                                    <option key={"status-suspend"} value={false}> Suspend </option>
+                                                    <option key={"status-active"} value={"true"}> Active </option>
+                                                    <option key={"status-suspend"} value={"false"}> Suspend </option>
                                               </CustomNativeSelect>
                                               </FormControl>
                                               </div>

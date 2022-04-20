@@ -133,7 +133,8 @@ function a11yProps(index) {
 function Navbar(props) {
   const odc_edit_modal = useRef(null);
   const { dataClient,odcData,email,role_name, add_user_confirmation,addNewUser,token} = props;
-  // console.log("raw data",dataClient,props)
+  // console.log("raw data",odcData,props)
+  const { odc_name } = odcData || {odc_name:''};
   const router = useRouter();
   const {odcId,userPath} = router.query;
   const filteredDataclient = (odcId)?dataClient.filter(item=>item.id==odcId[0]):""
@@ -240,7 +241,7 @@ function Navbar(props) {
                     ...prev.dom,
                       (prev.elm.length === 0) ? [<Link key={"link"+next} href={`/odc/${next}`} passHref>
                         <a className={indexStyles.logo}>
-                            <span className={indexStyles.logoTxt}> {next.toUpperCase()}</span>
+                            <span className={indexStyles.logoTxt}> {odc_name.toUpperCase()}</span>
                         </a>
                         </Link>]:
                       <Link key={"link"+next} href={`/odc/${[...prev.elm,next].join("/")}`} passHref>
