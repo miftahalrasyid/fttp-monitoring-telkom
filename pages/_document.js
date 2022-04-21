@@ -14,6 +14,24 @@ export default class MyDocument extends Document {
           <link rel="preconnect" href="https://fonts.googleapis.com"/>
           <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin/>
           <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&display=swap" rel="stylesheet"></link>
+
+          <link
+       href="../public/font/GothamRounded-Book.otf"
+       rel="stylesheet"
+     />
+          <link
+       href="../public/font/GothamRounded-Medium.otf"
+       rel="stylesheet"
+     />
+          <link
+       href="../public/font/GothamRounded-Bold.otf"
+       rel="stylesheet"
+     />
+          <link
+       href="../public/font/Gilroy-Regular.woff2"
+       rel="stylesheet"
+     />
+
         </Head>
         <body>
           <Main />
