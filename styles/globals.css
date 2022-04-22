@@ -13,7 +13,9 @@
 }
 @font-face {
   font-family: "GothamRounded-Medium";
-  src: url("/fonts/GothamRounded-Medium.woff2") format('woff2');
+  src: url("/fonts/GothamRounded-Medium.woff2") format('woff2'),
+  url("/fonts/GothamRounded-Medium.woff") format('woff'),
+  url("/fonts/GothamRounded-Medium.ttf") format('truetype');
 }
 @font-face {
   font-family: "GothamRounded-Bold";
