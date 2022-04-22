@@ -8,7 +8,9 @@ import logo_paperless from '../public/img/logo_paperless.png';
 import telkom_bg from "../public/img/telkom_bg.jpeg";
 import main_img from "../public/img/main_img.png";
 import styles from './index_evolve.module.css';
+import Head from 'next/head';
 import { Formik } from 'formik';
+// import '../public/fonts/GothamRounded-Medium.otf';
 import {
   Grid,
   CircularProgress,
@@ -97,6 +99,9 @@ function Index_evolve(props) {
     logoLoadCallback()
   },[isImageReady,logoLoadCallback])
   return (<div className={styles.containerWrapper}>
+    <Head>
+    <link href="/font/globals.css" rel="stylesheet" />
+    </Head>
     <div className={styles.backdrop}>
       <Image src={telkom_bg} width={1829} height={1100} alt={"background"}/>
     </div>

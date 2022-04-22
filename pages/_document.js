@@ -12,32 +12,9 @@ export default class MyDocument extends Document {
           {/* <meta name="theme-color" content={theme.palette.primary.main} /> */}
           <link rel="preconnect" href="https://fonts.googleapis.com"/>
           <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin/>
+          {/* <link href="../styles/globals.css" rel="stylesheet" /> */}
+          {/* <base href="/"/> */}
           <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&display=swap" rel="stylesheet"></link>
-
-          <link
-       href={"/font/GothamRounded-Book.otf"}
-       rel="stylesheet"
-       as="font"
-            crossOrigin=""
-     />
-          <link
-       href="/font/GothamRounded-Medium.otf"
-       rel="stylesheet"
-       as="font"
-            crossOrigin=""
-     />
-          <link
-       href="/font/GothamRounded-Bold.otf"
-       rel="stylesheet"
-       as="font"
-            crossOrigin=""
-     />
-          <link
-       href="/font/Gilroy-Regular.woff2"
-       rel="stylesheet"
-       as="font"
-            crossOrigin=""
-     />
 
         </Head>
         <body>

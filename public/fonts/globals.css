@@ -8,20 +8,26 @@
 }
 @import url(https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css);
 @font-face {
-  font-family: "GothamRounded-Book";
-  src: url("/fonts/GothamRounded-Book.woff2") format('woff2');
+  font-family: "GothamRounded-Book" !important;
+  src: url(../font/GothamRounded-Book.otf) format('opentype');
+  font-style: normal;
+}
+/* @font-face {
+  font-family: 'Graublau Web';
+  src: url(GraublauWeb.eot);
+  src: local('Graublau Web Regular'), url(GraublauWeb.otf) format('opentype');
+  } */
+@font-face {
+  font-family: "GothamRounded-Medium" !important;
+  src: local(''),url("../font/FontsFree-Net-Gilroy3.ttf") format('truetype');
 }
 @font-face {
-  font-family: "GothamRounded-Medium";
-  src: url("/fonts/GothamRounded-Medium.woff2") format('woff2');
-}
-@font-face {
-  font-family: "GothamRounded-Bold";
-  src: url("/fonts/GothamRounded-Bold.otf") format('opentype');
+  font-family: "GothamRounded-Bold" !important;
+  src: url("../font/GothamRounded-Bold.otf") format('opentype');
 }
 @font-face {
   font-family: "Gilroy-Regular";
-  src: url("/fonts/Gilroy-Regular.woff2") format('woff2');
+  src: url("../font/Gilroy-Regular.woff2") format('woff2');
 }
 span,h1,h2,h3,h4,div{
   font-family: "GothamRounded-Book" !important;
