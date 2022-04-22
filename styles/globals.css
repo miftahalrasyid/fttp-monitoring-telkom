@@ -15,6 +15,7 @@
   font-family: "GothamRounded-Medium";
   src: url("/fonts/GothamRounded-Medium.woff2") format('woff2'),
   url("/fonts/GothamRounded-Medium.woff") format('woff'),
+  url("GothamRounded-Medium.otf") format('opentype'),
   url("/fonts/GothamRounded-Medium.ttf") format('truetype');
 }
 @font-face {

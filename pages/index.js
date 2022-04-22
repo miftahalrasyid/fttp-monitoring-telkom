@@ -99,9 +99,6 @@ function Index_evolve(props) {
     logoLoadCallback()
   },[isImageReady,logoLoadCallback])
   return (<div className={styles.containerWrapper}>
-    <Head>
-    <link href="/font/globals.css" rel="stylesheet" />
-    </Head>
     <div className={styles.backdrop}>
       <Image src={telkom_bg} width={1829} height={1100} alt={"background"}/>
     </div>
