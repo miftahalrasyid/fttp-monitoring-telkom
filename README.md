@@ -52,3 +52,5 @@ in this project, i use jwt token to prevent csrf attack. the token are implement
 ### Page Render Method / Data Fetching Scheme
 
 unlike react js, next js are server side rendering. so the page already been rendered in the server then push it into the client view.
+
+pm2 start npm --name ditinote-odc-telkom -- start -- -p 3000
