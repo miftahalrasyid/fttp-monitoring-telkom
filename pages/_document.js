@@ -2,7 +2,6 @@ import React from 'react';
 import Document, { Html, Head, Main, NextScript } from 'next/document';
 import { ServerStyleSheets } from '@material-ui/styles'; // works with @material-ui/core/styles, if you prefer to use it.
 // import theme from '../src/theme'; // Adjust here as well
-
 export default class MyDocument extends Document {
   render() {
 
@@ -16,20 +15,28 @@ export default class MyDocument extends Document {
           <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&display=swap" rel="stylesheet"></link>
 
           <link
-       href="../public/font/GothamRounded-Book.otf"
+       href={"/font/GothamRounded-Book.otf"}
        rel="stylesheet"
+       as="font"
+            crossOrigin=""
      />
           <link
-       href="../public/font/GothamRounded-Medium.otf"
+       href="/font/GothamRounded-Medium.otf"
        rel="stylesheet"
+       as="font"
+            crossOrigin=""
      />
           <link
-       href="../public/font/GothamRounded-Bold.otf"
+       href="/font/GothamRounded-Bold.otf"
        rel="stylesheet"
+       as="font"
+            crossOrigin=""
      />
           <link
-       href="../public/font/Gilroy-Regular.woff2"
+       href="/font/Gilroy-Regular.woff2"
        rel="stylesheet"
+       as="font"
+            crossOrigin=""
      />
 
         </Head>

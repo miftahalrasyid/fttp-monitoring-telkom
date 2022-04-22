@@ -241,7 +241,7 @@ function Navbar(props) {
                     ...prev.dom,
                       (prev.elm.length === 0) ? [<Link key={"link"+next} href={`/odc/${next}`} passHref>
                         <a className={indexStyles.logo}>
-                            <span className={indexStyles.logoTxt}> {odc_name.toUpperCase()}</span>
+                            <span className={indexStyles.logoTxt}> {odc_name?.toUpperCase()}</span>
                         </a>
                         </Link>]:
                       <Link key={"link"+next} href={`/odc/${[...prev.elm,next].join("/")}`} passHref>

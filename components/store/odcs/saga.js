@@ -148,13 +148,13 @@ function* fetchStatus({payload:{odcId,token,toast}}){
             headers: myHeaders,
             redirect: 'follow'
           };
-        console.log("get fetch status");
+        console.log("get fetch status",token,`${process.env.NEXT_PUBLIC_API_HOST}/api/view-odc/`);
         const rest = yield fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/api/view-odc/${odcId}`,requestOptions).then(res=>res.json())
 
         console.log("odc ktm fs",rest)
-        const res = yield fetch("https://my-project-1550730936778.firebaseio.com/expOdcBox.json").then(res=>res.json());
-        const filtered = yield res.filter(item=>item.odc_id===odcId);
-        console.log("filtered", res, filtered[0],odcId)
+        // const res = yield fetch("https://my-project-1550730936778.firebaseio.com/expOdcBox.json").then(res=>res.json());
+        // const filtered = yield res.filter(item=>item.odc_id===odcId);
+        // console.log("filtered", res, filtered[0],odcId)
         yield put({type:GET_ODC_SPLITPANEL_STATUS_SUCCESSFUL,payload:rest})
         // yield put({type:GET_ODC_SPLITPANEL_STATUS_SUCCESSFUL,payload:filtered[0]})
     } catch (error) {

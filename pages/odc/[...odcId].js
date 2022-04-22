@@ -34,7 +34,7 @@ import Button from '@mui/material/Button';
 import {
     getOcdSplitpanelStatus
 } from '../../components/store/odcs/actions';
-import {getUserData} from '../../components/store/users/actions'
+import {getUserData} from '../../components/store/users/actions';
 import { wrapper,makeStore } from "../../components/store";
 // import store from '../../components/store'
 import Modal from '../../components/Modal';
@@ -266,7 +266,7 @@ function Odc({
      */
     const router = useRouter();
     const { odcId } = router.query;
-    const {splitter={splitter:{position:""},data:[],position:{left:0,top:0}},panel={data:[],position:{left:375,top:0}}} = ODCData;
+    const {splitter={splitter:{position:[]},data:[],position:{left:0,top:0}},panel={data:[],position:{left:375,top:0}}} = ODCData;
     const feederModal = useState(false);
     // const [feederFocus,setFeederFocus] = useState(false); 
     const [feederFocus,setFeederFocus] = useState(
@@ -917,10 +917,17 @@ function Odc({
 
 export const getServerSideProps = async (props) => wrapper.getServerSideProps(store => async ({req, res, ...etc}) => {
     // const { token } = /authUserToken=(?<token>\S+)/g.exec(req.headers.cookie)?.groups || {token: ""} ;
+    if(!req.cookies.token)
+    return {
+      redirect:{
+        permanent:false,
+        destination: "/"
+      }
+    }
     const {params:{odcId=[]}} = props;
     console.log("odc id",odcId[0])
     store.dispatch(getOcdSplitpanelStatus(odcId[0],req.cookies.token,toast))
-    store.dispatch(getUserData())
+    store.dispatch(getUserData(1,10, {name:"",direction:"asc"},req.cookies.token,null,toast))
     store.dispatch(END)
     await store.sagaTask.toPromise();
     console.log("user data",store.getState().Users)
