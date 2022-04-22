@@ -16,42 +16,6 @@ export default class MyDocument extends Document {
           {/* <base href="/"/> */}
           <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&display=swap" rel="stylesheet"></link>
 
-          <link
-       rel="preload"
-       href={"/fonts/GothamRounded-Book.woff2"}
-       as="font"
-       type={"font/woff2"}
-            crossOrigin=""
-     />
-          <link
-       rel="preload"
-       href="/fonts/GothamRounded-Medium.woff2"
-       as="font"
-       type={"font/woff2"}
-            crossOrigin=""
-     />
-          <link
-       rel="preload"
-       href="/fonts/GothamRounded-Bold.otf"
-       as="font"
-       type={"font/otf"}
-            crossOrigin=""
-     />
-          <link
-       rel="preload"
-       href="/fonts/Gilroy-Regular.woff2"
-       as="font"
-       type={"font/woff2"}
-            crossOrigin=""
-     />
-        <style>
-          {`
-          @font-face {
-            font-family: GothamRounded-Medium !important;
-            src: url(/font/GothamRounded-Medium.otf) format(opentype);
-          }
-          `}
-        </style>
         </Head>
         <body>
           <Main />
