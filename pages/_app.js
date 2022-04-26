@@ -20,6 +20,171 @@ const tema = createThemeCustom({
     darkgray: "darkgray!important",
     info: "#1976d2!important"
   },
+  spacing: (factor) => `${0.25 * factor}rem`,
+  components:{
+    MuiTypography:{
+      styleOverrides:{
+        root:{
+          "&h5":{
+            fontFamily: "'GothamRounded-Book' !important",
+
+          },
+        },
+        h6:{
+          fontFamily: "'GothamRounded-Bold' !important",
+        },
+        body1:{
+          fontFamily: "'GothamRounded-Book' !important",
+
+        },
+        subtitle2:{
+          fontFamily: "'GothamRounded-Book' !important",
+          lineHeight: '1.5'
+        }
+      }
+    },
+    MuiPaper:{
+      styleOverrides:{
+        root:{
+          // margin:"1rem 0",
+          // background: 'rgba(255,255,255,0.3)',
+          background: 'transparent',
+          // padding:'0 1rem',
+          boxShadow:"none",
+          '[class*="MUIDataTable-responsiveBase"]':{
+            padding: "0 2rem"
+          },
+          ".MuiList-root":{
+            width: "100%"
+          },
+          ".MuiMenuItem-root":{
+            width: "100%",
+            display: "flex",
+            paddingTop: "8px",
+            paddingBottom: "8px",
+          }
+        }
+      }
+    },
+    MuiPopover:{
+      styleOverrides:{
+        paper:{
+          background:"white",
+          boxShadow:"0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%)"
+        }
+      }
+    },
+    // MuiTable:{
+    //   styleOverrides:{
+    //     root:{
+    //       width: "calc(100% - 2rem)",
+    //       marginLeft: "1rem"
+    //     }
+    //   }
+    // },
+    MuiOutlinedInput:{
+      styleOverrides:{
+        root:{
+          color: "#ee2d24!important"
+        }
+      }
+    },
+    MuiTypography:{
+      styleOverrides:{
+        root:{
+          fontFamily:"'GothamRounded-Book' !important"
+        }
+      }
+    },
+    MuiButtonBase:{
+      styleOverrides:{
+        root:{
+          fontFamily:"'GothamRounded-Book' !important"
+        }
+      }
+    },
+    MuiTableRow:{
+      styleOverrides:{
+        root:{
+          color:"#ee2d24",
+          backgroundColor:"transparent"
+          // background:"rgba(255,255,255,0.3)"
+        },
+        "head":{
+          backgroundImage:"linear-gradient(to right,rgba(178,98,98,0.3),rgb(255 228 228 / 30%))",
+          backgroundImage:"linear-gradient(to right,rgb(237 167 88 / 30%),rgb(253 243 236 / 30%))",
+        },
+      }
+    },
+    MuiTableCell:{
+      styleOverrides:{
+        root:{
+          "span":{
+            display:"flex",
+            justifyContent:"center",
+          },
+        },
+        head:{
+          backgroundColor:"transparent !important",
+        }
+      }
+    },
+    MuiMenu:{
+      styleOverrides:{
+        paper:{
+          boxShadow:"0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%) !important"
+        },
+        list:{
+          background:"white",
+        }
+      }
+    },
+    MuiInput:{
+      styleOverrides:{
+        underline:{'&:after':{borderBottomColor:"#ee2d24!important"}}
+      }
+    },
+    MuiButton:{
+      styleOverrides:{
+        textPrimary:{
+          color: "#ee2d24!important"
+        }
+      }
+    },
+    MuiCheckbox:{
+      styleOverrides:{
+        colorPrimary:{
+          color:"#ee2d24!important"
+        }
+      }
+    },
+    MuiIconButton:{
+      styleOverrides:{
+        root:{
+          flex:" 0 0 auto !important",
+          color: "rgba(0, 0, 0, 0.54) !important",
+          padding:" 12px !important",
+          overflow: "visible !important",
+          fontSize: "1.5rem !important",
+          textAlign: "center !important",
+          transition: "background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms !important",
+          borderRadius:" 50% !important",
+          '&:hover': {color: '#ee2d24 !important'},
+          '&[class*="iconActive"]':{
+            color: '#ee2d24 !important'
+          }
+        },
+        
+      }
+    },
+    MuiToolbar:{
+      styleOverrides:{
+        root:{
+          
+        },
+      }
+    },
+  }
 });
 function MyApp({ Component, pageProps }) {
   if(typeof window !="undefined"){

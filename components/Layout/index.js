@@ -44,7 +44,7 @@ export default function Layout(props) {
     return <div className={styles.layoutWrapper}>
         <Sidebar odcProps={{regionList,witelList,datelList,stoList,merekList}} token={token}/>
         <div className={styles.topGap}>
-            <Navbar odcData={data} email={email} role_name={role_name} token={token}/>
+            <Navbar odcProps={{regionList,witelList,datelList,stoList,merekList}} odcData={data} email={email} role_name={role_name} token={token}/>
 
             {children}
             <div className={styles.overlay} onClick={closeMenu}></div>

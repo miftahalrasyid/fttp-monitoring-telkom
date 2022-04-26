@@ -31,10 +31,16 @@ import Button from '@mui/material/Button';
   import { createTheme, MuiThemeProvider,styled } from "@material-ui/core/styles";
   import {createTheme as customCreateTheme, ThemeProvider} from "@mui/material/styles";
   const DynamicMUIDataTable = dynamic(() => import('mui-datatables'),{ ssr: false });
-import {
-    getOcdSplitpanelStatus,
-    setSelectedCoreFeeder,
-    deleteSelectedCoreFeeder
+
+import { 
+  getRegionList,
+  getWitelList,
+  getDatelList,
+  getSTOList,
+  getMerekList,
+  getOcdSplitpanelStatus,
+  setSelectedCoreFeeder,
+  deleteSelectedCoreFeeder
 } from '../../components/store/odcs/actions';
 import {getUserData} from '../../components/store/users/actions';
 import { wrapper,makeStore } from "../../components/store";
@@ -989,6 +995,11 @@ export const getServerSideProps = async (props) => wrapper.getServerSideProps(st
     console.log("odc id",odcId[0])
     store.dispatch(getOcdSplitpanelStatus(odcId[0],req.cookies.token,toast))
     store.dispatch(getUserData(1,10, {name:"",direction:"asc"},req.cookies.token,null,toast))
+    store.dispatch(getRegionList(req.cookies.token))
+    store.dispatch(getWitelList(req.cookies.token))
+    store.dispatch(getDatelList(req.cookies.token))
+    store.dispatch(getSTOList(req.cookies.token))
+    store.dispatch(getMerekList(req.cookies.token,toast)),
     store.dispatch(END)
     await store.sagaTask.toPromise();
     console.log("user data",store.getState().Users)
@@ -1011,6 +1022,11 @@ export const getServerSideProps = async (props) => wrapper.getServerSideProps(st
                 props:{ 
                   data: selectedOdcSplitpanelStatus, 
                   userData: store.getState().Users.userData.data,
+                  regionList: store.getState().ODCs.region_list || [{id:0,name:""}],
+                  witelList: store.getState().ODCs.witel_list || [{id:0,region_id: 0,name:""}],
+                  datelList: store.getState().ODCs.datel_list || [{id:0,region_id: 0,witel_id: 0,name:""}],
+                  stoList: store.getState().ODCs.sto_list || [{id:0,region_id: 0,witel_id: 0,datel_id: 0, name:""}],
+                  merekList: store.getState().ODCs.merek_list || [{id: "",name: "",splitter_position: "",splitter_capacity: ""}],
                   token: req.cookies.token
                 },
                 // props:{ data: odcsBox,splitterData,coreFeederData},

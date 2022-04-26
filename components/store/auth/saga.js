@@ -35,33 +35,17 @@ function* checklogin({payload:{email,password,history,errorState,setSubmitting}}
         // yield put(verifyUser(false,true))
         let res;
         if(typeof window !== 'undefined')
-        // res = yield fetch("/api/feeder-status-graph?region=&witel=&datel=&sto",requestOptions).then(res=>res.json());
         res = yield fetch(`/login`,{...requestOptions,body: formData}).then(response => response.json())
-        .then(result => {
+        .then( result => {
             console.log("result", result)
             if(!result.success){
-                errorState({status:true,msg: result.msg});
+                errorState({status:true,msg: result.msg,token: result?.token || ""});
                 setSubmitting(false);
             }
             else
             errorState({status:false,msg: result?.msg || ""});
-            // console.log(result);
-            // verifyUser(res.success)
+
             return result
-            // put(verifyUser(res.success))
-        })
-        else
-        res = yield fetch(`${process.env.NEXT_PUBLIC_API_HOST}/login`, {...requestOptions,body: formData}).then(response => response.json())
-        .then(result => {
-            console.log("result", result)
-            if(!result.success)
-            errorState({status:true,msg: result.msg});
-            else
-            errorState({status:false,msg: result?.msg || ""});
-            // console.log(result);
-            // verifyUser(res.success)
-            return result
-            // put(verifyUser(res.success))
         })
 
 
@@ -108,20 +92,26 @@ function* otpVerify({payload:{value,history}}){
         console.log("otp verify error ",error)
     }
 }
-function* userVerify({payload:{status,errorCon}}){
+function* userVerify({payload:{status,errorCon,token}}){
     try {
 
-        console.log("user verify", status,errorCon)
+        // console.log("user verify", status,errorCon)
         if(!status){
             // console.log("fail")
         // if(email!=="noone@telkom.com"){
             if(errorCon){
-                console.log("login failed badly")
+                // console.log("login failed badly")
                 yield put({type:LOGIN_FAILED})
             }
             else
             {
-                yield put({type: TELEGRAM_USER_VERIFY_FAIL});
+                console.log("verify user",token)
+                if(!token)
+                yield put({type: TELEGRAM_USER_VERIFY_FAIL,payload:""});
+                else{
+                    yield put({type: TELEGRAM_USER_VERIFY_FAIL,payload:token});
+
+                }
 
                 yield put({type:LOGIN_SUCCESSFUL})
             }

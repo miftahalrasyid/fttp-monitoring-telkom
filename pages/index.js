@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Visibility from '@mui/icons-material/Visibility';
 import {MdOutlineVisibilityOff,MdOutlineVisibility} from 'react-icons/md'
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import teleLogo from '../public/img/telegram.svg';
 import logo_paperless from '../public/img/logo_paperless.png';
 import telkom_bg from "../public/img/telkom_bg.jpeg";
 import main_img from "../public/img/main_img.png";
@@ -24,6 +25,21 @@ import {
   Paper,
   makeStyles, useTheme, styled, createTheme,MuiThemeProvider
 } from "@material-ui/core";
+// import {
+//   Grid,
+//   CircularProgress,
+//   Typography,
+//   Button,
+//   Tabs,
+//   Tab,
+//   TextField,
+//   Fade,
+//   Avatar,
+//   Paper, useTheme, styled, createTheme,MuiThemeProvider
+// } from "@mui/material"
+// import {
+//   makeStyles
+// } from "@mui/styles"
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import { withRouter } from "next/router";
 import { 
@@ -40,26 +56,23 @@ const CustomButton = styledCustom(Button)(({ theme }) => ({
     fontFamily: 'GothamRounded-Book',
   },
 }));
-const theme = createTheme({
-  status: {
-    primary: "#ee2d24!important",
-    darkgray: "darkgray!important"
-  },
-});
+const theme = createTheme();
 function Index_evolve(props) {
-  
-  const useStyles = makeStyles(theme => ({
+  const useStyles = makeStyles((theme) => {
+    console.log("use styles",theme)
+    return {
+    
     grid: {
       backgroundColor: "grey",
       height: "46vh",
       textAlign: "center"
     },
     avatar: {
-      margin: theme.spacing(1),
-      backgroundColor: "#ee2e24"
+      // margin: theme.spacing(1),
+      backgroundColor: "#ee2e24 !important"
     },
     submit: {
-      margin: theme.spacing(3, 0, 2),
+      // margin: theme.spacing(3, 0, 2),
       backgroundColor: "#ee2e24"
     },
     paper: {
@@ -72,17 +85,17 @@ function Index_evolve(props) {
       marginLeft: "-0.5rem"
     },
     gridmargin_verify:{
-      margin: '3rem 0 0'
+      margin: '3rem 0 0 !important'
     },
     paperroot:{
       // backgroundColor: "#fafafa"
     }
-  }));
+  }});
   const classes = useStyles();
-  const {checkLogin,router,history,isLoading,isOtpVerify,verifyOtp,isOtpLoading, isUserVerify,isUserVerifyLoading,forgotPageClosed} = props;
-
+  const {checkLogin,router,history,isLoading,isOtpVerify,verifyOtp,isOtpLoading, isUserVerify,isUserVerifyLoading,forgotPageClosed, telegramToken} = props;
+console.log("is user verify",isUserVerify)
   const [isImageReady, setIsImageReady] = useState(false);
-  var [error, setError] = useState({status:false,msg:""});
+  var [error, setError] = useState({status:false,msg:"",token:""});
   var [loginValue, setLoginValue] = useState("admin@telkom.com");
   var [passwordValue, setPasswordValue] = useState("password");
   const [showPassword, setShowPassword] = useState(false);
@@ -139,7 +152,7 @@ function Index_evolve(props) {
           <React.Fragment>
           <div className={styles.baloon}>
         <div className={styles.form}>
-            {isUserVerifyLoading || (error.status || false ) ?
+            {isUserVerifyLoading || ((error.status || false) && error.token =="" ) ?
             <>
             <h2>Login</h2>
 
@@ -300,11 +313,11 @@ function Index_evolve(props) {
             </>
             :
              isUserVerify ? <div className={styles.telegramWrapper}>
-              <Image src={teleLogo} alt="telegram logo" width={50} height={50} />
-              <Typography Typography variant="h5" className={styles.telegramTitle}>
+              <Image src={"/img/telegram.svg"} alt="telegram logo" width={50} height={50} />
+              <Typography Typography variant="h6" className={styles.telegramTitle}>
                 Integrasi dengan Telegram
               </Typography>
-              <Typography variant="subtitle1" className={styles.telegramSubTitle}>
+              <Typography variant="subtitle2" className={styles.telegramSubTitle}>
                 untuk menyambungkan akun anda dengan telegram, silahkan ikuti langkah berikut:
               </Typography>
               <ol>
@@ -313,8 +326,8 @@ function Index_evolve(props) {
                 </li>
                 <div className={styles.tooltip}>
                   <span className={styles.tooltiptext} id="myTooltip">Salin token</span>
-                  <Button onClick={(ev)=>{myTooltip.innerHTML = "token disalin"; setTimeout(()=>{myTooltip.style.visibility = "hidden"},1000); navigator.clipboard.writeText(ev.target.innerHTML)}} className={styles.telegramToken}>
-                    TOKEN123As2DwYTKLWSKWL234Sm
+                  <Button className={styles.telegramToken}>
+                    <span onClick={(ev)=>{myTooltip.innerHTML = "token disalin"; setTimeout(()=>{myTooltip.style.visibility = "hidden"},1000); navigator.clipboard.writeText(ev.target.innerHTML)}}>{error.token}</span>
                   </Button>
                 </div>
                 <li>
@@ -322,7 +335,7 @@ function Index_evolve(props) {
                 </li>
                 <Link href={"https://t.me/yoga_test01bot"}>
                 <a >
-                <Typography variant="subtitle1" className={styles.telegramToken}>
+                <Typography variant="body1" className={styles.telegramToken}>
                   https://t.me/yoga_test01bot
                 </Typography>
                 </a>
@@ -379,7 +392,7 @@ function Index_evolve(props) {
               }}
                     />
                 </Grid>
-                <MuiThemeProvider theme={theme}>
+                {/* <MuiThemeProvider theme={theme}> */}
                   <Grid item className={classes.gridmargin_verify}>
                     <div className={styles.formButtons}>
                       {isOtpLoading ? (
@@ -398,7 +411,7 @@ function Index_evolve(props) {
                       )}
                     </div>
                   </Grid>
-                </MuiThemeProvider>
+                {/* </MuiThemeProvider> */}
               </Grid>
             </Grid>
           </div>
@@ -428,6 +441,7 @@ export async function getServerSideProps({req}) {
 }
 const mapStateToProps = state =>({
   isLoading: state.Auth.loading.login,
+  telegramToken: state.Auth.telegramToken,
   isUserVerifyLoading: state.Auth.loading.verifyUser,
   isUserVerify: state.Auth.openTelegramVerify,
   isOtpLoading: state.Auth.loading.otp,

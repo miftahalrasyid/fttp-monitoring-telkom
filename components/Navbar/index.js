@@ -6,7 +6,8 @@ import { MdMenu } from 'react-icons/md';
 // } from "@material-ui/core";
 import Image from 'next/image';
 import Link from 'next/link';
-import {Modal,Box,FormControl,InputLabel,NativeSelect, CircularProgress,Backdrop} from '@material-ui/core';
+// import {Modal,Box,FormControl,InputLabel,NativeSelect, CircularProgress,Backdrop} from '@material-ui/core';
+import { Modal,Box,FormControl,InputLabel, NativeSelect, CircularProgress, Backdrop } from '@mui/material'
 import { 
   styled as styledCustom
 } from "@mui/material/styles";
@@ -71,6 +72,17 @@ const CustomTabs = styledCustom(Tabs)(({theme})=>({
     backgroundColor: theme.status.primary,
   },
 }))
+const CustomFormControl = styledCustom(FormControl)(({theme})=>({
+  width: "100%",
+  // width: "calc(100% - 1rem)",
+  ".MuiInputLabel-root":{
+    transform:"translateY(-7px)"
+  },
+  ".MuiInputBase-root":{
+    padding: "7px 0 0px",
+    marginTop: "9px",
+  }
+}))
 const CustomTextField = styledCustom(TextField)((props) => ({
   // test:console.log("customText field",props),
   color: props.theme.status.primary,
@@ -132,7 +144,8 @@ function a11yProps(index) {
 
 function Navbar(props) {
   const odc_edit_modal = useRef(null);
-  const { dataClient,odcData,email,role_name, add_user_confirmation,addNewUser,token} = props;
+  const { odcProps,dataClient,odcData,email,role_name, add_user_confirmation,addNewUser,token} = props;
+  const {regionList,witelList,datelList,stoList,merekList} = odcProps
   // console.log("raw data",odcData,props)
   const { odc_name } = odcData || {odc_name:''};
   const router = useRouter();
@@ -167,10 +180,11 @@ function Navbar(props) {
  const handleOpen = () => setOpen(true);
  const handleClose = () => setOpen(false);
  const [value, setValue] = React.useState(0);
- const handleChange = (event, newValue) => {
-   console.log("new value",newValue)
-   setValue(newValue);
-  };
+ const [regionListClient,setRegionListClient] = useState("");
+ const [witelListClient,setWitelListClient] = useState("");
+ const [datelListClient,setDatelListClient] = useState("");
+ const [stoListClient,setSTOListClient] = useState("");
+
   useEffect(()=>{
     
     console.log("odc",odc_edit_modal.current,document.querySelector('[itemref="testing"]'))
@@ -217,6 +231,11 @@ function Navbar(props) {
   },[error])
   // const {email,role_name} = (typeof window !== "undefined") ? jwt(getCookie("token")) : {email:"",role_name:""};
 // console.log("odcid",odcId)
+console.log("odc props", odcData)
+const handleOnChange = (ev,newValues,setValues) =>{
+  console.log("on change")
+  setValues(prev=>({...prev,tabs: newValues}))
+}
   return  <nav id={indexStyles.topBar}>
     {/* <ToastContainer style={{zIndex:"99999999999"}}/> */}
       {/* <div className='container-fluid'></div> */}
@@ -256,7 +275,7 @@ function Navbar(props) {
                       ...prev.dom,
                       (prev.elm.length === 0) ? [<Link href={odcId[odcId.length-2] || ""} key={"arrow"}><a><MdKeyboardArrowLeft /></a></Link>,<Link key={"link"+next} href={`/odc/${next}`} passHref>
                         <a className={indexStyles.logo}>
-                            <span className={indexStyles.logoTxt}> {next.toUpperCase()}</span>
+                            <span className={indexStyles.logoTxt}> {odc_name?.toUpperCase()}</span>
                         </a>
                       </Link>,<span key={"p"+next} className={indexStyles.separator}> / </span>]:
                       [<Link key={"link"+next} href={`/odc/${[...prev.elm,next].join("/")}`} passHref>
@@ -304,7 +323,91 @@ function Navbar(props) {
                   // boxShadow: "0 1px 4px 0 rgb(0 0 0 / 14%)",
                 }} >
                 {/* }} className={` ${open && odcStyles.modalActive}`}> */}
-                 
+                <Formik
+                    initialValues={{
+                      tabs:0,
+                      name:"test",
+                      merek_id:(merekList)?merekList?.data[0].id.toString() : "",
+                      port_feeder_terminasi:"24",
+                      deployment_date:"mar-2022",
+                      capacity:144,
+                      panel_oa:"2",
+                      rak_oa:"2",
+                      port:"2",
+                      region_id:regionList?.data[0].id.toString(),
+                      // test: console.log("witel id",witelList.data.filter(item=>item.region_id.toString() === regionList.data[0].id.toString())[0].id.toString()),
+                      witel_id:witelList?.data?.filter(item=>item.region_id.toString() === regionList.data[0].id.toString())[0].id.toString(),
+                      datel_id:datelList?.data?.filter(item=>item.region_id.toString() === regionList.data[0].id.toString())
+                      .filter(item=>item.witel_id.toString() == witelList?.data?.filter(item=>item.region_id.toString() === regionList.data[0].id.toString())[0].id.toString())[0].id.toString(),
+                      sto_id:stoList?.data?.filter(item=>item.region_id.toString() === regionList.data[0].id.toString())
+                      .filter(item=>item.witel_id.toString() == witelList?.data?.filter(item=>item.region_id.toString() === regionList.data[0].id.toString())[0].id.toString())
+                      .filter(item=>item.datel_id.toString() == datelList?.data?.filter(item=>item.region_id.toString() === regionList.data[0].id.toString())
+                      .filter(item=>item.witel_id.toString() == witelList?.data?.filter(item=>item.region_id.toString() === regionList.data[0].id.toString())[0].id.toString())[0].id.toString())[0].id.toString()
+                    }}
+                    validateOnChange={true}
+                        validateOnMount={true}
+                        validate={(values)=>{
+                          console.log("all values",values)
+                          // console.log("witel",values.witel,witelList?.data?.filter(item=>item.region_id.toString() === values.regional))
+                          // console.log("datel",values.datel,witelList?.data?.filter(item=>item.region_id.toString() === values.regional),datelList?.data?.filter(item=>item.region_id.toString() == values.regional)
+                          // .filter(item=>item.witel_id.toString() == witelList?.data?.filter(item=>item.region_id.toString() === values.regional).filter(item=>item.id==values.witel)[0]?.id.toString()))
+                          // console.log("sto",values.datel_id,stoList?.data?.filter(item=>item.region_id.toString() === values.region_id),stoList?.data?.filter(item=>item.region_id.toString() === values.region_id)
+                          // .filter(item=>item.witel_id.toString() == stoList?.data?.filter(item=>item.region_id.toString() === values.region_id).filter(item=>item.witel_id==values.witel_id)[0]?.id.toString()))
+                          // console.log("witel count",values.witel)
+
+                          setWitelListClient(witelList?.data?.filter(item=>item.region_id.toString() === values.region_id))
+                          // setDatelListClient(datelList?.data?.filter(item=>item.region_id.toString() == values.regional)
+                          // .filter(item=>item.witel_id.toString() == witelList?.data?.filter(item=>item.region_id.toString() === values.regional).filter(item=>item.id==values.witel)[0]?.id.toString()))
+                          setDatelListClient(datelList?.data?.filter(item=>item.region_id.toString() == values.region_id).filter(item=>item.witel_id.toString() == values.witel_id))
+                          if(datelList?.data?.filter(item=>item.region_id.toString() == values.region_id).length==1){
+                            setDatelListClient(datelList?.data?.filter(item=>item.region_id.toString() == values.region_id))
+                          }
+                          setSTOListClient(stoList?.data?.filter(item=>item.region_id.toString() === values.region_id).filter(item=>item.witel_id.toString() == values.witel_id).filter(item=>item.datel_id.toString() == values.datel_id))
+
+                          /* fungsi komparasi region witel datel (jika sama select option langsung ditentukan)*/
+                          for(var i = 1; i < stoList?.data?.filter(item=>item.region_id.toString() === values.region_id).filter(item=>item.witel_id.toString() == values.witel_id).length; i++)
+                          { 
+                            let a = stoList?.data?.filter(item=>item.region_id.toString() === values.region_id).filter(item=>item.witel_id.toString() == values.witel_id)[i];
+                            let b = stoList?.data?.filter(item=>item.region_id.toString() === values.region_id).filter(item=>item.witel_id.toString() == values.witel_id)[i-1];
+                            let currentName = JSON.stringify({region:a.region_id,witel:a.witel_id,datel:a.datel_id}); 
+                            let firstName = JSON.stringify({region:b.region_id,witel:b.witel_id,datel:b.datel_id});
+                            if(firstName == currentName)
+                            {
+                              // return true;
+                              // console.log(stoList?.data?.filter(item=>item.region_id.toString() === values.regional).filter(item=>item.witel_id.toString() == values.witel).length,i+1)
+                              if(stoList?.data?.filter(item=>item.region_id.toString() === values.region_id).filter(item=>item.witel_id.toString() == values.witel_id).length==i+1)
+                              setSTOListClient(stoList?.data?.filter(item=>item.region_id.toString() === values.region_id).filter(item=>item.witel_id.toString() == values.witel_id))
+                            }
+                            else{
+                              break;
+                            }
+                          }     
+                          if(stoList?.data?.filter(item=>item.region_id.toString() === values.region_id).length==1 && stoList?.data?.filter(item=>item.region_id.toString() === values.region_id).filter(item=>item.witel_id.toString() == values.witel_id).length==0){
+                            setSTOListClient(stoList?.data?.filter(item=>item.region_id.toString() === values.region_id))
+                          }
+                          
+                          /** very important 
+                          if(stoList?.data?.filter(item=>item.region_id.toString() === values.regional).filter(item=>item.witel_id.toString() == values.witel)[0].region_id == stoList?.data?.filter(item=>item.region_id.toString() === values.regional).filter(item=>item.witel_id.toString() == values.witel)[1].region_id &&
+                          stoList?.data?.filter(item=>item.region_id.toString() === values.regional).filter(item=>item.witel_id.toString() == values.witel)[0].witel_id == stoList?.data?.filter(item=>item.region_id.toString() === values.regional).filter(item=>item.witel_id.toString() == values.witel)[1].witel_id && 
+                          stoList?.data?.filter(item=>item.region_id.toString() === values.regional).filter(item=>item.witel_id.toString() == values.witel)[0].datel_id == stoList?.data?.filter(item=>item.region_id.toString() === values.regional).filter(item=>item.witel_id.toString() == values.witel)[1].datel_id 
+                          ){
+                            setSTOListClient(stoList?.data?.filter(item=>item.region_id.toString() === values.regional).filter(item=>item.witel_id.toString() == values.witel))
+                          }
+                         */
+
+                        }}
+                    onSubmit={(values,{setSubmitting})=>{
+                      console.log(values)
+                    }}
+                    >
+                      {({
+                        values,
+                        setValues,
+                        handleSubmit,
+                        handleChange,
+                        handleBlur
+                      })=>(
+                        <form className={odcStyles.form} onSubmit={handleSubmit}>
                   <div className={`${odcStyles.card}  ${odcStyles.cardStats}`}>
                     <div className={`${odcStyles.cardHeader} ${odcStyles.cardHeaderPrimary}`}>
                       <h4 className={odcStyles.cardTitle}>{odcData?.odc_name?.toUpperCase()}</h4>
@@ -314,58 +417,84 @@ function Navbar(props) {
                     </div>
                     <div className={`${odcStyles.cardBody} card-body row`}>
                     <div className={odcStyles.tabLink}>
-                      <CustomTabs value={value} onChange={handleChange} aria-label="basic tabs example">
-                        <CustomTab label="ODC" {...a11yProps(0)} />
+                      <CustomTabs value={values.tabs} onChange={(ev,newValue)=>handleOnChange(ev,newValue,setValues)} onBlur={handleBlur} aria-label="basic tabs example">
+                        <CustomTab label="ODC" {...a11yProps()} />
                         <CustomTab label="OA" {...a11yProps(1)} />
                       </CustomTabs>
                     </div>
                     <div className={odcStyles.tabLink}>
                     </div>
-                    <Formik
-                    initialValues={{
-                      name:"",
-                      merk_id:0,
-                      // port_feeder_terminasi:"",
-                      deployment_date:"",
-                      capacity:0,
-                      panel_oa:"",
-                      rak_oa:"",
-                      port:"",
-                      region_id:"",
-                      witel_id:"",
-                      datel_id:"",
-                      sto_id:"",
-                    }}
-                    >
-                      {({
-                        values,
-                        handleSubmit,
-                        handleChange,
-                        handleBlur
-                      })=>(
-                        <form className={odcStyles.form} onSubmit={handleSubmit}>
+                    
                         <div
                           role="tabpanel"
-                          hidden={value !== 0}
+                          hidden={values.tabs !== 0}
                           id={`simple-tabpanel-${0}`}
                           aria-labelledby={`simple-tab-${0}`}
                         >
-                          {value === 0 && (
+                          {values.tabs === 0 && (
                             <div className={`row ${odcStyles.formGap}`}>
                                 <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
-                                  <CustomTextField id="odcName" label="Nama ODC" variant="standard" defaultValue={odcData.odc_id}/>
+                                  <CustomTextField id="odcName" label="Nama ODC" variant="standard" onChange={handleChange} onBlur={handleBlur} value={values.name}/>
                                 </div>
-                                <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                  <CustomTextField id="standard-basic" label="Regional" variant="standard" />
+                                <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
+                                  {/* <CustomTextField id="standard-basic" onChange={handleChange} onBlur={handleBlur} value={values.name} label="Regional" variant="standard" /> */}
+                                  <CustomFormControl key='regional' variant="standard" >
+                                    <CustomInputLabel id="demo-simple-select-standard-label">Regional</CustomInputLabel>
+
+                                    <NativeSelect value={values.region_id} onChange={handleChange} onBlur={handleBlur} inputProps={{
+                                    name: 'region_id',
+                                    id: 'uncontrolled-native',
+                                    }}>
+                                      {(regionList?.data?.map(item=>({label:item.name,value:item.id})) || []).map(item=>(
+                                        <option key={"region-"+item.label} value={item.value}>{item.label}</option>
+                                      ))}
+                                    </NativeSelect>
+                                  </CustomFormControl>
                                 </div>
-                                <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                  <CustomTextField id="standard-basic" label="WITEL" variant="standard" />
+                                <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
+                                  {/* <CustomTextField id="standard-basic" onChange={handleChange} onBlur={handleBlur} label="WITEL" variant="standard" /> */}
+                                  <CustomFormControl key='witel' variant="standard" >
+                                    <CustomInputLabel id="demo-simple-select-standard-label">Witel</CustomInputLabel>
+
+                                    <NativeSelect value={values.witel_id} onChange={handleChange} onBlur={handleBlur} inputProps={{
+                                    name: 'witel_id',
+                                    id: 'uncontrolled-native',
+                                    }}>
+                                      {((witelListClient || false)?witelListClient?.map(item=>({label:item.name,value:item.id})):witelList?.data?.map(item=>({label:item.name,value:item.id})) || []).map(item=>(
+                                        <option key={"witel-"+item.label} value={item.value}>{item.label}</option>
+                                      ))}
+                                    </NativeSelect>
+                                  </CustomFormControl>
                                 </div>
-                                <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                  <CustomTextField id="standard-basic" label="DATEL" variant="standard" />
+                                <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
+                                  {/* <CustomTextField id="standard-basic" onChange={handleChange} onBlur={handleBlur} label="DATEL" variant="standard" /> */}
+                                  <CustomFormControl key='datel' variant="standard" >
+                                    <CustomInputLabel id="demo-simple-select-standard-label">Datel</CustomInputLabel>
+
+                                    <NativeSelect value={values.datel_id} onChange={handleChange} onBlur={handleBlur} inputProps={{
+                                    name: 'datel_id',
+                                    id: 'uncontrolled-native',
+                                    }}>
+                                      {((datelListClient)?datelListClient?.map(item=>({label:item.name,value:item.id})):datelList?.data?.map(item=>({label:item.name,value:item.id})) || []).map(item=>(
+                                        <option key={"datel-"+item.label} value={item.value}>{item.label}</option>
+                                      ))}
+                                    </NativeSelect>
+                                  </CustomFormControl>
                                 </div>
-                                <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                  <CustomTextField id="standard-basic" label="STO" variant="standard" />
+                                <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
+                                  {/* <CustomTextField id="standard-basic" onChange={handleChange} onBlur={handleBlur} label="STO" variant="standard" /> */}
+                                  <CustomFormControl key='sto' variant="standard" >
+                                    <CustomInputLabel id="demo-simple-select-standard-label">STO</CustomInputLabel>
+
+                                    <NativeSelect value={values.sto_id} onChange={handleChange} onBlur={handleBlur} inputProps={{
+                                    name: 'sto_id',
+                                    id: 'uncontrolled-native',
+                                    }}>
+                                      {((stoListClient)?stoListClient?.map(item=>({label:item.name,value:item.id})):stoList?.data?.map(item=>({label:item.name,value:item.id})) || []).map(item=>(
+                                        <option key={"sto-"+item.label} value={item.value}>{item.label}</option>
+                                      ))}
+                                    </NativeSelect>
+                                  </CustomFormControl>
                                 </div>
                                 {/* <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
                                   <CustomTextField id="standard-basic" label="Kapasitas" variant="standard" defaultValue={odcData.capacity}/>
@@ -412,11 +541,11 @@ function Navbar(props) {
                         </div>
                         <div
                           role="tabpanel"
-                          hidden={value !== 1}
+                          hidden={values.tabs!== 1}
                           id={`simple-tabpanel-${1}`}
                           aria-labelledby={`simple-tab-${1}`}
                         >
-                          {value === 1 && (
+                          {values.tabs === 1 && (
                             <div className={`row ${odcStyles.formGap}`}>
                               {/* <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
                                 <CustomTextField id="standard-basic" label="Port Feeder Terminasi" variant="standard" defaultValue={odcData.core}/>
@@ -434,34 +563,34 @@ function Navbar(props) {
                           </div>
                           )}
                         </div>
-                        </form>
-                      )}
-                    </Formik>
                     </div>
                     <div className={odcStyles.actionContainer}>
-                    <CustomButtonModal onClick={(ev)=>handleChange(ev,value-1)} style={{visibility:(value<=0)?"hidden":"visible"}} variant="contained" color='primary' size="medium">
+                    <CustomButtonModal onClick={(ev)=>handleOnChange(ev,values.tabs-1,setValues)} style={{visibility:(values.tabs<=0)?"hidden":"visible"}} variant="contained" color='primary' size="medium">
                     Prev
                   </CustomButtonModal>
                   <div className='row'>
                     <div className='col-md-12 col-lg-6'> 
-                    {(value>0) && <CustomButtonModal btntype={'submit'} onClick={(ev)=>(value>0)?handleOpen:handleChange(ev,value+1)}  variant="contained" color='primary' size="medium">
+                    {(values.tabs>0) && <CustomButtonModal btntype={'submit'} type={"submit"} onClick={(ev)=>(values.tabs>0)?handleOpen:(ev,newValue)=>handleOnChange(ev,values.tabs+1,setValues)}  variant="contained" color='primary' size="medium">
                       Submit
                       </CustomButtonModal>}
                     </div>
                     <div className='col-md-12 col-lg-6'> 
-                    {(value>0) && <CustomButtonModal onClick={()=>handleClose()}  variant="contained" color='primary' size="medium">
+                    {(values.tabs>0) && <CustomButtonModal onClick={()=>handleClose()}  variant="contained" color='primary' size="medium">
                         Cancel
                         </CustomButtonModal>}
                     </div>
                   </div>
                   <div>
 
-                   <CustomButtonModal style={{visibility: (value>0)?"hidden":"visible"}} onClick={(ev)=>(value>0)?handleOpen:handleChange(ev,value+1)}  variant="contained" color='primary' size="medium">
-                   {(value<=0)? "Next":""}
+                   <CustomButtonModal style={{visibility: (values.tabs>0)?"hidden":"visible"}} onClick={(ev)=>(values.tabs>0)?handleOpen:handleOnChange(ev,values.tabs+1,setValues)}  variant="contained" color='primary' size="medium">
+                   {(values.tabs<=0)? "Next":""}
                   </CustomButtonModal>
                   </div>
                     </div>
                   </div>
+                  </form>
+                      )}
+                    </Formik>
                 </Box>
                 </div>
               </Modal>

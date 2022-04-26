@@ -18,6 +18,7 @@ const INIT_STATE = {
         verifyUser: true,
         forgotPassword: false,
     },
+    telegramToken:"",
     openTelegramVerify: false,
     openOtpService: false,
     openConfirmationPage:false
@@ -65,12 +66,14 @@ const auth = (state=INIT_STATE,action)=>{
                 }
             }
         case TELEGRAM_USER_VERIFY_FAIL:
+            console.log("reducer telegram verify fail",action.payload)
             return {
                 ...state,
                 loading:{
                     ...state.loading,
                     verifyUser: false,
                 },
+                telegramToken: action.payload!=="" && action.payload,
                 openTelegramVerify: true
             }
         case TELEGRAM_USER_VERIFY_SUCCESSFUL:
