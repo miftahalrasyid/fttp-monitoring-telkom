@@ -272,7 +272,20 @@ function Odc({
      */
     const router = useRouter();
     const { odcId } = router.query;
-    const {odc_name,capacity,merek,core,rak_oa,panel_oa,port,deployment_date,splitter={splitter:{position:[]},data:[],position:{left:0,top:0}},panel={data:[],position:{left:375,top:0}}} = (viewOdcClient || false)? viewOdcClient:ODCData;
+    const {
+      odc_name,
+      capacity,
+      merek,
+      core,
+      rak_oa,
+      panel_oa,
+      port,
+      deployment_date,
+      region_name,
+      witel_name,
+      datel_name,
+      sto_name,
+      splitter={splitter:{position:[]},data:[],position:{left:0,top:0}},panel={data:[],position:{left:375,top:0}}} = (viewOdcClient || false)? viewOdcClient:ODCData;
     const feederModal = useState({type:"",status:false});
     // const [feederFocus,setFeederFocus] = useState(false); 
     const [feederFocus,setFeederFocus] = useState(
@@ -545,50 +558,76 @@ function Odc({
           <div className={styles.odcWrapper}>
             <div className={`row ${styles.odcDetail}`}>
               <div>
-              <div className='col-lg-3'>
+              <div className='col-lg-12'>
                 <div className={styles.alldetailItems}>
-
+                  <div className={styles.odcItem}>
+                    <Typography sx={{ whiteSpace: "nowrap"}}>Nama ODC : </Typography>
+                    <Typography sx={{textTransform: "uppercase", whiteSpace: "nowrap"}}>{odc_name}</Typography>
+                  </div>
+                    <hr className={`${styles.hr}`}/>
+                  <div className={styles.odcItem}>
+                    <Typography>Kapasitas : </Typography>
+                    <Typography>{capacity || ""}</Typography>
+                  </div>
+                  <div className={styles.odcItem}>
+                    <Typography>Merek : </Typography>
+                    <Typography>{merek || ""}</Typography>
+                  </div>
+                    <hr className={`${styles.hr}`}/>
+                  <div className={styles.odcItem}>
+                    <Typography>Deployment Date : </Typography>
+                    <Typography>{deployment_date || ""}</Typography>
+                  </div>
+                  <div className={styles.odcItem}>
+                    <Typography>Core : </Typography>
+                    <Typography>{core || ""}</Typography>
+                  </div>
+                    <hr className={`${styles.hr}`}/>
+                  <div className={styles.odcItem}>
+                    <Typography>Rak OA : </Typography>
+                    <Typography>{rak_oa || ""}</Typography>
+                  </div>
+                  <div className={styles.odcItem}>
+                    <Typography>Panel : </Typography>
+                    <Typography>{panel_oa || ""}</Typography>
+                  </div>
+                    <hr className={`${styles.hr}`}/>
+                  <div className={styles.odcItem}>
+                    <Typography>Port : </Typography>
+                    <Typography>{port || ""}</Typography>
+                  </div>
+                  <div className={styles.odcItem}>
+                    <Typography>Regional : </Typography>
+                    <Typography>{region_name || ""}</Typography>
+                  </div>
+                    <hr className={`${styles.hr}`}/>
+                  <div className={styles.odcItem}>
+                    <Typography>Witel : </Typography>
+                    <Typography>{witel_name || ""}</Typography>
+                  </div>
+                  <div className={styles.odcItem}>
+                    <Typography>Datel : </Typography>
+                    <Typography>{datel_name || ""}</Typography>
+                  </div>
+                    <hr className={`${styles.hr}`}/>
+                  <div className={styles.odcItem}>
+                    <Typography>STO : </Typography>
+                    <Typography>{sto_name || ""}</Typography>
+                  </div>
                 </div>
-                <div className={styles.odcDetailItems}>
-                  <Typography sx={{ whiteSpace: "nowrap"}}>Nama ODC : </Typography>
-                  <Typography sx={{textTransform: "uppercase", whiteSpace: "nowrap"}}>{odc_name}</Typography>
-                </div>
-                <div className={styles.odcDetailItems}>
-                  <Typography>Kapasitas : </Typography>
-                  <Typography>{capacity || ""}</Typography>
-                </div>
+                
 
               </div>
               <div className='col-lg-3'>
-                <div className={styles.odcDetailItems}>
-                  <Typography>Merek : </Typography>
-                  <Typography>{merek || ""}</Typography>
-                </div>
 
-                <div className={styles.odcDetailItems}>
-                  <Typography>Deployment Date : </Typography>
-                  <Typography>{deployment_date || ""}</Typography>
-                </div>
+
+
               </div>
               <div className='col-lg-3'>
-                <div className={styles.odcDetailItems}>
-                  <Typography>Core : </Typography>
-                  <Typography>{core || ""}</Typography>
-                </div>
-                <div className={styles.odcDetailItems}>
-                  <Typography>Rak OA : </Typography>
-                  <Typography>{rak_oa || ""}</Typography>
-                </div>
+               
               </div>
               <div className='col-lg-3'>
-                <div className={styles.odcDetailItems}>
-                  <Typography>Panel : </Typography>
-                  <Typography>{panel_oa || ""}</Typography>
-                </div>
-                <div className={styles.odcDetailItems}>
-                  <Typography>Port : </Typography>
-                  <Typography>{port || ""}</Typography>
-                </div>
+
               </div>
               </div>
               <div className={styles.splitPanelWrapper} style={{height:"1000px"}}>

@@ -133,7 +133,7 @@ function* updateSplitterDistribution({payload:{data}}){
     }
 }
 
-function* setSelectedCoreFeederSaga({payload:{odcId,feeder_index,feeder_id,splitter_id,distribution_ids,handleClose,token,setSubmitting,toast,history}}){
+function* setSelectedCoreFeederSaga({payload:{odcId,type,feeder_index,feeder_id,splitter_id,distribution_ids,handleClose,token,setSubmitting,toast,history}}){
 
     try {
         if(!navigator.onLine) {
@@ -202,7 +202,7 @@ function* setSelectedCoreFeederSaga({payload:{odcId,feeder_index,feeder_id,split
             console.log("success added")
             setSubmitting(false)
             handleClose();
-            toast.success("Feeder "+feeder_index+" berhasil ditambahkan", {
+            toast.success(`Feeder ${feeder_index} berhasil ${(type!=="edit"?"ditambahkan":"diupdate")}`, {
                 position: "top-right",
                 autoClose: 5000,
                 hideProgressBar: false,
@@ -211,8 +211,8 @@ function* setSelectedCoreFeederSaga({payload:{odcId,feeder_index,feeder_id,split
                 draggable: true,
                 progress: undefined,
             });
-            yield history.reload(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/odc/${odcId}`)
-            // yield put({type:GET_ODC_SPLITPANEL_STATUS,payload:{odcId,token,toast}})
+            // yield history.reload(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/odc/${odcId}`)
+            yield put({type:GET_ODC_SPLITPANEL_STATUS,payload:{odcId,token,toast}})
         }
 
     } catch (error) {
@@ -295,7 +295,8 @@ function* deleteSelectedCoreFeederSaga({payload:{odcId,feeder_index,feeder_id,ha
         if(res.success){
             console.log("success added")
             setSubmitting(false)
-            handleClose();
+            handleClose[0]();
+            handleClose[1]();
             toast.success("Feeder "+feeder_index+" berhasil didelete", {
                 position: "top-right",
                 autoClose: 5000,
@@ -305,8 +306,8 @@ function* deleteSelectedCoreFeederSaga({payload:{odcId,feeder_index,feeder_id,ha
                 draggable: true,
                 progress: undefined,
             });
-            yield history.reload(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/odc/${odcId}`)
-            // yield put({type:GET_ODC_SPLITPANEL_STATUS,payload:{odcId,token,toast}})
+            // yield history.reload(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/odc/${odcId}`)
+            yield put({type:GET_ODC_SPLITPANEL_STATUS,payload:{odcId,token,toast}})
         }
 
     } catch (error) {

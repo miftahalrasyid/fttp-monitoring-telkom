@@ -386,7 +386,7 @@
 }
 @media (max-width: 1080px) {
     .actionContainer{
-        justify-content: space-around;
+        justify-content: flex-start;
     }
     .deleteFeeder{
         justify-content: center;

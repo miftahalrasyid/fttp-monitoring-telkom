@@ -284,7 +284,7 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
     const [deleteLoading,setDeleteLoading] = useState(false);
     const deleteFeederHandler = () => {
       console.log("deleteonclick",feederFocus, feederFocus.feeder.feeder_id)
-      deleteSelectedCoreFeeder(odcId,feederFocus.feeder.feeder_index,feederFocus.feeder.feeder_id,deleteRowHandleClose,token,setDeleteLoading,toast,router)
+      deleteSelectedCoreFeeder(odcId,feederFocus.feeder.feeder_index,feederFocus.feeder.feeder_id,[handleClose,deleteRowHandleClose],token,setDeleteLoading,toast,router)
     };
     return (
         <MUIModal key={header} open={feed.status} onClose={handleClose} className={`${styles.modalWrapper}`} aria-labelledby="modal-modal-title"
@@ -316,10 +316,10 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
                         odp_name_2: (feederFocus.odpName)?feederFocus.odpName[1] : "",
                         odp_name_3: (feederFocus.odpName)?feederFocus.odpName[2] : "",
                         odp_name_4: (feederFocus.odpName)?feederFocus.odpName[3] : "",
-                        dist_port_1: feederFocus?.distribution[0]?.distribution_id?"dist_po1"+feederFocus?.distribution[0]?.distribution_id:"",
-                        dist_port_2: feederFocus?.distribution[1]?.distribution_id?"dist_po2"+feederFocus?.distribution[1]?.distribution_id:"",
-                        dist_port_3: feederFocus?.distribution[2]?.distribution_id?"dist_po3"+feederFocus?.distribution[2]?.distribution_id:"",
-                        dist_port_4: feederFocus?.distribution[3]?.distribution_id?"dist_po4"+feederFocus?.distribution[3]?.distribution_id:"",
+                        dist_port_1: feederFocus?.distribution[0]?.distribution_id?feederFocus?.distribution[0]?.distribution_id:"",
+                        dist_port_2: feederFocus?.distribution[1]?.distribution_id?feederFocus?.distribution[1]?.distribution_id:"",
+                        dist_port_3: feederFocus?.distribution[2]?.distribution_id?feederFocus?.distribution[2]?.distribution_id:"",
+                        dist_port_4: feederFocus?.distribution[3]?.distribution_id?feederFocus?.distribution[3]?.distribution_id:"",
                       }}
                       validate={(values)=>{
                         if(values.dist_port_1){
@@ -331,7 +331,7 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
                       // validateOnBlur={true}
                       validateOnChange={true}
                       onSubmit={(values,{setSubmitting})=>{
-                        console.log(values)
+                        // console.log(values)
                         let dist_value = [
                           {
                             po_index:"1",
@@ -354,14 +354,14 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
                             distribution_id: values.dist_port_4.toString()
                           },
                         ];
-                        console.log("add distribution value",dist_value.filter(itm=>itm!==""))
+                        // console.log("add distribution value",dist_value.filter(itm=>itm!==""))
                         if(dist_value.filter(itm=>itm!=="").length==0){
                           setSubmitting(false)
                           setFormError(prev=>({...prev,status:true}))
                         }
                         else{
                           setFormError(prev=>({...prev,status:false}))
-                          setSelectedCoreFeeder(odcId,feederFocus.feeder.feeder_index,feederFocus.feeder.feeder_id,values.splitter,dist_value,handleClose,token,setSubmitting,toast,router)
+                          setSelectedCoreFeeder(odcId,feederModal[0].type,feederFocus.feeder.feeder_index,feederFocus.feeder.feeder_id,values.splitter,dist_value,handleClose,token,setSubmitting,toast,router)
                         }
 
 
@@ -429,7 +429,7 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
                                           <option value={""}>Empty</option>
                                           {
                                             feederFocus.distribution[0].distribution_id && 
-                                            <option key={"dist_po1"+feederFocus.distribution[0].distribution_index} value={"dist_po1"+feederFocus.distribution[0].distribution_id}>{(feederFocus?.distribution[0].distribution_level%2==0)?"D"+feederFocus?.distribution[0]?.distribution_level_id+"-"+(feederFocus.distribution[0].distribution_index+12):"D"+feederFocus?.distribution[0]?.distribution_level_id+"-"+feederFocus.distribution[0].distribution_index}</option>
+                                            <option key={"dist_po1"+feederFocus.distribution[0].distribution_index} value={feederFocus.distribution[0].distribution_id}>{(feederFocus?.distribution[0].distribution_level%2==0)?"D"+feederFocus?.distribution[0]?.distribution_level_id+"-"+(feederFocus.distribution[0].distribution_index+12):"D"+feederFocus?.distribution[0]?.distribution_level_id+"-"+feederFocus.distribution[0].distribution_index}</option>
                                           }
                                           {distributionOnChange[0].mapped.map((item,idx)=>{
                                             //level rak
@@ -467,7 +467,7 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
                                             <option value={""}>Empty</option>
                                             {
                                               feederFocus?.distribution[1]?.distribution_id && 
-                                              <option key={"dist_po2"+feederFocus.distribution[1].distribution_index} value={"dist_po2"+feederFocus?.distribution[1]?.distribution_id}>{(feederFocus?.distribution[1].distribution_level%2==0)?"D"+feederFocus?.distribution[1]?.distribution_level_id+"-"+(feederFocus.distribution[1].distribution_index+12):"D"+feederFocus?.distribution[1]?.distribution_level_id+"-"+feederFocus.distribution[1].distribution_index}</option>
+                                              <option key={"dist_po2"+feederFocus.distribution[1].distribution_index} value={feederFocus?.distribution[1]?.distribution_id}>{(feederFocus?.distribution[1].distribution_level%2==0)?"D"+feederFocus?.distribution[1]?.distribution_level_id+"-"+(feederFocus.distribution[1].distribution_index+12):"D"+feederFocus?.distribution[1]?.distribution_level_id+"-"+feederFocus.distribution[1].distribution_index}</option>
                                             }
                                             {distributionOnChange[1].mapped.map((item,idx)=>{
                                               // console.log("ds",item)
@@ -503,7 +503,7 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
                                           <option value={""}>Empty</option>
                                           {
                                             feederFocus?.distribution[2]?.distribution_id && 
-                                            <option key={"dist_po3"+feederFocus.distribution[2].distribution_index} value={"dist_po3"+feederFocus?.distribution[2]?.distribution_id}>{(feederFocus?.distribution[1].distribution_level%2==0)?"D"+feederFocus?.distribution[2]?.distribution_level_id+"-"+(feederFocus.distribution[2].distribution_index+12):"D"+feederFocus?.distribution[2]?.distribution_level_id+"-"+feederFocus.distribution[2].distribution_index}</option>
+                                            <option key={"dist_po3"+feederFocus.distribution[2].distribution_index} value={feederFocus?.distribution[2]?.distribution_id}>{(feederFocus?.distribution[1].distribution_level%2==0)?"D"+feederFocus?.distribution[2]?.distribution_level_id+"-"+(feederFocus.distribution[2].distribution_index+12):"D"+feederFocus?.distribution[2]?.distribution_level_id+"-"+feederFocus.distribution[2].distribution_index}</option>
                                           }
                                           {distributionOnChange[2].mapped.map((item,idx)=>{
                                             // console.log("ds",item)
@@ -538,7 +538,7 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
                                             <option value={""}>Empty</option>
                                             {
                                               feederFocus?.distribution[3]?.distribution_id && 
-                                              <option key={"dist_po4"+feederFocus.distribution[3].distribution_index} value={"dist_po4"+feederFocus?.distribution[3]?.distribution_id}>{(feederFocus?.distribution[1].distribution_level%2==0)?"D"+feederFocus?.distribution[3]?.distribution_level_id+"-"+(feederFocus.distribution[3].distribution_index+12):"D"+feederFocus?.distribution[3]?.distribution_level_id+"-"+feederFocus.distribution[3].distribution_index}</option>
+                                              <option key={"dist_po4"+feederFocus.distribution[3].distribution_index} value={feederFocus?.distribution[3]?.distribution_id}>{(feederFocus?.distribution[1].distribution_level%2==0)?"D"+feederFocus?.distribution[3]?.distribution_level_id+"-"+(feederFocus.distribution[3].distribution_index+12):"D"+feederFocus?.distribution[3]?.distribution_level_id+"-"+feederFocus.distribution[3].distribution_index}</option>
                                             }
                                             {distributionOnChange[3].mapped.map((item,idx)=>{
                                               // console.log("ds",item)

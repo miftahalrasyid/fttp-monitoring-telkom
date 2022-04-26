@@ -373,5 +373,51 @@
 }
 .alldetailItems{
     display: flex;
-    
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin: 2rem 0;
+    margin-right: 5rem;
+}
+.hr{
+    background: transparent;
+    display:none;
+    opacity: 0.5;
+    transform: rotate(90deg);
+    flex-basis: 11.4%;
+    flex-direction: row;
+    flex: 1 89%;
+    width: 100%;
+    max-width: 2.2rem;
+}
+.odcItem{
+    width: 30%;
+    min-width: 440px;
+    display:flex;
+    justify-content: space-between;
+}
+
+@media screen and (min-width: 1048px) 
+and (max-width: 1080px)  {
+    .hr{
+        display:flex;
+        background: black;
+        /* border: 1px dashed black;
+        border-right-color: transparent;
+        border-left-color: transparent; */
+    }
+    .alldetailItems{
+        margin-right: 0;
+    }
+}
+@media screen and (min-width: 1254px) {
+    .hr{
+        display:flex;
+        background: black;
+        /* border: 1px dashed black;
+        border-right-color: transparent;
+        border-left-color: transparent; */
+    }
+    .alldetailItems{
+        margin-right: 0;
+    }
 }

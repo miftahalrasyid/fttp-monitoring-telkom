@@ -3,7 +3,7 @@ import styles from './footer.module.css';
 
 function footer() {
   return <footer className={`wrapper ${styles.footerContainer}`}><div className="container-fluid">
-      produced by SwitchBox
+      Develop by SwitchBox
   </div></footer>;
 }
 

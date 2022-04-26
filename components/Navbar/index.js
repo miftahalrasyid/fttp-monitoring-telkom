@@ -307,9 +307,9 @@ function Navbar(props) {
                  
                   <div className={`${odcStyles.card}  ${odcStyles.cardStats}`}>
                     <div className={`${odcStyles.cardHeader} ${odcStyles.cardHeaderPrimary}`}>
-                      <h4 className={odcStyles.cardTitle}>{odcData?.odc_id?.toUpperCase()}</h4>
+                      <h4 className={odcStyles.cardTitle}>{odcData?.odc_name?.toUpperCase()}</h4>
                       <div className={odcStyles.stats}>
-                        lengkapi semua isian yang ada
+                        ubah bagian yang ingin di update
                       </div>
                     </div>
                     <div className={`${odcStyles.cardBody} card-body row`}>
@@ -325,7 +325,7 @@ function Navbar(props) {
                     initialValues={{
                       name:"",
                       merk_id:0,
-                      port_feeder_terminasi:"",
+                      // port_feeder_terminasi:"",
                       deployment_date:"",
                       capacity:0,
                       panel_oa:"",
@@ -367,12 +367,12 @@ function Navbar(props) {
                                 <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
                                   <CustomTextField id="standard-basic" label="STO" variant="standard" />
                                 </div>
-                                <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
+                                {/* <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
                                   <CustomTextField id="standard-basic" label="Kapasitas" variant="standard" defaultValue={odcData.capacity}/>
-                                </div>
-                                <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
+                                </div> */}
+                                {/* <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
                                   <CustomTextField id="standard-basic" label="Merek" variant="standard" defaultValue={odcData.merek}/>
-                                </div>
+                                </div> */}
                                 
                                     {/* <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
                                     <InputLabel variant="standard" htmlFor="uncontrolled-native">
@@ -418,9 +418,9 @@ function Navbar(props) {
                         >
                           {value === 1 && (
                             <div className={`row ${odcStyles.formGap}`}>
-                              <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                              {/* <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
                                 <CustomTextField id="standard-basic" label="Port Feeder Terminasi" variant="standard" defaultValue={odcData.core}/>
-                              </div>
+                              </div> */}
                               <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
                                 <CustomTextField id="standard-basic" label="Rak OA" variant="standard" defaultValue={odcData.rak_oa}/>
                               </div>

@@ -46,9 +46,9 @@ export const updateSplitterDistributionInfo = (data) =>({
     type: UPDATE_SPLITTER_DISTRIBUTION,
     payload: {data}
 });
-export const setSelectedCoreFeeder = (odcId,feeder_index,feeder_id,splitter_id,distribution_ids,handleClose,token,setSubmitting,toast,history) => ({
+export const setSelectedCoreFeeder = (odcId,type,feeder_index,feeder_id,splitter_id,distribution_ids,handleClose,token,setSubmitting,toast,history) => ({
     type: SET_SELECTED_CORE_FEEDER,
-    payload: {odcId,feeder_index,feeder_id,splitter_id,distribution_ids,handleClose,token,setSubmitting,toast,history}
+    payload: {odcId,type,feeder_index,feeder_id,splitter_id,distribution_ids,handleClose,token,setSubmitting,toast,history}
 })
 export const deleteSelectedCoreFeeder = (odcId,feeder_index,feeder_id,handleClose,token,setSubmitting,toast,history) => ({
     type: DELETE_SELECTED_CORE_FEEDER,
