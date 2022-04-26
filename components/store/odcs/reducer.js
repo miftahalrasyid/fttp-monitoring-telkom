@@ -6,6 +6,8 @@ import { GET_SPLITTER_DATA,
   GET_CORE_FEEDER_INFO_SUCCESSFUL,
   GET_ODCs_SUCCESSFUL,
   GET_SELECTED_CORE_FEEDER,
+  DELETE_SELECTED_CORE_FEEDER,
+  DELETE_SELECTED_CORE_FEEDER_SUCCESSFUL,
   GET_ODC_SPLITPANEL_STATUS,
   GET_ODC_SPLITPANEL_STATUS_SUCCESSFUL,
   GET_GRAPH_FEEDER,
@@ -20,6 +22,21 @@ import { GET_SPLITTER_DATA,
   GET_DATEL_LIST_SUCCESSFUL,
   GET_STO_LIST,
   GET_STO_LIST_SUCCESSFUL,
+  GET_ODC_PAGE,
+  GET_ODC_PAGE_SUCCESSFUL,
+  GET_ODC_PAGE_FAILED,
+  ADD_ODC_DATA,
+  ADD_ODC_DATA_SUCCESSFUL,
+  ADD_ODC_DATA_FAILED,
+  UPDATE_ODC_DATA,
+  UPDATE_ODC_DATA_SUCCESSFUL,
+  UPDATE_ODC_DATA_FAILED,
+  DELETE_ODC_DATA,
+  DELETE_ODC_DATA_SUCCESSFUL,
+  DELETE_ODC_DATA_FAILED,
+  GET_MEREK_LIST,
+  GET_MEREK_LIST_FAILED,
+  GET_MEREK_LIST_SUCCESSFUL
 } from "./actionTypes";
 import { HYDRATE } from 'next-redux-wrapper';
 const INIT_STATE = {
@@ -29,11 +46,21 @@ const INIT_STATE = {
         update:false,
         getSplitter:false,
         getOdcSplitpanelStatus:false,
+        deleteOdcSplitpanelStatus: false,
         getRegionList:false,
         getWitelList: false,
         getDatelList: false,
         getSTOList: false,
+        getMerekList: false,
+        getODCPage:false,
+        addODCData: false,
+        updateODCData: false,
+        deleteODCData: false,
     },
+    add_odc_list:"",
+    delete_odc_list:"",
+    odc_page:"",
+    merek_list:"",
     sto_list:"",
     datel_list:"",
     region_list:"",
@@ -43,7 +70,7 @@ const INIT_STATE = {
     coreFeederData:"",
     odcsBox:[],
     splitterData:"",
-    selectedOdcSplitpanelStatus:{},
+    selectedOdcSplitpanelStatus:"",
     client: {
       coreFeederData:'',
       odcsBoxClient:'',
@@ -189,7 +216,8 @@ const odcs = (state=INIT_STATE,action) => {
           loading:{
             ...state.loading,
             getOdcSplitpanelStatus: true
-          }
+          },
+          selectedOdcSplitpanelStatus: ""
         }
         
         case GET_ODC_SPLITPANEL_STATUS_SUCCESSFUL:
@@ -201,6 +229,27 @@ const odcs = (state=INIT_STATE,action) => {
             getOdcSplitpanelStatus: false
           },
           selectedOdcSplitpanelStatus: action.payload
+
+        }
+      case DELETE_SELECTED_CORE_FEEDER:
+
+        return{
+          ...state,
+          loading:{
+            ...state.loading,
+            deleteOdcSplitpanelStatus: true
+          },
+          deleteOdcSplitpanelStatus: ""
+        }
+        
+        case DELETE_SELECTED_CORE_FEEDER_SUCCESSFUL:
+          
+        return{
+          ...state,
+          loading:{
+            ...state.loading,
+            deleteOdcSplitpanelStatus: false
+          },
 
         }
   
@@ -288,7 +337,138 @@ const odcs = (state=INIT_STATE,action) => {
           sto_list: action.payload
 
         }
-  
+      case GET_MEREK_LIST:
+
+        return{
+          ...state,
+          loading:{
+            ...state.loading,
+            getMerekList: true
+          }
+        }
+        
+        case GET_MEREK_LIST_SUCCESSFUL:
+          
+        return{
+          ...state,
+          loading:{
+            ...state.loading,
+            getMerekList: false
+          },
+          merek_list: action.payload
+
+        }
+
+        case GET_ODC_PAGE:
+          
+        return{
+          ...state,
+          loading:{
+            ...state.loading,
+            getODCPage: true
+          },
+          odc_page:""
+        }
+        
+        case GET_ODC_PAGE_SUCCESSFUL:
+          console.log("odc page successful")
+        return{
+          ...state,
+          loading:{
+            ...state.loading,
+            getODCPage: false
+          },
+          odc_page: {...action.payload,loading:state.loading.getODCPage}
+
+        }
+        case GET_ODC_PAGE_FAILED:
+          console.log("odc page failed")
+        return{
+          ...state,
+          loading:{
+            ...state.loading,
+            getODCPage: false
+          },
+
+        }
+        case ADD_ODC_DATA:
+            
+          return {
+              ...state,
+              loading: {
+                  ...state.loading,
+                  addODCData:true
+              }
+          };
+        case ADD_ODC_DATA_SUCCESSFUL:
+          return {
+              ...state,
+              loading: {
+                  ...state.loading,
+                  addODCData:false
+              },
+          };
+        case ADD_ODC_DATA_FAILED:
+          return {
+              ...state,
+              loading: {
+                  ...state.loading,
+                  addODCData:false
+              },
+              add_odc_list: action.payload
+          };
+        case UPDATE_ODC_DATA:
+            
+          return {
+              ...state,
+              loading: {
+                  ...state.loading,
+                  updateODCData:true
+              }
+          };
+        case UPDATE_ODC_DATA_SUCCESSFUL:
+          return {
+              ...state,
+              loading: {
+                  ...state.loading,
+                  updateODCData:false
+              },
+          };
+        case UPDATE_ODC_DATA_FAILED:
+          return {
+              ...state,
+              loading: {
+                  ...state.loading,
+                  updateODCData:false
+              },
+          };
+          case DELETE_ODC_DATA:
+            
+            return {
+                ...state,
+                loading: {
+                    ...state.loading,
+                    deleteODCData:true
+                }
+            };
+        case DELETE_ODC_DATA_SUCCESSFUL:
+            return {
+                ...state,
+                loading: {
+                    ...state.loading,
+                    deleteODCData:false
+                }
+            };
+        case DELETE_ODC_DATA_FAILED:
+            return {
+                ...state,
+                loading: {
+                    ...state.loading,
+                    deleteODCData:false
+                },
+                delete_odc_list: action.payload
+            };
+    
       default:
           return state;
   }

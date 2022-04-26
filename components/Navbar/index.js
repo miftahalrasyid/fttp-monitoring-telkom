@@ -6,7 +6,7 @@ import { MdMenu } from 'react-icons/md';
 // } from "@material-ui/core";
 import Image from 'next/image';
 import Link from 'next/link';
-import {Modal,Box,FormControl,InputLabel,NativeSelect} from '@material-ui/core';
+import {Modal,Box,FormControl,InputLabel,NativeSelect, CircularProgress,Backdrop} from '@material-ui/core';
 import { 
   styled as styledCustom
 } from "@mui/material/styles";
@@ -16,6 +16,8 @@ import { FaBars } from 'react-icons/fa';
 import indexStyles from './index.module.css';
 import odcStyles from '../../pages/odc/odc.module.css';
 import {useRouter} from 'next/router';
+import {ToastContainer,toast} from 'react-toastify';
+import { Formik } from 'formik';
 import jwt from 'jwt-decode';
 import {
 Button
@@ -33,6 +35,7 @@ import {
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import TextField from '@mui/material/TextField';
+import {addNewUser} from '../../components/store/users/actions';
 // import {
 //   MdOutlineAddBox,
 // } from 'react-icons/md';
@@ -85,14 +88,17 @@ const CustomTextField = styledCustom(TextField)((props) => ({
     borderColor: props.theme.status.primary
   },
 }));
-const CustomButtonModal = styledCustom(Button)(({ theme, btnType }) => ({
-  background: btnType == 'submit' ? theme.status.success:theme.status.primary,
-  // background: btnType == 'submit' ? '#1ebc51!important':theme.status.primary,
+const CustomButtonModal = styledCustom(Button)(({ theme, btntype }) => ({
+  background: btntype == 'submit' ? theme.status.success:theme.status.primary,
+  // background: btntype == 'submit' ? '#1ebc51!important':theme.status.primary,
 }));
 const CustomButtonEdit= styledCustom(Button)(({ theme }) => ({
   borderColor: theme.status.primary,
   color: theme.status.primary,
 }));
+const CustomCircularProgress = styledCustom(CircularProgress)(({theme})=>({
+  color: theme.status.success
+}))
 const CustomButtonStatus= styledCustom(Button)(({ theme }) => ({
   borderColor: theme.status.success,
   color: theme.status.success,
@@ -126,8 +132,9 @@ function a11yProps(index) {
 
 function Navbar(props) {
   const odc_edit_modal = useRef(null);
-  const { dataClient,odcData } = props;
-  // console.log("raw data",dataClient,props)
+  const { dataClient,odcData,email,role_name, add_user_confirmation,addNewUser,token} = props;
+  // console.log("raw data",odcData,props)
+  const { odc_name } = odcData || {odc_name:''};
   const router = useRouter();
   const {odcId,userPath} = router.query;
   const filteredDataclient = (odcId)?dataClient.filter(item=>item.id==odcId[0]):""
@@ -161,6 +168,7 @@ function Navbar(props) {
  const handleClose = () => setOpen(false);
  const [value, setValue] = React.useState(0);
  const handleChange = (event, newValue) => {
+   console.log("new value",newValue)
    setValue(newValue);
   };
   useEffect(()=>{
@@ -179,24 +187,38 @@ function Navbar(props) {
   const [userModalOpen, setUserModalOpen] = React.useState(false);
   const handleAddUserOpen = () => setUserModalOpen(true);
   const handleAddUserClose = () => setUserModalOpen(false);
-  const getCookie = (cname)=> {
-    let name = cname + "=";
-    let decodedCookie = (typeof window !== "undefined") ? decodeURIComponent(document.cookie) : "";
-    let ca = decodedCookie.split(';');
-    for(let i = 0; i < ca.length; i++) {
-      let c = ca[i];
-      while (c.charAt(0) == ' ') {
-        c = c.substring(1);
-      }
-      if (c.indexOf(name) == 0) {
-        return c.substring(name.length, c.length);
-      }
-    }
-    return "";
-  }
-  const {email,role_name} = (typeof window !== "undefined") ? jwt(getCookie("token")) : {email:"",role_name:""};
+
+  /** add users confirmation */
+  const [error,setError] = useState();
+  useEffect(()=>{
+    console.log("error",error,add_user_confirmation)
+    // if(!error?.success)
+    // toast.error(error?.msg, {
+    //   position: "top-right",
+    //   autoClose: 5000,
+    //   hideProgressBar: false,
+    //   closeOnClick: true,
+    //   pauseOnHover: true,
+    //   draggable: true,
+    //   progress: undefined,
+    // });
+    // if(add_user_confirmation.success){
+    //   toast.success(add_user_confirmation.msg, {
+    //     position: "top-right",
+    //     autoClose: 5000,
+    //     hideProgressBar: false,
+    //     closeOnClick: true,
+    //     pauseOnHover: true,
+    //     draggable: true,
+    //     progress: undefined,
+    //   });
+    // }
+    // document.body.append(<ToastContainer style={{zIndex:"99999999999"}}/>)
+  },[error])
+  // const {email,role_name} = (typeof window !== "undefined") ? jwt(getCookie("token")) : {email:"",role_name:""};
 // console.log("odcid",odcId)
   return  <nav id={indexStyles.topBar}>
+    {/* <ToastContainer style={{zIndex:"99999999999"}}/> */}
       {/* <div className='container-fluid'></div> */}
             <div className={indexStyles.navbarBrandBox}>
                   {typeof odcId !== 'object'? 
@@ -219,7 +241,7 @@ function Navbar(props) {
                     ...prev.dom,
                       (prev.elm.length === 0) ? [<Link key={"link"+next} href={`/odc/${next}`} passHref>
                         <a className={indexStyles.logo}>
-                            <span className={indexStyles.logoTxt}> {next.toUpperCase()}</span>
+                            <span className={indexStyles.logoTxt}> {odc_name?.toUpperCase()}</span>
                         </a>
                         </Link>]:
                       <Link key={"link"+next} href={`/odc/${[...prev.elm,next].join("/")}`} passHref>
@@ -299,116 +321,142 @@ function Navbar(props) {
                     </div>
                     <div className={odcStyles.tabLink}>
                     </div>
-                    <div
-                      role="tabpanel"
-                      hidden={value !== 0}
-                      id={`simple-tabpanel-${0}`}
-                      aria-labelledby={`simple-tab-${0}`}
+                    <Formik
+                    initialValues={{
+                      name:"",
+                      merk_id:0,
+                      port_feeder_terminasi:"",
+                      deployment_date:"",
+                      capacity:0,
+                      panel_oa:"",
+                      rak_oa:"",
+                      port:"",
+                      region_id:"",
+                      witel_id:"",
+                      datel_id:"",
+                      sto_id:"",
+                    }}
                     >
-                      {value === 0 && (
-                        <div className={`row ${odcStyles.formGap}`}>
-                            <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
-                              <CustomTextField id="odcName" label="Nama ODC" variant="standard" defaultValue={odcData.odc_id}/>
-                            </div>
-                            <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                              <CustomTextField id="standard-basic" label="Regional" variant="standard" />
-                            </div>
-                            <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                              <CustomTextField id="standard-basic" label="WITEL" variant="standard" />
-                            </div>
-                            <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                              <CustomTextField id="standard-basic" label="DATEL" variant="standard" />
-                            </div>
-                            <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                              <CustomTextField id="standard-basic" label="STO" variant="standard" />
-                            </div>
-                            <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
-                              <CustomTextField id="standard-basic" label="Kapasitas" variant="standard" defaultValue={odcData.capacity}/>
-                            </div>
-                            <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
-                              <CustomTextField id="standard-basic" label="Merek" variant="standard" defaultValue={odcData.merek}/>
-                            </div>
-                            
-                                <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                <InputLabel variant="standard" htmlFor="uncontrolled-native">
-                                    Splitter Position
-                                  </InputLabel>
-                                  <NativeSelect
-                                    defaultValue={10}
-                                    inputProps={{
-                                      name: 'age',
-                                      id: 'uncontrolled-native',
-                                    }}
-                                  >
-                                    <option value={10}>top left</option>
-                                    <option value={20}>top right</option>
-                                    <option value={30}>top center</option>
-                                    <option value={40}>bottom center</option>
-                                    <option value={50}>bottom left</option>
-                                    <option value={60}>bottom right</option>
-                                  </NativeSelect>
-                                  {/* <CustomTextField id="standard-basic" label="Splitter Position" variant="standard" /> */}
-                                </div>
-                                {/* {item.merek} */}
-                                {/* merk
-                                  deploymentDate
-                                  core
-                                  rakOa
-                                  panelOa
-                                  port */}
+                      {({
+                        values,
+                        handleSubmit,
+                        handleChange,
+                        handleBlur
+                      })=>(
+                        <form className={odcStyles.form} onSubmit={handleSubmit}>
+                        <div
+                          role="tabpanel"
+                          hidden={value !== 0}
+                          id={`simple-tabpanel-${0}`}
+                          aria-labelledby={`simple-tab-${0}`}
+                        >
+                          {value === 0 && (
+                            <div className={`row ${odcStyles.formGap}`}>
                                 <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
-                                  <CustomTextField id="standard-basic" label="Deployment Date" color='primary'
-                                    variant="standard" defaultValue={odcData.deployment_date}/>
+                                  <CustomTextField id="odcName" label="Nama ODC" variant="standard" defaultValue={odcData.odc_id}/>
                                 </div>
-                            
+                                <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                  <CustomTextField id="standard-basic" label="Regional" variant="standard" />
+                                </div>
+                                <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                  <CustomTextField id="standard-basic" label="WITEL" variant="standard" />
+                                </div>
+                                <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                  <CustomTextField id="standard-basic" label="DATEL" variant="standard" />
+                                </div>
+                                <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                  <CustomTextField id="standard-basic" label="STO" variant="standard" />
+                                </div>
+                                <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
+                                  <CustomTextField id="standard-basic" label="Kapasitas" variant="standard" defaultValue={odcData.capacity}/>
+                                </div>
+                                <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
+                                  <CustomTextField id="standard-basic" label="Merek" variant="standard" defaultValue={odcData.merek}/>
+                                </div>
+                                
+                                    {/* <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                    <InputLabel variant="standard" htmlFor="uncontrolled-native">
+                                        Splitter Position
+                                      </InputLabel>
+                                      <NativeSelect
+                                        defaultValue={10}
+                                        inputProps={{
+                                          name: 'age',
+                                          id: 'uncontrolled-native',
+                                        }}
+                                      >
+                                        <option value={10}>top left</option>
+                                        <option value={20}>top right</option>
+                                        <option value={30}>top center</option>
+                                        <option value={40}>bottom center</option>
+                                        <option value={50}>bottom left</option>
+                                        <option value={60}>bottom right</option>
+                                      </NativeSelect>
+                                    </div> */}
+
+                                      {/* <CustomTextField id="standard-basic" label="Splitter Position" variant="standard" /> */}
+                                    {/* {item.merek} */}
+                                    {/* merk
+                                      deploymentDate
+                                      core
+                                      rakOa
+                                      panelOa
+                                      port */}
+                                    <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
+                                      <CustomTextField id="standard-basic" label="Deployment Date" color='primary'
+                                        variant="standard" defaultValue={odcData.deployment_date}/>
+                                    </div>
+                                
+                            </div>
+                          )}
                         </div>
+                        <div
+                          role="tabpanel"
+                          hidden={value !== 1}
+                          id={`simple-tabpanel-${1}`}
+                          aria-labelledby={`simple-tab-${1}`}
+                        >
+                          {value === 1 && (
+                            <div className={`row ${odcStyles.formGap}`}>
+                              <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                <CustomTextField id="standard-basic" label="Port Feeder Terminasi" variant="standard" defaultValue={odcData.core}/>
+                              </div>
+                              <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
+                                <CustomTextField id="standard-basic" label="Rak OA" variant="standard" defaultValue={odcData.rak_oa}/>
+                              </div>
+                              <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
+                                <CustomTextField id="standard-basic" label="Panel" variant="standard" defaultValue={odcData.panel_oa}/>
+                              </div>
+                              <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
+                                <CustomTextField id="standard-basic" label="Port" color='primary'
+                                  variant="standard" defaultValue={odcData.port}/>
+                              </div>
+                          </div>
+                          )}
+                        </div>
+                        </form>
                       )}
-                    </div>
-                    <div
-                      role="tabpanel"
-                      hidden={value !== 1}
-                      id={`simple-tabpanel-${1}`}
-                      aria-labelledby={`simple-tab-${1}`}
-                    >
-                      {value === 1 && (
-                        <div className={`row ${odcStyles.formGap}`}>
-                          <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                            <CustomTextField id="standard-basic" label="Port Feeder Terminasi" variant="standard" defaultValue={odcData.core}/>
-                          </div>
-                          <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
-                            <CustomTextField id="standard-basic" label="Rak OA" variant="standard" defaultValue={odcData.rak_oa}/>
-                          </div>
-                          <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
-                            <CustomTextField id="standard-basic" label="Panel" variant="standard" defaultValue={odcData.panel_oa}/>
-                          </div>
-                          <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
-                            <CustomTextField id="standard-basic" label="Port" color='primary'
-                              variant="standard" defaultValue={odcData.port}/>
-                          </div>
-                      </div>
-                      )}
-                    </div>
-                    
+                    </Formik>
                     </div>
                     <div className={odcStyles.actionContainer}>
-                    <CustomButtonModal onClick={(ev)=>handleChange(ev,value-1)} style={{visibility:(value<=0)?"hidden":"visible"}} variant="contained" color='primary' size="large">
+                    <CustomButtonModal onClick={(ev)=>handleChange(ev,value-1)} style={{visibility:(value<=0)?"hidden":"visible"}} variant="contained" color='primary' size="medium">
                     Prev
                   </CustomButtonModal>
                   <div className='row'>
                     <div className='col-md-12 col-lg-6'> 
-                    {(value>0) && <CustomButtonModal btnType={'submit'} onClick={(ev)=>(value>0)?handleOpen:handleChange(ev,value+1)}  variant="contained" color='primary' size="large">
+                    {(value>0) && <CustomButtonModal btntype={'submit'} onClick={(ev)=>(value>0)?handleOpen:handleChange(ev,value+1)}  variant="contained" color='primary' size="medium">
                       Submit
                       </CustomButtonModal>}
                     </div>
                     <div className='col-md-12 col-lg-6'> 
-                    {(value>0) && <CustomButtonModal onClick={()=>handleClose()}  variant="contained" color='primary' size="large">
+                    {(value>0) && <CustomButtonModal onClick={()=>handleClose()}  variant="contained" color='primary' size="medium">
                         Cancel
                         </CustomButtonModal>}
                     </div>
                   </div>
                   <div>
 
-                   <CustomButtonModal style={{visibility: (value>0)?"hidden":"visible"}} onClick={(ev)=>(value>0)?handleOpen:handleChange(ev,value+1)}  variant="contained" color='primary' size="large">
+                   <CustomButtonModal style={{visibility: (value>0)?"hidden":"visible"}} onClick={(ev)=>(value>0)?handleOpen:handleChange(ev,value+1)}  variant="contained" color='primary' size="medium">
                    {(value<=0)? "Next":""}
                   </CustomButtonModal>
                   </div>
@@ -487,55 +535,104 @@ function Navbar(props) {
                       </div>
                     </div>
                     <div className={`${odcStyles.cardBody} card-body row ${odcStyles.customCardBodyUser}`}>
-                      <div className={`row ${odcStyles.formGap}`}>
-                        {/* <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
-                          <CustomTextField id="standard-basic" label="Name" variant="standard" defaultValue={""} />
-                        </div> */}
-                        <div className={`col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
-                          <CustomTextField id="standard-basic" label="Email" variant="standard" defaultValue={""} />
-                        </div>
-                        <div className={`col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
-                          <CustomTextField id="standard-basic" label="Password" variant="standard" defaultValue={""} />
-                        </div>
-                        <div className={`col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
-                        <FormControl key='role' variant="standard" sx={{ m: 1, minWidth: 124 }}>
-                        <CustomInputLabel id="demo-simple-select-standard-label">Role</CustomInputLabel>
-
-                        <NativeSelect defaultValue={"user"} inputProps={{
-                            name: 'age',
-                            id: 'uncontrolled-native',
-                            }}>
-                              <option key={"role-admin"} value="admin"> Admin </option>
-                              <option key={"role-user"} value="user"> User </option>
-                        </NativeSelect>
-                        </FormControl>
-                        </div>
-                        
-                        {/* <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
-                          <CustomTextField id="standard-basic" label="Address" variant="standard" defaultValue={""} />
-                        </div>
-                        <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
-                          <CustomTextField id="standard-basic" label="Status" color='primary' variant="standard"
-                            defaultValue={""} />
-                        </div> */}
+                      <Formik
+                      initialValues={{email:'',password:'',role:'2'}}
+                      validate={values => {
+                        const errors = {};
+                        if (!values.email) {
+                          errors.email = '*Wajib diisi';
+                        } else if (
+                          !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
+                        ) {
+                          errors.email = '*Invalid email address';
+                        }
+                        if(!values.password){
+                          errors.password = '*Wajib diisi'
+                        }
+                        return errors;
+                      }}
+                      onSubmit={(values,{setSubmitting})=>{
+                        addNewUser(values.email,values.password,values.role,token,setSubmitting,handleAddUserClose,toast)
+                      }}
+                      >
+                        {({
+                  values,
+                  errors,
+                  touched,
+                  handleChange,
+                  handleBlur,
+                  handleSubmit,
+                  isSubmitting,
+                  /* and other goodies */
+                }) => (
+                  <form className={styles.form} onSubmit={handleSubmit}>
+                    <div className={`row ${odcStyles.formGap}`}>
+                      <div className={`col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
+                        <CustomTextField 
+                        id="standard-basic" 
+                        label="Email" 
+                        onChange={handleChange} 
+                        onBlur={handleBlur}
+                        name='email' 
+                        variant="standard" 
+                        placeholder='example@domain.com'
+                        value={values.email} 
+                        error={errors.email ? true:false}
+                        helperText={errors.email && touched.email && errors.email}
+                        />
                       </div>
+                      <div className={`col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
+                        <CustomTextField 
+                        id="standard-basic" 
+                        label="Password" 
+                        onChange={handleChange}
+                        type={"password"}
+                        onBlur={handleBlur} 
+                        name="password" 
+                        variant="standard" 
+                        value={values.password} 
+                        error={errors.password ? true:false}
+                        helperText={errors.password && touched.password && errors.password}/>
+                      </div>
+                      <div className={`col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
+                        <FormControl key='role' variant="standard" sx={{ m: 1, minWidth: 124 }}>
+                          <CustomInputLabel id="demo-simple-select-standard-label">Role</CustomInputLabel>
+
+                          <NativeSelect value={values.role} onChange={handleChange} onBlur={handleBlur} inputProps={{
+                          name: 'role',
+                          id: 'uncontrolled-native',
+                          }}>
+                            <option key={"role-admin"} value="1"> Admin </option>
+                            <option key={"role-user"} value="2"> User </option>
+                          </NativeSelect>
+                        </FormControl>
+                      </div>
+                    </div>
+
                     <div className={odcStyles.actionContainer}>
                       <div className='col-md-6'>
                         <div className='row'>
 
-                            <div className={`col-md-12 col-lg-4 `}>
-                              <CustomButtonModal btnType={'submit'}>
-                                {"Submit"}
-                              </CustomButtonModal>
-                            </div>
-                            <div className={`col-md-12 col-lg-4 `}>
-                              <CustomButtonModal onClick={()=>handleAddUserClose()}>
-                                {"Cancel"}
-                              </CustomButtonModal>
-                            </div>
+                          <div className={`col-md-12 col-lg-4 `}>
+                            {isSubmitting ?
+                            <CustomCircularProgress size={24} style={{ position: 'relative', top: 4,display:"flex",margin:"auto"}} />
+                            :
+                            <CustomButtonModal btntype={'submit'} type={"submit"} disabled={isSubmitting}>
+                              {"Submit"}
+                            </CustomButtonModal>
+                            }
+                          </div>
+                          <div className={`col-md-12 col-lg-4 `}>
+                            <CustomButtonModal onClick={()=>handleAddUserClose()} >
+                              {"Cancel"}
+                            </CustomButtonModal>
                           </div>
                         </div>
                       </div>
+                    </div>
+                  </form>
+                    )}
+                  </Formik>
                     </div>
                   </div>
                   </Box>
@@ -570,6 +667,11 @@ function Navbar(props) {
 
 const mapStateToProps = state => ({
   dataClient:state?.ODCs?.odcsBox,
-})
+  add_user_confirmation: state.Users.add_user
 
-export default connect(mapStateToProps,{})(Navbar);
+})
+const mapDispatchToProps = {
+  addNewUser
+}
+
+export default connect(mapStateToProps,mapDispatchToProps)(Navbar);

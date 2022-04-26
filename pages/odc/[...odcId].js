@@ -29,11 +29,14 @@ import Button from '@mui/material/Button';
 //     MdDeleteForever
 //   } from 'react-icons/md';
   import { createTheme, MuiThemeProvider,styled } from "@material-ui/core/styles";
+  import {createTheme as customCreateTheme, ThemeProvider} from "@mui/material/styles";
   const DynamicMUIDataTable = dynamic(() => import('mui-datatables'),{ ssr: false });
 import {
-    getOcdSplitpanelStatus
+    getOcdSplitpanelStatus,
+    setSelectedCoreFeeder,
+    deleteSelectedCoreFeeder
 } from '../../components/store/odcs/actions';
-import {getUserData} from '../../components/store/users/actions'
+import {getUserData} from '../../components/store/users/actions';
 import { wrapper,makeStore } from "../../components/store";
 // import store from '../../components/store'
 import Modal from '../../components/Modal';
@@ -46,6 +49,7 @@ import NativeSelect from '@mui/material/NativeSelect';
 import { 
     styled as styledCustom
   } from "@mui/material/styles";
+import { toast } from 'react-toastify';
 
 // const CustomSelect = styledCustom(Select)(({theme})=>({
 //     '.MuiList-root': {
@@ -54,53 +58,206 @@ import {
 //     },
 //   }))
 
+  // const getMuiTheme = () =>
+  // createTheme({
+  //   CustomButtonActivityLog: {
+  //     primary: "#ee2d24!important",
+  //     darkgray: "darkgray!important"
+  //   },
+  //   overrides: {
+  //     MuiOutlinedInput:{
+  //       root:{
+  //         color: "#ee2d24!important"
+  //       }
+  //     },
+  //     MuiTableRow:{
+  //       color:"#ee2d24",
+  //     },
+  //     MuiInput:{
+  //       underline:{'&:after':{borderBottomColor:"#ee2d24!important"}}
+  //     },
+  //     MuiButton:{
+  //       textPrimary:{
+  //         color: "#ee2d24!important"
+  //       }
+  //     },
+  //     MuiCheckbox:{
+  //       colorPrimary:{
+  //         color:"#ee2d24!important"
+  //       }
+  //     },
+  //     MUIDataTableToolbar:{
+  //       icon:{'&:hover': {color: '#ee2d24'}},
+  //       iconActive:{color:'#ee2d24'}
+  //     },
+  //     MuiPaper:{
+  //       root:{
+  //         boxShadow:"none!important"
+  //       }
+  //     },
+  //     MUIDataTableBodyCell: {
+  //       root: {
+  //         whiteSpace: "nowrap"
+  //       },
+  //     },
+  //   },
+  // });
+
   const getMuiTheme = () =>
-  createTheme({
-    CustomButtonActivityLog: {
-      primary: "#ee2d24!important",
-      darkgray: "darkgray!important"
+customCreateTheme({
+  status: {
+    success: "#009873!important",
+    primary: "#B10040!important",
+    darkgray: "darkgray!important"
+  },
+  components:{
+    MuiPaper:{
+      styleOverrides:{
+        root:{
+          // margin:"1rem 0",
+          // background: 'rgba(255,255,255,0.3)',
+          background: 'transparent',
+          // padding:'0 1rem',
+          boxShadow:"none",
+          ".MuiList-root":{
+            width: "100%"
+          },
+          ".MuiMenuItem-root":{
+            width: "100%",
+            display: "flex",
+            paddingTop: "8px",
+            paddingBottom: "8px",
+          }
+        }
+      }
     },
-    overrides: {
-      MuiOutlinedInput:{
+      MuiPopover:{
+        styleOverrides:{
+          paper:{
+            background:"white",
+            boxShadow:"0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%)"
+          }
+        }
+      },
+    // MuiTable:{
+    //   styleOverrides:{
+    //     root:{
+    //       width: "calc(100% - 2rem)",
+    //       marginLeft: "1rem"
+    //     }
+    //   }
+    // },
+    MuiOutlinedInput:{
+      styleOverrides:{
         root:{
           color: "#ee2d24!important"
         }
+      }
+    },
+    MuiTypography:{
+      styleOverrides:{
+        root:{
+          fontFamily:"'GothamRounded-Book' !important"
+        }
+      }
+    },
+    MuiButtonBase:{
+      styleOverrides:{
+        root:{
+          fontFamily:"'GothamRounded-Book' !important"
+        }
+      }
+    },
+    MuiTableRow:{
+      styleOverrides:{
+        root:{
+          color:"#ee2d24",
+          backgroundColor:"transparent"
+          // background:"rgba(255,255,255,0.3)"
+        },
+        "head":{
+          backgroundImage:"linear-gradient(to right,rgba(178,98,98,0.3),rgb(255 228 228 / 30%))",
+          backgroundImage:"linear-gradient(to right,rgb(237 167 88 / 30%),rgb(253 243 236 / 30%))",
+        },
+      }
+    },
+    MuiTableCell:{
+      styleOverrides:{
+        root:{
+          "span":{
+            display:"flex",
+            justifyContent:"center",
+          },
+        },
+        head:{
+          backgroundColor:"transparent !important",
+        }
+      }
+    },
+      MuiMenu:{
+        styleOverrides:{
+          paper:{
+            boxShadow:"0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%) !important"
+          },
+          list:{
+            background:"white",
+          }
+        }
       },
-      MuiTableRow:{
-        color:"#ee2d24",
-      },
-      MuiInput:{
+    MuiInput:{
+      styleOverrides:{
         underline:{'&:after':{borderBottomColor:"#ee2d24!important"}}
-      },
-      MuiButton:{
+      }
+    },
+    MuiButton:{
+      styleOverrides:{
         textPrimary:{
           color: "#ee2d24!important"
         }
-      },
-      MuiCheckbox:{
+      }
+    },
+    MuiCheckbox:{
+      styleOverrides:{
         colorPrimary:{
           color:"#ee2d24!important"
         }
-      },
-      MUIDataTableToolbar:{
-        icon:{'&:hover': {color: '#ee2d24'}},
-        iconActive:{color:'#ee2d24'}
-      },
-      MuiPaper:{
-        root:{
-          boxShadow:"none!important"
-        }
-      },
-      MUIDataTableBodyCell: {
-        root: {
-          whiteSpace: "nowrap"
-        },
-      },
+      }
     },
-  });
+    MuiIconButton:{
+      styleOverrides:{
+        root:{
+          flex:" 0 0 auto !important",
+          color: "rgba(0, 0, 0, 0.54) !important",
+          padding:" 12px !important",
+          overflow: "visible !important",
+          fontSize: "1.5rem !important",
+          textAlign: "center !important",
+          transition: "background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms !important",
+          borderRadius:" 50% !important",
+          '&:hover': {color: '#ee2d24 !important'},
+          '&[class*="iconActive"]':{
+            color: '#ee2d24 !important'
+          }
+        },
+        
+      }
+    },
+    MuiToolbar:{
+      styleOverrides:{
+        root:{
+          
+        },
+      }
+    },
+  }
+});
 function Odc({
     data:ODCData,
-    userData
+    userData,
+    viewOdcClient,
+    deleteSelectedCoreFeeder,
+    token,
+    setSelectedCoreFeeder
     }) {
       // console.log("ODC Data",ODCData)
         /**
@@ -115,8 +272,8 @@ function Odc({
      */
     const router = useRouter();
     const { odcId } = router.query;
-    const {splitter={data:[],position:{left:0,top:0}},panel={data:[],position:{left:375,top:0}}} = ODCData;
-    const feederModal = useState(false);
+    const {odc_name,capacity,merek,core,rak_oa,panel_oa,port,deployment_date,splitter={splitter:{position:[]},data:[],position:{left:0,top:0}},panel={data:[],position:{left:375,top:0}}} = (viewOdcClient || false)? viewOdcClient:ODCData;
+    const feederModal = useState({type:"",status:false});
     // const [feederFocus,setFeederFocus] = useState(false); 
     const [feederFocus,setFeederFocus] = useState(
       {
@@ -159,10 +316,10 @@ function Odc({
        * on feeder click start
        */
       /**if the feeder are idle */
-      console.log(ev.target.style.borderColor,hexToRgb("#75767e"), ev.target.parentNode.getAttribute("data-type")=="feeder")
+      // console.log(ev.target.style.borderColor,hexToRgb("#75767e"), ev.target.parentNode.getAttribute("data-type")=="feeder")
       if(ev.target.style.borderColor==hexToRgb("#75767e")){
       // if(ev.target.children[1].getAttribute("fill")=="#75767e"){
-        feederModal[1](true);
+        feederModal[1]({type:"add",status:true});
         if(feederFocus && (ev.target!==feederFocus.feederElm)){
           
           if(feederFocus.feederElm?.style)
@@ -176,7 +333,18 @@ function Odc({
             item.childNodes[0].style.borderColor = "blue";
           })
         }
-        setFeederFocus({
+        console.log("feederFocus",feederFocus)
+        setFeederFocus(()=>{
+          const [{data=[{
+            id:"",
+            index:"",
+            pass_through:"",
+            status:"",
+            passive_out:[],
+          }],rak_index}] = panel.data.filter(pnl=>pnl.rak_level.toString()==ev.target.parentNode.getAttribute('data-rak'));
+            console.log("feeder detail",data.filter(item=>item.index == ev.target.parentNode.getAttribute('data-id')))
+          const [{id:feeder_id,index:feeder_index,rak_level:feeder_level}] = data.filter(item=>item.index == ev.target.parentNode.getAttribute('data-id'))
+        return {
           distribution: [
             {distribution_id: "",
             distribution_index: null,
@@ -200,12 +368,12 @@ function Odc({
           }],
           
           distributionElm: [null, null, null, null],
-          feeder: {feeder_id: '', feeder_index: null, feeder_level: null},
+          feeder: {feeder_id, feeder_index, feeder_level},
           feederElm: null,
           odpName: ['', '', '', ''],
           splitter: {splitter_id: '', splitter_index: null},
           splitterElm: null
-        })
+        }})
       }
 
       /**if the feeder are used */
@@ -319,7 +487,7 @@ function Odc({
       /**if the feeder already focused */
       else if(ev.target.style.borderColor==hexToRgb("#ffda00") && ev.target.parentNode.getAttribute("data-type")=="feeder"){
       // else if(ev.target.children[1].getAttribute("fill")=="#ffda00" && ev.target.getAttribute("data-type")=="feeder"){
-        feederModal[1](true);
+        feederModal[1]({type:"edit",status:"true"});
       }
       else if( ev.target.parentNode.getAttribute("data-type")=="distribution"){
         
@@ -368,69 +536,77 @@ function Odc({
         "Sat Apr 02 2022 22:32:35",
         item.action || "user merubah ODC"
       ])))
-    },[ODCData,userData])
+      // console.log("re render data",(viewOdcClient || false)?viewOdcClient:ODCData)
+    },[ODCData,userData,viewOdcClient])
      /** display odc panel */
     if(odcId.length==1){
         return <div className={`wrapper ${styles.odcIdWrapper}`}>
-          { ODCData &&
+          { ((viewOdcClient || false)?viewOdcClient:ODCData) &&
           <div className={styles.odcWrapper}>
             <div className={`row ${styles.odcDetail}`}>
+              <div>
               <div className='col-lg-3'>
+                <div className={styles.alldetailItems}>
+
+                </div>
                 <div className={styles.odcDetailItems}>
                   <Typography sx={{ whiteSpace: "nowrap"}}>Nama ODC : </Typography>
-                  <Typography sx={{textTransform: "uppercase", whiteSpace: "nowrap"}}>{ODCData.odc_id}</Typography>
+                  <Typography sx={{textTransform: "uppercase", whiteSpace: "nowrap"}}>{odc_name}</Typography>
                 </div>
                 <div className={styles.odcDetailItems}>
                   <Typography>Kapasitas : </Typography>
-                  <Typography>{ODCData.capacity || ""}</Typography>
+                  <Typography>{capacity || ""}</Typography>
                 </div>
 
               </div>
               <div className='col-lg-3'>
                 <div className={styles.odcDetailItems}>
                   <Typography>Merek : </Typography>
-                  <Typography>{ODCData.mrek || ""}</Typography>
+                  <Typography>{merek || ""}</Typography>
                 </div>
 
                 <div className={styles.odcDetailItems}>
                   <Typography>Deployment Date : </Typography>
-                  <Typography>{ODCData.deployment_date || ""}</Typography>
+                  <Typography>{deployment_date || ""}</Typography>
                 </div>
               </div>
               <div className='col-lg-3'>
                 <div className={styles.odcDetailItems}>
                   <Typography>Core : </Typography>
-                  <Typography>{ODCData.core || ""}</Typography>
+                  <Typography>{core || ""}</Typography>
                 </div>
                 <div className={styles.odcDetailItems}>
                   <Typography>Rak OA : </Typography>
-                  <Typography>{ODCData.rak_oa || ""}</Typography>
+                  <Typography>{rak_oa || ""}</Typography>
                 </div>
               </div>
               <div className='col-lg-3'>
                 <div className={styles.odcDetailItems}>
                   <Typography>Panel : </Typography>
-                  <Typography>{ODCData.panel_oa || ""}</Typography>
+                  <Typography>{panel_oa || ""}</Typography>
                 </div>
                 <div className={styles.odcDetailItems}>
                   <Typography>Port : </Typography>
-                  <Typography>{ODCData.port || ""}</Typography>
+                  <Typography>{port || ""}</Typography>
                 </div>
               </div>
-
+              </div>
               <div className={styles.splitPanelWrapper} style={{height:"1000px"}}>
-                <Splitter x={splitter.position.left} y={splitter.position.top}>
+                <Splitter x={splitter.position.split(" ")[1] == "left" ? "0":""} y={splitter.position.split(" ")[0] == "top" ? "0":""}>
                   {splitter.data.map(s_item=>
                   <Eth from="splitter" key={"sp"+s_item.index} id={s_item.index} status={s_item.status}
                     columns={splitter.data.length} />
                   )}
                 </Splitter>
-                <Panel x={panel.position.left} y={panel.position.top}>
+                <Panel x={splitter.position.split(" ")[1] == "left" ? "375":""} y={splitter.position.split(" ")[0] == "top" ? "0":""}>
+                {/* <Panel x={panel.position.left} y={panel.position.top}> */}
                 {panel.data.map((r_item,idx)=>{
-                    return <Rak key={'r'+r_item.rak_level} last_feeder={panel.data.filter(item=>item.type==="feeder").length} level={r_item.rak_level} type={r_item.type} datalen={12}>
+                  // console.log("odc data panel",r_item.rak_index)
+                    return <Rak key={'r'+r_item.rak_level} distributor_level_id={r_item.rak_index} last_feeder={panel.data.filter(item=>item.type==="feeder").length} level={r_item.rak_level} type={r_item.type} datalen={12}>
                       {r_item.data.map(p_item=>
                       /** odd even to define 13-24 */
-                        <Eth from={r_item.type} clickHandler={panelClickHandler} key={"port"+p_item.index} rak_level={r_item.rak_level} id={((idx+1)%2===0)?(p_item.index+12):p_item.index} status={p_item.status}
+                        <Eth from={r_item.type} clickHandler={panelClickHandler} key={"port"+p_item.index} rak_level={r_item.rak_level} id={p_item.index} status={p_item.status}
+                        // <Eth from={r_item.type} clickHandler={panelClickHandler} key={"port"+p_item.index} rak_level={r_item.rak_level} id={((idx+1)%2===0)?(p_item.index+12):p_item.index} status={p_item.status}
                         columns={r_item.data.length} />
                       )}
                     </Rak>
@@ -439,7 +615,7 @@ function Odc({
                 </Panel>
               </div>
               {/* <div className={styles.odcFiles}> */}
-                <div className={`${splitterStyle.videoWrapper}`} style={{left:"30px",top:"419px"}}>
+                <div className={`${splitterStyle.videoWrapper}`} style={{left: (splitter.position.split(" ")[1]=="left"? "30px":""),top:(splitter.position.split(" ")[0]=="top"? "639px":"")}}>
               {/* <div className={`${splitterStyle.splitWrapper}`} style={{top:"250px",left:"0px"}}> */}
                 <div className={`${splitterStyle.card}`}>
                   <div className={`${splitterStyle.cardHeader} ${splitterStyle.cardHeaderBlue}`} style={{zIndex:"1"}}>
@@ -455,7 +631,7 @@ function Odc({
                 </div>
               {/* </div> */}
               </div>
-              <div className={`${splitterStyle.legendWrapper}`} style={{left:"30px",top:"701px"}}>
+              <div className={`${splitterStyle.legendWrapper}`} style={{left: (splitter.position.split(" ")[1]=="left"? "30px":""),top:(splitter.position.split(" ")[0]=="top"? "921px":"")}}>
               {/* <div className={`${splitterStyle.splitWrapper}`} style={{top:"250px",left:"0px"}}> */}
                 <div className={`${splitterStyle.card}`}>
                   <div className={`${splitterStyle.cardHeader} ${splitterStyle.cardHeaderPurple}`} style={{zIndex:"1"}}>
@@ -537,7 +713,7 @@ function Odc({
                   </div>
                   </div>
                 </div>
-              <Modal open={feederModal[0]} header={"Feeder "+feederFocus.feeder.feeder_index} splitterData={splitter.data} panelData={panel.data} feederModal={feederModal} feederFocus={feederFocus}/>
+              <Modal token={token} dispatchFn={{setSelectedCoreFeeder,deleteSelectedCoreFeeder}} open={feederModal[0].status} header={"Feeder "+feederFocus.feeder.feeder_index} splitterData={splitter.data} panelData={panel.data} feederModal={feederModal} feederFocus={feederFocus}/>
               {/* <script async src="https://telegram.org/js/telegram-widget.js?18" data-telegram-login="miftah1112_bot"
                 data-size="large" data-onauth="onTelegramAuth(user)" data-request-access="write"></script> */}
               <div className={styles.odcFiles}>
@@ -622,7 +798,7 @@ function Odc({
               <div className="card-body table-responsive">
                 <div className={styles.splitterStatusContainer}>
                   <Typography> Splitter </Typography>
-                  {ODCData.splitter.data.map(item=><FormControl key={item.id} variant="standard" sx={{ m: 1, minWidth: 124 }}>
+                  {splitter.data.map(item=><FormControl key={item.id} variant="standard" sx={{ m: 1, minWidth: 124 }}>
                     <InputLabel id="demo-simple-select-standard-label">Splitter {item.index}</InputLabel>
 
                     <NativeSelect defaultValue={item.status=="used" ? 10:20} inputProps={{
@@ -638,8 +814,9 @@ function Odc({
                 <div className={styles.feederStatusContainer}>
               <Typography> Panel </Typography>
               <div>
-                  {ODCData.panel.data.map(item=>(<>
+                  {panel.data.map(item=>(<>
                     {item.data.map(distFeed=>{
+                      
                       return <FormControl key={distFeed.index} variant="standard" sx={{ m: 1, minWidth: 89 }}>
                      <InputLabel id="demo-simple-select-standard-label" className={styles.portLabel}> { ((item.rak_level)%2===0)?item.type+item.rak_index+" "+(distFeed.index+12):item.type+item.rak_index+" "+distFeed.index }</InputLabel>
                      {/* <InputLabel id="demo-simple-select-standard-label" className={styles.portLabel}> { ((item.rak_level)%2===0)?item.type+item.rak_index+" "+(distFeed.index+12):item.type+item.rak_index+" "+distFeed.index }</InputLabel> */}
@@ -685,8 +862,8 @@ function Odc({
                               </div> */}
                           </div>
                               <div className="card-body table-responsive">
-                                  <MuiThemeProvider theme={getMuiTheme()}>
-                                  {/* <ThemeProvider theme={getMuiTheme()}> */}
+                                  {/* <MuiThemeProvider theme={getMuiTheme()}> */}
+                                  <ThemeProvider theme={getMuiTheme()}>
                                   {datatable ? <DynamicMUIDataTable 
                                       // title={"Employee List"}
                                       // options={options}
@@ -748,8 +925,8 @@ function Odc({
                                         }]}
                                       />:null}
                                       
-                                  {/* </ThemeProvider> */}
-                                  </MuiThemeProvider>
+                                  </ThemeProvider>
+                                  {/* </MuiThemeProvider> */}
                               </div>
                       </div>
                   </div>
@@ -762,9 +939,17 @@ function Odc({
 
 export const getServerSideProps = async (props) => wrapper.getServerSideProps(store => async ({req, res, ...etc}) => {
     // const { token } = /authUserToken=(?<token>\S+)/g.exec(req.headers.cookie)?.groups || {token: ""} ;
+    if(!req.cookies.token)
+    return {
+      redirect:{
+        permanent:false,
+        destination: "/"
+      }
+    }
     const {params:{odcId=[]}} = props;
-    store.dispatch(getOcdSplitpanelStatus(odcId[0]))
-    store.dispatch(getUserData())
+    console.log("odc id",odcId[0])
+    store.dispatch(getOcdSplitpanelStatus(odcId[0],req.cookies.token,toast))
+    store.dispatch(getUserData(1,10, {name:"",direction:"asc"},req.cookies.token,null,toast))
     store.dispatch(END)
     await store.sagaTask.toPromise();
     console.log("user data",store.getState().Users)
@@ -784,7 +969,11 @@ export const getServerSideProps = async (props) => wrapper.getServerSideProps(st
         }
         else{
             return {
-                props:{ data: selectedOdcSplitpanelStatus, userData: store.getState().Users.userData},
+                props:{ 
+                  data: selectedOdcSplitpanelStatus, 
+                  userData: store.getState().Users.userData.data,
+                  token: req.cookies.token
+                },
                 // props:{ data: odcsBox,splitterData,coreFeederData},
                 // revalidate:60,
             } 
@@ -796,9 +985,12 @@ const mapStateToProps = state => ({
     dataClient:state?.ODCs?.odcsBox,
     loading: state.ODCs.loading.get,
     selectedCoreFeeder:state.ODCs.client.selectedCoreFeeder,
+    viewOdcClient: state.ODCs.selectedOdcSplitpanelStatus,
     coreFeederDataClient: state.ODCs.client.coreFeederData,
 });
 const mapFunctionToProps = {
-    getOcdSplitpanelStatus
+    getOcdSplitpanelStatus,
+    setSelectedCoreFeeder,
+    deleteSelectedCoreFeeder
 }
 export default connect(mapStateToProps,mapFunctionToProps)(withAuth(Odc));

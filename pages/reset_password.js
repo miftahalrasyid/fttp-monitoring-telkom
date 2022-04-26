@@ -25,7 +25,7 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
   import styles from './index.module.css';
   import logo from "../public/img/telkom logo.png";
   import { connect } from "react-redux";
-  import { checkLogin, verifyOtp} from "../components/store/login/actions"
+  import { checkLogin, verifyOtp} from "../components/store/auth/actions"
   const CustomButton = styled(Button)(({ theme }) => ({
     background: theme.status.primary,
   }));
@@ -201,7 +201,7 @@ const [valuesConfirm, setValuesConfirm] = useState({
   )
 }
 const mapStateToProps = state =>({
-    isLoading: state.Login.loading.login,
+    isLoading: state.Auth.loading.login,
   });
   const mapDispatchToProps = {
     checkLogin,

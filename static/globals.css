@@ -8,17 +8,15 @@
 }
 @import url(https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css);
 @font-face {
-  font-family: "GothamRounded-Book";
-  src: url("/fonts/GothamRounded-Book.otf") format('opentype');
+  font-family: "GothamRounded-Regular" !important;
+  src: url("/fonts/AnyConv.com__GothamRounded-Book.woff2") format('woff2');
 }
 @font-face {
-  font-family: "GothamRounded-Medium";
-  src: url("/fonts/GothamRounded-Medium.woff") format('woff'),
-  url("/fonts/GothamRounded-Medium.otf") format('opentype'),
-  url("/fonts/GothamRounded-Medium.ttf") format('truetype');
+  font-family: "GothamRounded-Medium" !important;
+  src: url("/fonts/GothamRounded-Medium.otf") format('opentype');
 }
 @font-face {
-  font-family: "GothamRounded-Bold";
+  font-family: "GothamRounded-Bold" !important;
   src: url("/fonts/GothamRounded-Bold.otf") format('opentype');
 }
 @font-face {

@@ -380,6 +380,10 @@
     width:80%;
     /* max-width: 600px; */
 }
+.errorText{
+    color: red;
+    font-size: 0.8rem;
+}
 @media (max-width: 1080px) {
     .actionContainer{
         justify-content: space-around;

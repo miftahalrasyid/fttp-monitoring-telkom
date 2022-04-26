@@ -1,3 +1,4 @@
+
 import '../styles/globals.css';
 import { wrapper } from '../components/store';
 import 'bootstrap/dist/css/bootstrap.css';
@@ -7,6 +8,8 @@ import {
   ThemeProvider,
   styled as styledCustom
 } from "@mui/material/styles";
+import {ToastContainer} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const tema = createThemeCustom({
   status: {
     // primary: "#ee2d24!important",
@@ -26,6 +29,7 @@ function MyApp({ Component, pageProps }) {
   }
   return  <ThemeProvider theme={tema}>
     <Component {...pageProps} />
+    <ToastContainer/>
   </ThemeProvider>
 }
 
