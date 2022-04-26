@@ -33,7 +33,7 @@ import logo from "../public/img/telkom logo.png";
 import teleLogo from '../public/img/telegram.svg';
 import google from "../public/img/google.svg";
 import { connect } from "react-redux";
-import { checkLogin, verifyOtp,forgotPageClosed} from "../components/store/auth/actions"
+import { checkLogin, verifyOtp,forgotPageClosed} from "../components/store/login/actions"
 
 // context
 // import { useUserDispatch, loginUser } from "../../context/UserContext";

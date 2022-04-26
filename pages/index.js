@@ -8,9 +8,7 @@ import logo_paperless from '../public/img/logo_paperless.png';
 import telkom_bg from "../public/img/telkom_bg.jpeg";
 import main_img from "../public/img/main_img.png";
 import styles from './index_evolve.module.css';
-import Head from 'next/head';
 import { Formik } from 'formik';
-// import '../public/fonts/GothamRounded-Medium.otf';
 import {
   Grid,
   CircularProgress,
@@ -31,7 +29,7 @@ import {
 } from "@mui/material/styles";
 import OtpInput from "react-otp-input";
 import { connect } from "react-redux";
-import { checkLogin, verifyOtp,forgotPageClosed} from "../components/store/auth/actions"
+import { checkLogin, verifyOtp,forgotPageClosed} from "../components/store/login/actions"
 const CustomButton = styledCustom(Button)(({ theme }) => ({
   borderColor: theme.status.primary,
   color:theme.status.primary,
@@ -47,7 +45,6 @@ const theme = createTheme({
   },
 });
 function Index_evolve(props) {
-  
   const useStyles = makeStyles(theme => ({
     grid: {
       backgroundColor: "grey",
@@ -79,8 +76,7 @@ function Index_evolve(props) {
     }
   }));
   const classes = useStyles();
-  const {checkLogin,router,history,isLoading,isOtpVerify,verifyOtp,isOtpLoading, isUserVerify,isUserVerifyLoading,forgotPageClosed} = props;
-
+  const {checkLogin,router,isLoading,isOtpVerify,verifyOtp,isOtpLoading, isUserVerify,isUserVerifyLoading,forgotPageClosed} = props;
   const [isImageReady, setIsImageReady] = useState(false);
   var [error, setError] = useState({status:false,msg:""});
   var [loginValue, setLoginValue] = useState("admin@telkom.com");
@@ -153,8 +149,7 @@ function Index_evolve(props) {
                   <div className={styles.formDivider} />
                 </div> */}
                 <Formik 
-                initialValues={{ email: '', password: ''}}
-                initialErrors={{email:"test",password: "tes"}}
+                initialValues={{ email: '', password: '' }}
                 validate={values => {
                   const errors = {};
                   if (!values.email) {
@@ -166,14 +161,12 @@ function Index_evolve(props) {
                   }
                   return errors;
                 }}
-                validateOnMount={true}
                 onSubmit={(values, { setSubmitting }) => {
                   checkLogin(
                     values.email,
                     values.password,
                     router,
                     setError,
-                    setSubmitting
                     )
                   // setTimeout(() => {
                   //   alert(JSON.stringify(values, null, 2));
@@ -192,10 +185,6 @@ function Index_evolve(props) {
                   /* and other goodies */
                 }) => (
                   <form className={styles.form} onSubmit={handleSubmit}>
-                    
-                    <span className={styles.validationOnSubmit}>
-                      {error.msg}
-                    </span>
                     <div className={styles.groupInputField}>
                       <label htmlFor="email" className={styles.inputLabel}>Email</label>
                       <input
@@ -233,9 +222,8 @@ function Index_evolve(props) {
                       </Link>
                       </div>
                     </div>
-                    {/* <button className={styles.submitBtn} type="submit"> */}
-                    
-                    <button className={styles.submitBtn} type="submit" disabled={isSubmitting}>
+                    <button className={styles.submitBtn} type="submit">
+                    {/* <button className={styles.submitBtn} type="submit" disabled={isSubmitting}> */}
                       Sign In
                     </button>
                   </form>
@@ -412,26 +400,12 @@ function Index_evolve(props) {
   </div>
   )
 }
-export async function getServerSideProps({req}) {
-  console.log("req login",req.cookies.token)
-  if(req.cookies.token || false)
-  return {
-    redirect: {
-      permanent:false,
-      destination: "/odc"
-    }
-  }
-  else
-  return {
-    props: {token: req.cookies.token || ""}, // will be passed to the page component as props
-  }
-}
 const mapStateToProps = state =>({
-  isLoading: state.Auth.loading.login,
-  isUserVerifyLoading: state.Auth.loading.verifyUser,
-  isUserVerify: state.Auth.openTelegramVerify,
-  isOtpLoading: state.Auth.loading.otp,
-  isOtpVerify: state.Auth.openOtpService
+  isLoading: state.Login.loading.login,
+  isUserVerifyLoading: state.Login.loading.verifyUser,
+  isUserVerify: state.Login.openTelegramVerify,
+  isOtpLoading: state.Login.loading.otp,
+  isOtpVerify: state.Login.openOtpService
 });
 const mapDispatchToProps = {
   checkLogin,

@@ -29,12 +29,11 @@ import Button from '@mui/material/Button';
 //     MdDeleteForever
 //   } from 'react-icons/md';
   import { createTheme, MuiThemeProvider,styled } from "@material-ui/core/styles";
-  import {createTheme as customCreateTheme, ThemeProvider} from "@mui/material/styles";
   const DynamicMUIDataTable = dynamic(() => import('mui-datatables'),{ ssr: false });
 import {
     getOcdSplitpanelStatus
 } from '../../components/store/odcs/actions';
-import {getUserData} from '../../components/store/users/actions';
+import {getUserData} from '../../components/store/users/actions'
 import { wrapper,makeStore } from "../../components/store";
 // import store from '../../components/store'
 import Modal from '../../components/Modal';
@@ -47,7 +46,6 @@ import NativeSelect from '@mui/material/NativeSelect';
 import { 
     styled as styledCustom
   } from "@mui/material/styles";
-import { toast } from 'react-toastify';
 
 // const CustomSelect = styledCustom(Select)(({theme})=>({
 //     '.MuiList-root': {
@@ -56,199 +54,50 @@ import { toast } from 'react-toastify';
 //     },
 //   }))
 
-  // const getMuiTheme = () =>
-  // createTheme({
-  //   CustomButtonActivityLog: {
-  //     primary: "#ee2d24!important",
-  //     darkgray: "darkgray!important"
-  //   },
-  //   overrides: {
-  //     MuiOutlinedInput:{
-  //       root:{
-  //         color: "#ee2d24!important"
-  //       }
-  //     },
-  //     MuiTableRow:{
-  //       color:"#ee2d24",
-  //     },
-  //     MuiInput:{
-  //       underline:{'&:after':{borderBottomColor:"#ee2d24!important"}}
-  //     },
-  //     MuiButton:{
-  //       textPrimary:{
-  //         color: "#ee2d24!important"
-  //       }
-  //     },
-  //     MuiCheckbox:{
-  //       colorPrimary:{
-  //         color:"#ee2d24!important"
-  //       }
-  //     },
-  //     MUIDataTableToolbar:{
-  //       icon:{'&:hover': {color: '#ee2d24'}},
-  //       iconActive:{color:'#ee2d24'}
-  //     },
-  //     MuiPaper:{
-  //       root:{
-  //         boxShadow:"none!important"
-  //       }
-  //     },
-  //     MUIDataTableBodyCell: {
-  //       root: {
-  //         whiteSpace: "nowrap"
-  //       },
-  //     },
-  //   },
-  // });
-
   const getMuiTheme = () =>
-customCreateTheme({
-  status: {
-    success: "#009873!important",
-    primary: "#B10040!important",
-    darkgray: "darkgray!important"
-  },
-  components:{
-    MuiPaper:{
-      styleOverrides:{
-        root:{
-          // margin:"1rem 0",
-          // background: 'rgba(255,255,255,0.3)',
-          background: 'transparent',
-          // padding:'0 1rem',
-          boxShadow:"none",
-          ".MuiList-root":{
-            width: "100%"
-          },
-          ".MuiMenuItem-root":{
-            width: "100%",
-            display: "flex",
-            paddingTop: "8px",
-            paddingBottom: "8px",
-          }
-        }
-      }
+  createTheme({
+    CustomButtonActivityLog: {
+      primary: "#ee2d24!important",
+      darkgray: "darkgray!important"
     },
-      MuiPopover:{
-        styleOverrides:{
-          paper:{
-            background:"white",
-            boxShadow:"0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%)"
-          }
-        }
-      },
-    // MuiTable:{
-    //   styleOverrides:{
-    //     root:{
-    //       width: "calc(100% - 2rem)",
-    //       marginLeft: "1rem"
-    //     }
-    //   }
-    // },
-    MuiOutlinedInput:{
-      styleOverrides:{
+    overrides: {
+      MuiOutlinedInput:{
         root:{
           color: "#ee2d24!important"
         }
-      }
-    },
-    MuiTypography:{
-      styleOverrides:{
-        root:{
-          fontFamily:"'GothamRounded-Book' !important"
-        }
-      }
-    },
-    MuiButtonBase:{
-      styleOverrides:{
-        root:{
-          fontFamily:"'GothamRounded-Book' !important"
-        }
-      }
-    },
-    MuiTableRow:{
-      styleOverrides:{
-        root:{
-          color:"#ee2d24",
-          backgroundColor:"transparent"
-          // background:"rgba(255,255,255,0.3)"
-        },
-        "head":{
-          backgroundImage:"linear-gradient(to right,rgba(178,98,98,0.3),rgb(255 228 228 / 30%))",
-          backgroundImage:"linear-gradient(to right,rgb(237 167 88 / 30%),rgb(253 243 236 / 30%))",
-        },
-      }
-    },
-    MuiTableCell:{
-      styleOverrides:{
-        root:{
-          "span":{
-            display:"flex",
-            justifyContent:"center",
-          },
-        },
-        head:{
-          backgroundColor:"transparent !important",
-        }
-      }
-    },
-      MuiMenu:{
-        styleOverrides:{
-          paper:{
-            boxShadow:"0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%) !important"
-          },
-          list:{
-            background:"white",
-          }
-        }
       },
-    MuiInput:{
-      styleOverrides:{
+      MuiTableRow:{
+        color:"#ee2d24",
+      },
+      MuiInput:{
         underline:{'&:after':{borderBottomColor:"#ee2d24!important"}}
-      }
-    },
-    MuiButton:{
-      styleOverrides:{
+      },
+      MuiButton:{
         textPrimary:{
           color: "#ee2d24!important"
         }
-      }
-    },
-    MuiCheckbox:{
-      styleOverrides:{
+      },
+      MuiCheckbox:{
         colorPrimary:{
           color:"#ee2d24!important"
         }
-      }
-    },
-    MuiIconButton:{
-      styleOverrides:{
+      },
+      MUIDataTableToolbar:{
+        icon:{'&:hover': {color: '#ee2d24'}},
+        iconActive:{color:'#ee2d24'}
+      },
+      MuiPaper:{
         root:{
-          flex:" 0 0 auto !important",
-          color: "rgba(0, 0, 0, 0.54) !important",
-          padding:" 12px !important",
-          overflow: "visible !important",
-          fontSize: "1.5rem !important",
-          textAlign: "center !important",
-          transition: "background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms !important",
-          borderRadius:" 50% !important",
-          '&:hover': {color: '#ee2d24 !important'},
-          '&[class*="iconActive"]':{
-            color: '#ee2d24 !important'
-          }
+          boxShadow:"none!important"
+        }
+      },
+      MUIDataTableBodyCell: {
+        root: {
+          whiteSpace: "nowrap"
         },
-        
-      }
+      },
     },
-    MuiToolbar:{
-      styleOverrides:{
-        root:{
-          
-        },
-      }
-    },
-  }
-});
+  });
 function Odc({
     data:ODCData,
     userData
@@ -266,7 +115,7 @@ function Odc({
      */
     const router = useRouter();
     const { odcId } = router.query;
-    const {splitter={splitter:{position:[]},data:[],position:{left:0,top:0}},panel={data:[],position:{left:375,top:0}}} = ODCData;
+    const {splitter={data:[],position:{left:0,top:0}},panel={data:[],position:{left:375,top:0}}} = ODCData;
     const feederModal = useState(false);
     // const [feederFocus,setFeederFocus] = useState(false); 
     const [feederFocus,setFeederFocus] = useState(
@@ -526,11 +375,10 @@ function Odc({
           { ODCData &&
           <div className={styles.odcWrapper}>
             <div className={`row ${styles.odcDetail}`}>
-              <div>
               <div className='col-lg-3'>
                 <div className={styles.odcDetailItems}>
                   <Typography sx={{ whiteSpace: "nowrap"}}>Nama ODC : </Typography>
-                  <Typography sx={{textTransform: "uppercase", whiteSpace: "nowrap"}}>{ODCData.odc_name}</Typography>
+                  <Typography sx={{textTransform: "uppercase", whiteSpace: "nowrap"}}>{ODCData.odc_id}</Typography>
                 </div>
                 <div className={styles.odcDetailItems}>
                   <Typography>Kapasitas : </Typography>
@@ -541,7 +389,7 @@ function Odc({
               <div className='col-lg-3'>
                 <div className={styles.odcDetailItems}>
                   <Typography>Merek : </Typography>
-                  <Typography>{ODCData.merek || ""}</Typography>
+                  <Typography>{ODCData.mrek || ""}</Typography>
                 </div>
 
                 <div className={styles.odcDetailItems}>
@@ -569,19 +417,17 @@ function Odc({
                   <Typography>{ODCData.port || ""}</Typography>
                 </div>
               </div>
-              </div>
+
               <div className={styles.splitPanelWrapper} style={{height:"1000px"}}>
-                <Splitter x={splitter.position.split(" ")[1] == "left" ? "0":""} y={splitter.position.split(" ")[0] == "top" ? "0":""}>
+                <Splitter x={splitter.position.left} y={splitter.position.top}>
                   {splitter.data.map(s_item=>
                   <Eth from="splitter" key={"sp"+s_item.index} id={s_item.index} status={s_item.status}
                     columns={splitter.data.length} />
                   )}
                 </Splitter>
-                <Panel x={splitter.position.split(" ")[1] == "left" ? "375":""} y={splitter.position.split(" ")[0] == "top" ? "0":""}>
-                {/* <Panel x={panel.position.left} y={panel.position.top}> */}
+                <Panel x={panel.position.left} y={panel.position.top}>
                 {panel.data.map((r_item,idx)=>{
-                  // console.log("odc data panel",r_item.rak_index)
-                    return <Rak key={'r'+r_item.rak_level} distributor_level_id={r_item.rak_index} last_feeder={panel.data.filter(item=>item.type==="feeder").length} level={r_item.rak_level} type={r_item.type} datalen={12}>
+                    return <Rak key={'r'+r_item.rak_level} last_feeder={panel.data.filter(item=>item.type==="feeder").length} level={r_item.rak_level} type={r_item.type} datalen={12}>
                       {r_item.data.map(p_item=>
                       /** odd even to define 13-24 */
                         <Eth from={r_item.type} clickHandler={panelClickHandler} key={"port"+p_item.index} rak_level={r_item.rak_level} id={((idx+1)%2===0)?(p_item.index+12):p_item.index} status={p_item.status}
@@ -593,7 +439,7 @@ function Odc({
                 </Panel>
               </div>
               {/* <div className={styles.odcFiles}> */}
-                <div className={`${splitterStyle.videoWrapper}`} style={{left: (splitter.position.split(" ")[1]=="left"? "30px":""),top:(splitter.position.split(" ")[0]=="top"? "639px":"")}}>
+                <div className={`${splitterStyle.videoWrapper}`} style={{left:"30px",top:"419px"}}>
               {/* <div className={`${splitterStyle.splitWrapper}`} style={{top:"250px",left:"0px"}}> */}
                 <div className={`${splitterStyle.card}`}>
                   <div className={`${splitterStyle.cardHeader} ${splitterStyle.cardHeaderBlue}`} style={{zIndex:"1"}}>
@@ -609,7 +455,7 @@ function Odc({
                 </div>
               {/* </div> */}
               </div>
-              <div className={`${splitterStyle.legendWrapper}`} style={{left: (splitter.position.split(" ")[1]=="left"? "30px":""),top:(splitter.position.split(" ")[0]=="top"? "921px":"")}}>
+              <div className={`${splitterStyle.legendWrapper}`} style={{left:"30px",top:"701px"}}>
               {/* <div className={`${splitterStyle.splitWrapper}`} style={{top:"250px",left:"0px"}}> */}
                 <div className={`${splitterStyle.card}`}>
                   <div className={`${splitterStyle.cardHeader} ${splitterStyle.cardHeaderPurple}`} style={{zIndex:"1"}}>
@@ -794,7 +640,6 @@ function Odc({
               <div>
                   {ODCData.panel.data.map(item=>(<>
                     {item.data.map(distFeed=>{
-                      
                       return <FormControl key={distFeed.index} variant="standard" sx={{ m: 1, minWidth: 89 }}>
                      <InputLabel id="demo-simple-select-standard-label" className={styles.portLabel}> { ((item.rak_level)%2===0)?item.type+item.rak_index+" "+(distFeed.index+12):item.type+item.rak_index+" "+distFeed.index }</InputLabel>
                      {/* <InputLabel id="demo-simple-select-standard-label" className={styles.portLabel}> { ((item.rak_level)%2===0)?item.type+item.rak_index+" "+(distFeed.index+12):item.type+item.rak_index+" "+distFeed.index }</InputLabel> */}
@@ -840,8 +685,8 @@ function Odc({
                               </div> */}
                           </div>
                               <div className="card-body table-responsive">
-                                  {/* <MuiThemeProvider theme={getMuiTheme()}> */}
-                                  <ThemeProvider theme={getMuiTheme()}>
+                                  <MuiThemeProvider theme={getMuiTheme()}>
+                                  {/* <ThemeProvider theme={getMuiTheme()}> */}
                                   {datatable ? <DynamicMUIDataTable 
                                       // title={"Employee List"}
                                       // options={options}
@@ -903,8 +748,8 @@ function Odc({
                                         }]}
                                       />:null}
                                       
-                                  </ThemeProvider>
-                                  {/* </MuiThemeProvider> */}
+                                  {/* </ThemeProvider> */}
+                                  </MuiThemeProvider>
                               </div>
                       </div>
                   </div>
@@ -917,17 +762,9 @@ function Odc({
 
 export const getServerSideProps = async (props) => wrapper.getServerSideProps(store => async ({req, res, ...etc}) => {
     // const { token } = /authUserToken=(?<token>\S+)/g.exec(req.headers.cookie)?.groups || {token: ""} ;
-    if(!req.cookies.token)
-    return {
-      redirect:{
-        permanent:false,
-        destination: "/"
-      }
-    }
     const {params:{odcId=[]}} = props;
-    console.log("odc id",odcId[0])
-    store.dispatch(getOcdSplitpanelStatus(odcId[0],req.cookies.token,toast))
-    store.dispatch(getUserData(1,10, {name:"",direction:"asc"},req.cookies.token,null,toast))
+    store.dispatch(getOcdSplitpanelStatus(odcId[0]))
+    store.dispatch(getUserData())
     store.dispatch(END)
     await store.sagaTask.toPromise();
     console.log("user data",store.getState().Users)
@@ -947,7 +784,7 @@ export const getServerSideProps = async (props) => wrapper.getServerSideProps(st
         }
         else{
             return {
-                props:{ data: selectedOdcSplitpanelStatus, userData: store.getState().Users.userData.data},
+                props:{ data: selectedOdcSplitpanelStatus, userData: store.getState().Users.userData},
                 // props:{ data: odcsBox,splitterData,coreFeederData},
                 // revalidate:60,
             } 

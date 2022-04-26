@@ -8,9 +8,9 @@ import {
     FORGOT_PASSWORD_PAGE_CLOSED
 } from "./actionTypes";
 
-export const checkLogin = (email,password,history,errorState,setSubmitting)=>({
+export const checkLogin = (email,password,history,errorState)=>({
     type: LOGIN_CHECK,
-    payload: {email,password,history,errorState,setSubmitting}
+    payload: {email,password,history,errorState}
 });
 export const verifyOtp = (value,history)=>({
     type: OTP_VERIFY,
@@ -32,4 +32,4 @@ export const requestForgotPassword = (email) => ({
 });
 export const forgotPageClosed = () =>({
     type: FORGOT_PASSWORD_PAGE_CLOSED
-});
+})

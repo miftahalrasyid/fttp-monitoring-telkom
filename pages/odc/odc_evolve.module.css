@@ -270,9 +270,6 @@
 .charts > div h2{
     text-align: center;
 }
-.tableAction{
-    white-space: nowrap;
-}
 .tableAction button{
     border-radius: 22px !important;
     min-width:fit-content !important;
@@ -285,9 +282,6 @@
     width: 22px;
     /* color: var(--primary); */
     height: auto;
-}
-.table{
-    /* padding: 0 1rem; */
 }
 @media screen and (max-width: 1080px) {
     /* .odcBackdrop{

@@ -24,7 +24,7 @@ import {
   import telkom_bg from "../public/img/telkom_bg.jpeg";
   import logo_paperless from '../public/img/logo_paperless.png';
 import main_img from "../public/img/main_img.png";
-  import { checkLogin, verifyOtp,requestForgotPassword} from "../components/store/auth/actions";
+  import { checkLogin, verifyOtp,requestForgotPassword} from "../components/store/login/actions";
   import correctImg from '../public/img/correct.png';
 
 import { 
@@ -199,7 +199,7 @@ function Forgot_password({requestForgotPassword,isRequestConfirm}) {
   )
 }
 const mapStateToProps = state =>({
-    isRequestConfirm: state.Auth.openConfirmationPage,
+    isRequestConfirm: state.Login.openConfirmationPage,
   });
   const mapDispatchToProps = {
     requestForgotPassword

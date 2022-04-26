@@ -8,22 +8,20 @@
 }
 @import url(https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css);
 @font-face {
-  font-family: "GothamRounded-Book";
-  src: url("/fonts/GothamRounded-Book.otf") format('opentype');
+  font-family: "GothamRounded-Book" !important;
+  src: url("../public/font/GothamRounded-Book.otf");
 }
 @font-face {
-  font-family: "GothamRounded-Medium";
-  src: url("/fonts/GothamRounded-Medium.woff") format('woff'),
-  url("/fonts/GothamRounded-Medium.otf") format('opentype'),
-  url("/fonts/GothamRounded-Medium.ttf") format('truetype');
+  font-family: "GothamRounded-Medium" !important;
+  src: url("../public/font/GothamRounded-Medium.otf");
 }
 @font-face {
-  font-family: "GothamRounded-Bold";
-  src: url("/fonts/GothamRounded-Bold.otf") format('opentype');
+  font-family: "GothamRounded-Bold" !important;
+  src: url("../public/font/GothamRounded-Bold.otf");
 }
 @font-face {
   font-family: "Gilroy-Regular";
-  src: url("/fonts/Gilroy-Regular.woff2") format('woff2');
+  src: url("../public/font/Gilroy-Regular.woff2") format('woff2');
 }
 span,h1,h2,h3,h4,div{
   font-family: "GothamRounded-Book" !important;

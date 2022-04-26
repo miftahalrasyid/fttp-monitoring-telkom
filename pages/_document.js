@@ -2,9 +2,9 @@ import React from 'react';
 import Document, { Html, Head, Main, NextScript } from 'next/document';
 import { ServerStyleSheets } from '@material-ui/styles'; // works with @material-ui/core/styles, if you prefer to use it.
 // import theme from '../src/theme'; // Adjust here as well
+
 export default class MyDocument extends Document {
   render() {
-
     return (
       <Html lang="en">
         <Head>
@@ -12,15 +12,11 @@ export default class MyDocument extends Document {
           {/* <meta name="theme-color" content={theme.palette.primary.main} /> */}
           <link rel="preconnect" href="https://fonts.googleapis.com"/>
           <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin/>
-          {/* <link href="../styles/globals.css" rel="stylesheet" /> */}
-          {/* <base href="/"/> */}
           <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&display=swap" rel="stylesheet"></link>
-
         </Head>
         <body>
           <Main />
           <NextScript />
-          
         </body>
       </Html>
     );

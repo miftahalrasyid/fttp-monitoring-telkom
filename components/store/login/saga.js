@@ -21,9 +21,9 @@ var requestOptions = {
     // redirect: 'follow'
   };
 
-function* checklogin({payload:{email,password,history,errorState,setSubmitting}}){
+function* checklogin({payload:{email,password,history,errorState}}){
     try {
-        console.log("email",email,window,window.navigator.onLine,errorState)
+        console.log("email",email,window,window.navigator.onLine)
         // console.log("password",password)
         var formData = new FormData();
         formData.append("email",email);
@@ -39,10 +39,8 @@ function* checklogin({payload:{email,password,history,errorState,setSubmitting}}
         res = yield fetch(`/login`,{...requestOptions,body: formData}).then(response => response.json())
         .then(result => {
             console.log("result", result)
-            if(!result.success){
-                errorState({status:true,msg: result.msg});
-                setSubmitting(false);
-            }
+            if(!result.success)
+            errorState({status:true,msg: result.msg});
             else
             errorState({status:false,msg: result?.msg || ""});
             // console.log(result);
@@ -151,9 +149,9 @@ function* watchLogin(){
     yield takeEvery(FORGOT_PASSWORD_REQUEST,forgotPasswordRequest)
 }
 
-function* sagaAuth() {
+function* sagaLogin() {
     yield all([
         fork(watchLogin)
     ]);
 }
-export default sagaAuth
+export default sagaLogin
