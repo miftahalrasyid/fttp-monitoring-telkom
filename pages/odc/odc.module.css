@@ -267,7 +267,8 @@
 .odcFiles{
     display: flex;
     /* float: right; */
-    justify-content: right;
+    /* justify-content: right; */
+    justify-content: space-between;
     gap: 1rem;
 }
 .kmlWrapper{
@@ -278,17 +279,94 @@
     box-shadow: 0 1px 4px 0 rgb(0 0 0 / 14%);
     background: white;
 }
-.kmlContainer{
-    min-width: 230px;
-    width: 135px;
-    margin-top: -3.4rem;
-    padding-top: 3rem;
-    padding-left:1rem;
-    min-height: 135px;
+.kml_name{
+    font-size: 17px;
+    font-weight: bold;
+}
+.inst{
+    font-size: 12px;
+    line-height: 0;
+    margin-bottom: 0 !important;
+}
+.hrLine{
+    width: 100%;
+    margin-bottom: 2.5rem !important;
+    position: relative;
+}
+.hrLine p{
+    position: relative;
+    /* top: 0; */
+    width: 92px;
+    margin: auto;
+    background: white;
+    z-index: 1;
+}
+.hrLine hr{
+    position: absolute;
+    /* z-index: 9; */
+    top: 12px;
+    left: 0;
+    right: 0;
+    margin: auto;
+    width: 73%;
+    background: black;
+}
+.uploadFileWrapper{
+    /* min-width: 350px; */
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    /* min-height: 200px; */
+    /* margin-top: -3.4rem; */
+    /* padding-top: 3rem; */
+    /* padding-left:1rem; */
+    /* min-height: 135px; */
     border: 2px dashed #ced4da;
     background: #fff;
     border-radius: 6px;
+    margin-bottom:0 !important;
     color:#838689;
+}
+.dropzoneCustom{
+    width:100%;
+    height:100%;
+    text-align: center;
+    margin-bottom: 0 !important;
+}
+.dropzoneCustom div:first-child{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    gap:0.5rem;
+    
+    box-sizing: content-box;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.dropzoneHotspot{
+    height: 98px !important;
+}
+.filesCard{
+    max-width: 370px;
+    /* float:right; */
+    margin:auto
+}
+.uploadContainer{
+    min-width: 500px;
+    position:absolute;
+    /* left: 2.5rem; */
+    /* max-width:100%; */
+    padding: 0 1rem 1rem;
+    user-select: none;
+}
+.uploadCardStyle{
+    margin-top: 14px;
+    margin-left: -9px;
+    margin-right: -9px;
 }
 .mcWrapper{
     padding: 0.8rem;
@@ -390,10 +468,38 @@
     max-width: 2.2rem;
 }
 .odcItem{
-    width: 30%;
-    min-width: 440px;
+    /* width: 30%; */
+    /* min-width: 440px; */
     display:flex;
     justify-content: space-between;
+}
+.downloadIcon{
+    width: 1.5rem;
+    margin:auto;
+    margin-bottom: 1rem;
+}
+.downloadIcon svg{
+    font-size: 1.5rem;
+}
+.fileSelected{
+    width: 2rem;
+    margin:auto;
+    margin-bottom: 1rem;
+}
+.fileSelected svg{
+    font-size: 2rem
+}
+.fileDetail{
+    display:flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+.fileDetail :first-child{
+    max-width: 225px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 @media screen and (min-width: 1048px) 
@@ -409,6 +515,12 @@ and (max-width: 1080px)  {
         margin-right: 0;
     }
 }
+@media screen and (min-width: 1081px) and (max-width: 1254px){
+    .odcItem{
+        width:100%; 
+    }
+    
+}
 @media screen and (min-width: 1254px) {
     .hr{
         display:flex;
@@ -419,5 +531,24 @@ and (max-width: 1080px)  {
     }
     .alldetailItems{
         margin-right: 0;
+    }
+}
+@media (min-width: 768px){
+    .hr{
+        display:flex;
+        background: black;
+    }
+    .odcItem{
+        width:calc(50% - 1.5rem);
+    }
+}
+@media (max-width: 773px){
+    .filesCard{
+        max-width: 90%;
+    }
+    .uploadContainer{
+        width:100%;
+        display: flex;
+        justify-content: center;
     }
 }

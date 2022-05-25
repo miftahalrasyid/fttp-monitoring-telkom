@@ -17,7 +17,7 @@ import MetisMenu from '@metismenu/react';
 import 'metismenujs/dist/metismenujs.css';
 import odcStyles from '../Sidebar/sidebar.module.css';
 import {Modal as MUIModal,Box} from '@material-ui/core';
-import { CircularProgress, FormControl,InputLabel } from '@mui/material';
+import { CircularProgress, FormControl,FormHelperText,InputLabel } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import NativeSelect from '@mui/material/NativeSelect';
 import { toast } from 'react-toastify';
@@ -236,7 +236,7 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
     const [feed=false,setFeed] = feederModal || [];
     const handleClose = () => setFeed(prev=>({...prev,status:false}));
     const [openDeleteRowModal, setOpenDeleteRowModal] = React.useState(false);
-    const [formError,setFormError] = useState({status:false,text:"*semua opsi distribusi kosong, silahkan pilih salah satu"});
+    const [formError,setFormError] = useState({status:false,text:"*semua port distribusi kosong, silahkan pilih salah satu"});
     const deleteRowHandleOpen = () => setOpenDeleteRowModal(true);
     const deleteRowHandleClose = () => setOpenDeleteRowModal(false);
     const passiveOut2Ref = useRef(null);
@@ -311,7 +311,7 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
                     </div>
                     <Formik
                       initialValues={{
-                        splitter: feederFocus.splitter.splitter_id?feederFocus.splitter.splitter_id:splitterData?.filter(item=>item.status==="idle")[0].id,
+                        splitter: feederFocus.splitter.splitter_id?feederFocus.splitter.splitter_id:splitterData?.filter(item=>item.status==="idle")[0]?.id,
                         odp_name_1: (feederFocus.odpName)?feederFocus.odpName[0] : "",
                         odp_name_2: (feederFocus.odpName)?feederFocus.odpName[1] : "",
                         odp_name_3: (feederFocus.odpName)?feederFocus.odpName[2] : "",
@@ -322,11 +322,39 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
                         dist_port_4: feederFocus?.distribution[3]?.distribution_id?feederFocus?.distribution[3]?.distribution_id:"",
                       }}
                       validate={(values)=>{
-                        if(values.dist_port_1){
+                        var errors = {}
+                        
+                        if(values.odp_name_1!==""){
+                          errors.dist_port_1_stat = "port dist 1 tidak boleh kosong";
                           
-                          console.log("dist_1",distributionOnChange)
-
                         }
+                        if(values.odp_name_1=="" || values.dist_port_1!==""){
+                          errors.dist_port_1_stat = "";
+                        }
+
+                        if(values.odp_name_2!==""){
+                          errors.dist_port_2_stat = "port dist 2 tidak boleh kosong";
+                        }
+                        if(values.odp_name_2=="" || values.dist_port_2!==""){
+                          errors.dist_port_2_stat = "";
+                        }
+
+                        if(values.odp_name_3!==""){
+                          errors.dist_port_3_stat = "port dist 3 tidak boleh kosong";
+                        }
+                        if(values.odp_name_3=="" || values.dist_port_3!==""){
+                          errors.dist_port_3_stat = "";
+                        }
+
+                        if(values.odp_name_4!==""){
+                          errors.dist_port_4_stat = "port dist 4 tidak boleh kosong";
+                        }
+                        if(values.odp_name_4=="" || values.dist_port_4!==""){
+                          errors.dist_port_4_stat = "";
+                        }
+                        // console.log("errors",Object.values(errors).some(itm=>itm!=""))
+                        return Object.values(errors).some(itm=>itm!="")?errors:false
+                        // return values
                       }}
                       // validateOnBlur={true}
                       validateOnChange={true}
@@ -355,7 +383,8 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
                           },
                         ];
                         // console.log("add distribution value",dist_value.filter(itm=>itm!==""))
-                        if(dist_value.filter(itm=>itm!=="").length==0){
+                        console.log("dist port",dist_value.some(itm=>(itm.distribution_id=="" && itm.name!=="")),dist_value.filter(itm=>itm.distribution_id!=="").length)
+                        if(dist_value.filter(itm=>itm.distribution_id!=="").length==0){
                           setSubmitting(false)
                           setFormError(prev=>({...prev,status:true}))
                         }
@@ -370,6 +399,7 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
                       {({
                         values,
                         errors,
+                        isValid,
                         isSubmitting,
                         setValues,
                         handleChange,
@@ -420,9 +450,9 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
                                 </div>
                                 <div className={`col-lg-4 col-md-12 ${styles.textFieldContainer}`}>
                                 {/* {feederFocus.distribution[0].distribution_index} */}
-                                <CustomFormControl key='dpo1' variant="standard" >
+                                <CustomFormControl key='dpo1' error={errors.dist_port_1_stat?true:false} variant="standard" >
                                     <CustomInputLabel id="demo-simple-select-standard-label">Distribusi PO1</CustomInputLabel>
-                                  <NativeSelect  /*onChange={po1ClickHandler}*/ onChange={(ev)=>onchg1(ev,0,setValues)} onBlur={handleBlur} value={values.dist_port_1} inputProps={{
+                                  <NativeSelect /*onChange={po1ClickHandler}*/ onChange={(ev)=>onchg1(ev,0,setValues)} onBlur={handleBlur} value={values.dist_port_1} inputProps={{
                                         name: 'dist_port_1',
                                         id: 'uncontrolled-native',
                                         }} className={`col-lg-12 ${styles.splitterGap}`}>
@@ -445,6 +475,7 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
                                           })
                                           })}
                                   </NativeSelect>
+                                  <FormHelperText aria-labelledby='dpo1-helper'> {errors.dist_port_1_stat} </FormHelperText>
                                   </CustomFormControl>
                                 </div>
                               </div>
@@ -458,7 +489,7 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
                                     <CustomTextField id="standard-basic" name="odp_name_2" label="ODP Name 2" value={values.odp_name_2} onChange={handleChange} onBlur={handleBlur} variant="standard" />
                                   </div>
                                   <div className={`col-lg-4 col-md-12 ${styles.textFieldContainer}`}>
-                                  <CustomFormControl key='dpo2' variant="standard" >
+                                  <CustomFormControl key='dpo2' error={errors.dist_port_2_stat?true:false} variant="standard" >
                                     <CustomInputLabel id="demo-simple-select-standard-label">Distribusi PO2</CustomInputLabel>
                                     <NativeSelect onChange={(ev)=>onchg1(ev,1,setValues)} onBlur={handleBlur} value={values.dist_port_2} inputProps={{
                                           name: 'dist_port_2',
@@ -481,6 +512,7 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
                                             })
                                             })}
                                     </NativeSelect>
+                                    <FormHelperText aria-labelledby='dpo1-helper'> {errors.dist_port_2_stat} </FormHelperText>
                                   </CustomFormControl>
                                   </div>
                                   </div>
@@ -491,10 +523,10 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
                                   <p>Passive Out 3</p>
                                 </div>
                                   <div className={`col-lg-5 col-md-12 ${styles.textFieldContainer}`}>
-                                    <CustomTextField id="standard-basic" label="ODP Name 3" defaultValue={(feederFocus.odpName)?feederFocus.odpName[2] : null} variant="standard" />
+                                    <CustomTextField id="standard-basic" name="odp_name_3" label="ODP Name 3" value={values.odp_name_3} onChange={handleChange} onBlur={handleBlur} variant="standard" />
                                   </div>
                                   <div className={`col-lg-4 col-md-12 ${styles.textFieldContainer}`}>
-                                  <CustomFormControl key='dpo3' variant="standard" >
+                                  <CustomFormControl key='dpo3' error={errors.dist_port_3_stat?true:false} variant="standard" >
                                     <CustomInputLabel id="demo-simple-select-standard-label">Distribusi PO3</CustomInputLabel>
                                   <NativeSelect onChange={(ev)=>onchg1(ev,2,setValues)} onBlur={handleBlur} value={values.dist_port_3} inputProps={{
                                         name: 'dist_port_3',
@@ -516,6 +548,7 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
                                           })
                                           })}
                                   </NativeSelect>
+                                  <FormHelperText aria-labelledby='dpo1-helper'> {errors.dist_port_3_stat} </FormHelperText>
                                   </CustomFormControl>
                                   </div>
                                 </div>
@@ -526,10 +559,10 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
                                   <p>Passive Out 4</p>
                                 </div>
                                   <div className={`col-lg-5 col-md-12  ${styles.textFieldContainer}`}>
-                                    <CustomTextField id="standard-basic" label="ODP Name 4" defaultValue={(feederFocus.odpName)?feederFocus.odpName[3] : null} variant="standard" />
+                                    <CustomTextField id="standard-basic" name="odp_name_4" label="ODP Name 4" value={values.odp_name_4} onChange={handleChange} onBlur={handleBlur} variant="standard" />
                                   </div>
                                   <div className={`col-lg-4 col-md-12 ${styles.textFieldContainer}`}>
-                                  <CustomFormControl key='dpo4' variant="standard" >
+                                  <CustomFormControl key='dpo4' error={errors.dist_port_4_stat?true:false} variant="standard" >
                                     <CustomInputLabel id="demo-simple-select-standard-label">Distribusi PO4</CustomInputLabel>
                                     <NativeSelect value={values.dist_port_4} onChange={(ev)=>onchg1(ev,3,setValues)} onBlur={handleBlur} inputProps={{
                                           name: 'dist_port_4',
@@ -551,6 +584,7 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
                                             })
                                             })}
                                     </NativeSelect>
+                                    <FormHelperText aria-labelledby='dpo1-helper'> {errors.dist_port_4_stat} </FormHelperText>
                                   </CustomFormControl>
                                   </div>
                                 </div>
@@ -571,7 +605,7 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
                                 {/* <div className={`col-md-12 col-lg-6 `}> */}
                                 {isSubmitting ? <div>
                                   <CustomCircularProgress size={22} sx={{ "svg":{transform:"scale(1.2)"} , position: 'relative', top: 7,display:"inline-block",margin:"0 15px 0 20px"}}/></div>
-                                  : <CustomButtonModal btntype={"submit"} type={"submit"} disabled={isSubmitting}>
+                                  : <CustomButtonModal btntype={"submit"} type={"submit"}>
                                   {"Submit"}
                                 </CustomButtonModal>
                                 }

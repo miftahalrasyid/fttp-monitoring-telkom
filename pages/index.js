@@ -12,19 +12,6 @@ import styles from './index_evolve.module.css';
 import Head from 'next/head';
 import { Formik } from 'formik';
 // import '../public/fonts/GothamRounded-Medium.otf';
-import {
-  Grid,
-  CircularProgress,
-  Typography,
-  Button,
-  Tabs,
-  Tab,
-  TextField,
-  Fade,
-  Avatar,
-  Paper,
-  makeStyles, useTheme, styled, createTheme,MuiThemeProvider
-} from "@material-ui/core";
 // import {
 //   Grid,
 //   CircularProgress,
@@ -35,11 +22,24 @@ import {
 //   TextField,
 //   Fade,
 //   Avatar,
-//   Paper, useTheme, styled, createTheme,MuiThemeProvider
-// } from "@mui/material"
-// import {
-//   makeStyles
-// } from "@mui/styles"
+//   Paper,
+//   makeStyles, useTheme, styled, createTheme,MuiThemeProvider
+// } from "@material-ui/core";
+import {
+  Grid,
+  CircularProgress,
+  Typography,
+  Button,
+  Tabs,
+  Tab,
+  TextField,
+  Fade,
+  Avatar,
+  Paper, useTheme, styled, createTheme,MuiThemeProvider
+} from "@mui/material"
+import {
+  makeStyles
+} from "@mui/styles"
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import { withRouter } from "next/router";
 import { 
@@ -156,15 +156,6 @@ console.log("is user verify",isUserVerify)
             <>
             <h2>Login</h2>
 
-                {/* <Button size="large" className={styles.googleButton}>
-                  <img src={google} alt="google" className={styles.googleIcon} />
-                  &nbsp;Sign in with Google
-                </Button> */}
-                {/* <div className={styles.formDividerContainer}>
-                  <div className={styles.formDivider} />
-                  <Typography className={styles.formDividerWord}>or</Typography>
-                  <div className={styles.formDivider} />
-                </div> */}
                 <Formik 
                 initialValues={{ email: '', password: ''}}
                 initialErrors={{email:"test",password: "tes"}}
@@ -187,7 +178,7 @@ console.log("is user verify",isUserVerify)
                     router,
                     setError,
                     setSubmitting
-                    )
+                  )
                   // setTimeout(() => {
                   //   alert(JSON.stringify(values, null, 2));
                   //   setSubmitting(false);
@@ -205,14 +196,13 @@ console.log("is user verify",isUserVerify)
                   /* and other goodies */
                 }) => (
                   <form className={styles.form} onSubmit={handleSubmit}>
-                    
                     <span className={styles.validationOnSubmit}>
                       {error.msg}
                     </span>
                     <div className={styles.groupInputField}>
                       <label htmlFor="email" className={styles.inputLabel}>Email</label>
                       <input
-                      className={styles.inputField}
+                        className={styles.inputField}
                         type="email"
                         name="email"
                         onChange={handleChange}

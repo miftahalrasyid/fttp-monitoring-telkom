@@ -7,9 +7,17 @@ module.exports = {
         destination: process.env.NEXT_PUBLIC_API_HOST+'/api/:path',
       },
       {
+        source: '/uploads/:filename',
+        destination: process.env.NEXT_PUBLIC_API_HOST+'/uploads/:filename',
+      },
+      {
         source: '/api/:path/:user_id',
         destination: process.env.NEXT_PUBLIC_API_HOST+'/api/:path/:user_id',
       },
+      // {
+      //   source: '/api/:path/:odc_id',
+      //   destination: process.env.NEXT_PUBLIC_API_HOST+'/api/:path/:odc_id',
+      // },
       {
         source: '/login',
         destination: process.env.NEXT_PUBLIC_API_HOST+'/login',

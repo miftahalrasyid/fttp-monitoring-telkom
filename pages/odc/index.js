@@ -28,7 +28,8 @@ import {
   changeODCPage,
   addODCData,
   updateODCData,
-  deleteODCData
+  deleteODCData,
+  setTableRowsPerPage
 } from '../../components/store/odcs/actions';
 import {otpVerificationSuccessfull} from "../../components/store/auth/actions";
 import withAuth from '../../components/Auth';
@@ -42,7 +43,8 @@ import {
   Typography
   } from "@material-ui/core";
 import {
-  Button as newButton
+  Button as newButton,
+  FormControl,InputLabel
 } from '@mui/material'
 // import { makeStyles } from '@material-ui/styles';
 import { createTheme, MuiThemeProvider,makeStyles } from "@material-ui/core/styles";
@@ -67,6 +69,17 @@ const CustomTextField = styled(TextField)(({ theme }) => ({
     borderColor: theme.status.primary
   },
 }));
+const CustomFormControl = styled(FormControl)(({theme})=>({
+  width: "100%",
+  // width: "calc(100% - 1rem)",
+  ".MuiInputLabel-root":{
+    transform:"translateY(-7px)"
+  },
+  ".MuiInputBase-root":{
+    padding: "7px 0 0px",
+    marginTop: "9px",
+  }
+}))
 const CustomTab = styled(Tab)(({theme})=>({
   color:"gray!important",
   '&.MuiTab-root.Mui-selected': {
@@ -176,8 +189,12 @@ function ODC(props) {
     regionList,
     getWitelList,
     witelList,
+    updateODCData,
+    deleteODCData,
+    setTableRowsPerPage,
     getDatelList,
     datelList,
+    odc_rowsPerPage,
     getSTOList,
     stoList,
     token,
@@ -185,31 +202,11 @@ function ODC(props) {
     changeODCPage
   } = props
   console.log("data",odc_list)
-  const [open, setOpen] = React.useState(odc_list.data.map(item=>({status:false})));
   // const [open, setOpen] = React.useState(false);
-  console.log("modal edit",open)
   // const [openDeleteRowModal, setOpenDeleteRowModal] = React.useState(false);
   const [openDeleteRowModal, setOpenDeleteRowModal] = React.useState(odc_list.data.map(item=>({status:false})));
-  const [value, setValue] = React.useState(0);
 
-  const handleOpen = useCallback((row)=>{
-    setOpen(prev=>{
-      prev[row].status = true;
-      return {...prev}
-    });
-  },[setOpen])
-  const handleClose = useCallback((row)=>{
-    setOpen(prev=>{
-      prev[row].status = false;
-      return {...prev}
-    });
-  },[setOpen])
-  const deleteRowHandleOpen = useCallback((row)=>{
-    setOpenDeleteRowModal(prev=>{
-      prev[row].status = true;
-      return {...prev}
-    })
-  },[setOpenDeleteRowModal])
+
   const deleteRowHandleClose = useCallback((row)=>{
     setOpenDeleteRowModal(prev=>{
       prev[row].status = false;
@@ -222,6 +219,72 @@ function ODC(props) {
     setValues(prev=>({...prev,tabs: newValue}));
     // handleChange(event,newValue)
   };
+  const handleFilterOnChange = (ev,inputid,values,setValues) =>{
+    // console.log("input id",inputid,ev.target.value)
+    // console.log("all values",values)
+    // setValues(prev=>({...prev,[inputid]:ev.target.value.toString()}))
+    let dmp = {region_id:values.region_id?.toString(),witel_id:values.witel_id?.toString(),datel_id:values.datel_id?.toString(),sto_id:values.sto_id?.toString()};
+    [{region_id:['region_id',regionList.data]},{witel_id:['region_id',witelList.data]},{datel_id:['witel_id',datelList.data]},{sto_id:['datel_id',stoList.data]}].filter(item=>{
+      dmp[inputid] = ev.target.value;
+      // console.log("witel_id",dmp,dmp.region_id,witelList.data.find(item=>item.region_id==dmp.region_id)?.id.toString() || "" )
+      // console.log(item)
+      const [[key,filterValue]] = Object.entries(item);
+      // console.log(key)
+      dmp.region_id = regionList.data.find(item=>item.id == dmp.region_id)?.id.toString();
+      for (const key1 in item) {
+        if (Object.hasOwnProperty.call(item, key1) && key1!=inputid && key1!='region_id') {
+          dmp[key1] = item[key1][1].find(item2=>item2[item[key1][0]] == dmp[item[key1][0]])?.id;
+        }
+        else{
+  
+        }
+      }
+      return key == inputid
+    })
+    switch (inputid) {
+  
+      case "region_id":
+        // console.log("region list", {[inputid]:ev.target.value.toString()})
+        setWitelListClient(witelList.data.filter(item=>item.region_id.toString()==dmp.region_id))
+        //set region id
+        setValues(({...values,[inputid]:dmp[inputid]}))
+      case "witel_id":
+        // console.log("datel list", datelList.data.filter(item=>item.region_id.toString()==dmp.region_id),dmp.region_id)
+        // setDatelListClient(datelList.data.filter(item=>item.witel_id.toString()==dmp.datel_id[0].witel))
+        setDatelListClient(datelList.data.filter(item=>item.region_id.toString()==dmp.region_id)
+        .filter(item=>item.witel_id==dmp.witel_id))
+        //set witel id
+        setValues(({...values,[inputid]:dmp[inputid]}))
+        
+        // setDatelListClient(datelList.data.filter)
+        
+      case "datel_id":
+        // console.log("sto list",setSTOListClient(stoList.data
+        //   .filter(
+        //     item=>item.region_id.toString()==dmp.region_id
+        //   )),dmp.datel_id)
+        setSTOListClient(stoList.data
+          .filter(
+            item=>item.region_id.toString()==dmp.region_id
+          )
+          .filter(
+            item=>item.witel_id==dmp.witel_id
+          )
+          .filter(
+            item=>item.datel_id.toString()==dmp.datel_id
+          ))
+        //set datel id
+        setValues(({...values,[inputid]:dmp[inputid]}))
+  
+        // setDatelListClient(datelList.data.filter)
+      case "sto_id":
+        setValues(({...values,[inputid]:dmp[inputid]}))
+      break;
+    
+      default:
+        break;
+    }
+  }
   const useStyles = makeStyles(theme => ({
     green: {
         backgroundColor:"#009873!important",
@@ -248,6 +311,12 @@ function ODC(props) {
     background: btntype == 'submit' ? theme.status.success:theme.status.primary,
     color:"white!important",
   }});
+  const CustomInputLabel = styled(InputLabel)(({ theme }) => ({
+    '&.Mui-focused':{
+      color: theme.status.primary,
+  
+    }
+  }));
   const getMuiTheme = () =>
   customCreateTheme({
     status: {
@@ -457,11 +526,15 @@ function ODC(props) {
         item.rak_OA,
         item.panel,
         item.port,
-        item.id
+        item.id,
+        item.region_id,
+        item.witel_id,
+        item.datel_id,
+        item.sto_id
       ])))
-    },[rawData,open,openDeleteRowModal])
+    },[rawData,openDeleteRowModal])
     useEffect(()=>{
-      console.log("odc list client use effect",odc_list_client.success)
+      console.log("odc list client use effect",odc_list_client.success,odc_list_client.data)
       if(odc_list_client?.success || false)
       setDatatable(odc_list_client.data.map((item,idx)=>([
         idx+1,
@@ -483,7 +556,11 @@ function ODC(props) {
         item.rak_OA,
         item.panel,
         item.port,
-        item.id
+        item.id,
+        item.region_id,
+        item.witel_id,
+        item.datel_id,
+        item.sto_id
       ])))
     },[odc_list_client])
     // },[rawData,open,value,openDeleteRowModal])
@@ -628,6 +705,30 @@ function ODC(props) {
     const [datelListClient,setDatelListClient] = useState("");
     const [stoListClient,setSTOListClient] = useState("");
     const [feederChartName, setFeederChartName] = useState([]);
+    const [singleConfirmDeletePopup, setSingleConfirmDeletePopup] = useState(false)
+    const singleConfirmDeletePopupOpen = (selectedConfirmDeleteValue) => {
+      console.log("selectedConfirmDeleteValue",selectedConfirmDeleteValue)
+      setSelectedConfirmDeletePopup(selectedConfirmDeleteValue);
+      setSingleConfirmDeletePopup(true);
+    }
+    const singleConfirmDeletePopupClose = () =>{
+      setSingleConfirmDeletePopup(false);
+    }
+    const [selectedConfirmDeletePopup,setSelectedConfirmDeletePopup] = useState({odc_id:"",name:"",rowsPerPage:0});
+    const [singleModalPopup,setSingleModalPopup] = useState(false);
+    const singleModalPopupOpen = (selectedModalId) => {
+      // console.log("selectedModalValue",selectedModalId)
+      setWitelListClient(witelList.data.filter(item=>item.region_id==selectedModalId.region_id))
+      setDatelListClient(datelList.data.filter(item=>item.region_id==selectedModalId.region_id).filter(item=>item.witel_id==selectedModalId.witel_id))
+      setSTOListClient(stoList.data.filter(item=>item.region_id==selectedModalId.region_id).filter(item=>item.witel_id==selectedModalId.witel_id).filter(item=>item.datel_id==selectedModalId.datel_id))
+      setSelectedModalValue(selectedModalId)
+      setSingleModalPopup(true);
+    }
+    const [selectedModalValue,setSelectedModalValue] = useState({odc_id:"",name:"",region_id:"",witel_id:"",datel_id:"",sto_id:"",deployment_date:"",rak_oa:"",panel:"",port:"",rowsPerPage:0});
+    const singleModalPopupClose = (selectedModalId) => {
+      setSingleModalPopup(false)
+    };
+    // console.log("selectedModalValue",selectedModalValue)
     const feederChartRef = useRef(null);
     const distribusiChartRef = useRef(null);
     useEffect(()=>{
@@ -766,14 +867,21 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                 count: odc_list_client?.count || odc_list?.count,
                 rowsPerPage: 5,
                 rowsPerPageOptions:[5,10,25,50,100],
+                onTableInit:(test,tableState) =>{
+                  console.log("table init",tableState.rowsPerPage)
+                  setTableRowsPerPage(tableState.rowsPerPage)
+                },
                 onTableChange: (action, tableState) => {
                   console.log(action, tableState);
           
                   // a developer could react to change on an action basis or
                   // examine the state as a whole and do whatever they want
-          
                   switch (action) {
+                    case 'changeRowsPerPage':
+                      setTableRowsPerPage(tableState.rowsPerPage)
+                    break;
                     case 'changePage':
+                      console.log("change page")
                       changeODCPage(tableState.page+1,tableState.rowsPerPage, tableState.sortOrder,token,toast)
                       // this.changePage(tableState.page, tableState.sortOrder);
                       break;
@@ -950,7 +1058,7 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                 
                 options:{
                   customBodyRender:(value, tableMeta, update) => {
-                    let newValue = tableMeta.rowData[13]
+                    let newValue = tableMeta.rowData[15]
                     return ( <span>{newValue}</span> )
                   },
                   filter:false,
@@ -960,7 +1068,7 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                 name: "rak_OA",
                 options:{
                   customBodyRender:(value, tableMeta, update) => {
-                    let newValue = tableMeta.rowData[13]
+                    let newValue = tableMeta.rowData[16]
                     return ( <span>{newValue}</span> )
                   },
                   filter:false,
@@ -970,7 +1078,7 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                 name: "panel",
                 options:{
                   customBodyRender:(value, tableMeta, update) => {
-                    let newValue = tableMeta.rowData[13]
+                    let newValue = tableMeta.rowData[17]
                     return ( <span>{newValue}</span> )
                   },
                   filter:false,
@@ -980,7 +1088,7 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                 name: "port",
                 options:{
                   customBodyRender:(value, tableMeta, update) => {
-                    let newValue = tableMeta.rowData[13]
+                    let newValue = tableMeta.rowData[18]
                     return ( <span>{newValue}</span> )
                   },
                   filter:false,
@@ -990,7 +1098,51 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                 name: "odc_id",
                 options:{
                   customBodyRender:(value, tableMeta, update) => {
-                    let newValue = tableMeta.rowData[14]
+                    let newValue = tableMeta.rowData[19]
+                    return ( <span>{newValue}</span> )
+                  },
+                  filter:false,
+                  display:false,
+                }
+              },{
+                name: "region_id",
+                options:{
+                  customBodyRender:(value, tableMeta, update) => {
+                    console.log("region_id",tableMeta)
+                    let newValue = tableMeta.rowData[20]
+                    return ( <span>{newValue}</span> )
+                  },
+                  filter:false,
+                  display:false,
+                }
+              },{
+                name: "witel_id",
+                options:{
+                  customBodyRender:(value, tableMeta, update) => {
+                    console.log("witel_id",tableMeta.rowData[21])
+                    let newValue = tableMeta.rowData[21]
+                    return ( <span>{newValue}</span> )
+                  },
+                  filter:false,
+                  display:false,
+                }
+              },{
+                name: "datel_id",
+                options:{
+                  customBodyRender:(value, tableMeta, update) => {
+                    console.log("datel_id",tableMeta.rowData[22])
+                    let newValue = tableMeta.rowData[22]
+                    return ( <span>{newValue}</span> )
+                  },
+                  filter:false,
+                  display:false,
+                }
+              },{
+                name: "sto_id",
+                options:{
+                  customBodyRender:(value, tableMeta, update) => {
+                    console.log("sto_id",tableMeta.rowData[23])
+                    let newValue = tableMeta.rowData[23]
                     return ( <span>{newValue}</span> )
                   },
                   filter:false,
@@ -1010,191 +1162,37 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                     </CustomButton>
                       </a>
                       </Link>
-                    <CustomButton onClick={()=>handleOpen(tableMeta.rowData[0]-1)} variant='text'>
+                    <CustomButton onClick={()=>singleModalPopupOpen(
+                      {
+                        odc_id:tableMeta.rowData[19],
+                        name:  tableMeta.rowData[1],
+                        region_id: tableMeta.rowData[20],
+                        witel_id: tableMeta.rowData[21],
+                        datel_id: tableMeta.rowData[22],
+                        sto_id: tableMeta.rowData[23],
+                        deployment_date: tableMeta.rowData[15],
+                        rak_oa: tableMeta.rowData[16],
+                        panel: tableMeta.rowData[17],
+                        port: tableMeta.rowData[18],
+                        rowsPerPage: tableMeta.tableState.rowsPerPage
+                        // region_id: 
+                      }
+                      )} variant='text'>
+                    {/* <CustomButton onClick={()=>handleOpen(tableMeta.rowData[0]-1)} variant='text'> */}
                       <MdRemoveRedEye fill='#3124c1'/>
                     </CustomButton>
-                    <CustomButton onClick={()=>deleteRowHandleOpen(tableMeta.rowData[0]-1)} variant='text'>
+                    <CustomButton onClick={()=>singleConfirmDeletePopupOpen({
+                      odc_id:tableMeta.rowData[19],
+                      name:  tableMeta.rowData[1],
+                      rowsPerPage: tableMeta.tableState.rowsPerPage
+                    })} variant='text'>
+                    {/* <CustomButton onClick={()=>deleteRowHandleOpen(tableMeta.rowData[0]-1)} variant='text'> */}
                       <MdDeleteForever fill='#B10040'/>
                     </CustomButton>
                     {/* <CustomButton onClick={()=>deleteRow(item.id)} variant='text'>
                       <MdDeleteForever />
                     </CustomButton> */}
-                    <Modal open={open[tableMeta.rowData[0]-1]?.status} onClose={()=>handleClose(tableMeta.rowData[0]-1)} aria-labelledby="modal-modal-title"
-                            aria-describedby="modal-modal-description">
-                      <div>
-                        <div className={styles.closebtn}>
-                          <MdOutlineClose/>
-                        </div>
-                        <Box itemRef='odcDetailModal' sx={{
-                          position: "absolute",
-                          top: "48%",
-                          left: "50%",
-                          transition: 'all 0.3s ease-out',
-                          transform: "translate(-50%, -50%)",
-                          border: 0,
-                          /* margin-bottom: 30px;
-                          margin-top: 30px; */
-                          borderRadius: "6px",
-                          color: "#333",
-                          // background: "#fff",
-                          width:"90%",
-                          maxWidth: "600px",
-                          boxShadow: "0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 20%), 0 1px 5px 0 rgb(0 0 0 / 12%)",
-                          boxShadow: "0 1px 4px 0 rgb(0 0 0 / 14%)",
-                        }}>
-                            {/* <Box sx={styles.card}> */}
-                          <div className={`${styles.card}  ${styles.cardStats}`}>
-                            <div className={`${styles.cardHeader} ${styles.cardHeaderPrimary}`}>
-                              <h4 className={styles.cardTitle}>{tableMeta.rowData[1]?.toUpperCase()}</h4>
-                              <div className={styles.stats}>
-                                {/* <MdOutlineDateRange width={16} height={"auto"} />  */}
-                                lengkapi semua isian yang ada
-                              </div>
-                            </div>
-                              <Formik
-                              initialValues={{
-                                tabs:0,
-                                nama_odc: tableMeta.rowData[1],
-                                regional: tableMeta.rowData[2],
-                                witel: tableMeta.rowData[3],
-                                datel: tableMeta.rowData[4],
-                                sto: tableMeta.rowData[5],
-                                kapasitas: tableMeta.rowData[6],
-                                port_feeder_terminasi: tableMeta.rowData[7],
-                                merek: tableMeta.rowData[14],
-                                deployment_date: tableMeta.rowData[15],
-                                rak_OA: tableMeta.rowData[16],
-                                panel: tableMeta.rowData[17],
-                                port: tableMeta.rowData[18]
-                              }}
-                              validateOnChange={"true"}
-                                validate={(value)=>{
-                                  console.log("new value",value.tabs)
-                                }}
-                                
-                              >
-                                {({
-                                  values,
-                                  setValues,
-                                  handleSubmit,
-                                  handleChange,
-                                  handleBlur
-                                })=>(
-                                <form className={styles.form} onSubmit={handleSubmit} >
-                                  <div className={`${styles.cardBody} card-body row`}>
-                                  <div className={styles.tabLink}>
-                                    <CustomTabs value={values.tabs} onChange={(ev,newValue)=>handleOnChange(ev,newValue,setValues)} onBlur={handleBlur} aria-label="basic tabs example">
-                                      <CustomTab label="ODC" {...a11yProps(0)} />
-                                      <CustomTab label="OA" {...a11yProps(1)} />
-                                    </CustomTabs>
-                                  </div>
-                                  <div
-                                    role="tabpanel"
-                                    hidden={values.tabs !== 0}
-                                    id={`simple-tabpanel-${0}`}
-                                    aria-labelledby={`simple-tab-${0}`}
-                                    // {...other}
-                                  >
-                                    {values.tabs === 0 && (
-                                      <div className={`row ${styles.formGap}`}>
-                                        {/* <Typography> */}
-                                          <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                            <CustomTextField id="standard-basic" label="Nama ODC" onChange={handleChange} onBlur={handleBlur} variant="standard" defaultValue={values.nama_odc}/>
-                                          </div>
-                                          <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                            <CustomTextField id="standard-basic" label="Regional" onChange={handleChange} onBlur={handleBlur} variant="standard" defaultValue={values.regional}/>
-                                          </div>
-                                          <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                            <CustomTextField id="standard-basic" label="WITEL" onChange={handleChange} onBlur={handleBlur} variant="standard" defaultValue={values.witel}/>
-                                          </div>
-                                          <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                            <CustomTextField id="standard-basic" label="DATEL" onChange={handleChange} onBlur={handleBlur} variant="standard" defaultValue={values.datel}/>
-                                          </div>
-                                          <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                            <CustomTextField id="standard-basic" label="STO" onChange={handleChange} onBlur={handleBlur} variant="standard" defaultValue={values.sto}/>
-                                          </div>
-                                          <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                            <CustomTextField id="standard-basic" label="Kapasitas" onChange={handleChange} onBlur={handleBlur} variant="standard" defaultValue={values.kapasitas}/>
-                                          </div>
-                                          <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                            <CustomTextField id="standard-basic" label="Merek" variant="standard" onChange={handleChange} onBlur={handleBlur} defaultValue={values.merek}/>
-                                          </div>
-                                          {/* {item.merek} */}
-                                          {/* merk
-                                            deploymentDate
-                                            core
-                                            rakOa
-                                            panelOa
-                                            port */}
-                                          <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                            <CustomTextField id="standard-basic" label="Deployment Date" color='primary'
-                                              variant="standard" onChange={handleChange} onBlur={handleBlur} defaultValue={values.deployment_date}/>
-                                          </div>
-                                        {/* </Typography> */}
-                                      </div>
-                                    )}
-                                  </div>
-                                  <div
-                                    role="tabpanel"
-                                    hidden={values.tabs !== 1}
-                                    id={`simple-tabpanel-${1}`}
-                                    aria-labelledby={`simple-tab-${1}`}
-                                    // {...other}
-                                  >
-                                    {values.tabs === 1 && (
-                                      <div className={`row ${styles.formGap}`}>
-                                      {/* <Typography> */}
-                                        <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                          <CustomTextField id="standard-basic" onChange={handleChange} onBlur={handleBlur} label="Port Feeder Terminasi" variant="standard" defaultValue={values.port_feeder_terminasi}/>
-                                        </div>
-                                        <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                          <CustomTextField id="standard-basic" onChange={handleChange} onBlur={handleBlur} label="Rak OA" variant="standard" defaultValue={values.rak_OA}/>
-                                        </div>
-                                        <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                          <CustomTextField id="standard-basic" onChange={handleChange} onBlur={handleBlur} label="Panel" variant="standard" defaultValue={values.panel}/>
-                                        </div>
-                                        <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                          <CustomTextField id="standard-basic" onChange={handleChange} onBlur={handleBlur} label="Port" color='primary'
-                                            variant="standard" defaultValue={values.port}/>
-                                        </div>
-                                      {/* </Typography> */}
-                                    </div>
-                                    )}
-                                  </div>
-                                  
-                                  </div>
-                                  <div className={styles.actionContainer}>
-                                    <CustomButtonModal btntype={"prev"} onClick={(ev)=>setValues(prev=>({...prev,tabs:values.tabs-1}))}
-                                      style={{visibility:(values.tabs<=0)?"hidden":"visible"}} variant="contained" color='primary'
-                                      size="medium">
-                                      Prev
-                                    </CustomButtonModal>
-                                    <div className='row'>
-                                      <div className='col-md-12 col-lg-6'>
-                                        {(values.tabs>0) && <CustomButtonModal btntype={"submit"} onClick={(ev)=>
-                                          (values.tabs>0)?handleOpen:setValues(prev=>({...prev,tabs:values.tabs+1}))} variant="contained" color='primary'
-                                          size="medium">
-                                          Submit
-                                        </CustomButtonModal>}
-                                      </div>
-                                      <div className='col-md-12 col-lg-6'>
-                                        {(values.tabs>0) && <CustomButtonModal onClick={()=>handleClose(tableMeta.rowData[0]-1)} variant="contained"
-                                          color='primary' size="medium">
-                                          Cancel
-                                        </CustomButtonModal>}
-                                      </div>
-                                    </div>
-                                    <CustomButtonModal style={{visibility: (values.tabs>0)?"hidden":"visible"}} onClick={(ev)=>(values.tabs>0)?handleOpen:setValues(prev=>({...prev,tabs:values.tabs+1}))}  variant="contained" color='primary' size="medium">
-                                    {(values.tabs<=0)? "Next":""}
-                                    </CustomButtonModal>
-                                  </div>
-                                </form>
-                                )}
-                              </Formik>
-                          </div>
-                        </Box>
-                      </div>
-                    </Modal>
+
                     <Modal open={openDeleteRowModal[tableMeta.rowData[0]-1]?.status} onClose={()=>deleteRowHandleClose(tableMeta.rowData[0]-1)} >
                     <div>
                           <div className={styles.closebtn}>
@@ -1263,6 +1261,290 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
               
             </ThemeProvider>
         </div>
+        <Modal open={singleModalPopup} onClose={()=>singleModalPopupClose()} aria-labelledby="modal-modal-title"
+                            aria-describedby="modal-modal-description">
+                      <div>
+                        <div className={styles.closebtn}>
+                          <MdOutlineClose/>
+                        </div>
+                        <Box itemRef='odcDetailModal' sx={{
+                          position: "absolute",
+                          top: "48%",
+                          left: "50%",
+                          transition: 'all 0.3s ease-out',
+                          transform: "translate(-50%, -50%)",
+                          border: 0,
+                          /* margin-bottom: 30px;
+                          margin-top: 30px; */
+                          borderRadius: "6px",
+                          color: "#333",
+                          // background: "#fff",
+                          width:"90%",
+                          maxWidth: "600px",
+                          boxShadow: "0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 20%), 0 1px 5px 0 rgb(0 0 0 / 12%)",
+                          boxShadow: "0 1px 4px 0 rgb(0 0 0 / 14%)",
+                        }}>
+                            {/* <Box sx={styles.card}> */}
+                          <div className={`${styles.card}  ${styles.cardStats}`}>
+                            <div className={`${styles.cardHeader} ${styles.cardHeaderPrimary}`}>
+                              <h4 className={styles.cardTitle}>{selectedModalValue.name.toUpperCase()}</h4>
+                              <div className={styles.stats}>
+                                {/* <MdOutlineDateRange width={16} height={"auto"} />  */}
+                                lengkapi semua isian yang ada
+                              </div>
+                            </div>
+                              <Formik
+                              initialValues={{
+                                tabs:0,
+                                odcId: selectedModalValue.odc_id,
+                                nama_odc: selectedModalValue.name.toLocaleUpperCase(),
+                                region_id: selectedModalValue.region_id,
+                                witel_id: selectedModalValue.witel_id,
+                                datel_id: selectedModalValue.datel_id,
+                                sto_id: selectedModalValue.sto_id,
+                                deployment_date: selectedModalValue.deployment_date,
+                                rak_oa: selectedModalValue.rak_oa,
+                                panel: selectedModalValue.panel,
+                                port: selectedModalValue.port,
+                                rowsPerPage: selectedModalValue.rowsPerPage
+                              }}
+                              validateOnChange={"true"}
+                                validate={(value)=>{
+                                  console.log("new value",value.tabs)
+                                }}
+                                onSubmit={(values,{setSubmitting})=>{
+                                  console.log(values)
+                                  // console.log(updateODCData)
+                                  updateODCData(values.nama_odc,
+                                    values.deployment_date,
+                                    values.notes,
+                                    values.panel,
+                                    values.rak_oa,
+                                    values.port,
+                                    values.nama_odc,
+                                    values.region_id,
+                                    values.witel_id,
+                                    values.datel_id,
+                                    values.sto_id
+                                    ,values.odcId,token,setSubmitting,singleModalPopupClose,toast,values.rowsPerPage)
+                                }}
+                              >
+                                {({
+                                  values,
+                                  setValues,
+                                  handleSubmit,
+                                  handleChange,
+                                  handleBlur
+                                })=>(
+                                <form className={styles.form} onSubmit={handleSubmit} >
+                                  <div className={`${styles.cardBody} card-body row`}>
+                                  <div className={styles.tabLink}>
+                                    <CustomTabs value={values.tabs} onChange={(ev,newValue)=>handleOnChange(ev,newValue,setValues)} onBlur={handleBlur} aria-label="basic tabs example">
+                                      <CustomTab label="ODC" {...a11yProps(0)} />
+                                      <CustomTab label="OA" {...a11yProps(1)} />
+                                    </CustomTabs>
+                                  </div>
+                                  <div
+                                    role="tabpanel"
+                                    hidden={values.tabs !== 0}
+                                    id={`simple-tabpanel-${0}`}
+                                    aria-labelledby={`simple-tab-${0}`}
+                                    // {...other}
+                                  >
+                                    {values.tabs === 0 && (
+                                      <div className={`row ${styles.formGap}`}>
+                                        {/* <Typography> */}
+                                          <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                            <CustomTextField id="standard-basic" label="Nama ODC" name='nama_odc' onChange={handleChange} value={values.nama_odc} onBlur={handleBlur} variant="standard" />
+                                          </div>
+                                          <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                            <CustomFormControl key='regional' variant="standard" >
+                                              <CustomInputLabel id="demo-simple-select-standard-label">Regional</CustomInputLabel>
+
+                                              <NativeSelect value={values.region_id} onChange={(ev)=>handleFilterOnChange(ev,"region_id",values,setValues)} onBlur={handleBlur} inputProps={{
+                                              name: 'region_id',
+                                              id: 'uncontrolled-native',
+                                              }}>
+                                                {(regionList?.data?.map(item=>({label:item.name,value:item.id})) || []).map(item=>(
+                                                  <option key={"region-"+item.label} value={item.value}>{item.label}</option>
+                                                ))}
+                                              </NativeSelect>
+                                            </CustomFormControl>
+                                          </div>
+                                          <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                            <CustomFormControl key='witel' variant="standard" >
+                                              <CustomInputLabel id="demo-simple-select-standard-label">Witel</CustomInputLabel>
+
+                                              <NativeSelect value={values.witel_id} onChange={(ev)=>handleFilterOnChange(ev,"witel_id",values,setValues)} onBlur={handleBlur} inputProps={{
+                                              name: 'witel_id',
+                                              id: 'uncontrolled-native',
+                                              }}>
+                                                {((witelListClient || false)?witelListClient?.map(item=>({label:item.name,value:item.id})):witelList?.data?.map(item=>({label:item.name,value:item.id})) || []).map(item=>(
+                                                  <option key={"witel-"+item.label} value={item.value}>{item.label}</option>
+                                                ))}
+                                              </NativeSelect>
+                                            </CustomFormControl>
+                                          </div>
+                                          <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                            <CustomFormControl key='datel' variant="standard" >
+                                              <CustomInputLabel id="demo-simple-select-standard-label">Datel</CustomInputLabel>
+
+                                              <NativeSelect value={values.datel_id} onChange={(ev)=>handleFilterOnChange(ev,"datel_id",values,setValues)} onBlur={handleBlur} inputProps={{
+                                              name: 'datel_id',
+                                              id: 'uncontrolled-native',
+                                              }}>
+                                                {((datelListClient || false)?datelListClient?.map(item=>({label:item.name,value:item.id})):datelList?.data?.map(item=>({label:item.name,value:item.id})) || []).map(item=>(
+                                                  <option key={"datel-"+item.label} value={item.value}>{item.label}</option>
+                                                ))}
+                                              </NativeSelect>
+                                            </CustomFormControl>
+                                          </div>
+                                          <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                            <CustomFormControl key='sto' variant="standard" >
+                                              <CustomInputLabel id="demo-simple-select-standard-label">STO</CustomInputLabel>
+
+                                              <NativeSelect value={values.sto_id} onChange={(ev)=>handleFilterOnChange(ev,"sto_id",values,setValues)} onBlur={handleBlur} inputProps={{
+                                              name: 'sto_id',
+                                              id: 'uncontrolled-native',
+                                              }}>
+                                                {((stoListClient)?stoListClient?.map(item=>({label:item.name,value:item.id})):stoList?.data?.map(item=>({label:item.name,value:item.id})) || []).map(item=>(
+                                                  <option key={"sto-"+item.label} value={item.value}>{item.label}</option>
+                                                ))}
+                                              </NativeSelect>
+                                            </CustomFormControl>
+                                          </div>
+                                          {/* {item.merek} */}
+                                          {/* merk
+                                            deploymentDate
+                                            core
+                                            rakOa
+                                            panelOa
+                                            port */}
+                                          <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                            <CustomTextField id="standard-basic" label="Deployment Date" color='primary'
+                                              variant="standard" onChange={handleChange} onBlur={handleBlur} defaultValue={values.deployment_date}/>
+                                          </div>
+                                        {/* </Typography> */}
+                                      </div>
+                                    )}
+                                  </div>
+                                  <div
+                                    role="tabpanel"
+                                    hidden={values.tabs !== 1}
+                                    id={`simple-tabpanel-${1}`}
+                                    aria-labelledby={`simple-tab-${1}`}
+                                    // {...other}
+                                  >
+                                    {values.tabs === 1 && (
+                                      <div className={`row ${styles.formGap}`}>
+                                      {/* <Typography> */}
+                                        <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                          <CustomTextField id="standard-basic" onChange={handleChange} onBlur={handleBlur} label="Rak OA" variant="standard" defaultValue={values.rak_oa}/>
+                                        </div>
+                                        <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                          <CustomTextField id="standard-basic" onChange={handleChange} onBlur={handleBlur} label="Panel" variant="standard" defaultValue={values.panel}/>
+                                        </div>
+                                        <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                                          <CustomTextField id="standard-basic" onChange={handleChange} onBlur={handleBlur} label="Port" color='primary'
+                                            variant="standard" defaultValue={values.port}/>
+                                        </div>
+                                      {/* </Typography> */}
+                                    </div>
+                                    )}
+                                  </div>
+                                  
+                                  </div>
+                                  <div className={styles.actionContainer}>
+                                    <CustomButtonModal btntype={"prev"} onClick={(ev)=>setValues(prev=>({...prev,tabs:values.tabs-1}))}
+                                      style={{visibility:(values.tabs<=0)?"hidden":"visible"}} variant="contained" color='primary'
+                                      size="medium">
+                                      Prev
+                                    </CustomButtonModal>
+                                    <div className='row'>
+                                      <div className='col-md-12 col-lg-6'>
+                                        {(values.tabs>0) && <CustomButtonModal btntype={"submit"} type={"submit"} onClick={(ev)=>
+                                          (values.tabs>0)?singleModalPopupOpen:setValues(prev=>({...prev,tabs:values.tabs+1}))} variant="contained" color='primary'
+                                          size="medium">
+                                          Submit
+                                        </CustomButtonModal>}
+                                      </div>
+                                      <div className='col-md-12 col-lg-6'>
+                                        {(values.tabs>0) && <CustomButtonModal onClick={()=>singleModalPopupClose()} variant="contained"
+                                          color='primary' size="medium">
+                                          Cancel
+                                        </CustomButtonModal>}
+                                      </div>
+                                    </div>
+                                    <CustomButtonModal style={{visibility: (values.tabs>0)?"hidden":"visible"}} onClick={(ev)=>(values.tabs>0)?singleModalPopupOpen:setValues(prev=>({...prev,tabs:values.tabs+1}))}  variant="contained" color='primary' size="medium">
+                                    {(values.tabs<=0)? "Next":""}
+                                    </CustomButtonModal>
+                                  </div>
+                                </form>
+                                )}
+                              </Formik>
+                          </div>
+                        </Box>
+                      </div>
+        </Modal>
+        <Modal open={singleConfirmDeletePopup} onClose={singleConfirmDeletePopupClose} >
+                    <div>
+                          <div className={styles.closebtn}>
+                            <MdOutlineClose/>
+                          </div>
+                            <Box itemRef='odcDeleteModal' sx={{
+                              position: "absolute",
+                              top: "48%",
+                              left: "50%",
+                              transition: 'all 0.3s ease-out',
+                              transform: "translate(-50%, -50%)",
+                              border: 0,
+                              /* margin-bottom: 30px;
+                              margin-top: 30px; */
+                              borderRadius: "6px",
+                              color: "#333",
+                              // background: "#fff",
+                              width:"90%",
+                              maxWidth: "480px",
+                              boxShadow: "0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 20%), 0 1px 5px 0 rgb(0 0 0 / 12%)",
+                              boxShadow: "0 1px 4px 0 rgb(0 0 0 / 14%)",
+                            }}>
+                              <div className={`${styles.card}  ${styles.cardStats}`}>
+                                <div className={`${styles.cardHeader} ${styles.cardHeaderPrimary}`}>
+                                  <h4 className={styles.cardTitle}>{"Konfirmasi Delete"}</h4>
+                                  <div className={styles.stats}>
+                                    proses ini akan menghapus data odc secara permanen. mohon di cek kembali
+                                  </div>
+                                </div>
+                                <div className={`${styles.cardBody} card-body row`}>
+                                  <div className={styles.confirmationWrapper}>
+                                    <div className={`col-md-12`}>
+                                    <Typography variant='h6' className={styles.confirmationTitle}>
+                                      Anda yakin akan menghapus {selectedConfirmDeletePopup.name.toLocaleUpperCase()} ?
+                                    </Typography>
+                                    </div>
+                                    <div className={styles.actionContainer}>
+        
+                                          <div >
+                                            <CustomButtonModal btntype={'submit'} onClick={()=>deleteODCData(selectedConfirmDeletePopup.name,selectedConfirmDeletePopup.odc_id,token,singleConfirmDeletePopupClose,toast)}>
+                                              {"Submit"}
+                                            </CustomButtonModal>
+                                          </div>
+                                          <div >
+                                            <CustomButtonModal onClick={singleConfirmDeletePopupClose}>
+                                              {"Cancel"}
+                                            </CustomButtonModal>
+                                          </div>
+                                    </div>
+                                  </div>
+        
+        
+                                
+                                </div>
+        
+                              </div>
+                            </Box>
+                          </div>
+        </Modal>
               {/* </MuiThemeProvider> */}
       <div className={styles.odcBackdrop}>
         <Image src={'/img/backdrop_odc.jpeg'} width={1440} height={1213} alt={"backdrop"}/>
@@ -1315,6 +1597,7 @@ export const getServerSideProps = async (props) => wrapper.getServerSideProps(st
       }
     })(props);
 const mapStateToProps = state => ({
+  odc_rowsPerPage: state.ODCs.tableRowsPerPage,
   odc_list_client: state.ODCs.odc_page,
   feederGraphClient: state.ODCs.graph_feeder,
   distributionGraphClient: state.ODCs.graph_distribution,
@@ -1328,10 +1611,12 @@ getRegionList,
 getWitelList,
 getDatelList,
 getSTOList,
+updateODCData,
 changeODCPage,
 addODCData,
 updateODCData,
-deleteODCData
+deleteODCData,
+setTableRowsPerPage
 // getDistributionGraph,
 }
 export default connect(mapStateToProps,mapFunctionToProps)(withAuth(ODC))
