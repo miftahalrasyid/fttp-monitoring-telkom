@@ -30,6 +30,14 @@ module.exports = {
         source: '/forgot-password',
         destination: process.env.NEXT_PUBLIC_API_HOST+'/forgot-password',
       },
+      {
+        source: '/verify-forgot-password',
+        destination: process.env.NEXT_PUBLIC_API_HOST+'/verify-forgot-password',
+      },
+      {
+        source: '/update-password',
+        destination: process.env.NEXT_PUBLIC_API_HOST+'/update-password',
+      },
     ]
   },
   webpack: (config, options) => {

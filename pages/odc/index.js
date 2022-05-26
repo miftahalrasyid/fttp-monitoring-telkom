@@ -1109,7 +1109,7 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                 name: "region_id",
                 options:{
                   customBodyRender:(value, tableMeta, update) => {
-                    console.log("region_id",tableMeta)
+                    // console.log("region_id",tableMeta)
                     let newValue = tableMeta.rowData[20]
                     return ( <span>{newValue}</span> )
                   },
@@ -1120,7 +1120,7 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                 name: "witel_id",
                 options:{
                   customBodyRender:(value, tableMeta, update) => {
-                    console.log("witel_id",tableMeta.rowData[21])
+                    // console.log("witel_id",tableMeta.rowData[21])
                     let newValue = tableMeta.rowData[21]
                     return ( <span>{newValue}</span> )
                   },
@@ -1131,7 +1131,7 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                 name: "datel_id",
                 options:{
                   customBodyRender:(value, tableMeta, update) => {
-                    console.log("datel_id",tableMeta.rowData[22])
+                    // console.log("datel_id",tableMeta.rowData[22])
                     let newValue = tableMeta.rowData[22]
                     return ( <span>{newValue}</span> )
                   },
@@ -1142,7 +1142,7 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                 name: "sto_id",
                 options:{
                   customBodyRender:(value, tableMeta, update) => {
-                    console.log("sto_id",tableMeta.rowData[23])
+                    // console.log("sto_id",tableMeta.rowData[23])
                     let newValue = tableMeta.rowData[23]
                     return ( <span>{newValue}</span> )
                   },
@@ -1153,7 +1153,7 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                 name: "Aksi",
                 options:{
                   customBodyRender:(value, tableMeta, update) => {
-                    console.log("custom aksi ",tableMeta)
+                    // console.log("custom aksi ",tableMeta)
                     let newValue = tableMeta.rowData[14]
                     return (         <div key={0} className={styles.tableAction}>
                       <Link href={`/odc/${tableMeta.rowData[19]}`} passHref>

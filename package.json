@@ -26,6 +26,7 @@
     "file-loader": "^6.2.0",
     "firebase": "^9.6.7",
     "firebase-admin": "^10.0.2",
+    "form-data": "^4.0.0",
     "formik": "^2.2.9",
     "jwt-decode": "^3.1.2",
     "mui-datatables": "^4.2.2",

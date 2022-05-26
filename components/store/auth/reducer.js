@@ -9,7 +9,10 @@ import {
     TELEGRAM_USER_VERIFY_FAIL,
     FORGOT_PASSWORD_REQUEST,
     FORGOT_PASSWORD_REQUEST_SUCCESSFUL,
-    FORGOT_PASSWORD_PAGE_CLOSED
+    FORGOT_PASSWORD_PAGE_CLOSED,
+    VERIFY_RESET_CODE,
+    VERIFY_RESET_CODE_SUCCESSFUL,
+    VERIFY_RESET_CODE_FAILED
 } from "./actionTypes";
 const INIT_STATE = {
     loading: {
@@ -17,7 +20,9 @@ const INIT_STATE = {
         otp:false,
         verifyUser: true,
         forgotPassword: false,
+        verifyResetCode: false,
     },
+    isCodeVerify:"",
     telegramToken:"",
     openTelegramVerify: false,
     openOtpService: false,
@@ -134,6 +139,32 @@ const auth = (state=INIT_STATE,action)=>{
                     forgotPassword: false
                 },
                 openConfirmationPage:true
+            }
+        case VERIFY_RESET_CODE:
+            return {
+                ...state,
+                loading:{
+                    ...state.loading,
+                    verifyResetCode: true
+                },
+            }
+        case VERIFY_RESET_CODE_SUCCESSFUL:
+            return {
+                ...state,
+                loading:{
+                    ...state.loading,
+                    verifyResetCode: false
+                },
+                isCodeVerify: true
+            }
+        case VERIFY_RESET_CODE_FAILED:
+            return {
+                ...state,
+                loading:{
+                    ...state.loading,
+                    verifyResetCode: false
+                },
+                isCodeVerify: false
             }
         default:
             return state;

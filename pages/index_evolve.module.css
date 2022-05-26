@@ -311,3 +311,8 @@
     width: 127px;
     padding: 0.5rem;
 }
+.danger{
+    color: red;
+    flex-basis: 50%;
+    text-align: center;
+}
