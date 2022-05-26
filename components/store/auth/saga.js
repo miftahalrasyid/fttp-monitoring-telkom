@@ -10,7 +10,8 @@ import {
     FORGOT_PASSWORD_REQUEST,
     FORGOT_PASSWORD_REQUEST_SUCCESSFUL,
     LOGIN_FAILED,
-    FORGOT_PASSWORD_PAGE_CLOSED
+    FORGOT_PASSWORD_PAGE_CLOSED,
+    OTP_VERIFICATION_SUCCESSFUL
 } from "./actionTypes";
 
 // var myHeaders = new Headers();
@@ -84,7 +85,7 @@ function* otpVerify({payload:{value,history}}){
         if(res.success){
             console.log("go to odc",history)
             yield document.cookie = "token="+res.data.token;
-            yield history.push("/odc")
+            yield history.push("/odc");
         }
         else{
             // throw error msg to user

@@ -184,6 +184,7 @@ function ODC(props) {
     feederGraph,
     feederGraphClient,
     distributionGraph,
+    isUserVerifyLoading,
     distributionGraphClient,
     getRegionList,
     regionList,
@@ -201,7 +202,7 @@ function ODC(props) {
     odc_list_client,
     changeODCPage
   } = props
-  console.log("data",odc_list)
+  console.log("data",odc_list,isUserVerifyLoading)
   // const [open, setOpen] = React.useState(false);
   // const [openDeleteRowModal, setOpenDeleteRowModal] = React.useState(false);
   const [openDeleteRowModal, setOpenDeleteRowModal] = React.useState(odc_list.data.map(item=>({status:false})));
@@ -1597,6 +1598,7 @@ export const getServerSideProps = async (props) => wrapper.getServerSideProps(st
       }
     })(props);
 const mapStateToProps = state => ({
+  isUserVerifyLoading: state.Auth.loading.verifyUser,
   odc_rowsPerPage: state.ODCs.tableRowsPerPage,
   odc_list_client: state.ODCs.odc_page,
   feederGraphClient: state.ODCs.graph_feeder,
