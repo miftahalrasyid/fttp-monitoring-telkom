@@ -9,7 +9,8 @@ import {
     TELEGRAM_USER_VERIFY_FAIL,
     FORGOT_PASSWORD_REQUEST,
     FORGOT_PASSWORD_REQUEST_SUCCESSFUL,
-    LOGIN_FAILED
+    LOGIN_FAILED,
+    FORGOT_PASSWORD_PAGE_CLOSED
 } from "./actionTypes";
 
 // var myHeaders = new Headers();
@@ -128,7 +129,24 @@ function* userVerify({payload:{status,errorCon,token}}){
 function* forgotPasswordRequest({payload:{email}}){
     console.log("password requested")
     try {
+        const myHeaders = new Headers();
+        const formdata = new FormData();
+        formdata.append("email",email)
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: formdata,
+            redirect: 'follow'
+        };
+        const res = yield fetch("/forgot-password",requestOptions).then(rest=>rest.json()).then(result=>{
+
+        });
         yield put({type: FORGOT_PASSWORD_REQUEST_SUCCESSFUL})
+        // if(res.success){
+        // }
+        // else{
+        //     yield put({type: FORGOT_PASSWORD_PAGE_CLOSED})
+        // }
     } catch (error) {
         
     }

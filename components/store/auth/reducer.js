@@ -116,8 +116,13 @@ const auth = (state=INIT_STATE,action)=>{
                 }
             }
         case FORGOT_PASSWORD_PAGE_CLOSED:
+            console.log("forgot page closed")
             return {
                 ...state,
+                loading:{
+                    ...state.loading,
+                    forgotPassword: false
+                },
                 openConfirmationPage:false
             }
         case FORGOT_PASSWORD_REQUEST_SUCCESSFUL: 

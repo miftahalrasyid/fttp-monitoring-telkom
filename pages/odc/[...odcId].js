@@ -314,6 +314,7 @@ function Odc({
       sto_name,
       splitter={splitter:{position:[]},data:[],position:"top left"},panel={data:[],position:"top left"}} = (viewOdcClient || false)? viewOdcClient:ODCData;
     const feederModal = useState({type:"",status:false});
+    
     // const [feederFocus,setFeederFocus] = useState(false); 
     const [feederFocus,setFeederFocus] = useState(
       {
@@ -622,6 +623,7 @@ function Odc({
     }
     /** upload kml variables*/
     const [KMLSelectedFiles,setKMLSelectedFiles] = useState([])
+    console.log("kml ",kml_name,KMLSelectedFiles.length==0 && (kml_name || false))
     const handleAcceptedKMLFiles = files => {
       files.map((file,idx) => {
         console.log("uploaded file",file,file.type,file.type.split("/")[1]!==('png' || 'jpeg' || 'jpg'))
@@ -883,7 +885,7 @@ function Odc({
                         {/* <div className="mb-3">
                             <i className="display-4 text-muted ri-upload-cloud-2-line"></i>
                         </div> */}
-                        {KMLSelectedFiles.length==0 && kml_name=="" ? [<div key={"downloadIcon"} className={styles.downloadIcon}>
+                        {KMLSelectedFiles.length==0 && (kml_name=="" || kml_name==null) ? [<div key={"downloadIcon"} className={styles.downloadIcon}>
                           <BsDownload  />
                         </div>,<h6 key={"subtitle"}>klik disini untuk upload file</h6>]: 
                         KMLSelectedFiles.length==0 && (kml_name || false) ? [<div key={"fileSelected"} className={styles.fileSelected}>
@@ -947,7 +949,7 @@ function Odc({
                         {/* <div className="mb-3">
                             <i className="display-4 text-muted ri-upload-cloud-2-line"></i>
                         </div> */}
-                        {MCSelectedFiles.length==0 && mc_name=="" ? [<div key={"downloadIcon"} className={styles.downloadIcon}>
+                        {MCSelectedFiles.length==0 && (mc_name=="" || mc_name==null) ? [<div key={"downloadIcon"} className={styles.downloadIcon}>
                           <BsDownload  />
                         </div>,<h6 key={"subtitle"}>klik disini untuk upload file</h6>]:
                         MCSelectedFiles.length==0 && (mc_name || false) ? [<div key={"fileSelected"} className={styles.fileSelected}>

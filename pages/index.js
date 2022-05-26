@@ -111,6 +111,9 @@ console.log("is user verify",isUserVerify)
   useEffect(()=>{
     logoLoadCallback()
   },[isImageReady,logoLoadCallback])
+  useEffect(()=>{
+    forgotPageClosed();
+  },[])
   return (<div className={styles.containerWrapper}>
     <div className={styles.backdrop}>
       <Image src={telkom_bg} width={1829} height={1100} alt={"background"}/>

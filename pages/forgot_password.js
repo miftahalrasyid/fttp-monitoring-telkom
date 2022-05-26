@@ -30,6 +30,8 @@ import main_img from "../public/img/main_img.png";
 import { 
   styled as styledCustom 
 } from "@mui/material/styles";
+import { wrapper } from '../components/store';
+import { END } from 'redux-saga';
 const CustomButton = styledCustom(Button)(({ theme }) => ({
   borderColor: theme.status.primary,
   color:theme.status.primary,
@@ -44,6 +46,7 @@ function Forgot_password({requestForgotPassword,isRequestConfirm}) {
     var [loginValue, setLoginValue] = useState("admin@telkom.com");
     var [passwordValue, setPasswordValue] = useState("password");
     console.log("openconfirmation page",isRequestConfirm)
+
   return (
     <div className={styles.containerWrapper}>
       <div className={styles.backdrop}>
@@ -184,7 +187,7 @@ function Forgot_password({requestForgotPassword,isRequestConfirm}) {
         </div>
     <Link href={"/"}>
       <a className={styles.decorationNone}>
-      <button className={styles.backBtn}>
+      <button className={styles.backBtn} >
       Kembali
       </button>
       </a>
@@ -198,6 +201,9 @@ function Forgot_password({requestForgotPassword,isRequestConfirm}) {
     </div>
   )
 }
+
+
+
 const mapStateToProps = state =>({
     isRequestConfirm: state.Auth.openConfirmationPage,
   });

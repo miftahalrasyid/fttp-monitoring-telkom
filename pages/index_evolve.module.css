@@ -280,6 +280,9 @@
     align-items: center;
     height: 100%;
 }
+.confirmationPageWrapper a{
+    flex-basis: 16%;
+}
 .confirmGroup{
     /* margin-bottom: 4rem; */
     /* flex-basis: 32%; */

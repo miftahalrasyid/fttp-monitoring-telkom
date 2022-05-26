@@ -275,7 +275,7 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
         passiveOut3Ref.current.style.display = "flex";
         passiveOut4Ref.current.style.display = "flex";
       }
-      setValues(ev.target.value)
+      setValues(prev=>({...prev,splitter:ev.target.value}))
     }
 
     /**
