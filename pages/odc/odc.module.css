@@ -8,12 +8,17 @@
     overflow: scroll;
     height: calc(100vh - 120px);
 }
+
 .content{
     width: 1323px;
 }
 .odcIdWrapper{
     overflow: scroll;
     height: calc(100vh - 120px);
+}
+.publicView{
+    height: 100vh;
+    padding-bottom: 5rem !important;
 }
 .odcDetail{
     margin:0 1rem;
@@ -501,7 +506,6 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
-
 @media screen and (min-width: 1048px) 
 and (max-width: 1080px)  {
     .hr{

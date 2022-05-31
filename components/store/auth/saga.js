@@ -13,6 +13,7 @@ import {
     LOGIN_FAILED,
     FORGOT_PASSWORD_PAGE_CLOSED,
     OTP_VERIFICATION_SUCCESSFUL,
+    OTP_VERIFICATION_FAILED,
     VERIFY_RESET_CODE,
     VERIFY_RESET_CODE_SUCCESSFUL,
     VERIFY_RESET_CODE_FAILED,
@@ -70,7 +71,7 @@ function* checklogin({payload:{email,password,history,errorState,setSubmitting}}
     }
 }
 
-function* otpVerify({payload:{value,history}}){
+function* otpVerify({payload:{value,history,setError}}){
     
     
     try {
@@ -89,13 +90,16 @@ function* otpVerify({payload:{value,history}}){
         .catch(error => console.log('error', error));
         console.log("otp verify",res)
         if(res.success){
-            console.log("go to odc",history)
+            setError("")
+            // console.log("go to odc",history)
             yield document.cookie = "token="+res.data.token;
             yield history.push("/odc");
             yield put({type: OTP_VERIFICATION_SUCCESSFUL})
         }
         else{
-            // throw error msg to user
+            // console.log("isotp loading errors")
+            setError(res.msg);
+            yield put({type: OTP_VERIFICATION_FAILED})
         }
     } catch (error) {
         console.log("otp verify error ",error)

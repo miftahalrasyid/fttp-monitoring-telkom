@@ -17,7 +17,7 @@ import MetisMenu from '@metismenu/react';
 import 'metismenujs/dist/metismenujs.css';
 import odcStyles from '../Sidebar/sidebar.module.css';
 import {Modal as MUIModal,Box} from '@material-ui/core';
-import { CircularProgress, FormControl,FormHelperText,InputLabel } from '@mui/material';
+import { CircularProgress, FormControl,FormHelperText,Input,InputLabel } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import NativeSelect from '@mui/material/NativeSelect';
 import { toast } from 'react-toastify';
@@ -122,7 +122,7 @@ function Modal(props) {
     } = props;
     const router = useRouter();
     const {odcId} = router.query;
-    // console.log("feeder modal", feederModal,odcId)
+    console.log("feeder modal", feederModal,odcId,router.asPath.split("/")[1])
     const [availDistribution,setAvailDistribution] = useState(panelData.filter(pn=>pn.type==='distribution').map(ds=>{
       
       return ds.data.map(dsit=>({id: dsit.id,index:dsit.index ,status:dsit.status,rak_index:ds.rak_index,rak_level:ds.rak_level}))
@@ -416,25 +416,28 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
 
                                 </div>
                                 <div className={`col-lg-9 col-md-6 ${styles.textFieldContainer} ${styles.splitter}`}>
-                                <CustomFormControl label={"splitter"} key='splitter' variant="standard" >
-                                  <CustomNativeSelect 
-                                    value={values.splitter} 
-                                    onChange={(ev)=>handleSplitterChange(ev,setValues)}
-                                    onBlur={handleBlur}
-                                    inputProps={{
-                                      name: 'splitter',
-                                      id: 'uncontrolled-native',
-                                    }} className={`col-lg-12 ${styles.splitterGap}`}>
-                                      <option value={""}>Empty</option>
-                                      {
-                                        feederFocus.splitter.splitter_id && 
-                                        <option key={"splitter"+feederFocus.splitter.splitter_index} value={feederFocus.splitter.splitter_id}>{feederFocus?.splitter?.splitter_index}</option>
-                                        // <option key={"splitter"+feederFocus.splitter.splitter_index} value={"sp"+feederFocus.splitter.splitter_id}>{feederFocus?.splitter?.splitter_index}</option>
-                                      }
-                                      {splitterData?.filter(item=>item.status==="idle").map(item=><option key={"splitter"+item.index} value={item.id}>{item.index}</option>
-                                      // {splitterData?.filter(item=>item.status==="idle").map(item=><option key={"splitter"+item.index} value={"sp"+item.id}>{item.index}</option>
-                                    )}
-                                  </CustomNativeSelect>
+                                <CustomFormControl sx={{pointerEvents:router.asPath.split("/")[1] == 'view' ? "none" : "all"}} label={"splitter"} key='splitter' variant="standard" >
+                                {router.asPath.split("/")[1] == 'view' ? <Input value={feederFocus?.splitter?.splitter_index}></Input>
+                                :[ <CustomNativeSelect key={'natselsplit'}
+                                  value={values.splitter} 
+                                  onChange={(ev)=>handleSplitterChange(ev,setValues)}
+                                  onBlur={handleBlur}
+                                  inputProps={{
+                                    name: 'splitter',
+                                    id: 'uncontrolled-native',
+                                  }} className={`col-lg-12 ${styles.splitterGap}`}>
+                                    <option value={""}>Empty</option>
+                                    {
+                                      feederFocus.splitter.splitter_id && 
+                                      <option key={"splitter"+feederFocus.splitter.splitter_index} value={feederFocus.splitter.splitter_id}>{feederFocus?.splitter?.splitter_index}</option>
+                                      // <option key={"splitter"+feederFocus.splitter.splitter_index} value={"sp"+feederFocus.splitter.splitter_id}>{feederFocus?.splitter?.splitter_index}</option>
+                                    }
+                                    {splitterData?.filter(item=>item.status==="idle").map(item=><option key={"splitter"+item.index} value={item.id}>{item.index}</option>
+                                    // {splitterData?.filter(item=>item.status==="idle").map(item=><option key={"splitter"+item.index} value={"sp"+item.id}>{item.index}</option>
+                                  )}
+                                </CustomNativeSelect>]
+                                }
+
                                 </CustomFormControl>
                                 </div>
                               </div>
@@ -446,36 +449,39 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
                                   <p>Passive Out 1</p>
                                 </div>
                                 <div className={`col-lg-5 col-md-12  ${styles.textFieldContainer}`}>
-                                  <CustomTextField id="standard-basic" name='odp_name_1' label="ODP Name 1" value={values.odp_name_1} onChange={handleChange} onBlur={handleBlur} variant="standard" />
+                                  <CustomTextField sx={{pointerEvents:router.asPath.split("/")[1] == 'view' ? "none" : "all"}} id="standard-basic" name='odp_name_1' label="ODP Name 1" value={values.odp_name_1} onChange={handleChange} onBlur={handleBlur} variant="standard" />
                                 </div>
                                 <div className={`col-lg-4 col-md-12 ${styles.textFieldContainer}`}>
                                 {/* {feederFocus.distribution[0].distribution_index} */}
-                                <CustomFormControl key='dpo1' error={errors.dist_port_1_stat?true:false} variant="standard" >
+                                <CustomFormControl sx={{pointerEvents:router.asPath.split("/")[1] == 'view' ? "none" : "all"}} key='dpo1' error={errors.dist_port_1_stat?true:false} variant="standard" >
                                     <CustomInputLabel id="demo-simple-select-standard-label">Distribusi PO1</CustomInputLabel>
-                                  <NativeSelect /*onChange={po1ClickHandler}*/ onChange={(ev)=>onchg1(ev,0,setValues)} onBlur={handleBlur} value={values.dist_port_1} inputProps={{
-                                        name: 'dist_port_1',
-                                        id: 'uncontrolled-native',
-                                        }} className={`col-lg-12 ${styles.splitterGap}`}>
-                                          <option value={""}>Empty</option>
-                                          {
-                                            feederFocus.distribution[0].distribution_id && 
-                                            <option key={"dist_po1"+feederFocus.distribution[0].distribution_index} value={feederFocus.distribution[0].distribution_id}>{(feederFocus?.distribution[0].distribution_level%2==0)?"D"+feederFocus?.distribution[0]?.distribution_level_id+"-"+(feederFocus.distribution[0].distribution_index+12):"D"+feederFocus?.distribution[0]?.distribution_level_id+"-"+feederFocus.distribution[0].distribution_index}</option>
-                                          }
-                                          {distributionOnChange[0].mapped.map((item,idx)=>{
-                                            //level rak
-                                            // console.log("ds",item)
-                                          
-                                          return  item.map((dsitem,idx1)=>{
-                                            // level port
-                                            // console.log("dsiteman",dsitem)
-                                            // console.log("dsitem",(dsitem.rak_level%2==0)?"D"+dsitem.rak_index+"-"+(dsitem.index+13):"D"+dsitem.rak_index+"-"+dsitem.index)
-                                              if(dsitem.status!=="used"){
-                                                return <option key={"dist_po1"+"D"+dsitem.rak_index+"_"+dsitem.index} value={dsitem.id}>{"D"+dsitem.rak_index+"-"+dsitem.index}</option>
-                                              }
-                                          })
-                                          })}
-                                  </NativeSelect>
-                                  <FormHelperText aria-labelledby='dpo1-helper'> {errors.dist_port_1_stat} </FormHelperText>
+                                    {router.asPath.split("/")[1] == 'view' ? <Input value={(feederFocus?.distribution[0]?.distribution_level || false) ? (feederFocus?.distribution[0].distribution_level%2==0)?"D"+feederFocus?.distribution[0]?.distribution_level_id+"-"+(feederFocus.distribution[0].distribution_index+12):"D"+feederFocus?.distribution[0]?.distribution_level_id+"-"+feederFocus.distribution[0].distribution_index: "Empty"}></Input>
+                                    : [ <NativeSelect key={'natsel1'} /*onChange={po1ClickHandler}*/ onChange={(ev)=>onchg1(ev,0,setValues)} onBlur={handleBlur} value={values.dist_port_1} inputProps={{
+                                      name: 'dist_port_1',
+                                      id: 'uncontrolled-native',
+                                      }} className={`col-lg-12 ${styles.splitterGap}`}>
+                                        <option value={""}>Empty</option>
+                                        {
+                                          feederFocus.distribution[0].distribution_id && 
+                                          <option key={"dist_po1"+feederFocus.distribution[0].distribution_index} value={feederFocus.distribution[0].distribution_id}>{(feederFocus?.distribution[0].distribution_level%2==0)?"D"+feederFocus?.distribution[0]?.distribution_level_id+"-"+(feederFocus.distribution[0].distribution_index+12):"D"+feederFocus?.distribution[0]?.distribution_level_id+"-"+feederFocus.distribution[0].distribution_index}</option>
+                                        }
+                                        {distributionOnChange[0].mapped.map((item,idx)=>{
+                                          //level rak
+                                          // console.log("ds",item)
+                                        
+                                        return  item.map((dsitem,idx1)=>{
+                                          // level port
+                                          // console.log("dsiteman",dsitem)
+                                          // console.log("dsitem",(dsitem.rak_level%2==0)?"D"+dsitem.rak_index+"-"+(dsitem.index+13):"D"+dsitem.rak_index+"-"+dsitem.index)
+                                            if(dsitem.status!=="used"){
+                                              return <option key={"dist_po1"+"D"+dsitem.rak_index+"_"+dsitem.index} value={dsitem.id}>{"D"+dsitem.rak_index+"-"+dsitem.index}</option>
+                                            }
+                                        })
+                                        })}
+                                </NativeSelect>,
+                                <FormHelperText key={'natselhel1'} aria-labelledby='dpo1-helper'> {errors.dist_port_1_stat} </FormHelperText>]
+                                    }
+                                    
                                   </CustomFormControl>
                                 </div>
                               </div>
@@ -486,33 +492,36 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
                                   <p>Passive Out 2</p>
                                 </div>
                                   <div className={`col-lg-5 col-md-12 ${styles.textFieldContainer}`}>
-                                    <CustomTextField id="standard-basic" name="odp_name_2" label="ODP Name 2" value={values.odp_name_2} onChange={handleChange} onBlur={handleBlur} variant="standard" />
+                                    <CustomTextField sx={{pointerEvents:router.asPath.split("/")[1] == 'view' ? "none" : "all"}} id="standard-basic" name="odp_name_2" label="ODP Name 2" value={values.odp_name_2} onChange={handleChange} onBlur={handleBlur} variant="standard" />
                                   </div>
                                   <div className={`col-lg-4 col-md-12 ${styles.textFieldContainer}`}>
-                                  <CustomFormControl key='dpo2' error={errors.dist_port_2_stat?true:false} variant="standard" >
+                                  <CustomFormControl sx={{pointerEvents:router.asPath.split("/")[1] == 'view' ? "none" : "all"}} key='dpo2' error={errors.dist_port_2_stat?true:false} variant="standard" >
                                     <CustomInputLabel id="demo-simple-select-standard-label">Distribusi PO2</CustomInputLabel>
-                                    <NativeSelect onChange={(ev)=>onchg1(ev,1,setValues)} onBlur={handleBlur} value={values.dist_port_2} inputProps={{
-                                          name: 'dist_port_2',
-                                          id: 'uncontrolled-native',
-                                          }} className={`col-lg-12 ${styles.splitterGap}`}>
-                                            <option value={""}>Empty</option>
-                                            {
-                                              feederFocus?.distribution[1]?.distribution_id && 
-                                              <option key={"dist_po2"+feederFocus.distribution[1].distribution_index} value={feederFocus?.distribution[1]?.distribution_id}>{(feederFocus?.distribution[1].distribution_level%2==0)?"D"+feederFocus?.distribution[1]?.distribution_level_id+"-"+(feederFocus.distribution[1].distribution_index+12):"D"+feederFocus?.distribution[1]?.distribution_level_id+"-"+feederFocus.distribution[1].distribution_index}</option>
-                                            }
-                                            {distributionOnChange[1].mapped.map((item,idx)=>{
-                                              // console.log("ds",item)
-                                            
-                                            return  item.map(dsitem=>{
-                                              // console.log("dsiteman",dsitem)
-                                              // console.log("dsitem",(dsitem.rak_level%2==0)?"D"+dsitem.rak_index+"-"+(dsitem.index+13):"D"+dsitem.rak_index+"-"+dsitem.index)
-                                                if(dsitem.status!=="used")
-                                              return <option key={"dist_po2"+"D"+dsitem.rak_index+"_"+dsitem.index} value={dsitem.id}>{"D"+dsitem.rak_index+"-"+dsitem.index}</option>
-                                              // return <option key={"dist_po2"+"D"+dsitem.rak_index+"_"+dsitem.index} value={dsitem.id}>{(dsitem.rak_level%2==0)?"D"+dsitem.rak_index+"-"+(dsitem.index+12):"D"+dsitem.rak_index+"-"+dsitem.index}</option>
-                                            })
-                                            })}
-                                    </NativeSelect>
-                                    <FormHelperText aria-labelledby='dpo1-helper'> {errors.dist_port_2_stat} </FormHelperText>
+                                    {router.asPath.split("/")[1] == 'view' ? <Input value={(feederFocus?.distribution[1]?.distribution_level || false) ? (feederFocus?.distribution[1].distribution_level%2==0)?"D"+feederFocus?.distribution[1]?.distribution_level_id+"-"+(feederFocus.distribution[1].distribution_index+12):"D"+feederFocus?.distribution[1]?.distribution_level_id+"-"+feederFocus.distribution[1].distribution_index : "Empty"}></Input>
+                                    :[<NativeSelect key={"natsel2"} onChange={(ev)=>onchg1(ev,1,setValues)} onBlur={handleBlur} value={values.dist_port_2} inputProps={{
+                                      name: 'dist_port_2',
+                                      id: 'uncontrolled-native',
+                                      }} className={`col-lg-12 ${styles.splitterGap}`}>
+                                        <option value={""}>Empty</option>
+                                        {
+                                          feederFocus?.distribution[1]?.distribution_id && 
+                                          <option key={"dist_po2"+feederFocus.distribution[1].distribution_index} value={feederFocus?.distribution[1]?.distribution_id}>{(feederFocus?.distribution[1].distribution_level%2==0)?"D"+feederFocus?.distribution[1]?.distribution_level_id+"-"+(feederFocus.distribution[1].distribution_index+12):"D"+feederFocus?.distribution[1]?.distribution_level_id+"-"+feederFocus.distribution[1].distribution_index}</option>
+                                        }
+                                        {distributionOnChange[1].mapped.map((item,idx)=>{
+                                          // console.log("ds",item)
+                                        
+                                        return  item.map(dsitem=>{
+                                          // console.log("dsiteman",dsitem)
+                                          // console.log("dsitem",(dsitem.rak_level%2==0)?"D"+dsitem.rak_index+"-"+(dsitem.index+13):"D"+dsitem.rak_index+"-"+dsitem.index)
+                                            if(dsitem.status!=="used")
+                                          return <option key={"dist_po2"+"D"+dsitem.rak_index+"_"+dsitem.index} value={dsitem.id}>{"D"+dsitem.rak_index+"-"+dsitem.index}</option>
+                                          // return <option key={"dist_po2"+"D"+dsitem.rak_index+"_"+dsitem.index} value={dsitem.id}>{(dsitem.rak_level%2==0)?"D"+dsitem.rak_index+"-"+(dsitem.index+12):"D"+dsitem.rak_index+"-"+dsitem.index}</option>
+                                        })
+                                        })}
+                                </NativeSelect>,
+                                <FormHelperText key={"natselhel2"} aria-labelledby='dpo1-helper'> {errors.dist_port_2_stat} </FormHelperText>]
+                                  }
+
                                   </CustomFormControl>
                                   </div>
                                   </div>
@@ -523,32 +532,35 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
                                   <p>Passive Out 3</p>
                                 </div>
                                   <div className={`col-lg-5 col-md-12 ${styles.textFieldContainer}`}>
-                                    <CustomTextField id="standard-basic" name="odp_name_3" label="ODP Name 3" value={values.odp_name_3} onChange={handleChange} onBlur={handleBlur} variant="standard" />
+                                    <CustomTextField sx={{pointerEvents:router.asPath.split("/")[1] == 'view' ? "none" : "all"}} id="standard-basic" name="odp_name_3" label="ODP Name 3" value={values.odp_name_3} onChange={handleChange} onBlur={handleBlur} variant="standard" />
                                   </div>
                                   <div className={`col-lg-4 col-md-12 ${styles.textFieldContainer}`}>
-                                  <CustomFormControl key='dpo3' error={errors.dist_port_3_stat?true:false} variant="standard" >
+                                  <CustomFormControl sx={{pointerEvents:router.asPath.split("/")[1] == 'view' ? "none" : "all"}} key='dpo3' error={errors.dist_port_3_stat?true:false} variant="standard" >
                                     <CustomInputLabel id="demo-simple-select-standard-label">Distribusi PO3</CustomInputLabel>
-                                  <NativeSelect onChange={(ev)=>onchg1(ev,2,setValues)} onBlur={handleBlur} value={values.dist_port_3} inputProps={{
-                                        name: 'dist_port_3',
-                                        id: 'uncontrolled-native',
-                                        }} className={`col-lg-12 ${styles.splitterGap}`}>
-                                          <option value={""}>Empty</option>
-                                          {
-                                            feederFocus?.distribution[2]?.distribution_id && 
-                                            <option key={"dist_po3"+feederFocus.distribution[2].distribution_index} value={feederFocus?.distribution[2]?.distribution_id}>{(feederFocus?.distribution[1].distribution_level%2==0)?"D"+feederFocus?.distribution[2]?.distribution_level_id+"-"+(feederFocus.distribution[2].distribution_index+12):"D"+feederFocus?.distribution[2]?.distribution_level_id+"-"+feederFocus.distribution[2].distribution_index}</option>
-                                          }
-                                          {distributionOnChange[2].mapped.map((item,idx)=>{
-                                            // console.log("ds",item)
-                                          
-                                          return  item.map(dsitem=>{
-                                            // console.log("dsiteman",dsitem)
-                                            // console.log("dsitem",(dsitem.rak_level%2==0)?"D"+dsitem.rak_index+"-"+(dsitem.index+13):"D"+dsitem.rak_index+"-"+dsitem.index)
-                                              if(dsitem.status!=="used")
-                                            return <option key={"dist_po3"+"D"+dsitem.rak_index+"_"+dsitem.index} value={dsitem.id}>{"D"+dsitem.rak_index+"-"+dsitem.index}</option>
-                                          })
-                                          })}
-                                  </NativeSelect>
-                                  <FormHelperText aria-labelledby='dpo1-helper'> {errors.dist_port_3_stat} </FormHelperText>
+                                    {router.asPath.split("/")[1] == 'view' ? <Input value={(feederFocus?.distribution[2]?.distribution_level || false) ? (feederFocus?.distribution[1].distribution_level%2==0)?"D"+feederFocus?.distribution[2]?.distribution_level_id+"-"+(feederFocus.distribution[2].distribution_index+12):"D"+feederFocus?.distribution[2]?.distribution_level_id+"-"+feederFocus.distribution[2].distribution_index : 'Empty'}></Input>
+                                    :[<NativeSelect key={'natsel3'} onChange={(ev)=>onchg1(ev,2,setValues)} onBlur={handleBlur} value={values.dist_port_3} inputProps={{
+                                      name: 'dist_port_3',
+                                      id: 'uncontrolled-native',
+                                      }} className={`col-lg-12 ${styles.splitterGap}`}>
+                                        <option value={""}>Empty</option>
+                                        {
+                                          feederFocus?.distribution[2]?.distribution_id && 
+                                          <option key={"dist_po3"+feederFocus.distribution[2].distribution_index} value={feederFocus?.distribution[2]?.distribution_id}>{(feederFocus?.distribution[1].distribution_level%2==0)?"D"+feederFocus?.distribution[2]?.distribution_level_id+"-"+(feederFocus.distribution[2].distribution_index+12):"D"+feederFocus?.distribution[2]?.distribution_level_id+"-"+feederFocus.distribution[2].distribution_index}</option>
+                                        }
+                                        {distributionOnChange[2].mapped.map((item,idx)=>{
+                                          // console.log("ds",item)
+                                        
+                                        return  item.map(dsitem=>{
+                                          // console.log("dsiteman",dsitem)
+                                          // console.log("dsitem",(dsitem.rak_level%2==0)?"D"+dsitem.rak_index+"-"+(dsitem.index+13):"D"+dsitem.rak_index+"-"+dsitem.index)
+                                            if(dsitem.status!=="used")
+                                          return <option key={"dist_po3"+"D"+dsitem.rak_index+"_"+dsitem.index} value={dsitem.id}>{"D"+dsitem.rak_index+"-"+dsitem.index}</option>
+                                        })
+                                        })}
+                                </NativeSelect>,
+                                <FormHelperText key={'natselhel3'} aria-labelledby='dpo1-helper'> {errors.dist_port_3_stat} </FormHelperText>]
+                                    }
+                                    
                                   </CustomFormControl>
                                   </div>
                                 </div>
@@ -559,32 +571,33 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
                                   <p>Passive Out 4</p>
                                 </div>
                                   <div className={`col-lg-5 col-md-12  ${styles.textFieldContainer}`}>
-                                    <CustomTextField id="standard-basic" name="odp_name_4" label="ODP Name 4" value={values.odp_name_4} onChange={handleChange} onBlur={handleBlur} variant="standard" />
+                                    <CustomTextField sx={{pointerEvents:router.asPath.split("/")[1] == 'view' ? "none" : "all"}} id="standard-basic" name="odp_name_4" label="ODP Name 4" value={values.odp_name_4} onChange={handleChange} onBlur={handleBlur} variant="standard" />
                                   </div>
                                   <div className={`col-lg-4 col-md-12 ${styles.textFieldContainer}`}>
-                                  <CustomFormControl key='dpo4' error={errors.dist_port_4_stat?true:false} variant="standard" >
+                                  <CustomFormControl sx={{pointerEvents:router.asPath.split("/")[1] == 'view' ? "none" : "all"}} key='dpo4' error={errors.dist_port_4_stat?true:false} variant="standard" >
                                     <CustomInputLabel id="demo-simple-select-standard-label">Distribusi PO4</CustomInputLabel>
-                                    <NativeSelect value={values.dist_port_4} onChange={(ev)=>onchg1(ev,3,setValues)} onBlur={handleBlur} inputProps={{
-                                          name: 'dist_port_4',
-                                          id: 'uncontrolled-native',
-                                          }} className={`col-lg-12 ${styles.splitterGap}`}>
-                                            <option value={""}>Empty</option>
-                                            {
-                                              feederFocus?.distribution[3]?.distribution_id && 
-                                              <option key={"dist_po4"+feederFocus.distribution[3].distribution_index} value={feederFocus?.distribution[3]?.distribution_id}>{(feederFocus?.distribution[1].distribution_level%2==0)?"D"+feederFocus?.distribution[3]?.distribution_level_id+"-"+(feederFocus.distribution[3].distribution_index+12):"D"+feederFocus?.distribution[3]?.distribution_level_id+"-"+feederFocus.distribution[3].distribution_index}</option>
-                                            }
-                                            {distributionOnChange[3].mapped.map((item,idx)=>{
-                                              // console.log("ds",item)
-                                            
-                                            return  item.map(dsitem=>{
-                                              // console.log("dsiteman",dsitem)
-                                              // console.log("dsitem",(dsitem.rak_level%2==0)?"D"+dsitem.rak_index+"-"+(dsitem.index+13):"D"+dsitem.rak_index+"-"+dsitem.index)
-                                                if(dsitem.status!=="used")
-                                              return <option key={"dist_po4"+"D"+dsitem.rak_index+"_"+dsitem.index} value={dsitem.id}>{"D"+dsitem.rak_index+"-"+dsitem.index}</option>
-                                            })
-                                            })}
-                                    </NativeSelect>
-                                    <FormHelperText aria-labelledby='dpo1-helper'> {errors.dist_port_4_stat} </FormHelperText>
+                                    {router.asPath.split("/")[1] == 'view' ? <Input value={(feederFocus?.distribution[3]?.distribution_level || false) ? (feederFocus?.distribution[1].distribution_level%2==0)?"D"+feederFocus?.distribution[3]?.distribution_level_id+"-"+(feederFocus.distribution[3].distribution_index+12):"D"+feederFocus?.distribution[3]?.distribution_level_id+"-"+feederFocus.distribution[3].distribution_index : 'Empty'}></Input>
+                                    :[<NativeSelect key={'natsel4'} value={values.dist_port_4} onChange={(ev)=>onchg1(ev,3,setValues)} onBlur={handleBlur} inputProps={{
+                                      name: 'dist_port_4',
+                                      id: 'uncontrolled-native',
+                                      }} className={`col-lg-12 ${styles.splitterGap}`}>
+                                        <option value={""}>Empty</option>
+                                        {
+                                          feederFocus?.distribution[3]?.distribution_id && 
+                                          <option key={"dist_po4"+feederFocus.distribution[3].distribution_index} value={feederFocus?.distribution[3]?.distribution_id}>{(feederFocus?.distribution[1].distribution_level%2==0)?"D"+feederFocus?.distribution[3]?.distribution_level_id+"-"+(feederFocus.distribution[3].distribution_index+12):"D"+feederFocus?.distribution[3]?.distribution_level_id+"-"+feederFocus.distribution[3].distribution_index}</option>
+                                        }
+                                        {distributionOnChange[3].mapped.map((item,idx)=>{
+                                          // console.log("ds",item)
+                                        
+                                        return  item.map(dsitem=>{
+                                          // console.log("dsiteman",dsitem)
+                                          // console.log("dsitem",(dsitem.rak_level%2==0)?"D"+dsitem.rak_index+"-"+(dsitem.index+13):"D"+dsitem.rak_index+"-"+dsitem.index)
+                                            if(dsitem.status!=="used")
+                                          return <option key={"dist_po4"+"D"+dsitem.rak_index+"_"+dsitem.index} value={dsitem.id}>{"D"+dsitem.rak_index+"-"+dsitem.index}</option>
+                                        })
+                                        })}
+                                </NativeSelect>,
+                                <FormHelperText key={'natselhel4'} aria-labelledby='dpo1-helper'> {errors.dist_port_4_stat} </FormHelperText>]}
                                   </CustomFormControl>
                                   </div>
                                 </div>
@@ -599,7 +612,17 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
                           }
                         <div className={`col-lg-12 col-md-12  
                           ${odcStyles.deleteFeeder}`}>
-                          <div className={`row `}>
+                            {router.asPath.split("/")[1] == 'view' ? 
+                            <div className={`row `}>
+                              <div className={`col-md-12 col-lg-6 `}>
+                                <div className={odcStyles.actionContainer}>
+                                  <CustomButtonModal onClick={()=>handleClose()}>
+                                    {"Cancel"}
+                                  </CustomButtonModal>
+                                </div>
+                              </div>
+                            </div>
+                            :<div className={`row `}>
                             <div className={`col-md-12 col-lg-6 `}>
                               <div className={odcStyles.actionContainer}>
                                 {/* <div className={`col-md-12 col-lg-6 `}> */}
@@ -691,6 +714,7 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
                 </MUIModal>
                             </div>
                           </div>
+                            }
                         </div>
                         </div>
                         </form>

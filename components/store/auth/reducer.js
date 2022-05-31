@@ -4,6 +4,7 @@ import {
     LOGIN_FAILED,
     OTP_VERIFY,
     OTP_VERIFICATION_SUCCESSFUL,
+    OTP_VERIFICATION_FAILED,
     TELEGRAM_USER_VERIFY, 
     TELEGRAM_USER_VERIFY_SUCCESSFUL,
     TELEGRAM_USER_VERIFY_FAIL,
@@ -110,6 +111,15 @@ const auth = (state=INIT_STATE,action)=>{
                     verifyUser: true,
                 },
                 openOtpService: false
+            }
+        case OTP_VERIFICATION_FAILED:
+
+            return {
+                ...state,
+                loading:{
+                    ...state.loading,
+                    otp:false,
+                },
             }
         case FORGOT_PASSWORD_REQUEST: 
 

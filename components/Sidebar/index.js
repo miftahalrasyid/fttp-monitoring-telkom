@@ -190,7 +190,7 @@ function Index_evolve({odcProps,token,addODCData,...etc}) {
       const [witelListClient,setWitelListClient] = useState("");
       const [datelListClient,setDatelListClient] = useState("");
       const [stoListClient,setSTOListClient] = useState("");
-      console.log("region list",regionList.data,witelListClient)
+      // console.log("region list",regionList.data,witelListClient)
       useEffect(()=>{
         
       },[witelListClient,datelListClient,stoListClient,regionList,witelList])

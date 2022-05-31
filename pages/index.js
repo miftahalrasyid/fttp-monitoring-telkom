@@ -35,7 +35,7 @@ import {
   TextField,
   Fade,
   Avatar,
-  Paper, useTheme, styled, createTheme,MuiThemeProvider
+  Paper, useTheme, styled, createTheme,MuiThemeProvider, FormHelperText
 } from "@mui/material"
 import {
   makeStyles
@@ -104,6 +104,7 @@ console.log("is user verify",isUserVerify)
     setOtp(value)
     console.log(value)
   },[setOtp])
+  console.log("isotploading",isOtpLoading)
   const logoLoadCallback = useCallback((ev)=>{
     setIsImageReady(true)
     typeof onLoad === "function" && onLoad(e)
@@ -114,6 +115,9 @@ console.log("is user verify",isUserVerify)
   useEffect(()=>{
     forgotPageClosed();
   },[])
+  /** verification code variable */
+  const [helperText, setHelperText] = React.useState('');
+
   return (<div className={styles.containerWrapper}>
     <div className={styles.backdrop}>
       <Image src={telkom_bg} width={1829} height={1100} alt={"background"}/>
@@ -353,16 +357,16 @@ console.log("is user verify",isUserVerify)
                   <Grid item>
                   <h3>
 
-                      Verification Code
+                      Verifikasi kode
                   </h3>
                   </Grid>
                 </Grid>
               </Grid>
+              <FormHelperText className={styles.validation}>{helperText}</FormHelperText>
               <Grid item xs={12} textAlign="center">
                 <Paper elevation={0} className={classes.paperroot}>
                   <p>
-
-                    Please enter the verification code sent to your telegram
+                    Masukkan kode verifikasi yang dikirimkan ke telegram anda
                   </p>
                 </Paper>
               </Grid>
@@ -392,7 +396,7 @@ console.log("is user verify",isUserVerify)
                       <CircularProgress size={26} className={styles.loginLoader} />
                       ) : (
                         <button className={styles.submitBtn} type="submit" onClick={()=>
-                            {console.log("click"),verifyOtp(otp,router)}}>
+                            {console.log("click"),verifyOtp(otp,router,setHelperText)}}>
                       Verify
                     </button>
                       // <Button type="submit" fullWidth variant="contained" color="primary" onClick={()=>

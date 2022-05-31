@@ -14,9 +14,9 @@ export const checkLogin = (email,password,history,errorState,setSubmitting)=>({
     type: LOGIN_CHECK,
     payload: {email,password,history,errorState,setSubmitting}
 });
-export const verifyOtp = (value,history)=>({
+export const verifyOtp = (value,history,setError)=>({
     type: OTP_VERIFY,
-    payload: {value,history}
+    payload: {value,history,setError}
 });
 export const successfullLogin = () =>({
     type: LOGIN_SUCCESSFUL

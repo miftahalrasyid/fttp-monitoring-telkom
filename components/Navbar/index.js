@@ -190,10 +190,10 @@ function Navbar(props) {
  const handleOpen = () => setOpen(true);
  const handleClose = () => setOpen(false);
  const [value, setValue] = React.useState(0);
- const [regionListClient,setRegionListClient] = useState(regionList.data);
- const [witelListClient,setWitelListClient] = useState(witelList.data);
- const [datelListClient,setDatelListClient] = useState(datelList.data);
- const [stoListClient,setSTOListClient] = useState(stoList.data);
+ const [regionListClient,setRegionListClient] = useState(regionList?.data || []);
+ const [witelListClient,setWitelListClient] = useState(witelList?.data || []);
+ const [datelListClient,setDatelListClient] = useState(datelList?.data || []);
+ const [stoListClient,setSTOListClient] = useState(stoList?.data || []);
 //  const [witelListClient,setWitelListClient] = useState(witelList?.data || []);
 //  const [datelListClient,setDatelListClient] = useState(datelList?.data || []);
 //  const [stoListClient,setSTOListClient] = useState(stoList?.data || []);

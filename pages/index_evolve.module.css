@@ -130,8 +130,10 @@
     /* margin-bottom:1rem */
 }
 .validation{
-    color:#e33e3e;
-    margin-bottom: 0.5rem;
+    color:#e33e3e !important;
+    width: 100%;
+    text-align: center !important;
+    margin-bottom: 0.5rem !important;
 }
 .validationOnSubmit{
     color:#e33e3e;
