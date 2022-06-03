@@ -1,5 +1,6 @@
 import { put, all, takeEvery,fork} from 'redux-saga/effects';
 import { verifyUser } from './actions';
+import FormData from 'form-data';
 import {
     LOGIN_CHECK,
     LOGIN_SUCCESSFUL,
@@ -9,7 +10,15 @@ import {
     TELEGRAM_USER_VERIFY_FAIL,
     FORGOT_PASSWORD_REQUEST,
     FORGOT_PASSWORD_REQUEST_SUCCESSFUL,
-    LOGIN_FAILED
+    LOGIN_FAILED,
+    FORGOT_PASSWORD_PAGE_CLOSED,
+    OTP_VERIFICATION_SUCCESSFUL,
+    OTP_VERIFICATION_FAILED,
+    VERIFY_RESET_CODE,
+    VERIFY_RESET_CODE_SUCCESSFUL,
+    VERIFY_RESET_CODE_FAILED,
+    RESET_PASSWORD,
+    RESET_PASSWORD_SUCCESSFUL
 } from "./actionTypes";
 
 // var myHeaders = new Headers();
@@ -62,7 +71,7 @@ function* checklogin({payload:{email,password,history,errorState,setSubmitting}}
     }
 }
 
-function* otpVerify({payload:{value,history}}){
+function* otpVerify({payload:{value,history,setError}}){
     
     
     try {
@@ -81,12 +90,16 @@ function* otpVerify({payload:{value,history}}){
         .catch(error => console.log('error', error));
         console.log("otp verify",res)
         if(res.success){
-            console.log("go to odc",history)
+            setError("")
+            // console.log("go to odc",history)
             yield document.cookie = "token="+res.data.token;
-            yield history.push("/odc")
+            yield history.push("/odc");
+            yield put({type: OTP_VERIFICATION_SUCCESSFUL})
         }
         else{
-            // throw error msg to user
+            // console.log("isotp loading errors")
+            setError(res.msg);
+            yield put({type: OTP_VERIFICATION_FAILED})
         }
     } catch (error) {
         console.log("otp verify error ",error)
@@ -128,9 +141,77 @@ function* userVerify({payload:{status,errorCon,token}}){
 function* forgotPasswordRequest({payload:{email}}){
     console.log("password requested")
     try {
+        const myHeaders = new Headers();
+        const formdata = new FormData();
+        formdata.append("email",email)
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: formdata,
+            redirect: 'follow'
+        };
+        const res = yield fetch("/forgot-password",requestOptions).then(rest=>rest.json()).then(result=>{
+
+        });
         yield put({type: FORGOT_PASSWORD_REQUEST_SUCCESSFUL})
+        // if(res.success){
+        // }
+        // else{
+        //     yield put({type: FORGOT_PASSWORD_PAGE_CLOSED})
+        // }
     } catch (error) {
         
+    }
+}
+function* verifyResetCode({payload:{code}}){
+    try {
+        // console.log("verifyresetcode called");
+        var myHeaders = new Headers();
+        var formdata = new FormData();
+        formdata.append("code", code);
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: formdata,
+            redirect: 'follow'
+          };
+        const res = yield fetch(`${typeof window == 'undefined' ? process.env.NEXT_PUBLIC_API_HOST:""}/verify-forgot-password`,requestOptions).then(rest=>rest.json()).then(result=>{
+            return result
+        })
+        // console.log("result",res)
+        if(res.success)
+        yield put({type: VERIFY_RESET_CODE_SUCCESSFUL})
+        else
+        yield put({type: VERIFY_RESET_CODE_FAILED})
+    } catch (error) {
+        console.log("error verify code",error)
+    }
+}
+function* resetPassword({payload:{code,password,setError,setSubmitting}}){
+    try {
+        var myHeaders = new Headers();
+        var formdata = new FormData();
+        formdata.append("code", code);
+        formdata.append("password", password);
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: formdata,
+            redirect: 'follow'
+        };
+        const res = yield fetch("/update-password",requestOptions).then(rest=>rest.json()).then(result=>{
+            if(!result.success){
+                setSubmitting(false)
+                setError(prev=>({...prev,msg: "terjadi kesalahan server"}))
+            }
+            return result
+        });
+        if(res.success){
+            
+            yield put({type: RESET_PASSWORD_SUCCESSFUL})
+        }
+    } catch (error) {
+
     }
 }
 
@@ -139,6 +220,8 @@ function* watchLogin(){
     yield takeEvery(TELEGRAM_USER_VERIFY,userVerify)
     yield takeEvery(OTP_VERIFY,otpVerify)
     yield takeEvery(FORGOT_PASSWORD_REQUEST,forgotPasswordRequest)
+    yield takeEvery(VERIFY_RESET_CODE,verifyResetCode)
+    yield takeEvery(RESET_PASSWORD,resetPassword)
 }
 
 function* sagaAuth() {

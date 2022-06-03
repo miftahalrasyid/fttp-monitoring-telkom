@@ -139,6 +139,15 @@ const tema = createThemeCustom({
         }
       }
     },
+    MuiInputLabel:{
+      styleOverrides:{
+        root:{
+          '&.Mui-focused':{
+            color:"#ee2d24!important"
+          }
+        }
+      }
+    },
     MuiInput:{
       styleOverrides:{
         underline:{'&:after':{borderBottomColor:"#ee2d24!important"}}

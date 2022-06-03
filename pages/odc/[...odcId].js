@@ -1,6 +1,7 @@
-import React,{useState,useCallback,useEffect} from 'react';
+import React,{useState,useCallback,useEffect, useRef} from 'react';
 import { useRouter } from 'next/router';
 import withAuth from '../../components/Auth';
+import Link from 'next/link';
 import {END} from 'redux-saga';
 import { connect, useDispatch } from 'react-redux';
 
@@ -16,6 +17,9 @@ import Rak from '../../components/Rak';
 import Panel from '../../components/Panel';
 import {MdOutlineViewSidebar} from 'react-icons/md';
 import Button from '@mui/material/Button';
+import Dropzone from 'react-dropzone';
+import { AiOutlineFile } from 'react-icons/ai';
+import { BsDownload } from 'react-icons/bs';
 // import panelStyles from '../../components/panel.module.css';
 // import Feeder from '../../components/Feeder';
 // import Distributor from '../../components/Distributor';
@@ -39,8 +43,13 @@ import {
   getSTOList,
   getMerekList,
   getOcdSplitpanelStatus,
+  getOcdSplitpanelDetail,
+  updateODCData,
   setSelectedCoreFeeder,
-  deleteSelectedCoreFeeder
+  deleteSelectedCoreFeeder,
+  upsertODCFile,
+  updateNotes,
+  updateODCPort
 } from '../../components/store/odcs/actions';
 import {getUserData} from '../../components/store/users/actions';
 import { wrapper,makeStore } from "../../components/store";
@@ -63,7 +72,12 @@ import { toast } from 'react-toastify';
 //       flexDirection: "column",
 //     },
 //   }))
-
+const CustomButton = styledCustom(Button)(({theme,itemType})=>({
+  position: itemType =="floating"? "absolute !important":itemType=="download" ? "absolute !important":"unset !important",
+  bottom: itemType =="floating" ? "17%":itemType == 'download' ? "10%":"",
+  backgroundColor:"#C7417F !important",
+  color: "white !important"
+}))
   // const getMuiTheme = () =>
   // createTheme({
   //   CustomButtonActivityLog: {
@@ -263,8 +277,12 @@ function Odc({
     viewOdcClient,
     deleteSelectedCoreFeeder,
     token,
-    setSelectedCoreFeeder
+    updateNotes,
+    updateODCPort,
+    setSelectedCoreFeeder,
+    upsertODCFile
     }) {
+      const notes = useRef(null);
       // console.log("ODC Data",ODCData)
         /**
          * variables for Selected ODC 
@@ -278,21 +296,31 @@ function Odc({
      */
     const router = useRouter();
     const { odcId } = router.query;
+
+    // console.log("odc_id",odcId)
     const {
       odc_name,
       capacity,
       merek,
-      core,
+      port_feeder_terminasi,
       rak_oa,
       panel_oa,
+      kml_name,
+      kml_size,
+      kml_file,
+      mc_name,
+      mc_size,
+      mc_file,
+      notes: serverNotes,
       port,
       deployment_date,
       region_name,
       witel_name,
       datel_name,
       sto_name,
-      splitter={splitter:{position:[]},data:[],position:{left:0,top:0}},panel={data:[],position:{left:375,top:0}}} = (viewOdcClient || false)? viewOdcClient:ODCData;
+      splitter={splitter:{position:[]},data:[],position:"top left"},panel={data:[],position:"top left"}} = (viewOdcClient || false)? viewOdcClient:ODCData;
     const feederModal = useState({type:"",status:false});
+    
     // const [feederFocus,setFeederFocus] = useState(false); 
     const [feederFocus,setFeederFocus] = useState(
       {
@@ -557,93 +585,159 @@ function Odc({
       ])))
       // console.log("re render data",(viewOdcClient || false)?viewOdcClient:ODCData)
     },[ODCData,userData,viewOdcClient])
+    /** upload mc variables*/
+    const [MCSelectedFiles,setMCSelectedFiles] = useState([])
+    const formatBytes = (bytes, decimals = 2) => {
+      if (bytes === 0) return "0 Bytes";
+      const k = 1024;
+      const dm = decimals < 0 ? 0 : decimals;
+      const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
+  };
+    const handleAcceptedMCFiles = files => {
+      files.map((file,idx) => {
+        console.log("uploaded file",file,file.type,file.type.split("/")[1]!==('png' || 'jpeg' || 'jpg'))
+        let metadata = {};
+        metadata.idx = idx;
+        if(file.type.split("/")[1]!==('png' || 'jpeg' || 'jpg'))
+        metadata.preview = URL.createObjectURL(file)
+        // else
+        // metadata.thumbnail = (file.type.split("/")[1]!==('vnd.openxmlformats-officedocument.spreadsheetml.sheet'))
+        metadata.formattedSize= formatBytes(file.size)
+          return Object.assign(file, metadata)
+        }
+      );
+      setMCSelectedFiles(files);
+    };
+    /** download mc variables */
+    const handleMCDownload = async() => {
+      fetch(mc_file).then(response => response.blob())
+       .then(blob => {
+           var url = window.URL.createObjectURL(blob);
+           var a = document.createElement('a');
+           a.href = url;
+           a.download = mc_name;
+           document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
+           a.click();    
+           a.remove();  //afterwards we remove the element again         
+       });
+     }
+    const updateMCFile = () => {
+
+    }
+    /** upload kml variables*/
+    const [KMLSelectedFiles,setKMLSelectedFiles] = useState([])
+    console.log("kml ",kml_name,KMLSelectedFiles.length==0 && (kml_name || false))
+    const handleAcceptedKMLFiles = files => {
+      files.map((file,idx) => {
+        console.log("uploaded file",file,file.type,file.type.split("/")[1]!==('png' || 'jpeg' || 'jpg'))
+        let metadata = {};
+        metadata.idx = idx;
+        if(file.type.split("/")[1]!==('png' || 'jpeg' || 'jpg'))
+        metadata.preview = URL.createObjectURL(file)
+        // else
+        // metadata.thumbnail = (file.type.split("/")[1]!==('vnd.openxmlformats-officedocument.spreadsheetml.sheet'))
+        metadata.formattedSize= formatBytes(file.size)
+          return Object.assign(file, metadata)
+        }
+      );
+      setKMLSelectedFiles(files);
+    };
+    /** download kml variables */
+    const handleKmlDownload = async() => {
+     fetch(kml_file).then(response => response.blob())
+      .then(blob => {
+          var url = window.URL.createObjectURL(blob);
+          var a = document.createElement('a');
+          a.href = url;
+          a.download = kml_name;
+          document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
+          a.click();    
+          a.remove();  //afterwards we remove the element again         
+      });
+    }
+    const updateKMLFile = () => {
+
+    }
      /** display odc panel */
     if(odcId.length==1){
         return <div className={`wrapper ${styles.odcIdWrapper}`}>
           { ((viewOdcClient || false)?viewOdcClient:ODCData) &&
           <div className={styles.odcWrapper}>
-            <div className={`row ${styles.odcDetail}`}>
-              <div>
-              <div className='col-lg-12'>
-                <div className={styles.alldetailItems}>
-                  <div className={styles.odcItem}>
-                    <Typography sx={{ whiteSpace: "nowrap"}}>Nama ODC : </Typography>
-                    <Typography sx={{textTransform: "uppercase", whiteSpace: "nowrap"}}>{odc_name}</Typography>
-                  </div>
-                    <hr className={`${styles.hr}`}/>
-                  <div className={styles.odcItem}>
-                    <Typography>Kapasitas : </Typography>
-                    <Typography>{capacity || ""}</Typography>
-                  </div>
-                  <div className={styles.odcItem}>
-                    <Typography>Merek : </Typography>
-                    <Typography>{merek || ""}</Typography>
-                  </div>
-                    <hr className={`${styles.hr}`}/>
-                  <div className={styles.odcItem}>
-                    <Typography>Deployment Date : </Typography>
-                    <Typography>{deployment_date || ""}</Typography>
-                  </div>
-                  <div className={styles.odcItem}>
-                    <Typography>Core : </Typography>
-                    <Typography>{core || ""}</Typography>
-                  </div>
-                    <hr className={`${styles.hr}`}/>
-                  <div className={styles.odcItem}>
-                    <Typography>Rak OA : </Typography>
-                    <Typography>{rak_oa || ""}</Typography>
-                  </div>
-                  <div className={styles.odcItem}>
-                    <Typography>Panel : </Typography>
-                    <Typography>{panel_oa || ""}</Typography>
-                  </div>
-                    <hr className={`${styles.hr}`}/>
-                  <div className={styles.odcItem}>
-                    <Typography>Port : </Typography>
-                    <Typography>{port || ""}</Typography>
-                  </div>
-                  <div className={styles.odcItem}>
-                    <Typography>Regional : </Typography>
-                    <Typography>{region_name || ""}</Typography>
-                  </div>
-                    <hr className={`${styles.hr}`}/>
-                  <div className={styles.odcItem}>
-                    <Typography>Witel : </Typography>
-                    <Typography>{witel_name || ""}</Typography>
-                  </div>
-                  <div className={styles.odcItem}>
-                    <Typography>Datel : </Typography>
-                    <Typography>{datel_name || ""}</Typography>
-                  </div>
-                    <hr className={`${styles.hr}`}/>
-                  <div className={styles.odcItem}>
-                    <Typography>STO : </Typography>
-                    <Typography>{sto_name || ""}</Typography>
-                  </div>
+          <div className={`odcdetail row ${styles.odcDetail}`}>
+
+              <div className={`row ${styles.alldetailItems}`}>
+                <div className={`${styles.odcItem} col-12 col-md-6 col-sm-12`}>
+                  <Typography sx={{ whiteSpace: "nowrap"}}>Nama ODC : </Typography>
+                  <Typography sx={{textTransform: "uppercase", whiteSpace: "nowrap"}}>{odc_name}</Typography>
                 </div>
-                
-
+                   <hr className={`${styles.hr}`}/>
+                <div className={`${styles.odcItem} col-12 col-md-6 col-sm-12`}>
+                  <Typography>Kapasitas : </Typography>
+                  <Typography>{capacity || ""}</Typography>
+                </div>
+               <div className={`${styles.odcItem} col-12 col-md-6 col-sm-12`}>
+                  <Typography>Merek : </Typography>
+                  <Typography>{merek || ""}</Typography>
+                </div>
+                  <hr className={`${styles.hr}`}/>
+                <div className={`${styles.odcItem} col-12 col-md-6 col-sm-12`}>
+                  <Typography>Deployment Date : </Typography>
+                  <Typography>{deployment_date || ""}</Typography>
+                </div>
+                 <div className={`${styles.odcItem} col-12 col-md-6 col-sm-12`}>
+                  <Typography>Port feeder terminasi : </Typography>
+                  <Typography>{port_feeder_terminasi || ""}</Typography>
+                </div>
+                  <hr className={`${styles.hr}`}/>
+                <div className={`${styles.odcItem} col-12 col-md-6 col-sm-12`}>
+                  <Typography>Rak OA : </Typography>
+                  <Typography>{rak_oa || ""}</Typography>
+                </div>
+                <div className={`${styles.odcItem} col-12 col-md-6 col-sm-12`}>
+                  <Typography>Panel : </Typography>
+                  <Typography>{panel_oa || ""}</Typography>
+                </div>
+                  <hr className={`${styles.hr}`}/>
+                <div className={`${styles.odcItem} col-12 col-md-6 col-sm-12`}>
+                  <Typography>Port : </Typography>
+                  <Typography>{port || ""}</Typography>
+                </div>
+                <div className={`${styles.odcItem} col-12 col-md-6 col-sm-12`}>
+                  <Typography>Regional : </Typography>
+                  <Typography>{region_name || ""}</Typography>
+                </div>
+                  <hr className={`${styles.hr}`}/>
+                <div className={`${styles.odcItem} col-12 col-md-6 col-sm-12`}>
+                  <Typography>Witel : </Typography>
+                  <Typography>{witel_name || ""}</Typography>
+                </div>
+                <div className={`${styles.odcItem} col-12 col-md-6 col-sm-12`}>
+                  <Typography>Datel : </Typography>
+                  <Typography>{datel_name || ""}</Typography>
+                </div>
+                  <hr className={`${styles.hr}`}/>
+                <div className={`${styles.odcItem} col-12 col-md-6 col-sm-12`}>
+                  <Typography>STO : </Typography>
+                  <Typography>{sto_name || ""}</Typography>
+                </div> 
               </div>
-              <div className='col-lg-3'>
-
-
-
-              </div>
-              <div className='col-lg-3'>
-               
-              </div>
-              <div className='col-lg-3'>
-
-              </div>
-              </div>
-              <div className={styles.splitPanelWrapper} style={{height:"1000px"}}>
-                <Splitter x={splitter.position.split(" ")[1] == "left" ? "0":""} y={splitter.position.split(" ")[0] == "top" ? "0":""}>
+            <div>
+          </div>
+            
+          </div>
+          <div className='odcpanel row'>
+          <div className={styles.splitPanelWrapper} style={{height:"1000px"}}>
+                {console.log("splitter position",splitter.position)}
+                <Splitter x={splitter.position?(splitter.position.split(" ")[1] == "left" ? "0":""):""} y={splitter.position.split(" ")[0] == "top" ? "0":""}>
                   {splitter.data.map(s_item=>
                   <Eth from="splitter" key={"sp"+s_item.index} id={s_item.index} status={s_item.status}
                     columns={splitter.data.length} />
                   )}
                 </Splitter>
-                <Panel x={splitter.position.split(" ")[1] == "left" ? "375":""} y={splitter.position.split(" ")[0] == "top" ? "0":""}>
+                <Panel x={splitter?.position.split(" ")[1] == "left" ? "375":""} y={splitter.position.split(" ")[0] == "top" ? "0":""}>
                 {/* <Panel x={panel.position.left} y={panel.position.top}> */}
                 {panel.data.map((r_item,idx)=>{
                   // console.log("odc data panel",r_item.rak_index)
@@ -658,9 +752,7 @@ function Odc({
                 
                 })}
                 </Panel>
-              </div>
-              {/* <div className={styles.odcFiles}> */}
-                <div className={`${splitterStyle.videoWrapper}`} style={{left: (splitter.position.split(" ")[1]=="left"? "30px":""),top:(splitter.position.split(" ")[0]=="top"? "639px":"")}}>
+                <div className={`${splitterStyle.videoWrapper}`} style={{left: (splitter.position.split(" ")[1]=="left"? "0px":""),top:(splitter.position.split(" ")[0]=="top"? "320px":"")}}>
               {/* <div className={`${splitterStyle.splitWrapper}`} style={{top:"250px",left:"0px"}}> */}
                 <div className={`${splitterStyle.card}`}>
                   <div className={`${splitterStyle.cardHeader} ${splitterStyle.cardHeaderBlue}`} style={{zIndex:"1"}}>
@@ -676,7 +768,7 @@ function Odc({
                 </div>
               {/* </div> */}
               </div>
-              <div className={`${splitterStyle.legendWrapper}`} style={{left: (splitter.position.split(" ")[1]=="left"? "30px":""),top:(splitter.position.split(" ")[0]=="top"? "921px":"")}}>
+              <div className={`${splitterStyle.legendWrapper}`} style={{left: (splitter.position.split(" ")[1]=="left"? "0px":""),top:(splitter.position.split(" ")[0]=="top"? "600px":"")}}>
               {/* <div className={`${splitterStyle.splitWrapper}`} style={{top:"250px",left:"0px"}}> */}
                 <div className={`${splitterStyle.card}`}>
                   <div className={`${splitterStyle.cardHeader} ${splitterStyle.cardHeaderPurple}`} style={{zIndex:"1"}}>
@@ -688,23 +780,23 @@ function Odc({
                     
                       <div className='col-md-12 col-lg-12'>
                         <div className="row">
-                          <div className='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
+                          <div className='col-sm-12 col-md-6 col-lg-6'>
                             <div className='row'>
-                              <div className='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
+                              <div className='col-6 col-sm-6 col-md-6 col-lg-6'>
                                 focused
                               </div>
-                              <div className='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
+                              <div className='col-6 col-sm-6 col-md-6 col-lg-6'>
                                 <div className={styles.portBorder} style={{borderColor:'#ffda00'}}>
                                 </div>
                               </div>
                             </div>
                           </div>
-                          <div className='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
+                          <div className='col-sm-12 col-md-6 col-lg-6'>
                             <div className='row'>
-                              <div className='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
+                              <div className='col-6 col-sm-6 col-md-6 col-lg-6'>
                                 priority
                               </div>
-                              <div className='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
+                              <div className='col-6 col-sm-6 col-md-6 col-lg-6'>
                               {/* <MdOutlineViewSidebar fill='#ee2d24'/> */}
                               <div className={styles.portBorder} style={{borderColor:'#ee2d24'}}>
                                 </div>
@@ -717,10 +809,10 @@ function Odc({
                       <div className="row">
                         <div className='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
                           <div className='row'>
-                            <div className='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
+                            <div className='col-6 col-sm-6 col-md-6 col-lg-6'>
                             used
                             </div>
-                            <div className='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
+                            <div className='col-6 col-sm-6 col-md-6 col-lg-6'>
                               {/* <MdOutlineViewSidebar fill='blue'/> */}
                               <div className={styles.portBorder} style={{borderColor:'blue'}}>
                                 </div>
@@ -729,10 +821,10 @@ function Odc({
                         </div>
                         <div className='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
                           <div className='row'>
-                            <div className='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
+                            <div className='col-6 col-sm-6 col-md-6 col-lg-6'>
                             idle
                             </div>
-                            <div className='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
+                            <div className='col-6 col-sm-6 col-md-6 col-lg-6'>
                               {/* <MdOutlineViewSidebar /> */}
                               <div className={styles.portBorder} style={{borderColor:'gray'}}>
                                 </div>
@@ -743,10 +835,10 @@ function Odc({
                       <div className="row">
                       <div className='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
                           <div className='row'>
-                            <div className='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
+                            <div className='col-6 col-sm-6 col-md-6 col-lg-6'>
                             broken
                             </div>
-                            <div className='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
+                            <div className='col-6 col-sm-6 col-md-6 col-lg-6'>
                               {/* <MdOutlineViewSidebar fill='black'/> */}
                               <div className={styles.portBorder} style={{borderColor:'black'}}>
                                 </div>
@@ -758,71 +850,155 @@ function Odc({
                   </div>
                   </div>
                 </div>
-              <Modal token={token} dispatchFn={{setSelectedCoreFeeder,deleteSelectedCoreFeeder}} open={feederModal[0].status} header={"Feeder "+feederFocus.feeder.feeder_index} splitterData={splitter.data} panelData={panel.data} feederModal={feederModal} feederFocus={feederFocus}/>
+              </div>
+              {/* <div className={styles.odcFiles}> */}
+              <Modal token={token} dispatchFn={{setSelectedCoreFeeder,deleteSelectedCoreFeeder}} open={feederModal[0].status} header={"Feeder "+feederFocus.feeder.feeder_index} splitterData={splitter.data} panelData={panel.data} feederModal={feederModal} feederFocus={feederFocus} setFeederFocus={setFeederFocus}/>
               {/* <script async src="https://telegram.org/js/telegram-widget.js?18" data-telegram-login="miftah1112_bot"
                 data-size="large" data-onauth="onTelegramAuth(user)" data-request-access="write"></script> */}
-              <div className={styles.odcFiles}>
-                <div className={`${splitterStyle.splitWrapper}`} style={{position:"relative",minWidth:"279px"}}>
+
+
+          </div>
+          <div className={`download_upload_file row`}>
+          {/* <div className={`download_upload_file row ${styles.odcFiles}`}> */}
+
+                <div className={`col-6 col-md-6 col-sm-12 ${styles.uploadContainer}`} style={{position:"relative",minWidth:"370px"}}>
                   {/* <div className={`${splitterStyle.splitWrapper}`} style={{top:"250px",left:"0px"}}> */}
-                  <div className={`${splitterStyle.card}`}>
-                    <div className={`${splitterStyle.cardHeader} ${splitterStyle.cardPinkish}`} style={{zIndex:"1"}}>
+                  <div className={`${splitterStyle.card} ${styles.filesCard}`}>
+                    <div className={`${splitterStyle.cardHeader} ${splitterStyle.cardPinkish} ${splitterStyle.uploadCardStyle}`} style={{zIndex:"1"}}>
 
 
                       <h4 className={splitterStyle.cardTitle}>KML Data</h4>
                     </div>
-                    <div className={`${splitterStyle.splitContainer}`}>
-                      <div className={styles.kmlContainer}>
-                        klik disini untuk upload file
+                    <div className={`${splitterStyle.splitContainer} ${splitterStyle.kmlCardContainer}`}>
+                      <div className={styles.uploadFileWrapper}>
+                      {/* <a target="_blank" href="https://icons8.com/icon/111876/xls">XLS</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a> */}
+                        
+                        <Dropzone
+                  accept='image/xls, image/xlsx'
+                  onDrop={acceptedFiles =>
+                    handleAcceptedKMLFiles(acceptedFiles)
+                  }
+              >
+                  {({ getRootProps, getInputProps }) => (
+                  <div className={`dropzone ${styles.dropzoneCustom}`} style={ {paddingBottom: KMLSelectedFiles.length!==0 && "3rem"}}>
+                      <div
+                      className="dz-message needsclick"
+                      // className="dz-message needsclick mt-2"
+                      {...getRootProps()}
+                      >
+                      <div className={styles.dropzoneHotspot}>
+                        <input {...getInputProps()} className="form-control"/>
+                        {/* <div className="mb-3">
+                            <i className="display-4 text-muted ri-upload-cloud-2-line"></i>
+                        </div> */}
+                        {KMLSelectedFiles.length==0 && (kml_name=="" || kml_name==null) ? [<div key={"downloadIcon"} className={styles.downloadIcon}>
+                          <BsDownload  />
+                        </div>,<h6 key={"subtitle"}>klik disini untuk upload file</h6>]: 
+                        KMLSelectedFiles.length==0 && (kml_name || false) ? [<div key={"fileSelected"} className={styles.fileSelected}>
+                        <AiOutlineFile  />
+                      </div>, <div className={styles.fileDetail} key={"saved_kml"}>
+                          <span >{kml_name}</span>
+                          <span> {kml_size}</span>
+                        </div>,
+                        <h6 key={"subtitle"} className={`${styles.inst}`}>
+                          klik area sekitar untuk memperbarui file
+                        </h6>,
+                        <div key={"hr"} className={`${styles.hrLine}`}> <p>atau</p><hr ></hr></div>]: 
+                        [<div key={"fileSelected"} className={styles.fileSelected}>
+                        <AiOutlineFile  />
+                      </div>,KMLSelectedFiles.map(item=><div className={styles.fileDetail} key={item.idx}>
+                          <span>{item.name}</span>
+                          <span> {item.formattedSize}</span>
+                        </div>)]
+                        }
+                      </div>
+                      
+                      </div>
+                  </div>
+                  )}
+              </Dropzone>
+              {KMLSelectedFiles.length!==0 && <CustomButton itemType='floating' variant='standard' onClick={()=>upsertODCFile(KMLSelectedFiles[0].name,odcId[0],token,toast,KMLSelectedFiles[0],setKMLSelectedFiles,null,null)}>Unggah</CustomButton>}
+              {(KMLSelectedFiles.length==0 && kml_name) && <CustomButton itemType='download' variant='standard' onClick={handleKmlDownload}>Unduh</CustomButton>}
+              
                       </div>
                     </div>
                   </div>
                 </div>
-                <div className={`${splitterStyle.splitWrapper}`} style={{position:"relative",minWidth:"279px"}}>
+                <div className={`col-6 col-md-6 col-sm-12 ${styles.uploadContainer}`} style={{position:"relative",minWidth:"370px"}}>
+                {/* <div className={`col-6 col-sm-12 ${splitterStyle.splitWrapper}`} style={{position:"relative",minWidth:"279px"}}> */}
                   {/* <div className={`${splitterStyle.splitWrapper}`} style={{top:"250px",left:"0px"}}> */}
-                  <div className={`${splitterStyle.card}`}>
-                    <div className={`${splitterStyle.cardHeader} ${splitterStyle.cardPinkish}`}
+                  <div className={`${splitterStyle.card} ${styles.filesCard}`}>
+                    <div className={`${splitterStyle.cardHeader} ${splitterStyle.cardPinkish} ${splitterStyle.uploadCardStyle}`}
                       style={{zIndex:"1"}}>
 
 
                       <h4 className={splitterStyle.cardTitle}>MC Data</h4>
                     </div>
-                    <div className={`${splitterStyle.splitContainer}`}>
-                      <div className={styles.mcContainer}>
-                        klik disini untuk upload file
+                    <div className={`${splitterStyle.splitContainer} ${splitterStyle.kmlCardContainer}`}>
+                      <div className={styles.uploadFileWrapper}>
+                      <Dropzone
+                  accept='image/xls, image/xlsx'
+                  onDrop={acceptedFiles =>
+                    handleAcceptedMCFiles(acceptedFiles)
+                  }
+              >
+                  {({ getRootProps, getInputProps }) => (
+                  <div className={`dropzone ${styles.dropzoneCustom}`} style={ {paddingBottom: MCSelectedFiles.length!==0 && "3rem"}}>
+                      <div
+                      className="dz-message needsclick"
+                      // className="dz-message needsclick mt-2"
+                      {...getRootProps()}
+                      >
+                      <div className={styles.dropzoneHotspot}>
+
+                        <input {...getInputProps()} className="form-control"/>
+                        {/* <div className="mb-3">
+                            <i className="display-4 text-muted ri-upload-cloud-2-line"></i>
+                        </div> */}
+                        {MCSelectedFiles.length==0 && (mc_name=="" || mc_name==null) ? [<div key={"downloadIcon"} className={styles.downloadIcon}>
+                          <BsDownload  />
+                        </div>,<h6 key={"subtitle"}>klik disini untuk upload file</h6>]:
+                        MCSelectedFiles.length==0 && (mc_name || false) ? [<div key={"fileSelected"} className={styles.fileSelected}>
+                        <AiOutlineFile  />
+                      </div>, <div className={styles.fileDetail} key={"saved_mc"}>
+                          <span >{mc_name}</span>
+                          <span> {mc_size}</span>
+                        </div>,
+                        <h6 key={"subtitle"} className={`${styles.inst}`}>
+                          klik area sekitar untuk memperbarui file
+                        </h6>,
+                        <div key={"hr"} className={`${styles.hrLine}`}> <p>atau</p><hr ></hr></div>]: [<div key={"fileSelected"} className={styles.fileSelected}>
+                          <AiOutlineFile  />
+                        </div>,
+                        MCSelectedFiles.map(item=><div className={styles.fileDetail} key={item.idx}>
+                          <span>{item.name}</span>
+                          <span> {item.formattedSize}</span>
+                          
+                        
+                        </div>)]
+                        }
+                        
+                      </div>
+                      
+                      </div>
+                  </div>
+                  )}
+              </Dropzone>
+              {MCSelectedFiles.length!==0 && <CustomButton itemType='floating' variant='standard' onClick={()=>upsertODCFile(MCSelectedFiles[0].name,odcId[0],token,toast,null,null,MCSelectedFiles[0],setMCSelectedFiles)}>Unggah</CustomButton>}
+              {(MCSelectedFiles.length==0 && mc_name) && <CustomButton itemType='download' variant='standard' onClick={handleMCDownload}>Unduh</CustomButton>}
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              <div className={styles.notesContainer}>
-                Notes: 
-                <textarea name="" id="" cols="30" rows="10"></textarea>
-                <Button variant={"outlined"}><a>Edit</a></Button>
+          </div>
+          <div className={`row`}>
+            <div className={`${styles.notesContainer}`}>
+              Notes: 
+              <textarea ref={notes} name="" id="" cols="30" rows="10" defaultValue={serverNotes}></textarea>
+              <Button onClick={()=>updateNotes(notes.current.value,odcId,token,toast)} variant={"outlined"}>Edit</Button>
 
-              </div>
-              
-              {/* <Dropzone
-                  accept='image/jpeg, image/png'
-                  onDrop={acceptedFiles =>
-                  handleAcceptedFiles(acceptedFiles)
-                  }
-              >
-                  {({ getRootProps, getInputProps }) => (
-                  <div className="dropzone">
-                      <div
-                      className="dz-message needsclick mt-2"
-                      {...getRootProps()}
-                      >
-                      <input {...getInputProps()} className="form-control"/>
-                      <div className="mb-3">
-                          <i className="display-4 text-muted ri-upload-cloud-2-line"></i>
-                      </div>
-                      <h4>Drop files here or click to upload.</h4>
-                      </div>
-                  </div>
-                  )}
-              </Dropzone> */}
             </div>
+          </div>
           </div>
             }
         </div>
@@ -843,10 +1019,10 @@ function Odc({
               <div className="card-body table-responsive">
                 <div className={styles.splitterStatusContainer}>
                   <Typography> Splitter </Typography>
-                  {splitter.data.map(item=><FormControl key={item.id} variant="standard" sx={{ m: 1, minWidth: 124 }}>
+                  {splitter.data.map(item=><FormControl key={item.id} variant="standard" sx={{ m: 1, minWidth: 132,marginTop:"0.5rem"}}>
                     <InputLabel id="demo-simple-select-standard-label">Splitter {item.index}</InputLabel>
 
-                    <NativeSelect defaultValue={item.status=="used" ? 10:20} inputProps={{
+                    <NativeSelect defaultValue={item.status=="used" ? 10:20} onChange={(ev)=>updateODCPort(item.id,'splitter',ev.target.options[ev.target.selectedIndex].text,token,toast)} inputProps={{
                         name: 'age',
                         id: 'uncontrolled-native',
                         }}>
@@ -862,13 +1038,13 @@ function Odc({
                   {panel.data.map(item=>(<>
                     {item.data.map(distFeed=>{
                       
-                      return <FormControl key={distFeed.index} variant="standard" sx={{ m: 1, minWidth: 89 }}>
-                     <InputLabel id="demo-simple-select-standard-label" className={styles.portLabel}> { ((item.rak_level)%2===0)?item.type+item.rak_index+" "+(distFeed.index+12):item.type+item.rak_index+" "+distFeed.index }</InputLabel>
+                      return <FormControl key={distFeed.index} variant="standard" sx={{ m: 1, minWidth: 97,marginTop:item.type == 'distribution' && item.rak_index == '1' && distFeed.index<=12 ? "2rem":"0.5rem" }}>
+                     <InputLabel id="demo-simple-select-standard-label" className={styles.portLabel}> { ((item.rak_level)%2===0)?item.type+item.rak_index+" "+(distFeed.index):item.type+item.rak_index+" "+distFeed.index }</InputLabel>
                      {/* <InputLabel id="demo-simple-select-standard-label" className={styles.portLabel}> { ((item.rak_level)%2===0)?item.type+item.rak_index+" "+(distFeed.index+12):item.type+item.rak_index+" "+distFeed.index }</InputLabel> */}
                         {/* {ODCData.panel.data.length}
                         {item.data.length} */}
                        
-                     <NativeSelect  defaultValue={distFeed.status=="used" ? 10:20} inputProps={{
+                     <NativeSelect  defaultValue={distFeed.status=="used" ? 10:20} onChange={(ev)=>{console.log(distFeed,item.type);return updateODCPort(distFeed.id,item.type ,ev.target.options[ev.target.selectedIndex].text,token,toast)}} inputProps={{
                        name: 'age',
                        id: 'uncontrolled-native',
                       }}>
@@ -992,8 +1168,10 @@ export const getServerSideProps = async (props) => wrapper.getServerSideProps(st
       }
     }
     const {params:{odcId=[]}} = props;
-    console.log("odc id",odcId[0])
-    store.dispatch(getOcdSplitpanelStatus(odcId[0],req.cookies.token,toast))
+    // console.log("odc id req",req)
+    // console.log("odc id",odcId[0])
+    store.dispatch(getOcdSplitpanelStatus(odcId[0],req.cookies.token,toast));
+    store.dispatch(getOcdSplitpanelDetail(odcId[0],req.cookies.token,toast));
     store.dispatch(getUserData(1,10, {name:"",direction:"asc"},req.cookies.token,null,toast))
     store.dispatch(getRegionList(req.cookies.token))
     store.dispatch(getWitelList(req.cookies.token))
@@ -1021,7 +1199,8 @@ export const getServerSideProps = async (props) => wrapper.getServerSideProps(st
             return {
                 props:{ 
                   data: selectedOdcSplitpanelStatus, 
-                  userData: store.getState().Users.userData.data,
+                  ODCdetailData: store.getState().ODCs.selectedOdcSplitpanelDetail.data,
+                  userData: store.getState().Users.userData.data || [{id:0,name:""}],
                   regionList: store.getState().ODCs.region_list || [{id:0,name:""}],
                   witelList: store.getState().ODCs.witel_list || [{id:0,region_id: 0,name:""}],
                   datelList: store.getState().ODCs.datel_list || [{id:0,region_id: 0,witel_id: 0,name:""}],
@@ -1046,6 +1225,10 @@ const mapStateToProps = state => ({
 const mapFunctionToProps = {
     getOcdSplitpanelStatus,
     setSelectedCoreFeeder,
-    deleteSelectedCoreFeeder
+    updateODCData,
+    deleteSelectedCoreFeeder,
+    upsertODCFile,
+    updateNotes,
+    updateODCPort
 }
 export default connect(mapStateToProps,mapFunctionToProps)(withAuth(Odc));

@@ -21,6 +21,9 @@ export default function Layout(props) {
         email,
         role_name,
         token,
+        updateODCData,
+        ODCdetailData,
+        odc_rowsPerPage,
         regionList,
         witelList,
         datelList,
@@ -40,11 +43,12 @@ export default function Layout(props) {
 
         },333)
     },[closeState])
+    // console.log("option list", regionList,witelList,datelList,stoList,merekList)
   
     return <div className={styles.layoutWrapper}>
-        <Sidebar odcProps={{regionList,witelList,datelList,stoList,merekList}} token={token}/>
+        <Sidebar odcProps={{regionList,witelList,datelList,stoList,merekList,odc_rowsPerPage}} token={token}/>
         <div className={styles.topGap}>
-            <Navbar odcProps={{regionList,witelList,datelList,stoList,merekList}} odcData={data} email={email} role_name={role_name} token={token}/>
+            <Navbar odcProps={{regionList,witelList,datelList,stoList,merekList,ODCdetailData}} odcDispatch={{updateODCData}} odcData={data} email={email} role_name={role_name} token={token}/>
 
             {children}
             <div className={styles.overlay} onClick={closeMenu}></div>
