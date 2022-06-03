@@ -5,18 +5,16 @@ import {
     OTP_VERIFICATION_SUCCESSFUL,
     TELEGRAM_USER_VERIFY,
     FORGOT_PASSWORD_REQUEST,
-    FORGOT_PASSWORD_PAGE_CLOSED,
-    VERIFY_RESET_CODE,
-    RESET_PASSWORD
+    FORGOT_PASSWORD_PAGE_CLOSED
 } from "./actionTypes";
 
 export const checkLogin = (email,password,history,errorState,setSubmitting)=>({
     type: LOGIN_CHECK,
     payload: {email,password,history,errorState,setSubmitting}
 });
-export const verifyOtp = (value,history,setError)=>({
+export const verifyOtp = (value,history)=>({
     type: OTP_VERIFY,
-    payload: {value,history,setError}
+    payload: {value,history}
 });
 export const successfullLogin = () =>({
     type: LOGIN_SUCCESSFUL
@@ -34,12 +32,4 @@ export const requestForgotPassword = (email) => ({
 });
 export const forgotPageClosed = () =>({
     type: FORGOT_PASSWORD_PAGE_CLOSED
-});
-export const verifyResetCode = (code) => ({
-    type: VERIFY_RESET_CODE,
-    payload: {code}
-});
-export const resetPassword = (code,password,setError,setSubmitting) => ({
-    type: RESET_PASSWORD,
-    payload: {code,password,setError,setSubmitting}
 });

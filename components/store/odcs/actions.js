@@ -20,9 +20,6 @@ import {
     ADD_ODC_DATA,
     UPDATE_ODC_DATA,
     DELETE_ODC_DATA,
-    GET_ODC_SPLITPANEL_DETAIL,
-    SET_ROWS_PER_PAGE,
-    UPSERT_ODC_FILE
 } from './actionTypes'
 export const getSplitterData = () =>({
     type: GET_SPLITTER_DATA,
@@ -65,10 +62,6 @@ export const getOcdSplitpanelStatus = (odcId,token,toast) => ({
     type: GET_ODC_SPLITPANEL_STATUS,
     payload: {odcId,token,toast}
 });
-export const getOcdSplitpanelDetail = (odcId,token,toast) => ({
-    type: GET_ODC_SPLITPANEL_DETAIL,
-    payload: {odcId,token,toast}
-});
 export const getRegionList = (token) => ({
     type: GET_REGION_LIST,
     payload: {token}
@@ -93,10 +86,7 @@ export const changeODCPage = (page,rowsPerPage,sortOrder,token,toast) => ({
     type: GET_ODC_PAGE,
     payload: {page,rowsPerPage,sortOrder,token,toast}
 })
-export const setTableRowsPerPage = (value)=>({
-    type: SET_ROWS_PER_PAGE,
-    payload:{value}
-})
+
 export const addODCData = (
     name,
     merek_id,
@@ -112,7 +102,7 @@ export const addODCData = (
     witel_id,
     datel_id,
     sto_id
-    ,token,setSubmitting,handleClose,toast,rowsPerPage) => ({
+    ,token,setSubmitting,handleClose,toast) => ({
     type: ADD_ODC_DATA,
     payload: {
         name,
@@ -129,17 +119,20 @@ export const addODCData = (
         witel_id,
         datel_id,
         sto_id
-        ,token,setSubmitting,handleClose,toast,rowsPerPage
+        ,token,setSubmitting,handleClose,toast
     }
 });
 
-export const deleteODCData = (odc_name,odc_id,token,deleteRowHandleClose,toast)=>({
+export const deleteODCData = (odc_name,idx,odc_id,token,setSubmitting,deleteRowHandleClose,toast)=>({
     type: DELETE_ODC_DATA,
-    payload: {odc_name,odc_id,token,deleteRowHandleClose,toast}
+    payload: {odc_name,idx,odc_id,token,setSubmitting,deleteRowHandleClose,toast}
 })
 export const updateODCData = (
     name,
+    merk_id,
+    port_feeder_terminasi,
     deployment_date,
+    capacity,
     notes,
     panel_oa,
     rak_oa,
@@ -149,11 +142,14 @@ export const updateODCData = (
     witel_id,
     datel_id,
     sto_id
-    ,odc_id,token,setSubmitting,handleClose,toast,rowsPerPage)=>({
+    ,idx,user_id,token,setSubmitting,handleClose,toast)=>({
     type: UPDATE_ODC_DATA,
     payload: {
         name,
+        merk_id,
+        port_feeder_terminasi,
         deployment_date,
+        capacity,
         notes,
         panel_oa,
         rak_oa,
@@ -162,11 +158,7 @@ export const updateODCData = (
         region_id,
         witel_id,
         datel_id,
-        sto_id,
-        odc_id,token,setSubmitting,handleClose,toast,rowsPerPage
+        sto_id
+        ,idx,user_id,token,setSubmitting,handleClose,toast
     }
-})
-export const upsertODCFile = (name,odc_id,token,toast,kml,setKml,mc,setMc) => ({
-    type: UPSERT_ODC_FILE,
-    payload: {name,odc_id,token,toast,kml,setKml,mc,setMc}
 })

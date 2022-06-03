@@ -35,12 +35,8 @@ import { GET_SPLITTER_DATA,
   DELETE_ODC_DATA_SUCCESSFUL,
   DELETE_ODC_DATA_FAILED,
   GET_MEREK_LIST,
-  GET_ODC_SPLITPANEL_DETAIL_SUCCESSFUL,
   GET_MEREK_LIST_FAILED,
-  GET_MEREK_LIST_SUCCESSFUL,
-  SET_TABEL_ROWS_PER_PAGE_SUCCESSFUL,
-  UPSERT_ODC_FILE,
-  UPSERT_ODC_FILE_SUCCESSFUL
+  GET_MEREK_LIST_SUCCESSFUL
 } from "./actionTypes";
 import { HYDRATE } from 'next-redux-wrapper';
 const INIT_STATE = {
@@ -60,9 +56,7 @@ const INIT_STATE = {
         addODCData: false,
         updateODCData: false,
         deleteODCData: false,
-        upsertFile: false,
     },
-    tableRowsPerPage:0,
     add_odc_list:"",
     delete_odc_list:"",
     odc_page:"",
@@ -221,11 +215,9 @@ const odcs = (state=INIT_STATE,action) => {
           ...state,
           loading:{
             ...state.loading,
-            getOdcSplitpanelStatus: true,
-            getOdcSplitpanelDetail: true,
+            getOdcSplitpanelStatus: true
           },
-          selectedOdcSplitpanelStatus: "",
-          selectedOdcSplitpanelDetail: ""
+          selectedOdcSplitpanelStatus: ""
         }
         
         case GET_ODC_SPLITPANEL_STATUS_SUCCESSFUL:
@@ -237,17 +229,6 @@ const odcs = (state=INIT_STATE,action) => {
             getOdcSplitpanelStatus: false
           },
           selectedOdcSplitpanelStatus: action.payload
-
-        }
-        case GET_ODC_SPLITPANEL_DETAIL_SUCCESSFUL:
-          
-        return{
-          ...state,
-          loading:{
-            ...state.loading,
-            getOdcSplitpanelDetail: false
-          },
-          selectedOdcSplitpanelDetail: action.payload
 
         }
       case DELETE_SELECTED_CORE_FEEDER:
@@ -487,27 +468,7 @@ const odcs = (state=INIT_STATE,action) => {
                 },
                 delete_odc_list: action.payload
             };
-      case SET_TABEL_ROWS_PER_PAGE_SUCCESSFUL:
-            return{
-              ...state,
-              tableRowsPerPage: action.payload
-            }
-      case UPSERT_ODC_FILE:
-        return {
-          ...state,
-          loading:{
-            ...state.loading,
-            upsertFile:true
-          }
-        }
-      case UPSERT_ODC_FILE_SUCCESSFUL:
-        return {
-          ...state,
-          loading:{
-            ...state.loading,
-            upsertFile:false
-          },
-        }
+    
       default:
           return state;
   }

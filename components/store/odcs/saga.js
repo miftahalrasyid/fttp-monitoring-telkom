@@ -1,4 +1,3 @@
-import { SettingsInputComponent } from '@material-ui/icons';
 import {call,all,put,fork,takeEvery} from 'redux-saga/effects';
 import {
     GET_CORE_FEEDER,
@@ -18,8 +17,6 @@ import {
     GET_SELECTED_CORE_FEEDER,
     GET_ODC_SPLITPANEL_STATUS,
     GET_ODC_SPLITPANEL_STATUS_SUCCESSFUL,
-    GET_ODC_SPLITPANEL_DETAIL,
-    GET_ODC_SPLITPANEL_DETAIL_SUCCESSFUL,
     GET_REGION_LIST,
     GET_REGION_LIST_SUCCESSFUL,
     GET_WITEL_LIST,
@@ -42,10 +39,6 @@ import {
     DELETE_ODC_DATA_FAILED,
     SET_SELECTED_CORE_FEEDER_FAILED,
     SET_SELECTED_CORE_FEEDER_SUCCESSFUL,
-    SET_ROWS_PER_PAGE,
-    SET_TABEL_ROWS_PER_PAGE_SUCCESSFUL,
-    UPSERT_ODC_FILE,
-    UPSERT_ODC_FILE_FAILED
 } from './actionTypes';
 // import firebase from '../../Firebase';
 
@@ -341,7 +334,7 @@ function* fetchStatus({payload:{odcId,token,toast}}){
             headers: myHeaders,
             redirect: 'follow'
           };
-        // console.log("get fetch status",token,`${process.env.NEXT_PUBLIC_API_HOST}/api/view-odc/`);
+        console.log("get fetch status",token,`${process.env.NEXT_PUBLIC_API_HOST}/api/view-odc/`);
         const rest = yield fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/api/view-odc/${odcId}`,requestOptions).then(res=>res.json())
 
         // console.log("odc ktm fs",rest)
@@ -644,7 +637,7 @@ function* addODCData({payload:{
     panel_oa,
     rak_oa,
     port
-    ,token,setSubmitting,handleClose,toast,rowsPerPage
+    ,token,setSubmitting,handleClose,toast
 }}){
     try {
         console.log("masuk add odc data saga")
@@ -734,7 +727,7 @@ function* addODCData({payload:{
                 draggable: true,
                 progress: undefined,
               });
-            yield put({type:GET_ODC_PAGE,payload:{page:1,rowsPerPage,sortOrder:{name:"",direction:"asc"},token}})
+            yield put({type:GET_ODC_PAGE,payload:{page:1,rowsPerPage:10,sortOrder:{name:"",direction:"asc"},token}})
         }
     } catch (error) {
         console.log("saga add odc error" ,error)
@@ -753,7 +746,10 @@ function* addODCData({payload:{
 
 function* updateODCData({payload:{
     name,
+    merek_id,
+    port_feeder_terminasi,
     deployment_date,
+    capacity,
     notes,
     panel_oa,
     rak_oa,
@@ -763,9 +759,8 @@ function* updateODCData({payload:{
     witel_id,
     datel_id,
     sto_id
-    ,odc_id,token,setSubmitting,handleClose,toast,rowsPerPage
+    ,idx,odc_id,token,setSubmitting,handleClose,toast
 }}){
-    console.log("toast",toast)
     try {
         /** jika offline */
         if(!navigator.onLine) {
@@ -786,10 +781,12 @@ function* updateODCData({payload:{
         var myHeaders = new Headers();
         myHeaders.append("Authorization", "Bearer "+token);
         var formdata = new FormData();
-        
         formdata.append("name", name);
+        formdata.append("merek_id", merek_id);
+        formdata.append("port_feeder_terminasi", port_feeder_terminasi);
         formdata.append("deployment_date", deployment_date);
-        formdata.append("notes",  "");
+        formdata.append("capacity", capacity);
+        formdata.append("notes", notes);
         formdata.append("panel_oa", panel_oa);
         formdata.append("rak_oa", rak_oa);
         formdata.append("port", port);
@@ -808,12 +805,12 @@ function* updateODCData({payload:{
         const res = yield fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/api/update-odc/${odc_id}`,requestOptions)
         .then(res=>res.json())
         .then(result=>{
+            // console.log("error sgga",result)
             if(!result.success){
-                setSubmitting(false)
-                // setSubmitting(prev=>{
-                //     prev[idx].status = false;
-                //     return {...prev}
-                // })
+                setSubmitting(prev=>{
+                    prev[idx].status = false;
+                    return {...prev}
+                })
                 if(result.msg=='Method must be one of: OPTIONS'){
                     toast.error("Gagal memanggil API", {
                         position: "top-right",
@@ -846,19 +843,11 @@ function* updateODCData({payload:{
             }
         });        
         if(res.success){
-            // handleClose(idx)
-            handleClose()
-            // console.log("set submit",setSubmitting)
-            setSubmitting(false)
-            // setSubmitting(prev=>{
-            //     console.log("prev",prev)
-            //     if(idx)
-            //     return false
-            //     else{
-            //         prev[idx].status = false;
-            //         return {...prev}
-            //     }
-            // })
+            handleClose(idx)
+            setSubmitting(prev=>{
+                prev[idx].status = false;
+                return {...prev}
+            })
             toast.success("odc berhasil di update", {
                 position: "top-right",
                 autoClose: 5000,
@@ -868,10 +857,7 @@ function* updateODCData({payload:{
                 draggable: true,
                 progress: undefined,
               });
-              if(rowsPerPage)
-              yield put({type:GET_ODC_PAGE,payload:{page:0,rowsPerPage,sortOrder:{name:"",direction:"asc"},token,errorState:""}})
-              else
-              yield put({type:GET_ODC_SPLITPANEL_STATUS,payload:{odcId:odc_id[0],token,toast}})
+              yield put({type:GET_ODC_PAGE,payload:{page:0,rowsPerPage:10,sortOrder:{name:"",direction:"asc"},token,errorState:""}})
         }
     } catch (error) {
         console.log("saga update odc error" ,error)
@@ -887,9 +873,10 @@ function* updateODCData({payload:{
     }
 }
 
-function* deleteODCData({payload:{odc_name,odc_id,token,deleteRowHandleClose,toast}}){
+function* deleteODCData({payload:{odc_name,idx,odc_id,token,setSubmitting,deleteRowHandleClose,toast}}){
     try {
         if(!navigator.onLine) {
+            setSubmitting(false);
             toast.error("Anda tidak terhubung dengan internet", {
                 position: "top-right",
                 autoClose: 5000,
@@ -899,6 +886,7 @@ function* deleteODCData({payload:{odc_name,odc_id,token,deleteRowHandleClose,toa
                 draggable: true,
                 progress: undefined,
               });
+              setSubmitting(false);
             return; 
         }
         var myHeaders = new Headers();
@@ -914,6 +902,10 @@ function* deleteODCData({payload:{odc_name,odc_id,token,deleteRowHandleClose,toa
         .then(result=>{
             // console.log("error sgga",result)
             if(!result.success){
+                setSubmitting(prev=>{
+                    prev[idx].status = false;
+                    return {...prev}
+                })
                 if(result.msg=='Method must be one of: OPTIONS'){
                     toast.error("Gagal memanggil API", {
                         position: "top-right",
@@ -946,7 +938,11 @@ function* deleteODCData({payload:{odc_name,odc_id,token,deleteRowHandleClose,toa
             }
         });        
         if(res.success){
-            deleteRowHandleClose(false)
+            deleteRowHandleClose(idx)
+            setSubmitting(prev=>{
+                prev[idx].status = false;
+                return {...prev}
+            })
             toast.success(odc_name+" berhasil di delete", {
                 position: "top-right",
                 autoClose: 5000,
@@ -974,186 +970,21 @@ function* deleteODCData({payload:{odc_name,odc_id,token,deleteRowHandleClose,toa
           });
     }
 }
-function* fetchODCDetail({payload:{odcId,token,toast}}) {
-    try {
-        var myHeaders = new Headers();
-        myHeaders.append("Authorization", "Bearer "+token);
-        var requestOptions = {
-            method: 'GET',
-            headers: myHeaders,
-            redirect: 'follow'
-          };
-    
-        const res = yield fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/api/get-odc/${odcId}`,requestOptions).then(rest=>rest.json())
-        //   console.log("fetch odc detail", res)
-        yield put({type:GET_ODC_SPLITPANEL_DETAIL_SUCCESSFUL,payload:(res && res.success)? res  : {"data": {
-            id:"",
-            name:"",
-            merek_id:"",
-            port_feeder_terminasi: 0,
-            deployment_date: "",
-            capacity:0,
-            notes:"",
-            panel_oa:"",
-            rak_oa: "",
-            port:"2",
-            status:false,
-            created_at:"",
-            created_by:"",
-            updated_at:"",
-            updated_by: "",
-            mc_file:"",
-            kml_file:"",
-            region_id:0,
-            witel_id:0,
-            datel_id:0,
-            sto_id:0,
-        }}})
 
-    } catch (error) {
-        console.error(error)
-        toast.error("Maaf, ada kesalahan teknis", {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-        });
-    }
-
-}
-function* setTableRowsPerPage({payload:{value}}){
-    try {
-        yield put({type: SET_TABEL_ROWS_PER_PAGE_SUCCESSFUL,payload:value})
-    } catch (error) {
-        
-    }
-}
-
-function* upsertFile({payload:{name,odc_id,token,toast,kml,setKml,mc,setMc}}){
-    // console.log("saga kml",kml,odc_id,token)
-    try {
-        var myHeaders = new Headers();
-        myHeaders.append("Authorization",`Bearer ${token}`);
-        var formdata = new FormData();
-        if(kml instanceof File)
-        formdata.append("kml_file", kml, kml.name);
-        if(mc instanceof File)
-        formdata.append("mc_file", mc, mc.name);
-        var requestOptions = {
-            method: 'POST',
-            headers: myHeaders,
-            body: formdata,
-            redirect: 'follow',
-        }
-        var res = yield fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/api/upload-file/${odc_id}`,requestOptions).then(rest=>{
-            if(rest.status==413){
-                toast.error("file terlalu besar", {
-                    position: "top-right",
-                    autoClose: 5000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                  });
-                // errorState({status:true,msg:"Gagal memanggil API"});
-                return put({type:UPSERT_ODC_FILE_FAILED,payload:{success:false,data:[],msg:"Gagal memanggil API"}})
-            }
-            return rest.json()})
-        // console.log("saga upsert file",res)
-        .then(result=>{
-            // console.log("error sgga",result)
-            if(!result.success){
-                
-                if(result.msg=='Method must be one of: OPTIONS'){
-                    toast.error("Gagal memanggil API", {
-                        position: "top-right",
-                        autoClose: 5000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                      });
-                    // errorState({status:true,msg:"Gagal memanggil API"});
-                    return put({type:UPSERT_ODC_FILE_FAILED,payload:{success:false,data:[],msg:"Gagal memanggil API"}})
-                }
-                else{
-                    toast.error(result.msg, {
-                        position: "top-right",
-                        autoClose: 5000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                      });
-                    // errorState({status:true,msg: result.msg});
-                    return put({type:UPSERT_ODC_FILE_FAILED,payload:{success:result.success,data:[],msg:result.msg || result.message}})
-                }
-            }
-            else {
-                return {success:result.success,data:result.data}
-            }
-        });   
-        if(res.success){
-            toast.success(`${kml? "KML":"MC"} file berhasil di update`, {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-            });
-            if(kml)
-            setKml([])
-            else
-            setMc([])
-            yield put({type:GET_ODC_SPLITPANEL_STATUS,payload:{odcId:odc_id,token,toast}})
-        }
-        // else{
-        //     toast.error("MC file gagal di update", {
-        //         position: "top-right",
-        //         autoClose: 5000,
-        //         hideProgressBar: false,
-        //         closeOnClick: true,
-        //         pauseOnHover: true,
-        //         draggable: true,
-        //         progress: undefined,
-        //     });
-        // }
-    } catch (error) {
-        console.error(error)
-        toast.error("Maaf, ada kesalahan teknis", {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-        });
-    }
-}
 
 function* watchODCsData(){
     yield takeEvery(GET_GRAPH_FEEDER,getFeederGraph)
     yield takeEvery(GET_GRAPH_DISTRIBUTION,getDistributionGraph)
     
-    // yield takeEvery(GET_SPLITTER_DATA,getSplitter)
-    // yield takeEvery(GET_CORE_FEEDER,getCoreFeeder)
-    // yield takeEvery(GET_ODCs,getODCsBox)
-    // yield takeEvery(UPDATE_CORE_FEEDER,updateCoreFeeder)
-    // yield takeEvery(UPDATE_SPLITTER_DISTRIBUTION,updateSplitterDistribution);
+    yield takeEvery(GET_SPLITTER_DATA,getSplitter)
+    yield takeEvery(GET_CORE_FEEDER,getCoreFeeder)
+    yield takeEvery(GET_ODCs,getODCsBox)
+    yield takeEvery(UPDATE_CORE_FEEDER,updateCoreFeeder)
+    yield takeEvery(UPDATE_SPLITTER_DISTRIBUTION,updateSplitterDistribution);
     yield takeEvery(SET_SELECTED_CORE_FEEDER,setSelectedCoreFeederSaga)
     yield takeEvery(DELETE_SELECTED_CORE_FEEDER,deleteSelectedCoreFeederSaga)
 
     yield takeEvery(GET_ODC_SPLITPANEL_STATUS,fetchStatus)
-    yield takeEvery(GET_ODC_SPLITPANEL_DETAIL,fetchODCDetail)
     
     yield takeEvery(GET_REGION_LIST,getRegionList)
     yield takeEvery(GET_WITEL_LIST,getWitelList)
@@ -1165,10 +996,6 @@ function* watchODCsData(){
     yield takeEvery(ADD_ODC_DATA,addODCData)
     yield takeEvery(UPDATE_ODC_DATA,updateODCData)
     yield takeEvery(DELETE_ODC_DATA,deleteODCData)
-
-    yield takeEvery(SET_ROWS_PER_PAGE,setTableRowsPerPage)
-
-    yield takeEvery(UPSERT_ODC_FILE,upsertFile)
 }
 
 function* odcsSaga() {

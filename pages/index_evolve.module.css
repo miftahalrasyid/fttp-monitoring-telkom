@@ -130,10 +130,8 @@
     /* margin-bottom:1rem */
 }
 .validation{
-    color:#e33e3e !important;
-    width: 100%;
-    text-align: center !important;
-    margin-bottom: 0.5rem !important;
+    color:#e33e3e;
+    margin-bottom: 0.5rem;
 }
 .validationOnSubmit{
     color:#e33e3e;
@@ -282,9 +280,6 @@
     align-items: center;
     height: 100%;
 }
-.confirmationPageWrapper a{
-    flex-basis: 16%;
-}
 .confirmGroup{
     /* margin-bottom: 4rem; */
     /* flex-basis: 32%; */
@@ -312,9 +307,4 @@
     color: white;
     width: 127px;
     padding: 0.5rem;
-}
-.danger{
-    color: red;
-    flex-basis: 50%;
-    text-align: center;
 }

@@ -11,32 +11,12 @@ module.exports = {
         destination: process.env.NEXT_PUBLIC_API_HOST+'/api/:path/:user_id',
       },
       {
-        source: '/uploads/:filename',
-        destination: process.env.NEXT_PUBLIC_API_HOST+'/uploads/:filename',
-      },
-      // {
-      //   source: '/api/:path/:odc_id',
-      //   destination: process.env.NEXT_PUBLIC_API_HOST+'/api/:path/:odc_id',
-      // },
-      {
         source: '/login',
         destination: process.env.NEXT_PUBLIC_API_HOST+'/login',
       },
       {
         source: '/verify-otp',
         destination: process.env.NEXT_PUBLIC_API_HOST+'/verify-otp',
-      },
-      {
-        source: '/forgot-password',
-        destination: process.env.NEXT_PUBLIC_API_HOST+'/forgot-password',
-      },
-      {
-        source: '/verify-forgot-password',
-        destination: process.env.NEXT_PUBLIC_API_HOST+'/verify-forgot-password',
-      },
-      {
-        source: '/update-password',
-        destination: process.env.NEXT_PUBLIC_API_HOST+'/update-password',
       },
     ]
   },

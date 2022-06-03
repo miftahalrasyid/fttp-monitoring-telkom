@@ -18,9 +18,6 @@ export const DELETE_SELECTED_CORE_FEEDER_FAILED = "delete_selected_core_feeder_f
 export const GET_ODC_SPLITPANEL_STATUS = "get_odc_splitpanel_status";
 export const GET_ODC_SPLITPANEL_STATUS_SUCCESSFUL = "get_odc_splitpanel_status_successful";
 
-export const GET_ODC_SPLITPANEL_DETAIL = "get_odc_splitpanel_detail";
-export const GET_ODC_SPLITPANEL_DETAIL_SUCCESSFUL = "get_odc_splitpanel_detail_successful";
-
 export const GET_GRAPH_FEEDER = "get_odc_graph_feeder";
 export const GET_GRAPH_FEEDER_SUCCESSFUL = "get_odc_graph_feeder_successful";
 
@@ -55,9 +52,3 @@ export const UPDATE_ODC_DATA_FAILED = "update_odc_data_failed";
 export const DELETE_ODC_DATA = "delete_odc_data";
 export const DELETE_ODC_DATA_SUCCESSFUL = "delete_odc_data_successful";
 export const DELETE_ODC_DATA_FAILED = "delete_odc_data_failed";
-
-export const SET_ROWS_PER_PAGE = "set_table_rows_per_page";
-export const SET_TABEL_ROWS_PER_PAGE_SUCCESSFUL = "set_table_rows_per_page_successful";
-
-export const UPSERT_ODC_FILE = "upsert_odc_file";
-export const UPSERT_ODC_FILE_FAILED = "upsert_odc_file_failed";

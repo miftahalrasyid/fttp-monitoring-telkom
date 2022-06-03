@@ -100,15 +100,12 @@ const CustomButtonModal = styled(Button)(({ theme, btntype }) => ({
   }
 function Index_evolve({odcProps,token,addODCData,...etc}) {
     console.log("odc props",odcProps,etc)
-    const {
+    const {  
       regionList,
       witelList,
       datelList,
       stoList,
       merekList,
-      odc_rowsPerPage,
-    } = odcProps
-    const {  
       getRegionList,
       getWitelList,
       getDatelList,
@@ -190,7 +187,7 @@ function Index_evolve({odcProps,token,addODCData,...etc}) {
       const [witelListClient,setWitelListClient] = useState("");
       const [datelListClient,setDatelListClient] = useState("");
       const [stoListClient,setSTOListClient] = useState("");
-      // console.log("region list",regionList.data,witelListClient)
+      console.log("region list",regionList.data,witelListClient)
       useEffect(()=>{
         
       },[witelListClient,datelListClient,stoListClient,regionList,witelList])
@@ -335,24 +332,10 @@ function Index_evolve({odcProps,token,addODCData,...etc}) {
                           /* fungsi komparasi region witel datel (jika sama select option langsung ditentukan)*/
                           for(var i = 1; i < stoList?.data?.filter(item=>item.region_id.toString() === values.region_id).filter(item=>item.witel_id.toString() == values.witel_id).length; i++)
                           { 
-                            let a = stoList?.data?.filter(
-                              item=>item.region_id.toString() === values.region_id
-                            )
-                            .filter(
-                              item=>item.witel_id.toString() == values.witel_id
-                            )[i];
-                            let b = stoList?.data?.filter(
-                              item=>item.region_id.toString() === values.region_id
-                            )
-                            .filter(
-                              item=>item.witel_id.toString() == values.witel_id
-                            )[i-1];
-                            let currentName = JSON.stringify({
-                              region:a.region_id,witel:a.witel_id,datel:a.datel_id
-                            }); 
-                            let firstName = JSON.stringify({
-                              region:b.region_id,witel:b.witel_id,datel:b.datel_id
-                            });
+                            let a = stoList?.data?.filter(item=>item.region_id.toString() === values.region_id).filter(item=>item.witel_id.toString() == values.witel_id)[i];
+                            let b = stoList?.data?.filter(item=>item.region_id.toString() === values.region_id).filter(item=>item.witel_id.toString() == values.witel_id)[i-1];
+                            let currentName = JSON.stringify({region:a.region_id,witel:a.witel_id,datel:a.datel_id}); 
+                            let firstName = JSON.stringify({region:b.region_id,witel:b.witel_id,datel:b.datel_id});
                             if(firstName == currentName)
                             {
                               // return true;
@@ -380,7 +363,7 @@ function Index_evolve({odcProps,token,addODCData,...etc}) {
                         }}
                         onSubmit={(values,{setSubmitting})=>{
                           console.log("on submit",values)
-                          addODCData(values.name,values.merek_id,values.port_feeder_terminasi,values.deployment_date,values.capacity,null,values.panel_oa,values.rak_oa,values.port,values.name,values.region_id,values.witel_id,values.datel_id,values.sto_id,token,setSubmitting,handleClose,toast,odc_rowsPerPage)
+                          addODCData(values.name,values.merek_id,values.port_feeder_terminasi,values.deployment_date,values.capacity,null,values.panel_oa,values.rak_oa,values.port,values.name,values.region_id,values.witel_id,values.datel_id,values.sto_id,token,setSubmitting,handleClose,toast)
                         }}
                       >
                         {({

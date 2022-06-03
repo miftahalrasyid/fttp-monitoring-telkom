@@ -17,10 +17,6 @@
 .splitContainer div{
     margin-bottom: 0.5rem;
 }
-.splitContainer h6{
-    margin-bottom: 1.5rem;
-    text-align: center;
-}
 .legendContainer{
     position: relative;
     display:flex;
@@ -81,8 +77,7 @@
 }
 .cardPinkish{
     background: linear-gradient(60deg,#f14399,#e42e2e);
-    /* box-shadow: 0 4px 20px 0 rgb(0 0 0 / 14%), 0 7px 10px -5px rgb(255 0 131 / 40%); */
-    box-shadow: 0 4px 20px 0 rgb(0 0 0 / 14%), 0px 4px 10px 1px rgb(255 0 131 / 40%);
+    box-shadow: 0 4px 20px 0 rgb(0 0 0 / 14%), 0 7px 10px -5px rgb(255 0 131 / 40%);
 }
 .card {
     border: 0;
@@ -221,19 +216,6 @@
 }
 .card .cardHeader .cardCategory {
     margin: 0;
-}
-.card .cardHeader.cardPinkish.uploadCardStyle{
-    margin-top: 14px !important;
-    margin-left: -9px;
-    margin-right: -9px;
-}
-.card .cardHeader.cardPinkish.uploadCardStyle h4{
-    text-align: center;
-}
-.card .kmlCardContainer{
-    margin: 0 0.9rem;
-    height:200px;
-    /* margin-top: 55px; */
 }
 @media (min-width:1080px) {
     .splitWrapper{
