@@ -49,7 +49,9 @@ import {
   deleteSelectedCoreFeeder,
   upsertODCFile,
   updateNotes,
-  updateODCPort
+  updateODCPort,
+  getActivityLog,
+  setTableRowsPerPage
 } from '../../components/store/odcs/actions';
 import {getUserData} from '../../components/store/users/actions';
 import { wrapper,makeStore } from "../../components/store";
@@ -274,6 +276,9 @@ customCreateTheme({
 function Odc({
     data:ODCData,
     userData,
+    activityLog,
+    activity_log_client,
+    getActivityLog,
     viewOdcClient,
     deleteSelectedCoreFeeder,
     token,
@@ -575,16 +580,26 @@ function Odc({
      */
      const [datatable, setDatatable] = useState([[]]);
      useEffect(()=>{
-      setDatatable(userData.map(item=>([
-        item.name,
+      setDatatable(activityLog.data.map(item=>([
+        item.row_number,
         item.email,
-        item.role,
-        // ODCData.deployment_date,
-        "Sat Apr 02 2022 22:32:35",
-        item.action || "user merubah ODC"
+        item.role_name,
+        item.created_at,
+        item.action 
       ])))
+     },[activityLog])
+     useEffect(()=>{
+      if(activity_log_client?.success || false)
+      setDatatable(activity_log_client.data.map(item=>([
+        item.row_number,
+        item.email,
+        item.role_name,
+        item.created_at,
+        item.action 
+      ])))
+      console.log("activity log client",activity_log_client)
       // console.log("re render data",(viewOdcClient || false)?viewOdcClient:ODCData)
-    },[ODCData,userData,viewOdcClient])
+    },[activity_log_client])
     /** upload mc variables*/
     const [MCSelectedFiles,setMCSelectedFiles] = useState([])
     const formatBytes = (bytes, decimals = 2) => {
@@ -1022,12 +1037,13 @@ function Odc({
                   {splitter.data.map(item=><FormControl key={item.id} variant="standard" sx={{ m: 1, minWidth: 132,marginTop:"0.5rem"}}>
                     <InputLabel id="demo-simple-select-standard-label">Splitter {item.index}</InputLabel>
 
-                    <NativeSelect defaultValue={item.status=="used" ? 10:20} onChange={(ev)=>updateODCPort(item.id,'splitter',ev.target.options[ev.target.selectedIndex].text,token,toast)} inputProps={{
+                    <NativeSelect defaultValue={item.status=="used" ? 10:item.status=='priority' ? 20:30} onChange={(ev)=>{console.log(splitter,item,ev.target.options[ev.target.selectedIndex].text); return updateODCPort(odcId[0],item.id,'splitter',ev.target.options[ev.target.selectedIndex].text,token,toast)}} inputProps={{
                         name: 'age',
                         id: 'uncontrolled-native',
                         }}>
-                          {(item.status=="used" || item.status=="priority") && [{status:"used",value:10},{status:"priority",value:20},{status:"broken",value:30}].map(item=><option key={"sp"+item.status} value={item.value}> {item.status}</option>)}
-                          {(item.status=="idle") && ["idle","broken"].map(item=><option key={"sp"+item} value={10}> {item}</option>)}
+                          {(item.status=="used" || item.status=="priority") && [{status:"used",value:10},{status:"priority",value:20}].map(item=><option key={"sp"+item.status} value={item.value}> {item.status}</option>)}
+                          {/* {(item.status=="used" || item.status=="priority" || item.status=="broken") && [{status:"used",value:10},{status:"priority",value:20},{status:"broken",value:30}].map(item=><option key={"sp"+item.status} value={item.value}> {item.status}</option>)} */}
+                          {(item.status=="idle" || item.status=="broken") && ["idle","broken"].map(item=><option key={"sp"+item} value={10}> {item}</option>)}
                     </NativeSelect>
                     </FormControl>
                   )}
@@ -1044,12 +1060,13 @@ function Odc({
                         {/* {ODCData.panel.data.length}
                         {item.data.length} */}
                        
-                     <NativeSelect  defaultValue={distFeed.status=="used" ? 10:20} onChange={(ev)=>{console.log(distFeed,item.type);return updateODCPort(distFeed.id,item.type ,ev.target.options[ev.target.selectedIndex].text,token,toast)}} inputProps={{
+                     <NativeSelect  defaultValue={distFeed.status=="used" ? 10:distFeed.status=='priority' ? 20 : 30} onChange={(ev)=>{console.log(distFeed,item.type,ev.target.options[ev.target.selectedIndex].text);return updateODCPort(odcId[0],distFeed.id,item.type ,ev.target.options[ev.target.selectedIndex].text,token,toast)}} inputProps={{
                        name: 'age',
                        id: 'uncontrolled-native',
                       }}>
                              {/* (item.status=="used") ? ["used","priority"].map(item=><option key={"sp"+item} value={10}> {item}</option>) : ["idle","broken"].map(item=><option key={"sp"+item} value={10}> {item}</option>) */}
-                          {(distFeed.status=="used" || distFeed.status=="priority") && [{status:"used",value:10},{status:"priority",value:20},{status:"broken",value:30}].map(item=><option key={"sp"+item.status} value={item.value}> {item.status}</option>)}
+                          {(distFeed.status=="used" || distFeed.status=="priority") && [{status:"used",value:10},{status:"priority",value:20}].map(item=><option key={"sp"+item.status} value={item.value}> {item.status}</option>)}
+                          {/* {(distFeed.status=="used" || distFeed.status=="priority" || distFeed.status=="broken") && [{status:"used",value:10},{status:"priority",value:20},{status:"broken",value:30}].map(item=><option key={"sp"+item.status} value={item.value}> {item.status}</option>)} */}
                           {/* {(distFeed.status=="used" || distFeed.status=="priority") && [{status:"used",value:10},{status:"priority",value:20}].map(item=><option key={"sp"+item.status} value={item.value}> {item.status}</option>)} */}
                           {(distFeed.status=="idle") && ["idle","broken"].map(item=><option key={"sp"+item} value={10}> {item}</option>)}
                     </NativeSelect>
@@ -1089,6 +1106,67 @@ function Odc({
                                       // title={"Employee List"}
                                       // options={options}
                                       options={{
+                                        serverSide:true,
+                                        count: activityLog?.count ,
+                                        rowsPerPage: 5,
+                                        rowsPerPageOptions:[5,10,25,50,100],
+                                        onTableInit:(test,tableState) =>{
+                                          console.log("table init",tableState.rowsPerPage)
+                                          setTableRowsPerPage(tableState.rowsPerPage)
+                                        },
+                                        onTableChange: (action, tableState) => {
+                                          console.log(action, tableState);
+                                  
+                                          // a developer could react to change on an action basis or
+                                          // examine the state as a whole and do whatever they want
+                                          switch (action) {
+                                            case 'changeRowsPerPage':
+                                              setTableRowsPerPage(tableState.rowsPerPage)
+                                              console.log("change page")
+                                              getActivityLog(odcId[0],tableState.page+1,tableState.rowsPerPage,null,null,token)
+                                            break;
+                                            case 'changePage':
+                                              // console.log("change page",tableState.sortOrder)
+                                              //changeODCPage(limit,offset,region,witel,datel,sto,sortby,direction,token,toast)
+                                              getActivityLog(odcId[0],tableState.page+1,tableState.rowsPerPage,null,null,token)
+                                              // this.changePage(tableState.page, tableState.sortOrder);
+                                              break;
+                                            case 'sort':
+                                              // console.log("sort",tableState.sortOrder)
+                                              let sortConvention = "";
+                                              // console.log("odc name sort",tableState.sortOrder.name.toLocaleLowerCase())
+                                              switch (tableState.sortOrder.name.toLocaleLowerCase()) {
+                                                case "no":
+                                                  // console.log("odc name")
+                                                  sortConvention = "row_number"
+                                                  break;
+                                                case "aksi":
+                                                  // console.log("odc name")
+                                                  sortConvention = "action"
+                                                  break;
+                                                case "tanggal":
+                                                  // console.log("odc name")
+                                                  sortConvention = "activity_log.created_at"
+                                                  break;
+                                                case "email":
+                                                  // console.log("odc name")
+                                                  sortConvention = "email"
+                                                  break;
+                                                case "role":
+                                                  // console.log("odc name")
+                                                  sortConvention = "role_name"
+                                                  break;
+                                              
+                                                default:
+                                                  break;
+                                              }
+                                              getActivityLog(odcId[0],tableState.page+1,tableState.rowsPerPage,sortConvention, tableState.sortOrder.direction.toLocaleLowerCase(),token)
+                                              // this.sort(tableState.page, tableState.sortOrder);
+                                              break;
+                                            default:
+                                              console.log('action not handled.');
+                                          }
+                                        },
                                       selectableRows:false,
                                       print: false,
                                       }}
@@ -1099,16 +1177,9 @@ function Odc({
                                           options:{
                                             customBodyRender:(value, tableMeta, update) => {
                                                 // console.log("row render",tableMeta)
-                                              let rowIndex = (tableMeta.rowData[1])?Number(tableMeta.rowIndex) + 1: "";
+                                              let rowIndex = tableMeta.rowData[0];
+                                              // let rowIndex = (tableMeta.rowData[1])?Number(tableMeta.rowIndex) + 1: "";
                                               return ( <span>{rowIndex}</span> )
-                                            }
-                                          }
-                                        },{
-                                          name: "User",
-                                          options:{
-                                            customBodyRender:(value, tableMeta, update) => {
-                                              let newValue = tableMeta.rowData[0]
-                                              return ( <span>{newValue}</span> )
                                             }
                                           }
                                         },{
@@ -1173,6 +1244,7 @@ export const getServerSideProps = async (props) => wrapper.getServerSideProps(st
     store.dispatch(getOcdSplitpanelStatus(odcId[0],req.cookies.token,toast));
     store.dispatch(getOcdSplitpanelDetail(odcId[0],req.cookies.token,toast));
     store.dispatch(getUserData(1,10, {name:"",direction:"asc"},req.cookies.token,null,toast))
+    store.dispatch(getActivityLog(odcId[0],1,5,null,null,req.cookies.token))
     store.dispatch(getRegionList(req.cookies.token))
     store.dispatch(getWitelList(req.cookies.token))
     store.dispatch(getDatelList(req.cookies.token))
@@ -1180,7 +1252,7 @@ export const getServerSideProps = async (props) => wrapper.getServerSideProps(st
     store.dispatch(getMerekList(req.cookies.token,toast)),
     store.dispatch(END)
     await store.sagaTask.toPromise();
-    console.log("user data",store.getState().Users)
+    console.log("activity log",store.getState().ODCs.activity_log_list)
     // console.log("req test:",req.url,res,etc)
     // console.log("store",store.getState().ODCs.selectedOdcSplitpanelStatus)
     const {ODCs:{selectedOdcSplitpanelStatus}} = store.getState();
@@ -1200,6 +1272,7 @@ export const getServerSideProps = async (props) => wrapper.getServerSideProps(st
                 props:{ 
                   data: selectedOdcSplitpanelStatus, 
                   ODCdetailData: store.getState().ODCs.selectedOdcSplitpanelDetail.data,
+                  activityLog: store.getState().ODCs.activity_log_list,
                   userData: store.getState().Users.userData.data || [{id:0,name:""}],
                   regionList: store.getState().ODCs.region_list || [{id:0,name:""}],
                   witelList: store.getState().ODCs.witel_list || [{id:0,region_id: 0,name:""}],
@@ -1217,6 +1290,7 @@ export const getServerSideProps = async (props) => wrapper.getServerSideProps(st
 
 const mapStateToProps = state => ({
     dataClient:state?.ODCs?.odcsBox,
+    activity_log_client: state?.ODCs?.activity_log_list,
     loading: state.ODCs.loading.get,
     selectedCoreFeeder:state.ODCs.client.selectedCoreFeeder,
     viewOdcClient: state.ODCs.selectedOdcSplitpanelStatus,
@@ -1229,6 +1303,7 @@ const mapFunctionToProps = {
     deleteSelectedCoreFeeder,
     upsertODCFile,
     updateNotes,
-    updateODCPort
+    updateODCPort,
+    getActivityLog
 }
 export default connect(mapStateToProps,mapFunctionToProps)(withAuth(Odc));

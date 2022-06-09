@@ -687,13 +687,6 @@ function ODC(props) {
         },
       }
     }
-    const state = {
-          
-     
-    
-    
-    };
-    console.log("state",state)
     const getCookie = (cname)=> {
       let name = cname + "=";
       let decodedCookie = decodeURIComponent(document.cookie);
@@ -753,6 +746,7 @@ function ODC(props) {
         return key+" "+datelList?.data.filter(item=>item.id.toString() == value)[0]?.name || ""
       }))
     },[feederChartName])
+
   return (<div className={styles.mainContent}>
           <div className={styles.cardWrapper}>
             <Card title='Total ODC' value='18.669' unit='unit' primaryFill={"#FF72BE"} secondaryFill={'#006ED3'}/>
@@ -780,12 +774,12 @@ function ODC(props) {
           }}
           validateOnChange={"true"}
           onSubmit={(values)=>{
-            console.log("on filter submit",values)
             // console.log("cookie",document.cookie.split(" "))
             getFeederGraph(values || { regional: '', witel: '', datel: '', sto: ''},token);
             getDistributionGraph(values || { regional: '', witel: '', datel: '', sto: ''},token);
-
+            changeODCPage(1,odc_rowsPerPage, values.regional,values.witel,values.datel,values.sto,null,null,token,toast)
             setSubmittedFilter(values || { regional: '', witel: '', datel: '', sto: ''});
+
 
             feederChartRef.current.innerHTML = "Feeder Mapping - "+ Object.entries(feederChartName).map(([key,value])=>{
               if(key == "regional" && value!=0)
@@ -876,11 +870,12 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                 print: false,
                 serverSide:true,
                 count: odc_list_client?.count || odc_list?.count,
-                rowsPerPage: 5,
+                rowsPerPage: odc_rowsPerPage || 5,
                 rowsPerPageOptions:[5,10,25,50,100],
                 onTableInit:(test,tableState) =>{
                   console.log("table init",tableState.rowsPerPage)
                   setTableRowsPerPage(tableState.rowsPerPage)
+                  changeODCPage(tableState.page+1,tableState.rowsPerPage,submittedFilter.regional,submittedFilter.witel,submittedFilter.datel,submittedFilter.sto,null, null,token,toast)
                 },
                 onTableChange: (action, tableState) => {
                   console.log(action, tableState);
@@ -889,7 +884,9 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                   // examine the state as a whole and do whatever they want
                   switch (action) {
                     case 'changeRowsPerPage':
+                      // console.log("change rows per page",tableState.rowsPerPage)
                       setTableRowsPerPage(tableState.rowsPerPage)
+                      changeODCPage(tableState.page+1,tableState.rowsPerPage,submittedFilter.regional,submittedFilter.witel,submittedFilter.datel,submittedFilter.sto,null, null,token,toast)
                     break;
                     case 'changePage':
                       // console.log("change page",tableState.sortOrder)
@@ -900,7 +897,7 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                     case 'sort':
                       // console.log("sort",tableState.sortOrder)
                       let sortConvention = "";
-                      console.log("odc name sort",tableState.sortOrder.name.toLocaleLowerCase())
+                      // console.log("odc name sort",tableState.sortOrder.name.toLocaleLowerCase())
                       switch (tableState.sortOrder.name.toLocaleLowerCase()) {
                         case "no":
                           // console.log("odc name")
@@ -949,7 +946,7 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                 options:{
                   customBodyRender:(value, tableMeta, update) => {
                   //   console.log("row render",tableMeta)
-                  let newNumber = tableMeta.tableState.page*tableMeta.tableState.rowsPerPage+tableMeta.rowData[0]
+                  let newNumber = tableMeta.rowData[0]
                   return ( <span>{newNumber}</span> )
                   // },
             //       filterOptions: {
@@ -1671,7 +1668,6 @@ getSTOList,
 updateODCData,
 changeODCPage,
 addODCData,
-updateODCData,
 deleteODCData,
 setTableRowsPerPage
 // getDistributionGraph,

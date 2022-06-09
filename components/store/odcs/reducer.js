@@ -43,9 +43,14 @@ import { GET_SPLITTER_DATA,
   UPSERT_ODC_FILE_SUCCESSFUL,
   GET_PUBLIC_ODC_DETAIL,
   GET_PUBLIC_ODC_DETAIL_SUCCESSFUL,
+  ADD_ACTIVITYLOG,
+  GET_ACTIVITYLOG_SUCCESSFUL,
+  GET_ACTIVITYLOG,
+  GET_ACTIVITYLOG_FAILED,
 } from "./actionTypes";
 import { HYDRATE } from 'next-redux-wrapper';
-const INIT_STATE = {
+
+export const INIT_STATE = {
     loading:{
         get: false,
         getOdc:false,
@@ -63,7 +68,9 @@ const INIT_STATE = {
         updateODCData: false,
         deleteODCData: false,
         upsertFile: false,
+        activityLog: false
     },
+    activity_log_list:[],
     tableRowsPerPage:0,
     add_odc_list:"",
     delete_odc_list:"",
@@ -531,6 +538,33 @@ const odcs = (state=INIT_STATE,action) => {
           loading:{
             ...state.loading,
             upsertFile:false
+          },
+        }
+
+      case GET_ACTIVITYLOG:
+        return {
+          ...state,
+          loading:{
+            ...state.loading,
+            activityLog:true
+          },
+          activity_log_list:""
+        }
+      case GET_ACTIVITYLOG_SUCCESSFUL:
+        return {
+          ...state,
+          loading:{
+            ...state.loading,
+            activityLog:false
+          },
+          activity_log_list: action.payload
+        }
+      case GET_ACTIVITYLOG_FAILED:
+        return {
+          ...state,
+          loading:{
+            ...state.loading,
+            activityLog:false
           },
         }
       default:

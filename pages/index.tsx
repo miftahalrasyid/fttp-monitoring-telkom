@@ -30,12 +30,13 @@ import {
   CircularProgress,
   Typography,
   Button,
+  ButtonProps,
   Tabs,
   Tab,
   TextField,
   Fade,
   Avatar,
-  Paper, useTheme, styled, createTheme,MuiThemeProvider, FormHelperText
+  Paper, useTheme, styled, createTheme, FormHelperText
 } from "@mui/material"
 import {
   makeStyles
@@ -48,7 +49,8 @@ import {
 import OtpInput from "react-otp-input";
 import { connect } from "react-redux";
 import { checkLogin, verifyOtp,forgotPageClosed} from "../components/store/auth/actions"
-const CustomButton = styledCustom(Button)(({ theme }) => ({
+type CustomButtonProps = ButtonProps & {theme?:{status:any}};
+const CustomButton = styledCustom(Button)<CustomButtonProps>(({ theme })=> ({
   borderColor: theme.status.primary,
   color:theme.status.primary,
   textDecoration: "none",
@@ -92,12 +94,9 @@ function Index_evolve(props) {
     }
   }});
   const classes = useStyles();
-  const {checkLogin,router,history,isLoading,isOtpVerify,verifyOtp,isOtpLoading, isUserVerify,isUserVerifyLoading,forgotPageClosed, telegramToken} = props;
-console.log("is user verify",isUserVerify)
-  const [isImageReady, setIsImageReady] = useState(false);
+  const {checkLogin,router,verifyOtp,isOtpLoading, isUserVerify,isUserVerifyLoading} = props;
+// console.log("is user verify",isUserVerify)
   var [error, setError] = useState({status:false,msg:"",token:""});
-  var [loginValue, setLoginValue] = useState("admin@telkom.com");
-  var [passwordValue, setPasswordValue] = useState("password");
   const [showPassword, setShowPassword] = useState(false);
   const [otp,setOtp] = useState(null);
   const otpHandleChange = React.useCallback((value)=>{
@@ -105,16 +104,7 @@ console.log("is user verify",isUserVerify)
     console.log(value)
   },[setOtp])
   console.log("isotploading",isOtpLoading)
-  const logoLoadCallback = useCallback((ev)=>{
-    setIsImageReady(true)
-    typeof onLoad === "function" && onLoad(e)
-  },[setIsImageReady])
-  useEffect(()=>{
-    logoLoadCallback()
-  },[isImageReady,logoLoadCallback])
-  useEffect(()=>{
-    forgotPageClosed();
-  },[])
+
   /** verification code variable */
   const [helperText, setHelperText] = React.useState('');
 
@@ -167,7 +157,7 @@ console.log("is user verify",isUserVerify)
                 initialValues={{ email: '', password: ''}}
                 initialErrors={{email:"test",password: "tes"}}
                 validate={values => {
-                  const errors = {};
+                  const errors:any = {};
                   if (!values.email) {
                     errors.email = '*Required';
                   } else if (
@@ -311,7 +301,7 @@ console.log("is user verify",isUserVerify)
             :
              isUserVerify ? <div className={styles.telegramWrapper}>
               <Image src={"/img/telegram.svg"} alt="telegram logo" width={50} height={50} />
-              <Typography Typography variant="h6" className={styles.telegramTitle}>
+              <Typography variant="h6" className={styles.telegramTitle}>
                 Integrasi dengan Telegram
               </Typography>
               <Typography variant="subtitle2" className={styles.telegramSubTitle}>
@@ -324,7 +314,7 @@ console.log("is user verify",isUserVerify)
                 <div className={styles.tooltip}>
                   <span className={styles.tooltiptext} id="myTooltip">Salin token</span>
                   <Button className={styles.telegramToken}>
-                    <span onClick={(ev)=>{myTooltip.innerHTML = "token disalin"; setTimeout(()=>{myTooltip.style.visibility = "hidden"},1000); navigator.clipboard.writeText(ev.target.innerHTML)}}>{error.token}</span>
+                    <span onClick={(ev)=>{document.getElementById("myTooltip").innerHTML = "token disalin"; setTimeout(()=>{document.getElementById("myTooltip").style.visibility = "hidden"},1000);const target = ev.target as Element; navigator.clipboard.writeText(target.innerHTML)}}>{error.token}</span>
                   </Button>
                 </div>
                 <li>
@@ -346,8 +336,8 @@ console.log("is user verify",isUserVerify)
             : 
             <div className={classes.paper}>
             <Grid container style={{ backgroundColor: "white" }} // style={{ backgroundColor: "#fafafa" }}
-              className={classes.grid} justify="center" alignItems="center" spacing={3}>
-              <Grid item container justify="center">
+              className={classes.grid} alignItems="center" spacing={3} justifyContent={"center"}>
+              <Grid item container justifyContent={"center"} >
                 <Grid item container alignItems="center" direction="column">
                   <Grid item>
                     <Avatar className={classes.avatar}>
@@ -370,8 +360,8 @@ console.log("is user verify",isUserVerify)
                   </p>
                 </Paper>
               </Grid>
-              <Grid item xs={12} container justify="center" alignItems="center" direction="column" >
-                <Grid item spacing={3} justify="center" className={classes.gridmargin}>
+              <Grid item xs={12} container justifyContent="center" alignItems="center" direction="column" >
+                <Grid item spacing={3} justifyContent="center" className={classes.gridmargin}>
                   <OtpInput separator={ <span>
                     <strong>.</strong>
                     </span>

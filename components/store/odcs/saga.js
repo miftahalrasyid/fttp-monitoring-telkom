@@ -51,9 +51,157 @@ import {
     UPDATE_NOTES,
     UPDATE_NOTES_FAILED,
     UPDATE_ODC_PORT,
-    UPDATE_ODC_PORT_FAILED
+    UPDATE_ODC_PORT_FAILED,
+    ADD_ACTIVITYLOG,
+    GET_ACTIVITYLOG,
+    GET_ACTIVITYLOG_SUCCESSFUL
 } from './actionTypes';
+import {changeODCPage} from './actions'
 // import firebase from '../../Firebase';
+/**
+ * 
+ * @param {requestOptions} set_core_feeder 
+ * @returns 
+ */
+const setCoreFeederCall = (requestOptions) => fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/api/core-feeder`,requestOptions).then(res=>res.json())
+/**
+ * 
+ * @param {requestOptions} delete_core_feeder 
+ * @returns 
+ */
+const deleteCoreFeederCall = (requestOptions) => fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/api/delete-feeder`,requestOptions).then(res=>res.json())
+/**
+ * 
+ * @param {odcId, requestOptions} odcId 
+ * @param {*} requestOptions
+ * @returns 
+ */
+const fetchODCDetailCall = (odcId,requestOptions) => fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/api/view-odc/${odcId}`,requestOptions).then(rest=>rest.json())
+/**
+ * 
+ * @param {odcId, requestOptions} odcId 
+ * @param {*} requestOptions
+ * @returns 
+ */
+const fetchODCDetailCall2 = (odcId,requestOptions) => fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/api/get-odc/${odcId}`,requestOptions).then(rest=>rest.json())
+/**
+ * 
+ * @param {regional,witel,datel} data 
+ * @param {*} requestOptions 
+ * @returns 
+ */
+const getFeederGraphCall = (data,requestOptions) => fetch(`${typeof window !== 'undefined' ? "" : process.env.NEXT_PUBLIC_API_HOST}/api/feeder-status-graph?region=${data.regional}&witel=${data.witel}&datel=${data.datel}&sto`,requestOptions).then(res=>res.json())
+/**
+ * 
+ * @param {*} data 
+ * @param {*} requestOptions 
+ * @returns 
+ */
+const getDistributionGraphCall = (data,requestOptions) => fetch(`${typeof window !== 'undefined' ? "" : process.env.NEXT_PUBLIC_API_HOST}/api/distribution-status-graph?region=${data.regional}&witel=${data.witel}&datel=${data.datel}&sto`,requestOptions).then(res=>res.json());
+/**
+ * 
+ * @param {*} requestOptions 
+ * @returns 
+ */
+const getRegionListCall = (requestOptions) => fetch(`${typeof window !== 'undefined' ? "" : process.env.NEXT_PUBLIC_API_HOST}/api/list-region`,requestOptions).then(res=>res.json());
+/**
+ * 
+ * @param {*} requestOptions 
+ * @returns 
+ */
+const getWitelListCall = (requestOptions) => fetch(`${typeof window !== 'undefined' ? "" : process.env.NEXT_PUBLIC_API_HOST}/api/list-witel?region=`,requestOptions).then(res=>res.json());
+/**
+ * 
+ * @param {*} requestOptions 
+ * @returns 
+ */
+const getDatelListCall = (requestOptions) => fetch(`${typeof window !== 'undefined' ? "" : process.env.NEXT_PUBLIC_API_HOST}/api/list-datel?witel=`,requestOptions).then(res=>res.json());
+/**
+ * 
+ * @param {*} requestOptions 
+ * @returns 
+ */
+const getSTOListCall = (requestOptions) => fetch(`${typeof window !== 'undefined' ? "" : process.env.NEXT_PUBLIC_API_HOST}/api/list-sto?datel=`,requestOptions).then(res=>res.json());
+/**
+ * 
+ * @param {*} requestOptions 
+ * @returns 
+ */
+const getMerekListCall = (requestOptions) => fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/api/list-merek`,requestOptions).then(res=>res.json())
+/**
+ * 
+ * @param {*} page 
+ * @param {*} rowsPerPage 
+ * @param {*} region 
+ * @param {*} witel 
+ * @param {*} datel 
+ * @param {*} sto 
+ * @param {*} sortBy 
+ * @param {*} sortOrder 
+ * @param {*} requestOptions 
+ * @returns 
+ */
+const getOdcPageCall = (page,rowsPerPage,region,witel,datel,sto,sortBy,sortOrder,requestOptions) => fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/api/odc-paginate?limit=${rowsPerPage}&offset=${page!==0?page:1}&region=${region || ""}&witel=${witel || ""}&datel=${datel || ""}&sto=${sto || ""}&sorting=${sortBy || ""}&direction=${sortOrder || ""}`,requestOptions).then(res=>res.json())
+/**
+ * 
+ * @param {*} requestOptions 
+ * @returns 
+ */
+const addODCDataCall = (requestOptions) => fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/api/add-odc`,requestOptions).then(res=>res.json())
+/**
+ * 
+ * @param {*} odc_id 
+ * @param {*} requestOptions 
+ * @returns 
+ */
+const updateODCDataCall = (odc_id,requestOptions) => fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/api/update-odc/${odc_id}`,requestOptions).then(res=>res.json())
+/**
+ * 
+ * @param {*} odc_id 
+ * @param {*} requestOptions 
+ * @returns 
+ */
+const deleteODCDataCall = (odc_id,requestOptions) => fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/api/delete-odc/${odc_id}`,requestOptions).then(res=>res.json())
+/**
+ * 
+ * @param {*} odc_id 
+ * @param {*} requestOptions 
+ * @returns 
+ */
+const upsertFileCall = (odc_id,requestOptions) => fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/api/upload-file/${odc_id}`,requestOptions)
+/**
+ * 
+ * @param {*} odc_id 
+ * @param {*} requestOptions 
+ * @returns 
+ */
+const publicViewODCCall = (odcId,requestOptions) => fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/public-view-odc/${odcId}`,requestOptions).then(res=>res.json())
+/**
+ * 
+ * @param {*} odc_id 
+ * @param {*} requestOptions 
+ * @returns 
+ */
+const updateNotesCall = (odcId,requestOptions) => fetch(`${typeof window !=='undefined' ? "":process.env.NEXT_PUBLIC_API_HOST}/api/dynamic-update/${odcId}`,requestOptions).then(rest=>rest.json())
+/**
+ * 
+ * @param {*} field_id 
+ * @param {*} requestOptions 
+ * @returns 
+ */
+const updateODCPortStatusCall = (field_id,requestOptions) => fetch(`${typeof window !== 'undefined' ? "" : process.env.NEXT_PUBLIC_API_HOST}/api/dynamic-update/${field_id}`,requestOptions).then(rest=>rest.json())
+/**
+ * 
+ * @param {*} requestOptions 
+ * @returns 
+ */
+const addActivityLogCall = (requestOptions) => fetch(`${typeof window !== 'undefined' ? "" : process.env.NEXT_PUBLIC_API_HOST}/api/add-log`,requestOptions).then(rest=>rest.json())
+/**
+ * 
+ * @param {*} requestOptions 
+ * @returns 
+ */
+const getActivityLogCall = (odcId,page,rowsPerPage,sortBy,sortOrder,requestOptions) => fetch(`${typeof window !== 'undefined' ? "" : process.env.NEXT_PUBLIC_API_HOST}/api/get-log?limit=${rowsPerPage}&offset=${page!==0?page:1}&odc_id=${odcId}&sorting=${sortBy || ""}&direction=${sortOrder || ""}`,requestOptions).then(rest=>rest.json())
 
 function* getSplitter() {
     try {
@@ -176,8 +324,7 @@ function* setSelectedCoreFeederSaga({payload:{odcId,type,feeder_index,feeder_id,
         body: formdata,
         redirect: 'follow'
         };
-        const res = yield fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/api/core-feeder`,requestOptions)
-        .then(res=>res.json())
+        const res = yield setCoreFeederCall(requestOptions)
         .then(result=>{
             if(!result.success){
                 setSubmitting(false);
@@ -225,6 +372,7 @@ function* setSelectedCoreFeederSaga({payload:{odcId,type,feeder_index,feeder_id,
                 progress: undefined,
             });
             // yield history.reload(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/odc/${odcId}`)
+            yield call(addActivityLog,({payload:{odcId,table_name:`feeder ${feeder_index}`,action:`User ${(type!=="edit"?"menambahkan":"mengupdate")}`,token}}))
             yield put({type:GET_ODC_SPLITPANEL_STATUS,payload:{odcId,token,toast}})
         }
 
@@ -243,7 +391,7 @@ function* setSelectedCoreFeederSaga({payload:{odcId,type,feeder_index,feeder_id,
 }
 
 function* deleteSelectedCoreFeederSaga({payload:{odcId,feeder:{feeder_index,feeder_id},setFeeder,handleClose,token,setSubmitting,toast,history}}){
-    console.log("delete core feeder ",feeder_id)
+    // console.log("delete core feeder ",feeder_id)
     try {
         if(!navigator.onLine) {
             setSubmitting(false);
@@ -270,8 +418,7 @@ function* deleteSelectedCoreFeederSaga({payload:{odcId,feeder:{feeder_index,feed
         body: formdata,
         redirect: 'follow'
         };
-        const res = yield fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/api/delete-feeder`,requestOptions)
-        .then(res=>res.json())
+        const res = yield deleteCoreFeederCall(requestOptions)
         .then(result=>{
             if(!result.success){
                 setSubmitting(false);
@@ -351,6 +498,7 @@ function* deleteSelectedCoreFeederSaga({payload:{odcId,feeder:{feeder_index,feed
                 progress: undefined,
             });
             // yield history.reload(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/odc/${odcId}`)
+            yield put({type:ADD_ACTIVITYLOG,payload:{odcId,table_name:`feeder ${feeder_index}`,action:`User mendelete`,token}})
             yield put({type:GET_ODC_SPLITPANEL_STATUS,payload:{odcId,token,toast}})
         }
 
@@ -379,7 +527,9 @@ function* fetchStatus({payload:{odcId,token,toast}}){
             redirect: 'follow'
           };
         // console.log("get fetch status",token,`${process.env.NEXT_PUBLIC_API_HOST}/api/view-odc/`);
-        const rest = yield fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/api/view-odc/${odcId}`,requestOptions).then(res=>res.json())
+        const rest = yield fetchODCDetailCall(odcId,requestOptions)
+        // console.log("fetch status", rest)
+        // rest.then(res=>res.json())
 
         // console.log("odc ktm fs",rest)
         // const res = yield fetch("https://my-project-1550730936778.firebaseio.com/expOdcBox.json").then(res=>res.json());
@@ -412,19 +562,16 @@ function* getFeederGraph({payload:{data,token}}){
       };
     try {
         let res;
-        if(typeof window !== 'undefined')
-        // res = yield fetch("/api/feeder-status-graph?region=&witel=&datel=&sto",requestOptions).then(res=>res.json());
-        res = yield fetch(`/api/feeder-status-graph?region=${data.regional}&witel=${data.witel}&datel=${data.datel}&sto`,requestOptions).then(res=>res.json());
-        else
-        res = yield fetch(`${process.env.NEXT_PUBLIC_API_HOST}/api/feeder-status-graph?region=&witel=&datel=&sto`,requestOptions).then(res=>res.json());
-        console.log("get feeder graph response",res)
+        res = yield call(getFeederGraphCall,data,requestOptions);
+
+        // console.log("get feeder graph response",res)
         yield put({type:GET_GRAPH_FEEDER_SUCCESSFUL,payload:res})
     } catch (error) {
         console.log("getfeedergraph",error)
     }
 }
 function* getDistributionGraph({payload:{data,token}}){
-    console.log("get distribution graph",data,token)
+    // console.log("get distribution graph",data,token)
     var requestOptions = {
         method: 'GET',
         headers: {
@@ -435,11 +582,8 @@ function* getDistributionGraph({payload:{data,token}}){
       };
     try {
         let res;
-        if(typeof window !== 'undefined')
-        // res = yield fetch("/api/feeder-status-graph?region=&witel=&datel=&sto",requestOptions).then(res=>res.json());
-        res = yield fetch(`/api/distribution-status-graph?region=${data.regional}&witel=${data.witel}&datel=${data.datel}&sto`,requestOptions).then(res=>res.json());
-        else
-        res = yield fetch(`${process.env.NEXT_PUBLIC_API_HOST}/api/distribution-status-graph?region=&witel=&datel=&sto`,requestOptions).then(res=>res.json());
+        res = yield call(getDistributionGraphCall,data,requestOptions)
+       
         // console.log("get feeder graph response",res)
         yield put({type:GET_GRAPH_DISTRIBUTION_SUCCESSFUL,payload:res})
     } catch (error) {
@@ -447,7 +591,7 @@ function* getDistributionGraph({payload:{data,token}}){
     }
 }
 function* getRegionList({payload:{token}}) {
-    console.log("region list",token)
+    // console.log("region list",token)
     var requestOptions = {
         method: 'GET',
         headers: {
@@ -458,11 +602,7 @@ function* getRegionList({payload:{token}}) {
       };
     try {
         let res;
-        if(typeof window !== 'undefined')
-        // res = yield fetch("/api/feeder-status-graph?region=&witel=&datel=&sto",requestOptions).then(res=>res.json());
-        res = yield fetch(`/api/list-region`,requestOptions).then(res=>res.json());
-        else
-        res = yield fetch(`${process.env.NEXT_PUBLIC_API_HOST}/api/list-region`,requestOptions).then(res=>res.json());
+        res = yield call(getRegionListCall,requestOptions)
         // console.log("get feeder graph response",res)
         yield put({type:GET_REGION_LIST_SUCCESSFUL,payload:res})
     } catch (error) {
@@ -470,7 +610,7 @@ function* getRegionList({payload:{token}}) {
     }
 }
 function* getWitelList({payload:{token}}) {
-    console.log("Witel list",token)
+    // console.log("Witel list",token)
     var requestOptions = {
         method: 'GET',
         headers: {
@@ -481,11 +621,7 @@ function* getWitelList({payload:{token}}) {
       };
     try {
         let res;
-        if(typeof window !== 'undefined')
-        // res = yield fetch("/api/feeder-status-graph?region=&witel=&datel=&sto",requestOptions).then(res=>res.json());
-        res = yield fetch(`/api/list-witel?region=`,requestOptions).then(res=>res.json());
-        else
-        res = yield fetch(`${process.env.NEXT_PUBLIC_API_HOST}/api/list-witel?region=`,requestOptions).then(res=>res.json());
+        res = yield call(getWitelListCall,requestOptions)
         // console.log("get feeder graph response",res)
         yield put({type:GET_WITEL_LIST_SUCCESSFUL,payload:res})
     } catch (error) {
@@ -493,7 +629,7 @@ function* getWitelList({payload:{token}}) {
     }
 }
 function* getDatelList({payload:{token}}) {
-    console.log("Datel list",token)
+    // console.log("Datel list",token)
     var requestOptions = {
         method: 'GET',
         headers: {
@@ -504,11 +640,7 @@ function* getDatelList({payload:{token}}) {
       };
     try {
         let res;
-        if(typeof window !== 'undefined')
-        // res = yield fetch("/api/feeder-status-graph?region=&witel=&datel=&sto",requestOptions).then(res=>res.json());
-        res = yield fetch(`/api/list-datel?witel=`,requestOptions).then(res=>res.json());
-        else
-        res = yield fetch(`${process.env.NEXT_PUBLIC_API_HOST}/api/list-datel?witel=`,requestOptions).then(res=>res.json());
+        res = yield call(getDatelListCall,requestOptions)
         // console.log("get feeder graph response",res)
         yield put({type:GET_DATEL_LIST_SUCCESSFUL,payload:res})
     } catch (error) {
@@ -527,11 +659,7 @@ function* getSTOList({payload:{token}}) {
       };
     try {
         let res;
-        if(typeof window !== 'undefined')
-        // res = yield fetch("/api/feeder-status-graph?region=&witel=&datel=&sto",requestOptions).then(res=>res.json());
-        res = yield fetch(`/api/list-sto?datel=`,requestOptions).then(res=>res.json());
-        else
-        res = yield fetch(`${process.env.NEXT_PUBLIC_API_HOST}/api/list-sto?datel=`,requestOptions).then(res=>res.json());
+        res = yield call(getSTOListCall,requestOptions)
         // console.log("get feeder graph response",res)
         yield put({type:GET_STO_LIST_SUCCESSFUL,payload:res})
     } catch (error) {
@@ -565,9 +693,10 @@ function* getMerekList({payload:{token,toast}}){
         
         console.log("get merek list")
         
-        const res = yield fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/api/list-merek`,requestOptions).then(res=>res.json())
+        const res = yield getMerekListCall(requestOptions)
+        
         .then(result=>{
-            console.log("error sgga",result)
+            // console.log("error sgga",result)
             if(!result.success){
                 if(result.msg=='Method must be one of: OPTIONS'){
                     toast.error("Gagal memanggil API", {
@@ -618,7 +747,8 @@ function* getMerekList({payload:{token,toast}}){
     }
 }
 
-function* getODCPage({payload:{page,rowsPerPage,region,witel,datel,sto,sortBy,sortOrder,token,toast}}) {
+function* getODCPage(props) {
+    const {payload:{page,rowsPerPage,region,witel,datel,sto,sortBy,sortOrder,token,toast}} = props
     var requestOptions = {
         method: 'GET',
         headers: {
@@ -630,7 +760,8 @@ function* getODCPage({payload:{page,rowsPerPage,region,witel,datel,sto,sortBy,so
       console.log("on odc page change",page,rowsPerPage,sortOrder)
     try {
         let res;
-        res = yield fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/api/odc-paginate?limit=${rowsPerPage}&offset=${page!==0?page:1}&region=${region || ""}&witel=${witel || ""}&datel=${datel || ""}&sto=${sto || ""}&sorting=${sortBy || ""}&direction=${sortOrder || ""}`,requestOptions).then(res=>res.json()).then(result => {
+        res = yield getOdcPageCall(page,rowsPerPage,region,witel,datel,sto,sortBy,sortOrder,requestOptions)
+        .then(result => {
             // console.log("result true", result.data)
             if(!result.success){
                 console.log("result false", result)
@@ -651,8 +782,10 @@ function* getODCPage({payload:{page,rowsPerPage,region,witel,datel,sto,sortBy,so
                 // return {success:result.success,data:result.data,count:result.data.length,sortOrder,page}
             }
         });
-        if(res.success)
-        yield put({type:GET_ODC_PAGE_SUCCESSFUL,payload:res})
+        if(res.success){
+            console.log("get odc page",res)
+            yield put({type:GET_ODC_PAGE_SUCCESSFUL,payload:res})
+        }
     } catch (error) {
         toast.error("Maaf, ada kesalahan teknis", {
             position: "top-right",
@@ -665,8 +798,6 @@ function* getODCPage({payload:{page,rowsPerPage,region,witel,datel,sto,sortBy,so
         });
     }
 }
-
-
 
 function* addODCData({payload:{
     name,
@@ -722,8 +853,8 @@ function* addODCData({payload:{
         body: formdata,
         redirect: 'follow'
         };
-        const res = yield fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/api/add-odc`,requestOptions)
-        .then(res=>res.json())
+        const res = yield addODCDataCall(requestOptions)
+        
         .then(result=>{
             // console.log("error sgga",result)
             if(!result.success){
@@ -771,6 +902,7 @@ function* addODCData({payload:{
                 draggable: true,
                 progress: undefined,
               });
+              yield call(addActivityLog,({payload:{odcId:res.odcId,table_name:`ODC`,action:`User menambahkan`,token}}))
             yield put({type:GET_ODC_PAGE,payload:{page:1,rowsPerPage,sortOrder:{name:"",direction:"asc"},token}})
         }
     } catch (error) {
@@ -802,7 +934,7 @@ function* updateODCData({payload:{
     sto_id
     ,odc_id,token,setSubmitting,handleClose,toast,rowsPerPage
 }}){
-    console.log("toast",toast)
+    // console.log("updateODCData",odc_id)
     try {
         /** jika offline */
         if(!navigator.onLine) {
@@ -842,8 +974,8 @@ function* updateODCData({payload:{
         body: formdata,
         redirect: 'follow'
         };
-        const res = yield fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/api/update-odc/${odc_id}`,requestOptions)
-        .then(res=>res.json())
+        const res = yield updateODCDataCall(odc_id,requestOptions)
+        
         .then(result=>{
             if(!result.success){
                 setSubmitting(false)
@@ -905,10 +1037,13 @@ function* updateODCData({payload:{
                 draggable: true,
                 progress: undefined,
               });
-              if(rowsPerPage)
-              yield put({type:GET_ODC_PAGE,payload:{page:0,rowsPerPage,sortOrder:{name:"",direction:"asc"},token,errorState:""}})
-              else
-              yield put({type:GET_ODC_SPLITPANEL_STATUS,payload:{odcId:odc_id[0],token,toast}})
+              yield call(addActivityLog,({payload:{odcId:odc_id,table_name:`ODC`,action:`User mengupdate`,token}}))
+              
+              yield call(getODCPage,({payload:{page:1,rowsPerPage,region:null,witel:null,datel:null,sto:null,sortBy:null,sortOrder:null,token,toast}}))
+              //   if(rowsPerPage)
+            //   yield put({type:GET_ODC_PAGE,payload:{page:0,rowsPerPage,sortOrder:{name:"",direction:"asc"},token,errorState:""}})
+            //   else
+            //   yield put({type:GET_ODC_SPLITPANEL_STATUS,payload:{odcId:odc_id[0],token,toast}})
         }
     } catch (error) {
         console.log("saga update odc error" ,error)
@@ -946,8 +1081,7 @@ function* deleteODCData({payload:{odc_name,odc_id,token,deleteRowHandleClose,toa
         headers: myHeaders,
         redirect: 'follow'
         };
-        const res = yield fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/api/delete-odc/${odc_id}`,requestOptions)
-        .then(res=>res.json())
+        const res = yield deleteODCDataCall(odc_id,requestOptions)
         .then(result=>{
             // console.log("error sgga",result)
             if(!result.success){
@@ -993,6 +1127,7 @@ function* deleteODCData({payload:{odc_name,odc_id,token,deleteRowHandleClose,toa
                 draggable: true,
                 progress: undefined,
               });
+              yield call(addActivityLog,({payload:{odcId:odc_id,table_name:`ODC`,action:`User mendelete`,token}}))
               yield put({type:GET_ODC_PAGE,payload:{page:0,rowsPerPage:10,sortOrder:{name:"",direction:"asc"},token,errorState:""}})
         }
         else{
@@ -1021,7 +1156,7 @@ function* fetchODCDetail({payload:{odcId,token,toast}}) {
             redirect: 'follow'
           };
     
-        const res = yield fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/api/get-odc/${odcId}`,requestOptions).then(rest=>rest.json())
+        const res = yield fetchODCDetailCall2(odcId,requestOptions)
         //   console.log("fetch odc detail", res)
         yield put({type:GET_ODC_SPLITPANEL_DETAIL_SUCCESSFUL,payload:(res && res.success)? res  : {"data": {
             id:"",
@@ -1085,7 +1220,8 @@ function* upsertFile({payload:{name,odc_id,token,toast,kml,setKml,mc,setMc}}){
             body: formdata,
             redirect: 'follow',
         }
-        var res = yield fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/api/upload-file/${odc_id}`,requestOptions).then(rest=>{
+        var res = yield upsertFileCall(odc_id,requestOptions)
+        .then(rest=>{
             if(rest.status==413){
                 toast.error("file terlalu besar", {
                     position: "top-right",
@@ -1146,6 +1282,7 @@ function* upsertFile({payload:{name,odc_id,token,toast,kml,setKml,mc,setMc}}){
                 draggable: true,
                 progress: undefined,
             });
+            yield call(addActivityLog,({payload:{odcId:odc_id,table_name:`${kml? "KML":"MC"}`,action:`User mengupdate`,token}}))
             if(kml)
             setKml([])
             else
@@ -1187,8 +1324,8 @@ function* publicViewODC({payload:{odcId,toast}}){
             redirect: 'follow'
           };
         // console.log("get fetch status",token,`${process.env.NEXT_PUBLIC_API_HOST}/api/view-odc/`);
-        const rest = yield fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/public-view-odc/${odcId}`,requestOptions).then(res=>res.json())
-        console.log("odc ktm fs",rest)
+        const rest = yield publicViewODCCall(odcId,requestOptions)
+        // console.log("odc ktm fs",rest)
         // const res = yield fetch("https://my-project-1550730936778.firebaseio.com/expOdcBox.json").then(res=>res.json());
         // const filtered = yield res.filter(item=>item.odc_id===odcId);
         // console.log("filtered", res, filtered[0],odcId)
@@ -1224,7 +1361,7 @@ function* updateNotes({payload:{notes,odcId,token,toast}}) {
             redirect: 'follow'
         };
 
-        var res = yield fetch(`${typeof window !=='undefined' ? "":process.env.NEXT_PUBLIC_API_HOST}/api/dynamic-update/${odcId}`,requestOptions).then(rest=>rest.json())
+        var res = yield updateNotesCall(odcId,requestOptions)
         .then(result=>{
             if(!result.success){
                 
@@ -1267,6 +1404,7 @@ function* updateNotes({payload:{notes,odcId,token,toast}}) {
                 draggable: true,
                 progress: undefined,
             });
+            yield call(addActivityLog,({payload:{odcId,table_name:`notes`,action:`User mengupdate`,token}}))
             yield put({type:GET_ODC_SPLITPANEL_STATUS,payload:{odcId,token,toast}})
         }
     } catch (error) {
@@ -1284,7 +1422,7 @@ function* updateNotes({payload:{notes,odcId,token,toast}}) {
     
 }
 
-function* updateODCPortStatus({payload: {field_id,table_name,value,token,toast}}) {
+function* updateODCPortStatus({payload: {odcId,field_id,table_name,value,token,toast}}) {
     try {
         var myHeaders = new Headers();
         myHeaders.append("Authorization", "Bearer "+token);
@@ -1298,7 +1436,7 @@ function* updateODCPortStatus({payload: {field_id,table_name,value,token,toast}}
             body: formdata,
             redirect: 'follow'
         }
-        var res = yield fetch(`${typeof window !== 'undefined' ? "" : process.env.NEXT_PUBLIC_API_HOST}/api/dynamic-update/${field_id}`,requestOptions).then(rest=>rest.json())
+        var res = yield updateODCPortStatusCall(field_id,requestOptions)
         .then(result=>{
             if(!result.success){
 
@@ -1341,10 +1479,75 @@ function* updateODCPortStatus({payload: {field_id,table_name,value,token,toast}}
                 draggable: true,
                 progress: undefined,
             });
+            yield call(addActivityLog,({payload:{odcId,table_name:`status ${table_name}`,action:`User mengupdate`,token}}))
+            // console.log("log",lol)
+            // console.log("add activity log",addActivityLog)
+            // yield call(addActivityLog,{payload:"test"})
+            // yield put({type:ADD_ACTIVITYLOG,payload:{odcId,table_name:`status ${table_name}`,action:`User mengupdate`,token}})
             yield put({type:GET_ODC_SPLITPANEL_STATUS,payload:{odcId,token,toast}})
         }
     } catch (error) {
         
+    }
+}
+function* addActivityLog(browse){
+    const {payload:{odcId,table_name,action,token}} = browse;
+    // function* addActivityLog({payload:{odcId,table_name,action,token}}){
+    console.log("odc id",odcId)
+    
+    try {
+        var myHeaders = new Headers();
+    myHeaders.append("Authorization", "Bearer "+token);
+        var formdata = new FormData();
+        formdata.append("odc_id", odcId);
+        formdata.append("table_name", table_name);
+        formdata.append("action", action);
+
+        var requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: formdata,
+        redirect: 'follow'
+        };
+
+        var res = yield addActivityLogCall(requestOptions)
+        .then(result=>{
+            return result;
+        })
+        if(res.success){
+
+        }
+    } catch (error) {
+        
+    }
+}
+function* getActivityLog({payload:{odcId,page,rowsPerPage,sortBy,sortOrder,token}}){
+    try {
+        console.log("get activity log",odcId)
+        var myHeaders = new Headers();
+        myHeaders.append("Authorization", "Bearer "+token);
+        myHeaders.append("Cookie", "PHPSESSID=h9m2nju1qgp3oneuhbres6907h");
+
+        var requestOptions = {
+        method: 'GET',
+        headers: myHeaders,
+        redirect: 'follow'
+        };
+        // console.log("fetch url",`${typeof window !== 'undefined' ? "" : process.env.NEXT_PUBLIC_API_HOST}/api/get-log?limit=${rowsPerPage}&offset=${page!==0?page:1}&odc_id=${odcId}&sorting=${sortBy || ""}&direction=${sortOrder || ""}`)
+        var res = yield getActivityLogCall(odcId,page,rowsPerPage,sortBy,sortOrder,requestOptions)
+        .then(result=>{
+
+            return {success:result.success,data:result.data,count:result.total_rows,sortOrder,page:page-1};
+        })
+        if(res.success){
+            console.log("activity log res",res)
+                // console.log("result true", result.data)
+                // return {success:result.success,data:result.data,count:result.data.length,sortOrder,page}
+            yield put({type: GET_ACTIVITYLOG_SUCCESSFUL,payload:res})
+            // return {success:result.success,data:result.data,count:result.total_rows,sortOrder,page:page-1}
+        }
+    } catch (error) {
+        console.log("get activity log error",error)
     }
 }
 
@@ -1382,6 +1585,9 @@ function* watchODCsData(){
     yield takeEvery(UPDATE_NOTES,updateNotes);
 
     yield takeEvery(UPDATE_ODC_PORT,updateODCPortStatus);
+
+    yield takeEvery(ADD_ACTIVITYLOG,addActivityLog);
+    yield takeEvery(GET_ACTIVITYLOG,getActivityLog);
 }
 
 function* odcsSaga() {

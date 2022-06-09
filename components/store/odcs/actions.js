@@ -25,7 +25,8 @@ import {
     UPSERT_ODC_FILE,
     GET_PUBLIC_ODC_DETAIL,
     UPDATE_NOTES,
-    UPDATE_ODC_PORT
+    UPDATE_ODC_PORT,
+    GET_ACTIVITYLOG
 } from './actionTypes'
 export const getSplitterData = () =>({
     type: GET_SPLITTER_DATA,
@@ -182,7 +183,12 @@ export const updateNotes = (notes,odcId,token,toast) => ({
     payload: {notes,odcId,token,toast}
 })
 
-export const updateODCPort = (field_id,table_name,value,token,toast) => ({
+export const updateODCPort = (odcId,field_id,table_name,value,token,toast) => ({
     type: UPDATE_ODC_PORT,
-    payload: {field_id,table_name,value,token,toast}
+    payload: {odcId,field_id,table_name,value,token,toast}
+})
+
+export const getActivityLog = (odcId,page,rowsPerPage,sortBy,sortOrder,token) => ({
+    type: GET_ACTIVITYLOG,
+    payload: {odcId,page,rowsPerPage,sortBy,sortOrder,token}
 })

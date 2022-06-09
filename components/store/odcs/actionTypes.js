@@ -71,3 +71,9 @@ export const UPDATE_NOTES_SUCCESSFUL = "update_odc_notes_successful";
 export const UPDATE_ODC_PORT = "update_odc_port";
 export const UPDATE_ODC_PORT_FAILED = "update_odc_port_failed";
 export const UPDATE_ODC_PORT_SUCCESSFUL = "update_odc_port_successful";
+
+export const ADD_ACTIVITYLOG = "add_activitylog";
+
+export const GET_ACTIVITYLOG = "get_activitylog";
+export const GET_ACTIVITYLOG_FAILED = "get_activitylog_failed";
+export const GET_ACTIVITYLOG_SUCCESSFUL= "get_activitylog_successful";

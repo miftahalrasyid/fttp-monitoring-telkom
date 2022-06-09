@@ -32,7 +32,7 @@ var requestOptions = {
 
 function* checklogin({payload:{email,password,history,errorState,setSubmitting}}){
     try {
-        console.log("email",email,window,window.navigator.onLine,errorState)
+        // console.log("email",email,window,window.navigator.onLine,errorState)
         // console.log("password",password)
         var formData = new FormData();
         formData.append("email",email);
