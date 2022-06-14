@@ -392,7 +392,7 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
                         }
                         else{
                           setFormError(prev=>({...prev,status:false}))
-                          setSelectedCoreFeeder(odcId,feederModal[0].type,feederFocus.feeder.feeder_index,feederFocus.feeder.feeder_id,values.splitter,dist_value,handleClose,token,setSubmitting,toast,router)
+                          setSelectedCoreFeeder({odcId,type:feederModal[0].type,feeder_index:feederFocus.feeder.feeder_index,feeder_id:feederFocus.feeder.feeder_id,splitter_id:values.splitter,distribution_ids:dist_value},handleClose,token,setSubmitting,toast,router)
                         }
 
 

@@ -3,7 +3,7 @@ import {MdOutlineViewSidebar} from 'react-icons/md';
 import styles from './eth.module.css';
 import Button from '@mui/material/Button';
 
-function Eth({id,rak_level,columns,clickHandler,status,isActive,from}) {
+function Eth({id="",key="",rak_level="",columns=[],clickHandler=(ev)=>{},status,isActive=false,from}) {
   // console.log("eth",inUsed?.ids.find(item=> item==id));
   // console.log("from",from)
   // console.log("from eth",columns,status)

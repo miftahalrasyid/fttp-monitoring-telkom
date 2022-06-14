@@ -29,7 +29,8 @@ import {
   addODCData,
   updateODCData,
   deleteODCData,
-  setTableRowsPerPage
+  setTableRowsPerPage,
+  getDashCard
 } from '../../components/store/odcs/actions';
 import {otpVerificationSuccessfull} from "../../components/store/auth/actions";
 import withAuth from '../../components/Auth';
@@ -200,7 +201,10 @@ function ODC(props) {
     stoList,
     token,
     odc_list_client,
-    changeODCPage
+    changeODCPage,
+    deck_value,
+    deck_value_client,
+    getDashCard
   } = props
   console.log("data",odc_list,isUserVerifyLoading)
   // const [open, setOpen] = React.useState(false);
@@ -746,29 +750,29 @@ function ODC(props) {
         return key+" "+datelList?.data.filter(item=>item.id.toString() == value)[0]?.name || ""
       }))
     },[feederChartName])
-
+    /** get dashboard deck card */
   return (<div className={styles.mainContent}>
           <div className={styles.cardWrapper}>
-            <Card title='Total ODC' value='18.669' unit='unit' primaryFill={"#FF72BE"} secondaryFill={'#006ED3'}/>
-            <Card title='Core Feeder Idle' unit='ports' primaryFill={"#6FB400"} secondaryFill={'#006ED3'}/>
-            <Card title='Core Feeder Used' unit='ports' primaryFill={"#00C092"} secondaryFill={'#006ED3'}/>
-            <Card title='Core Feeder Broken' unit='ports' primaryFill={"#ABD601"} secondaryFill={'#006ED3'}/>
-            <Card title='Core Distribusi Idle' unit='ports' primaryFill={"#36DBFF"} secondaryFill={'#006ED3'}/>
-            <Card title='Core Distribusi Used' unit='ports' primaryFill={"#00BBE4"} secondaryFill={'#006ED3'}/>
-            <Card title='Core Distribusi Broken' unit='ports' primaryFill={"#51C0FF"} secondaryFill={'#006ED3'}/>
+            <Card title='Total ODC' value={deck_value_client?.total_odc || deck_value?.total_odc} unit='unit' primaryFill={"#FF72BE"} secondaryFill={'#006ED3'}/>
+            <Card title='Core Feeder Idle' value={deck_value_client?.total_feeder_idle || deck_value?.total_feeder_idle} unit='ports' primaryFill={"#6FB400"} secondaryFill={'#006ED3'}/>
+            <Card title='Core Feeder Used' value={deck_value_client?.total_feeder_used || deck_value?.total_feeder_used} unit='ports' primaryFill={"#00C092"} secondaryFill={'#006ED3'}/>
+            <Card title='Core Feeder Broken' value={deck_value_client?.total_feeder_broken || deck_value?.total_feeder_broken} unit='ports' primaryFill={"#ABD601"} secondaryFill={'#006ED3'}/>
+            <Card title='Core Distribusi Idle' value={deck_value_client?.total_distribution_idle || deck_value?.total_distribution_idle} unit='ports' primaryFill={"#36DBFF"} secondaryFill={'#006ED3'}/>
+            <Card title='Core Distribusi Used' value={deck_value_client?.total_distribution_used || deck_value?.total_distribution_used} unit='ports' primaryFill={"#00BBE4"} secondaryFill={'#006ED3'}/>
+            <Card title='Core Distribusi Broken' value={deck_value_client?.total_distribution_broken || deck_value?.total_distribution_broken} unit='ports' primaryFill={"#51C0FF"} secondaryFill={'#006ED3'}/>
           </div>
-          <p className={styles.last_update}>Last Update : Minggu, 03 April 2022 - 14.30 WIB</p>
+          <p className={styles.last_update}>Last Update : {deck_value?.last_update}</p>
 
           <Formik 
           initialValues={{ regional: 0, witel: 0, datel: 0, sto: 0}}
           validate={(values)=>{
             setFeederChartName(values)
-              setWitelListClient(witelList?.data?.filter(item=>(values.regional == "0") ? item.region_id.toString() !== values.regional:item.region_id.toString() === values.regional))
-              setDatelListClient(datelList?.data?.filter(item=>(values.regional == "0") ? item.region_id.toString() !== values.regional:item.region_id.toString() === values.regional)
-              .filter(item=>(values.witel == "0") ? item.witel_id.toString() !== values.witel:item.witel_id.toString() === values.witel))
-              setSTOListClient(stoList?.data?.filter(item=>(values.regional == "0") ? item.region_id.toString() !== values.regional:item.region_id.toString() === values.regional)
-              .filter(item=>(values.witel == "0") ? item.witel_id.toString() !== values.witel:item.witel_id.toString() === values.witel)
-              .filter(item=>(values.datel == "0") ? item.datel_id.toString() !== values.datel:item.datel_id.toString() === values.datel))
+            setWitelListClient(witelList?.data?.filter(item=>(values.regional == "0") ? item.region_id.toString() !== values.regional:item.region_id.toString() === values.regional))
+            setDatelListClient(datelList?.data?.filter(item=>(values.regional == "0") ? item.region_id.toString() !== values.regional:item.region_id.toString() === values.regional)
+            .filter(item=>(values.witel == "0") ? item.witel_id.toString() !== values.witel:item.witel_id.toString() === values.witel))
+            setSTOListClient(stoList?.data?.filter(item=>(values.regional == "0") ? item.region_id.toString() !== values.regional:item.region_id.toString() === values.regional)
+            .filter(item=>(values.witel == "0") ? item.witel_id.toString() !== values.witel:item.witel_id.toString() === values.witel)
+            .filter(item=>(values.datel == "0") ? item.datel_id.toString() !== values.datel:item.datel_id.toString() === values.datel))
 
             // return values
           }}
@@ -777,7 +781,8 @@ function ODC(props) {
             // console.log("cookie",document.cookie.split(" "))
             getFeederGraph(values || { regional: '', witel: '', datel: '', sto: ''},token);
             getDistributionGraph(values || { regional: '', witel: '', datel: '', sto: ''},token);
-            changeODCPage(1,odc_rowsPerPage, values.regional,values.witel,values.datel,values.sto,null,null,token,toast)
+            changeODCPage({page:1,rowsPerPage:odc_rowsPerPage, region:values.regional,witel:values.witel,datel:values.datel,sto:values.sto,sortBy:null,sortOrder:null},token,toast)
+            getDashCard({region:values.regional,witel:values.witel,datel:values.datel,sto:values.sto},token,toast)
             setSubmittedFilter(values || { regional: '', witel: '', datel: '', sto: ''});
 
 
@@ -875,7 +880,7 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                 onTableInit:(test,tableState) =>{
                   console.log("table init",tableState.rowsPerPage)
                   setTableRowsPerPage(tableState.rowsPerPage)
-                  changeODCPage(tableState.page+1,tableState.rowsPerPage,submittedFilter.regional,submittedFilter.witel,submittedFilter.datel,submittedFilter.sto,null, null,token,toast)
+                  changeODCPage({page:tableState.page+1,rowsPerPage:tableState.rowsPerPage, region:submittedFilter.regional,witel:submittedFilter.witel,datel:submittedFilter.datel,sto:submittedFilter.sto,sortBy:null,sortOrder:null},token,toast)
                 },
                 onTableChange: (action, tableState) => {
                   console.log(action, tableState);
@@ -886,12 +891,12 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                     case 'changeRowsPerPage':
                       // console.log("change rows per page",tableState.rowsPerPage)
                       setTableRowsPerPage(tableState.rowsPerPage)
-                      changeODCPage(tableState.page+1,tableState.rowsPerPage,submittedFilter.regional,submittedFilter.witel,submittedFilter.datel,submittedFilter.sto,null, null,token,toast)
+                      changeODCPage({page:tableState.page+1,rowsPerPage:tableState.rowsPerPage, region:submittedFilter.regional,witel:submittedFilter.witel,datel:submittedFilter.datel,sto:submittedFilter.sto,sortBy:null,sortOrder:null},token,toast)
                     break;
                     case 'changePage':
                       // console.log("change page",tableState.sortOrder)
                       //changeODCPage(limit,offset,region,witel,datel,sto,sortby,direction,token,toast)
-                      changeODCPage(tableState.page+1,tableState.rowsPerPage,submittedFilter.regional,submittedFilter.witel,submittedFilter.datel,submittedFilter.sto,null, null,token,toast)
+                      changeODCPage({page:tableState.page+1,rowsPerPage:tableState.rowsPerPage, region:submittedFilter.regional,witel:submittedFilter.witel,datel:submittedFilter.datel,sto:submittedFilter.sto,sortBy:null,sortOrder:null},token,toast)
                       // this.changePage(tableState.page, tableState.sortOrder);
                       break;
                     case 'sort':
@@ -931,7 +936,7 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                         default:
                           break;
                       }
-                      changeODCPage(tableState.page+1,tableState.rowsPerPage,submittedFilter.regional,submittedFilter.witel,submittedFilter.datel,submittedFilter.sto,sortConvention, tableState.sortOrder.direction.toLocaleUpperCase(),token,toast)
+                      changeODCPage({page:tableState.page+1,rowsPerPage:tableState.rowsPerPage, region:submittedFilter.regional,witel:submittedFilter.witel,datel:submittedFilter.datel,sto:submittedFilter.sto,sortBy:sortConvention,sortOrder:tableState.sortOrder.direction.toLocaleUpperCase()},token,toast)
                       // this.sort(tableState.page, tableState.sortOrder);
                       break;
                     default:
@@ -1614,7 +1619,8 @@ export const getServerSideProps = async (props) => wrapper.getServerSideProps(st
     }
   }
   store.dispatch(getODCsBox())
-  store.dispatch(changeODCPage(1,5, null,null,null,null,null,null,req.cookies.token,toast))
+  store.dispatch(getDashCard({region:null,witel:null,datel:null,sto:null},req.cookies.token,toast))
+  store.dispatch(changeODCPage({page:1,rowsPerPage:5, region:null,witel:null,datel:null,sto:null,sortBy:null,sortOrder:null},req.cookies.token,toast))
   store.dispatch(getFeederGraph({ regional: '', witel: '', datel: '', sto: ''},req.cookies.token))
   store.dispatch(getDistributionGraph({ regional: '', witel: '', datel: '', sto: ''},req.cookies.token))
   store.dispatch(getRegionList(req.cookies.token))
@@ -1636,6 +1642,7 @@ export const getServerSideProps = async (props) => wrapper.getServerSideProps(st
         props:{
           odc_list:store.getState().ODCs.odc_page || {isLoading: false,page: 1, sortOrder: {name:"",direction:"asc"},data:[],count:0},
           // data:store.getState().ODCs.odcsBox,
+          deck_value: store.getState().ODCs.dashboard_card_list,
           token: req.cookies.token,
           email: jwt(req.cookies.token).email,
           role_name: jwt(req.cookies.token).role_name,
@@ -1653,6 +1660,7 @@ const mapStateToProps = state => ({
   isUserVerifyLoading: state.Auth.loading.verifyUser,
   odc_rowsPerPage: state.ODCs.tableRowsPerPage,
   odc_list_client: state.ODCs.odc_page,
+  deck_value_client: state.ODCs.dashboard_card_list,
   feederGraphClient: state.ODCs.graph_feeder,
   distributionGraphClient: state.ODCs.graph_distribution,
 });
@@ -1669,7 +1677,8 @@ updateODCData,
 changeODCPage,
 addODCData,
 deleteODCData,
-setTableRowsPerPage
+setTableRowsPerPage,
+getDashCard
 // getDistributionGraph,
 }
 export default connect(mapStateToProps,mapFunctionToProps)(withAuth(ODC))

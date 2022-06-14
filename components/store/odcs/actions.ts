@@ -26,8 +26,10 @@ import {
     GET_PUBLIC_ODC_DETAIL,
     UPDATE_NOTES,
     UPDATE_ODC_PORT,
-    GET_ACTIVITYLOG
+    GET_ACTIVITYLOG,
+    GET_DASHBOARD_CARD
 } from './actionTypes'
+import { ChangeOdcPageData, FeederDetail, GetDashCardData, IchangeODCPage, IdeleteSelectedCoreFeeder, IgetDashCard, IsetSelectedCoreFeeder, SetSelectedCoreFeederData } from './types';
 export const getSplitterData = () =>({
     type: GET_SPLITTER_DATA,
 });
@@ -45,22 +47,26 @@ export const getFeederGraph = (data,token) =>({
     type: GET_GRAPH_FEEDER,
     payload: {data,token}
 });
+
 export const getDistributionGraph = (data,token) =>({
     type: GET_GRAPH_DISTRIBUTION,
     payload: {data,token}
 });
+
 export const updateSplitterDistributionInfo = (data) =>({
     type: UPDATE_SPLITTER_DISTRIBUTION,
     payload: {data}
 });
-export const setSelectedCoreFeeder = (odcId,type,feeder_index,feeder_id,splitter_id,distribution_ids,handleClose,token,setSubmitting,toast,history) => ({
+export const setSelectedCoreFeeder = (data: SetSelectedCoreFeederData,handleClose:any,token:string,setSubmitting:any,toast:any,history:any): IsetSelectedCoreFeeder => ({
     type: SET_SELECTED_CORE_FEEDER,
-    payload: {odcId,type,feeder_index,feeder_id,splitter_id,distribution_ids,handleClose,token,setSubmitting,toast,history}
+    payload: {data,handleClose,token,setSubmitting,toast,history}
 })
-export const deleteSelectedCoreFeeder = (odcId,feeder,setFeeder,handleClose,token,setSubmitting,toast,history) => ({
+
+export const deleteSelectedCoreFeeder = (odcId:string,feeder:FeederDetail,setFeeder:any,handleClose:any,token:string,setSubmitting:any,toast:any,history:any): IdeleteSelectedCoreFeeder => ({
     type: DELETE_SELECTED_CORE_FEEDER,
     payload: {odcId,feeder,setFeeder,handleClose,token,setSubmitting,toast,history}
 })
+
 export const getSelectedCoreFeeder = (data) => ({
     type: GET_SELECTED_CORE_FEEDER,
     payload: data
@@ -69,42 +75,56 @@ export const getOcdSplitpanelStatus = (odcId,token,toast) => ({
     type: GET_ODC_SPLITPANEL_STATUS,
     payload: {odcId,token,toast}
 });
+
 export const getPublicViewODC = (odcId,toast) => ({
     type: GET_PUBLIC_ODC_DETAIL,
     payload: {odcId,toast}
 });
+
 export const getOcdSplitpanelDetail = (odcId,token,toast) => ({
     type: GET_ODC_SPLITPANEL_DETAIL,
     payload: {odcId,token,toast}
 });
+
 export const getRegionList = (token) => ({
     type: GET_REGION_LIST,
     payload: {token}
 });
+
 export const getWitelList = (token) => ({
     type: GET_WITEL_LIST,
     payload: {token}
 });
+
 export const getDatelList = (token) => ({
     type: GET_DATEL_LIST,
     payload: {token}
 });
+
 export const getSTOList = (token) => ({
     type: GET_STO_LIST,
     payload: {token}
 });
+
 export const getMerekList = (token,toast) => ({
     type: GET_MEREK_LIST,
     payload: {token,toast}
 });
-export const changeODCPage = (page,rowsPerPage,region,witel,datel,sto,sortBy,sortOrder,token,toast) => ({
+
+export const changeODCPage = (data: ChangeOdcPageData,token:string,toast:any):IchangeODCPage => ({
     type: GET_ODC_PAGE,
-    payload: {page,rowsPerPage,region,witel,datel,sto,sortBy,sortOrder,token,toast}
+    payload: {data,token,toast}
+})
+
+export const getDashCard = (data: GetDashCardData,token:string,toast:any): IgetDashCard => ({
+    type: GET_DASHBOARD_CARD,
+    payload: {data,token,toast}
 })
 export const setTableRowsPerPage = (value)=>({
     type: SET_ROWS_PER_PAGE,
     payload:{value}
 })
+
 export const addODCData = (
     name,
     merek_id,
@@ -141,10 +161,12 @@ export const addODCData = (
     }
 });
 
+
 export const deleteODCData = (odc_name,odc_id,token,deleteRowHandleClose,toast)=>({
     type: DELETE_ODC_DATA,
     payload: {odc_name,odc_id,token,deleteRowHandleClose,toast}
 })
+
 export const updateODCData = (
     name,
     deployment_date,
@@ -174,10 +196,12 @@ export const updateODCData = (
         odc_id,token,setSubmitting,handleClose,toast,rowsPerPage
     }
 })
+
 export const upsertODCFile = (name,odc_id,token,toast,kml,setKml,mc,setMc) => ({
     type: UPSERT_ODC_FILE,
     payload: {name,odc_id,token,toast,kml,setKml,mc,setMc}
 })
+
 export const updateNotes = (notes,odcId,token,toast) => ({
     type: UPDATE_NOTES,
     payload: {notes,odcId,token,toast}

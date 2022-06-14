@@ -77,3 +77,7 @@ export const ADD_ACTIVITYLOG = "add_activitylog";
 export const GET_ACTIVITYLOG = "get_activitylog";
 export const GET_ACTIVITYLOG_FAILED = "get_activitylog_failed";
 export const GET_ACTIVITYLOG_SUCCESSFUL= "get_activitylog_successful";
+
+export const GET_DASHBOARD_CARD= "get_dashboard_card";
+export const GET_DASHBOARD_CARD_FAILED= "get_dashboard_card_failed";
+export const GET_DASHBOARD_CARD_SUCCESSFUL= "get_dashboard_card_successful";

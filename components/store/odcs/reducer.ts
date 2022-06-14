@@ -40,13 +40,16 @@ import { GET_SPLITTER_DATA,
   GET_MEREK_LIST_SUCCESSFUL,
   SET_TABEL_ROWS_PER_PAGE_SUCCESSFUL,
   UPSERT_ODC_FILE,
-  UPSERT_ODC_FILE_SUCCESSFUL,
+  // UPSERT_ODC_FILE_SUCCESSFUL,
   GET_PUBLIC_ODC_DETAIL,
   GET_PUBLIC_ODC_DETAIL_SUCCESSFUL,
   ADD_ACTIVITYLOG,
   GET_ACTIVITYLOG_SUCCESSFUL,
   GET_ACTIVITYLOG,
   GET_ACTIVITYLOG_FAILED,
+  GET_DASHBOARD_CARD,
+  GET_DASHBOARD_CARD_SUCCESSFUL,
+  GET_DASHBOARD_CARD_FAILED,
 } from "./actionTypes";
 import { HYDRATE } from 'next-redux-wrapper';
 
@@ -68,8 +71,10 @@ export const INIT_STATE = {
         updateODCData: false,
         deleteODCData: false,
         upsertFile: false,
-        activityLog: false
+        activityLog: false,
+        dashCard: false
     },
+    dashboard_card_list:{},
     activity_log_list:[],
     tableRowsPerPage:0,
     add_odc_list:"",
@@ -532,14 +537,14 @@ const odcs = (state=INIT_STATE,action) => {
             upsertFile:true
           }
         }
-      case UPSERT_ODC_FILE_SUCCESSFUL:
-        return {
-          ...state,
-          loading:{
-            ...state.loading,
-            upsertFile:false
-          },
-        }
+      // case UPSERT_ODC_FILE_SUCCESSFUL:
+      //   return {
+      //     ...state,
+      //     loading:{
+      //       ...state.loading,
+      //       upsertFile:false
+      //     },
+      //   }
 
       case GET_ACTIVITYLOG:
         return {
@@ -565,6 +570,32 @@ const odcs = (state=INIT_STATE,action) => {
           loading:{
             ...state.loading,
             activityLog:false
+          },
+        }
+      case GET_DASHBOARD_CARD:
+        return {
+          ...state,
+          loading:{
+            ...state.loading,
+            dashCard:true
+          },
+          dashboard_card_list:""
+        }
+      case GET_DASHBOARD_CARD_SUCCESSFUL:
+        return {
+          ...state,
+          loading:{
+            ...state.loading,
+            dashCard:false
+          },
+          dashboard_card_list: action.payload
+        }
+      case GET_DASHBOARD_CARD_FAILED:
+        return {
+          ...state,
+          loading:{
+            ...state.loading,
+            dashCard:false
           },
         }
       default:

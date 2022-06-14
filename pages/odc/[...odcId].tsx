@@ -17,6 +17,7 @@ import Rak from '../../components/Rak';
 import Panel from '../../components/Panel';
 import {MdOutlineViewSidebar} from 'react-icons/md';
 import Button from '@mui/material/Button';
+import {ButtonProps, ThemeOptions} from '@mui/material'
 import Dropzone from 'react-dropzone';
 import { AiOutlineFile } from 'react-icons/ai';
 import { BsDownload } from 'react-icons/bs';
@@ -32,9 +33,10 @@ import { BsDownload } from 'react-icons/bs';
 //     MdRemoveRedEye,
 //     MdDeleteForever
 //   } from 'react-icons/md';
+// import {} from 'mui-datatables'
   import { createTheme, MuiThemeProvider,styled } from "@material-ui/core/styles";
   import {createTheme as customCreateTheme, ThemeProvider} from "@mui/material/styles";
-  const DynamicMUIDataTable = dynamic(() => import('mui-datatables'),{ ssr: false });
+  const DynamicMUIDataTable = dynamic(() => import('mui-datatables'),{ ssr: false }) as any;
 
 import { 
   getRegionList,
@@ -68,14 +70,27 @@ import {
   } from "@mui/material/styles";
 import { toast } from 'react-toastify';
 
+declare module '@mui/material/styles' {
+  // fix the type error when calling `createTheme()` with a custom theme option
+  interface ThemeOptions {
+    status?: {
+      success?: string;
+      primary?: string;
+      darkgray?: string;
+    };
+  }
+}
 // const CustomSelect = styledCustom(Select)(({theme})=>({
 //     '.MuiList-root': {
 //       display: "flex",
 //       flexDirection: "column",
 //     },
 //   }))
-const CustomButton = styledCustom(Button)(({theme,itemType})=>({
-  position: itemType =="floating"? "absolute !important":itemType=="download" ? "absolute !important":"unset !important",
+type CustomButtonProps = ButtonProps & {
+  itemType?:string
+}
+const CustomButton = styledCustom(Button)<CustomButtonProps>(({itemType})=>({
+  position: (itemType == "floating" ? "absolute!important" : itemType=="download" ? "absolute!important" : "unset!important") as any,
   bottom: itemType =="floating" ? "17%":itemType == 'download' ? "10%":"",
   backgroundColor:"#C7417F !important",
   color: "white !important"
@@ -131,7 +146,7 @@ customCreateTheme({
     success: "#009873!important",
     primary: "#B10040!important",
     darkgray: "darkgray!important"
-  },
+  } as any,
   components:{
     MuiPaper:{
       styleOverrides:{
@@ -198,7 +213,7 @@ customCreateTheme({
           // background:"rgba(255,255,255,0.3)"
         },
         "head":{
-          backgroundImage:"linear-gradient(to right,rgba(178,98,98,0.3),rgb(255 228 228 / 30%))",
+          // backgroundImage:"linear-gradient(to right,rgba(178,98,98,0.3),rgb(255 228 228 / 30%))",
           backgroundImage:"linear-gradient(to right,rgb(237 167 88 / 30%),rgb(253 243 236 / 30%))",
         },
       }
@@ -253,7 +268,7 @@ customCreateTheme({
           padding:" 12px !important",
           overflow: "visible !important",
           fontSize: "1.5rem !important",
-          textAlign: "center !important",
+          textAlign:"center!important" as any,
           transition: "background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms !important",
           borderRadius:" 50% !important",
           '&:hover': {color: '#ee2d24 !important'},
@@ -503,12 +518,12 @@ function Odc({
             // console.log("rak children",document.querySelector(`[data-id="${pa.splitter.splitter_index}"][data-type="splitter"]`))
             /** change color from used to focused with pass_through condition for splitter*/
             /** kondisi jika tidak passthrough */
-            const splitter = (!pass_through)?document.querySelector(`[data-id="${currPa.splitter.splitter_index}"][data-type="splitter"]`).children[0]:null;
+            const splitter = ((!pass_through)?document.querySelector(`[data-id="${currPa.splitter.splitter_index}"][data-type="splitter"]`).children[0] as HTMLElement:null);
             if(!pass_through)
             splitter.style.borderColor = "#ffda00";
-            const distribution = (currPa.distribution)?document.querySelector(`[data-id="${currPa.distribution.distribution_index}"][data-rak="${currPa.distribution.distribution_level}"]`):null;
+            const distribution = (currPa.distribution)?document.querySelector(`[data-id="${currPa.distribution.distribution_index}"][data-rak="${currPa.distribution.distribution_level}"]`) :null;
             if(currPa.distribution){
-              distribution.childNodes[0].style.borderColor = "#ffda00";
+              (distribution.childNodes[0] as HTMLElement).style.borderColor = "#ffda00";
             }
             splitter.style.borderColor = "#ffda00";
             console.log("ethstyles",ethStyles)
@@ -539,7 +554,7 @@ function Odc({
       /**if the feeder already focused */
       else if(ev.target.style.borderColor==hexToRgb("#ffda00") && ev.target.parentNode.getAttribute("data-type")=="feeder"){
       // else if(ev.target.children[1].getAttribute("fill")=="#ffda00" && ev.target.getAttribute("data-type")=="feeder"){
-        feederModal[1]({type:"edit",status:"true"});
+        feederModal[1]({type:"edit",status:true});
       }
       else if( ev.target.parentNode.getAttribute("data-type")=="distribution"){
         
@@ -614,7 +629,7 @@ function Odc({
     const handleAcceptedMCFiles = files => {
       files.map((file,idx) => {
         console.log("uploaded file",file,file.type,file.type.split("/")[1]!==('png' || 'jpeg' || 'jpg'))
-        let metadata = {};
+        let metadata:any = {};
         metadata.idx = idx;
         if(file.type.split("/")[1]!==('png' || 'jpeg' || 'jpg'))
         metadata.preview = URL.createObjectURL(file)
@@ -648,7 +663,7 @@ function Odc({
     const handleAcceptedKMLFiles = files => {
       files.map((file,idx) => {
         console.log("uploaded file",file,file.type,file.type.split("/")[1]!==('png' || 'jpeg' || 'jpg'))
-        let metadata = {};
+        let metadata:any = {};
         metadata.idx = idx;
         if(file.type.split("/")[1]!==('png' || 'jpeg' || 'jpg'))
         metadata.preview = URL.createObjectURL(file)
@@ -776,8 +791,8 @@ function Odc({
                     <h4 className={splitterStyle.cardTitle}>Video</h4>
                   </div>
                   <div className={`${splitterStyle.videoContainer}`}>
-                    <iframe frameBorder="0" scrolling="no" marginHeight="0" marginWidth="0" width="315" height="auto"
-                      type="text/html"
+                    <iframe frameBorder="0" scrolling="no" marginHeight={0} marginWidth={0} width="315" height="auto"
+                      // type="text/html"
                       src="https://www.youtube.com/embed/_cAIkgb5I0E?autoplay=0&fs=0&iv_load_policy=3&showinfo=0&rel=0&cc_load_policy=0&start=0&end=0&origin=http://youtubeembedcode.com"></iframe>
                   </div>
                 </div>
@@ -889,7 +904,7 @@ function Odc({
                       {/* <a target="_blank" href="https://icons8.com/icon/111876/xls">XLS</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a> */}
                         
                         <Dropzone
-                  accept='image/xls, image/xlsx'
+                  accept={'image/xls, image/xlsx' as any}
                   onDrop={acceptedFiles =>
                     handleAcceptedKMLFiles(acceptedFiles)
                   }
@@ -932,8 +947,8 @@ function Odc({
                   </div>
                   )}
               </Dropzone>
-              {KMLSelectedFiles.length!==0 && <CustomButton itemType='floating' variant='standard' onClick={()=>upsertODCFile(KMLSelectedFiles[0].name,odcId[0],token,toast,KMLSelectedFiles[0],setKMLSelectedFiles,null,null)}>Unggah</CustomButton>}
-              {(KMLSelectedFiles.length==0 && kml_name) && <CustomButton itemType='download' variant='standard' onClick={handleKmlDownload}>Unduh</CustomButton>}
+              {KMLSelectedFiles.length!==0 && <CustomButton itemType='floating' variant={'standard' as any} onClick={()=>upsertODCFile(KMLSelectedFiles[0].name,odcId[0],token,toast,KMLSelectedFiles[0],setKMLSelectedFiles,null,null)}>Unggah</CustomButton>}
+              {(KMLSelectedFiles.length==0 && kml_name) && <CustomButton itemType='download' variant={'standard' as any} onClick={handleKmlDownload}>Unduh</CustomButton>}
               
                       </div>
                     </div>
@@ -952,7 +967,7 @@ function Odc({
                     <div className={`${splitterStyle.splitContainer} ${splitterStyle.kmlCardContainer}`}>
                       <div className={styles.uploadFileWrapper}>
                       <Dropzone
-                  accept='image/xls, image/xlsx'
+                  accept={'image/xls, image/xlsx' as any}
                   onDrop={acceptedFiles =>
                     handleAcceptedMCFiles(acceptedFiles)
                   }
@@ -999,8 +1014,8 @@ function Odc({
                   </div>
                   )}
               </Dropzone>
-              {MCSelectedFiles.length!==0 && <CustomButton itemType='floating' variant='standard' onClick={()=>upsertODCFile(MCSelectedFiles[0].name,odcId[0],token,toast,null,null,MCSelectedFiles[0],setMCSelectedFiles)}>Unggah</CustomButton>}
-              {(MCSelectedFiles.length==0 && mc_name) && <CustomButton itemType='download' variant='standard' onClick={handleMCDownload}>Unduh</CustomButton>}
+              {MCSelectedFiles.length!==0 && <CustomButton itemType='floating' variant={'standard' as any} onClick={()=>upsertODCFile(MCSelectedFiles[0].name,odcId[0],token,toast,null,null,MCSelectedFiles[0],setMCSelectedFiles)}>Unggah</CustomButton>}
+              {(MCSelectedFiles.length==0 && mc_name) && <CustomButton itemType='download' variant={'standard' as any} onClick={handleMCDownload}>Unduh</CustomButton>}
                       </div>
                     </div>
                   </div>
@@ -1009,7 +1024,7 @@ function Odc({
           <div className={`row`}>
             <div className={`${styles.notesContainer}`}>
               Notes: 
-              <textarea ref={notes} name="" id="" cols="30" rows="10" defaultValue={serverNotes}></textarea>
+              <textarea ref={notes} name="" id="" cols={30} rows={10} defaultValue={serverNotes}></textarea>
               <Button onClick={()=>updateNotes(notes.current.value,odcId,token,toast)} variant={"outlined"}>Edit</Button>
 
             </div>
@@ -1105,6 +1120,7 @@ function Odc({
                                   {datatable ? <DynamicMUIDataTable 
                                       // title={"Employee List"}
                                       // options={options}
+                                      
                                       options={{
                                         serverSide:true,
                                         count: activityLog?.count ,
@@ -1167,9 +1183,9 @@ function Odc({
                                               console.log('action not handled.');
                                           }
                                         },
-                                      selectableRows:false,
-                                      print: false,
-                                      }}
+                                        selectableRows:false,
+                                        print: false,
+                                      }} 
                                       checkboxSelection={false} 
                                       data={datatable}
                                       columns={[{

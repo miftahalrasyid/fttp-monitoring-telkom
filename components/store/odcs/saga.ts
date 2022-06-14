@@ -15,6 +15,7 @@ import {
     GET_SPLITTER_DATA_SUCCESSFUL,
     SET_SELECTED_CORE_FEEDER,
     DELETE_SELECTED_CORE_FEEDER,
+    DELETE_SELECTED_CORE_FEEDER_FAILED,
     GET_SELECTED_CORE_FEEDER,
     GET_ODC_SPLITPANEL_STATUS,
     GET_ODC_SPLITPANEL_STATUS_SUCCESSFUL,
@@ -54,8 +55,12 @@ import {
     UPDATE_ODC_PORT_FAILED,
     ADD_ACTIVITYLOG,
     GET_ACTIVITYLOG,
-    GET_ACTIVITYLOG_SUCCESSFUL
+    GET_ACTIVITYLOG_SUCCESSFUL,
+    GET_DASHBOARD_CARD,
+    GET_DASHBOARD_CARD_FAILED,
+    GET_DASHBOARD_CARD_SUCCESSFUL
 } from './actionTypes';
+import {IdeleteSelectedCoreFeeder, IgetDistributionGraph, IgetFeederGraph, IsetSelectedCoreFeeder,IgetOcdSplitpanelStatus, IgetOcdSplitpanelDetail, IgetRegionList, IgetWitelList, IgetDatelList, IgetSTOList, IgetMerekList, IgetPublicViewODC, IaddODCData, IupdateODCData, IdeleteODCData, IsetTableRowsPerPage, IupsertODCFile, IupdateNotes, IupdateODCPort, IgetActivityLog, IchangeODCPage, ChangeOdcPageData, IgetDashCard, GetDashCardData} from './types';
 import {changeODCPage} from './actions'
 // import firebase from '../../Firebase';
 /**
@@ -86,7 +91,7 @@ const fetchODCDetailCall = (odcId,requestOptions) => fetch(`${(typeof window !==
 const fetchODCDetailCall2 = (odcId,requestOptions) => fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/api/get-odc/${odcId}`,requestOptions).then(rest=>rest.json())
 /**
  * 
- * @param {regional,witel,datel} data 
+ * @param {regional,witel,datel,sto} data 
  * @param {*} requestOptions 
  * @returns 
  */
@@ -141,7 +146,7 @@ const getMerekListCall = (requestOptions) => fetch(`${(typeof window !== 'undefi
  * @param {*} requestOptions 
  * @returns 
  */
-const getOdcPageCall = (page,rowsPerPage,region,witel,datel,sto,sortBy,sortOrder,requestOptions) => fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/api/odc-paginate?limit=${rowsPerPage}&offset=${page!==0?page:1}&region=${region || ""}&witel=${witel || ""}&datel=${datel || ""}&sto=${sto || ""}&sorting=${sortBy || ""}&direction=${sortOrder || ""}`,requestOptions).then(res=>res.json())
+const getOdcPageCall = (data: ChangeOdcPageData,requestOptions:any): Promise<any> => fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/api/odc-paginate?limit=${data.rowsPerPage}&offset=${data.page!==0?data.page:1}&region=${data.region || ""}&witel=${data.witel || ""}&datel=${data.datel || ""}&sto=${data.sto || ""}&sorting=${data.sortBy || ""}&direction=${data.sortOrder || ""}`,requestOptions).then(res=>res.json())
 /**
  * 
  * @param {*} requestOptions 
@@ -202,6 +207,13 @@ const addActivityLogCall = (requestOptions) => fetch(`${typeof window !== 'undef
  * @returns 
  */
 const getActivityLogCall = (odcId,page,rowsPerPage,sortBy,sortOrder,requestOptions) => fetch(`${typeof window !== 'undefined' ? "" : process.env.NEXT_PUBLIC_API_HOST}/api/get-log?limit=${rowsPerPage}&offset=${page!==0?page:1}&odc_id=${odcId}&sorting=${sortBy || ""}&direction=${sortOrder || ""}`,requestOptions).then(rest=>rest.json())
+/**
+ * 
+ * @param {region,witel,datel,sto} data 
+ * @param {*} requestOptions 
+ * @returns 
+ */
+const getDashCardCall = (data: GetDashCardData,requestOptions:any) => fetch(`${typeof window !== 'undefined' ? "" : process.env.NEXT_PUBLIC_API_HOST}/api/get-card?&region=${data.region || ""}&witel=${data.witel || ""}&datel=${data.datel || ""}&sto=${data.sto || ""}`,requestOptions).then(rest=>rest.json())
 
 function* getSplitter() {
     try {
@@ -294,8 +306,7 @@ function* updateSplitterDistribution({payload:{data}}){
     }
 }
 
-function* setSelectedCoreFeederSaga({payload:{odcId,type,feeder_index,feeder_id,splitter_id,distribution_ids,handleClose,token,setSubmitting,toast,history}}){
-
+function* setSelectedCoreFeederSaga({payload:{data,handleClose,token,setSubmitting,toast,history}}: IsetSelectedCoreFeeder){
     try {
         if(!navigator.onLine) {
             setSubmitting(false);
@@ -314,9 +325,9 @@ function* setSelectedCoreFeederSaga({payload:{odcId,type,feeder_index,feeder_id,
         myHeaders.append("Authorization", "Bearer "+token);
 
         var formdata = new FormData();
-        formdata.append("feeder_id", feeder_id.toString());
-        formdata.append("splitter_id", splitter_id.toString());
-        formdata.append("distribution", JSON.stringify(distribution_ids));
+        formdata.append("feeder_id", data.feeder_id.toString());
+        formdata.append("splitter_id", data.splitter_id.toString());
+        formdata.append("distribution", JSON.stringify(data.distribution_ids));
 
         var requestOptions = {
         method: 'POST',
@@ -359,10 +370,10 @@ function* setSelectedCoreFeederSaga({payload:{odcId,type,feeder_index,feeder_id,
             }
         });        
         if(res.success){
-            console.log("success added")
+            // console.log("success added")
             setSubmitting(false)
             handleClose();
-            toast.success(`Feeder ${feeder_index} berhasil ${(type!=="edit"?"ditambahkan":"diupdate")}`, {
+            toast.success(`Feeder ${data.feeder_index} berhasil ${(data.type!=="edit"?"ditambahkan":"diupdate")}`, {
                 position: "top-right",
                 autoClose: 5000,
                 hideProgressBar: false,
@@ -372,8 +383,8 @@ function* setSelectedCoreFeederSaga({payload:{odcId,type,feeder_index,feeder_id,
                 progress: undefined,
             });
             // yield history.reload(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/odc/${odcId}`)
-            yield call(addActivityLog,({payload:{odcId,table_name:`feeder ${feeder_index}`,action:`User ${(type!=="edit"?"menambahkan":"mengupdate")}`,token}}))
-            yield put({type:GET_ODC_SPLITPANEL_STATUS,payload:{odcId,token,toast}})
+            yield call(addActivityLog,({payload:{odcId:data.odcId,table_name:`feeder ${data.feeder_index}`,action:`User ${(data.type!=="edit"?"menambahkan":"mengupdate")}`,token}}))
+            yield put({type:GET_ODC_SPLITPANEL_STATUS,payload:{odcId:data.odcId,token,toast}})
         }
 
     } catch (error) {
@@ -390,7 +401,7 @@ function* setSelectedCoreFeederSaga({payload:{odcId,type,feeder_index,feeder_id,
     }
 }
 
-function* deleteSelectedCoreFeederSaga({payload:{odcId,feeder:{feeder_index,feeder_id},setFeeder,handleClose,token,setSubmitting,toast,history}}){
+function* deleteSelectedCoreFeederSaga({payload:{odcId,feeder:{feeder_index,feeder_id},setFeeder,handleClose,token,setSubmitting,toast,history}}: IdeleteSelectedCoreFeeder){
     // console.log("delete core feeder ",feeder_id)
     try {
         if(!navigator.onLine) {
@@ -432,7 +443,7 @@ function* deleteSelectedCoreFeederSaga({payload:{odcId,feeder:{feeder_index,feed
                         draggable: true,
                         progress: undefined,
                       });
-                    return put({type:DELETE_SELECTED_CORE_FEEDER,payload:{success:false,data:[],msg:"Gagal memanggil API"}})
+                    return put({type:DELETE_SELECTED_CORE_FEEDER_FAILED,payload:{success:false,data:[],msg:"Gagal memanggil API"}})
                 }
                 else{
                     toast.error(result.msg, {
@@ -516,7 +527,7 @@ function* deleteSelectedCoreFeederSaga({payload:{odcId,feeder:{feeder_index,feed
     }
 }
 
-function* fetchStatus({payload:{odcId,token,toast}}){
+function* fetchStatus({payload:{odcId,token,toast}}: IgetOcdSplitpanelStatus){
     try {
         console.log("re fetch status")
         var myHeaders = new Headers();
@@ -550,7 +561,7 @@ function* fetchStatus({payload:{odcId,token,toast}}){
         });
     }
 }
-function* getFeederGraph({payload:{data,token}}){
+function* getFeederGraph({payload:{data,token}}: IgetFeederGraph){
     console.log("get feeder graph",data,token)
     var requestOptions = {
         method: 'GET',
@@ -570,7 +581,7 @@ function* getFeederGraph({payload:{data,token}}){
         console.log("getfeedergraph",error)
     }
 }
-function* getDistributionGraph({payload:{data,token}}){
+function* getDistributionGraph({payload:{data,token}}:IgetDistributionGraph){
     // console.log("get distribution graph",data,token)
     var requestOptions = {
         method: 'GET',
@@ -590,7 +601,7 @@ function* getDistributionGraph({payload:{data,token}}){
         console.log("getDistributionGraph",error)
     }
 }
-function* getRegionList({payload:{token}}) {
+function* getRegionList({payload:{token}}: IgetRegionList) {
     // console.log("region list",token)
     var requestOptions = {
         method: 'GET',
@@ -609,7 +620,7 @@ function* getRegionList({payload:{token}}) {
         console.log("getRegionList",error)
     }
 }
-function* getWitelList({payload:{token}}) {
+function* getWitelList({payload:{token}}: IgetWitelList) {
     // console.log("Witel list",token)
     var requestOptions = {
         method: 'GET',
@@ -628,7 +639,7 @@ function* getWitelList({payload:{token}}) {
         console.log("getWitelList",error)
     }
 }
-function* getDatelList({payload:{token}}) {
+function* getDatelList({payload:{token}}: IgetDatelList) {
     // console.log("Datel list",token)
     var requestOptions = {
         method: 'GET',
@@ -647,7 +658,7 @@ function* getDatelList({payload:{token}}) {
         console.log("getDatelList",error)
     }
 }
-function* getSTOList({payload:{token}}) {
+function* getSTOList({payload:{token}}: IgetSTOList) {
     console.log("STO list",token)
     var requestOptions = {
         method: 'GET',
@@ -667,7 +678,7 @@ function* getSTOList({payload:{token}}) {
     }
 }
 
-function* getMerekList({payload:{token,toast}}){
+function* getMerekList({payload:{token,toast}}: IgetMerekList){
    
     var requestOptions = {
         method: 'GET',
@@ -746,9 +757,44 @@ function* getMerekList({payload:{token,toast}}){
         console.log("getSTOList",error)
     }
 }
-
+function* getDashCard({payload:{data,token,toast}}: IgetDashCard){
+    try {
+        var requestOptions = {
+            method: 'GET',
+            headers: {
+                "Authorization": "Bearer "+token,
+                "Content-Type":"application/json",
+            },
+            redirect: 'follow'
+        };
+        let res = yield getDashCardCall(data,requestOptions)
+        .then(result => {
+            if(!result.success){
+                console.log("result false", result)
+                put({type:GET_DASHBOARD_CARD_FAILED,payload:result.msg})
+                toast.error(result.msg, {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
+            }
+            return result
+        })
+        if(res.success){
+            // console.log("get odc page",res)
+            yield put({type:GET_DASHBOARD_CARD_SUCCESSFUL,payload:res})
+        }
+    } catch (error) {
+        
+    }
+}
 function* getODCPage(props) {
-    const {payload:{page,rowsPerPage,region,witel,datel,sto,sortBy,sortOrder,token,toast}} = props
+    const {payload:{data,token,toast}}: IchangeODCPage = props
+    // const {payload:{data:{page,rowsPerPage,region,witel,datel,sto,sortBy,sortOrder},token,toast}}: IchangeODCPage = props
     var requestOptions = {
         method: 'GET',
         headers: {
@@ -757,10 +803,9 @@ function* getODCPage(props) {
         },
         redirect: 'follow'
       };
-      console.log("on odc page change",page,rowsPerPage,sortOrder)
+    //   console.log("on odc page change",page,rowsPerPage,sortOrder)
     try {
-        let res;
-        res = yield getOdcPageCall(page,rowsPerPage,region,witel,datel,sto,sortBy,sortOrder,requestOptions)
+        let res = yield getOdcPageCall(data,requestOptions)
         .then(result => {
             // console.log("result true", result.data)
             if(!result.success){
@@ -778,7 +823,7 @@ function* getODCPage(props) {
             }
             else if(result.success){
                 // console.log("result true", result.data)
-                return {success:result.success,data:result.data,count:result.total_rows,sortOrder,page:page-1}
+                return {success:result.success,data:result.data,count:result.total_rows,sortOrder:data.sortOrder,page:data.page-1}
                 // return {success:result.success,data:result.data,count:result.data.length,sortOrder,page}
             }
         });
@@ -813,7 +858,7 @@ function* addODCData({payload:{
     rak_oa,
     port
     ,token,setSubmitting,handleClose,toast,rowsPerPage
-}}){
+}}: IaddODCData){
     try {
         console.log("masuk add odc data saga")
         if(!navigator.onLine) {
@@ -933,7 +978,7 @@ function* updateODCData({payload:{
     datel_id,
     sto_id
     ,odc_id,token,setSubmitting,handleClose,toast,rowsPerPage
-}}){
+}}: IupdateODCData){
     // console.log("updateODCData",odc_id)
     try {
         /** jika offline */
@@ -1059,7 +1104,7 @@ function* updateODCData({payload:{
     }
 }
 
-function* deleteODCData({payload:{odc_name,odc_id,token,deleteRowHandleClose,toast}}){
+function* deleteODCData({payload:{odc_name,odc_id,token,deleteRowHandleClose,toast}}: IdeleteODCData){
     try {
         if(!navigator.onLine) {
             toast.error("Anda tidak terhubung dengan internet", {
@@ -1146,7 +1191,7 @@ function* deleteODCData({payload:{odc_name,odc_id,token,deleteRowHandleClose,toa
           });
     }
 }
-function* fetchODCDetail({payload:{odcId,token,toast}}) {
+function* fetchODCDetail({payload:{odcId,token,toast}}: IgetOcdSplitpanelDetail) {
     try {
         var myHeaders = new Headers();
         myHeaders.append("Authorization", "Bearer "+token);
@@ -1196,7 +1241,7 @@ function* fetchODCDetail({payload:{odcId,token,toast}}) {
     }
 
 }
-function* setTableRowsPerPage({payload:{value}}){
+function* setTableRowsPerPage({payload:{value}}:IsetTableRowsPerPage){
     try {
         yield put({type: SET_TABEL_ROWS_PER_PAGE_SUCCESSFUL,payload:value})
     } catch (error) {
@@ -1204,7 +1249,7 @@ function* setTableRowsPerPage({payload:{value}}){
     }
 }
 
-function* upsertFile({payload:{name,odc_id,token,toast,kml,setKml,mc,setMc}}){
+function* upsertFile({payload:{name,odc_id,token,toast,kml,setKml,mc,setMc}}: IupsertODCFile){
     // console.log("saga kml",kml,odc_id,token)
     try {
         var myHeaders = new Headers();
@@ -1314,7 +1359,7 @@ function* upsertFile({payload:{name,odc_id,token,toast,kml,setKml,mc,setMc}}){
     }
 }
 
-function* publicViewODC({payload:{odcId,toast}}){
+function* publicViewODC({payload:{odcId,toast}}: IgetPublicViewODC){
     try {
         // console.log("re fetch status")
         var myHeaders = new Headers();
@@ -1344,7 +1389,7 @@ function* publicViewODC({payload:{odcId,toast}}){
         });
     }
 }
-function* updateNotes({payload:{notes,odcId,token,toast}}) {
+function* updateNotes({payload:{notes,odcId,token,toast}}: IupdateNotes) {
     try {
         var myHeaders = new Headers();
         myHeaders.append("Authorization", "Bearer "+token);
@@ -1422,7 +1467,7 @@ function* updateNotes({payload:{notes,odcId,token,toast}}) {
     
 }
 
-function* updateODCPortStatus({payload: {odcId,field_id,table_name,value,token,toast}}) {
+function* updateODCPortStatus({payload: {odcId,field_id,table_name,value,token,toast}}: IupdateODCPort) {
     try {
         var myHeaders = new Headers();
         myHeaders.append("Authorization", "Bearer "+token);
@@ -1521,7 +1566,7 @@ function* addActivityLog(browse){
         
     }
 }
-function* getActivityLog({payload:{odcId,page,rowsPerPage,sortBy,sortOrder,token}}){
+function* getActivityLog({payload:{odcId,page,rowsPerPage,sortBy,sortOrder,token}}: IgetActivityLog){
     try {
         console.log("get activity log",odcId)
         var myHeaders = new Headers();
@@ -1588,6 +1633,8 @@ function* watchODCsData(){
 
     yield takeEvery(ADD_ACTIVITYLOG,addActivityLog);
     yield takeEvery(GET_ACTIVITYLOG,getActivityLog);
+
+    yield takeEvery(GET_DASHBOARD_CARD,getDashCard);
 }
 
 function* odcsSaga() {
