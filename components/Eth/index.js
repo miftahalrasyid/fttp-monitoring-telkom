@@ -21,6 +21,7 @@ function Eth({id="",key="",rak_level="",columns=[],clickHandler=(ev)=>{},status,
   useEffect(()=>{
     ethRef?.current?.setAttribute("data-id",id)
     ethRef?.current?.setAttribute("data-rak",rak_level)
+    ethRef?.current?.setAttribute("data-from",status ==='used'?'blue':status ==="priority"?"#ee2d24":'#75767e')
     ethRef?.current?.setAttribute("data-type",from)
   },[])
   // return <div className={`${styles.ethContainer}`} >

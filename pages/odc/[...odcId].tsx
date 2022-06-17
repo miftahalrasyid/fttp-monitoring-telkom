@@ -55,7 +55,6 @@ import {
   getActivityLog,
   setTableRowsPerPage
 } from '../../components/store/odcs/actions';
-import {getUserData} from '../../components/store/users/actions';
 import { wrapper,makeStore } from "../../components/store";
 // import store from '../../components/store'
 import Modal from '../../components/Modal';
@@ -293,14 +292,27 @@ function Odc({
     userData,
     activityLog,
     activity_log_client,
-    getActivityLog,
+    getActivityLog_odcSaga,
     viewOdcClient,
-    deleteSelectedCoreFeeder,
+    deleteSelectedCoreFeeder_odcSaga,
     token,
-    updateNotes,
-    updateODCPort,
-    setSelectedCoreFeeder,
-    upsertODCFile
+    updateNotes_odcSaga,
+    updateODCPort_odcSaga,
+    setSelectedCoreFeeder_odcSaga,
+    upsertODCFile_odcSaga
+    }:{
+      getActivityLog_odcSaga: typeof getActivityLog,
+      data: any,
+      activityLog: any,
+      activity_log_client: any, 
+      userData: any,
+      viewOdcClient: any,
+      deleteSelectedCoreFeeder_odcSaga:typeof deleteSelectedCoreFeeder,
+      token:any,
+      updateNotes_odcSaga: typeof updateNotes,
+      updateODCPort_odcSaga: typeof updateODCPort,
+      setSelectedCoreFeeder_odcSaga: typeof setSelectedCoreFeeder,
+      upsertODCFile_odcSaga: typeof upsertODCFile
     }) {
       const notes = useRef(null);
       // console.log("ODC Data",ODCData)
@@ -445,9 +457,117 @@ function Odc({
 
       /**if the feeder are used */
       // console.log(ev.target.children[1].getAttribute("fill"))
-      else if(ev.target.style.borderColor=="blue" && ev.target.parentNode.getAttribute("data-type")=="feeder"){
+      else if((ev.target.style.borderColor=="blue" || "red") && ev.target.parentNode.getAttribute("data-type")=="feeder"){
       // else if(ev.target.children[1].getAttribute("fill")=="blue" && ev.target.getAttribute("data-type")=="feeder"){
-        
+        ev.target.setAttribute("data-to","#ffda00")
+        setFeederFocus(()=>{
+
+          /* ketika klik feeder used lainnya*/
+          if(feederFocus && (ev.target.children[1]!==feederFocus)){
+            
+            if(feederFocus.feederElm?.style){
+              feederFocus.feederElm.parentNode.classList.remove(ethStyles.active)
+              feederFocus.feederElm.style.borderColor=feederFocus.feederElm.parentNode.getAttribute("data-from");
+              feederFocus.feederElm.setAttribute("data-to","")
+            }
+            if(feederFocus.splitterElm?.style)
+              feederFocus.splitterElm.style.borderColor=feederFocus.splitterElm.parentNode.getAttribute("data-from");
+              feederFocus.distributionElm?.forEach(item=>{
+              if(item)
+                item.childNodes[0].style.borderColor = item.childNodes[0].parentNode.getAttribute("data-from");
+              })
+          }
+          const [{data=[{
+            id:"",
+            index:"",
+            pass_through:"",
+            status:"",
+            passive_out:[],
+          }],rak_index}] = panel.data.filter(pnl=>pnl.rak_level.toString()==ev.target.parentNode.getAttribute('data-rak'));
+
+          /**
+           * data
+           * {
+           * id,
+           * index,
+           * passthrough,
+           * passive_out:{
+           *   distribution:{}
+           *   feeder:{}
+          *   name:
+          *   po_index:
+          *   splitter:{
+          *     splitter_id:
+          *     splitter_index
+          * 
+        *     }
+           *   }
+           * }
+           */
+
+          /** simpan data splitter,feeder, dan distributor didalam state setFeederFocus jika belum ada nilai data yang di fokus*/
+          const [{
+            passive_out = [{
+              distribution:{
+                distribution_id:"",
+                distribution_index:"",
+                distribution_level:""
+              },
+              feeder:{
+                feeder_id:"",
+                feeder_index:"",
+                feeder_level:""
+              },
+              splitter:{
+                splitter_id:"",
+                splitter_index:"",
+                splitter_level:""
+              }
+            }]
+            ,pass_through,status,index:feederIndex}] = data.filter(rpnl=>rpnl.index.toString() === ev.target.parentNode.getAttribute('data-id'));
+            return passive_out.reduce((prevPa,currPa)=>{
+              // console.log("feeder on focus",status,prevPa)
+          // return passive_out.reduce(pa=>{
+            // console.log("rak children",document.querySelector(`[data-id="${pa.splitter.splitter_index}"][data-type="splitter"]`))
+            /** change color from used to focused with pass_through condition for splitter*/
+            /** kondisi jika tidak passthrough */
+            const splitter = ((!pass_through)?document.querySelector(`[data-id="${currPa.splitter.splitter_index}"][data-type="splitter"]`).children[0] as HTMLElement:null);
+            if(!pass_through)
+            splitter.style.borderColor = "#ffda00";
+            const distribution = (currPa.distribution)?document.querySelector(`[data-id="${currPa.distribution.distribution_index}"][data-rak="${currPa.distribution.distribution_level}"]`) :null;
+            if(currPa.distribution){
+              (distribution.childNodes[0] as HTMLElement).style.borderColor = "#ffda00";
+            }
+            splitter.style.borderColor = "#ffda00";
+            // console.log("ethstyles",ethStyles)
+            ev.target.parentNode.classList.add(ethStyles.active)
+            ev.target.style.borderColor = "#ffda00";
+
+            // console.log("prev pa",prevPa,currPa)
+            // console.log("feeder elm",splitter,distribution)
+            return {
+              /** assign new data to either remove or add focused status */
+              splitterElm:splitter,
+              feederElm: ev.target,
+              distributionElm: [...prevPa.distributionElm,distribution],
+              /** input all passive out data for later Modal popup */
+              odpName: [...prevPa.odpName,currPa.name],
+              splitter: currPa.splitter,
+              feeder: currPa.feeder,
+              distribution: [...prevPa.distribution,currPa.distribution],
+            }
+          },{splitterElm:null,feederElm:null,odpName:[],distributionElm:[],distribution:[]});
+          /**
+           * set splitter focused
+           */
+          //  document.querySelector(`[data-id="${splitter.splitter_index}"]`).children[1].style.fill="#ffda00"
+          // console.log("selected feeder",passive_out,splitter,document.querySelector(`[data-id="${splitter.splitter_index}"]`))
+        });
+      }
+      /**if the feeder already focused */
+      else if(((ev.target.getAttribute("data-to") || false) && hexToRgb(ev.target.getAttribute("data-to")))==hexToRgb("#ffda00") && ev.target.parentNode.getAttribute("data-type")=="feeder"){
+      // else if(ev.target.children[1].getAttribute("fill")=="#ffda00" && ev.target.getAttribute("data-type")=="feeder"){
+        console.log("feederFocus",feederFocus)
         setFeederFocus(()=>{
 
           /* ketika klik feeder used lainnya*/
@@ -529,6 +649,7 @@ function Odc({
             console.log("ethstyles",ethStyles)
             ev.target.parentNode.classList.add(ethStyles.active)
             ev.target.style.borderColor = "#ffda00";
+            
 
             // console.log("prev pa",prevPa,currPa)
             // console.log("feeder elm",splitter,distribution)
@@ -550,10 +671,6 @@ function Odc({
           //  document.querySelector(`[data-id="${splitter.splitter_index}"]`).children[1].style.fill="#ffda00"
           // console.log("selected feeder",passive_out,splitter,document.querySelector(`[data-id="${splitter.splitter_index}"]`))
         });
-      }
-      /**if the feeder already focused */
-      else if(ev.target.style.borderColor==hexToRgb("#ffda00") && ev.target.parentNode.getAttribute("data-type")=="feeder"){
-      // else if(ev.target.children[1].getAttribute("fill")=="#ffda00" && ev.target.getAttribute("data-type")=="feeder"){
         feederModal[1]({type:"edit",status:true});
       }
       else if( ev.target.parentNode.getAttribute("data-type")=="distribution"){
@@ -577,7 +694,7 @@ function Odc({
        */
       // console.log(ev.target)
       //   console.log("feeder click",feederModal[0])
-    },[feederModal,feederFocus,panel.data])
+    },[feederModal,feederFocus,panel.data,viewOdcClient])
     /**
      * startpoint route /odc/odc-ktm-fs
      */
@@ -882,7 +999,7 @@ function Odc({
                 </div>
               </div>
               {/* <div className={styles.odcFiles}> */}
-              <Modal token={token} dispatchFn={{setSelectedCoreFeeder,deleteSelectedCoreFeeder}} open={feederModal[0].status} header={"Feeder "+feederFocus.feeder.feeder_index} splitterData={splitter.data} panelData={panel.data} feederModal={feederModal} feederFocus={feederFocus} setFeederFocus={setFeederFocus}/>
+              <Modal token={token} dispatchFn={{setSelectedCoreFeeder:setSelectedCoreFeeder_odcSaga,deleteSelectedCoreFeeder}} open={feederModal[0].status} header={"Feeder "+feederFocus.feeder.feeder_index} splitterData={splitter.data} panelData={panel.data} feederModal={feederModal} feederFocus={feederFocus} setFeederFocus={setFeederFocus}/>
               {/* <script async src="https://telegram.org/js/telegram-widget.js?18" data-telegram-login="miftah1112_bot"
                 data-size="large" data-onauth="onTelegramAuth(user)" data-request-access="write"></script> */}
 
@@ -947,7 +1064,7 @@ function Odc({
                   </div>
                   )}
               </Dropzone>
-              {KMLSelectedFiles.length!==0 && <CustomButton itemType='floating' variant={'standard' as any} onClick={()=>upsertODCFile(KMLSelectedFiles[0].name,odcId[0],token,toast,KMLSelectedFiles[0],setKMLSelectedFiles,null,null)}>Unggah</CustomButton>}
+              {KMLSelectedFiles.length!==0 && <CustomButton itemType='floating' variant={'standard' as any} onClick={()=>upsertODCFile_odcSaga(KMLSelectedFiles[0].name,odcId[0],token,toast,KMLSelectedFiles[0],setKMLSelectedFiles,null,null)}>Unggah</CustomButton>}
               {(KMLSelectedFiles.length==0 && kml_name) && <CustomButton itemType='download' variant={'standard' as any} onClick={handleKmlDownload}>Unduh</CustomButton>}
               
                       </div>
@@ -1014,7 +1131,7 @@ function Odc({
                   </div>
                   )}
               </Dropzone>
-              {MCSelectedFiles.length!==0 && <CustomButton itemType='floating' variant={'standard' as any} onClick={()=>upsertODCFile(MCSelectedFiles[0].name,odcId[0],token,toast,null,null,MCSelectedFiles[0],setMCSelectedFiles)}>Unggah</CustomButton>}
+              {MCSelectedFiles.length!==0 && <CustomButton itemType='floating' variant={'standard' as any} onClick={()=>upsertODCFile_odcSaga(MCSelectedFiles[0].name,odcId[0],token,toast,null,null,MCSelectedFiles[0],setMCSelectedFiles)}>Unggah</CustomButton>}
               {(MCSelectedFiles.length==0 && mc_name) && <CustomButton itemType='download' variant={'standard' as any} onClick={handleMCDownload}>Unduh</CustomButton>}
                       </div>
                     </div>
@@ -1025,7 +1142,7 @@ function Odc({
             <div className={`${styles.notesContainer}`}>
               Notes: 
               <textarea ref={notes} name="" id="" cols={30} rows={10} defaultValue={serverNotes}></textarea>
-              <Button onClick={()=>updateNotes(notes.current.value,odcId,token,toast)} variant={"outlined"}>Edit</Button>
+              <Button onClick={()=>updateNotes_odcSaga(notes.current.value,odcId[0],token,toast)} variant={"outlined"}>Edit</Button>
 
             </div>
           </div>
@@ -1052,7 +1169,7 @@ function Odc({
                   {splitter.data.map(item=><FormControl key={item.id} variant="standard" sx={{ m: 1, minWidth: 132,marginTop:"0.5rem"}}>
                     <InputLabel id="demo-simple-select-standard-label">Splitter {item.index}</InputLabel>
 
-                    <NativeSelect defaultValue={item.status=="used" ? 10:item.status=='priority' ? 20:30} onChange={(ev)=>{console.log(splitter,item,ev.target.options[ev.target.selectedIndex].text); return updateODCPort(odcId[0],item.id,'splitter',ev.target.options[ev.target.selectedIndex].text,token,toast)}} inputProps={{
+                    <NativeSelect defaultValue={item.status=="used" ? 10:item.status=='priority' ? 20:30} onChange={(ev)=>{console.log(splitter,item,ev.target.options[ev.target.selectedIndex].text); return updateODCPort_odcSaga(odcId[0],item.id,'splitter',ev.target.options[ev.target.selectedIndex].text,token,toast)}} inputProps={{
                         name: 'age',
                         id: 'uncontrolled-native',
                         }}>
@@ -1075,7 +1192,7 @@ function Odc({
                         {/* {ODCData.panel.data.length}
                         {item.data.length} */}
                        
-                     <NativeSelect  defaultValue={distFeed.status=="used" ? 10:distFeed.status=='priority' ? 20 : 30} onChange={(ev)=>{console.log(distFeed,item.type,ev.target.options[ev.target.selectedIndex].text);return updateODCPort(odcId[0],distFeed.id,item.type ,ev.target.options[ev.target.selectedIndex].text,token,toast)}} inputProps={{
+                     <NativeSelect  defaultValue={distFeed.status=="used" ? 10:distFeed.status=='priority' ? 20 : 30} onChange={(ev)=>{console.log(distFeed,item.type,ev.target.options[ev.target.selectedIndex].text);return updateODCPort_odcSaga(odcId[0],distFeed.id,item.type ,ev.target.options[ev.target.selectedIndex].text,token,toast)}} inputProps={{
                        name: 'age',
                        id: 'uncontrolled-native',
                       }}>
@@ -1139,12 +1256,12 @@ function Odc({
                                             case 'changeRowsPerPage':
                                               setTableRowsPerPage(tableState.rowsPerPage)
                                               console.log("change page")
-                                              getActivityLog(odcId[0],tableState.page+1,tableState.rowsPerPage,null,null,token)
+                                              getActivityLog_odcSaga(odcId[0],tableState.page+1,tableState.rowsPerPage,null,null,token)
                                             break;
                                             case 'changePage':
                                               // console.log("change page",tableState.sortOrder)
                                               //changeODCPage(limit,offset,region,witel,datel,sto,sortby,direction,token,toast)
-                                              getActivityLog(odcId[0],tableState.page+1,tableState.rowsPerPage,null,null,token)
+                                              getActivityLog_odcSaga(odcId[0],tableState.page+1,tableState.rowsPerPage,null,null,token)
                                               // this.changePage(tableState.page, tableState.sortOrder);
                                               break;
                                             case 'sort':
@@ -1176,7 +1293,7 @@ function Odc({
                                                 default:
                                                   break;
                                               }
-                                              getActivityLog(odcId[0],tableState.page+1,tableState.rowsPerPage,sortConvention, tableState.sortOrder.direction.toLocaleLowerCase(),token)
+                                              getActivityLog_odcSaga(odcId[0],tableState.page+1,tableState.rowsPerPage,sortConvention, tableState.sortOrder.direction.toLocaleLowerCase(),token)
                                               // this.sort(tableState.page, tableState.sortOrder);
                                               break;
                                             default:
@@ -1259,7 +1376,6 @@ export const getServerSideProps = async (props) => wrapper.getServerSideProps(st
     // console.log("odc id",odcId[0])
     store.dispatch(getOcdSplitpanelStatus(odcId[0],req.cookies.token,toast));
     store.dispatch(getOcdSplitpanelDetail(odcId[0],req.cookies.token,toast));
-    store.dispatch(getUserData(1,10, {name:"",direction:"asc"},req.cookies.token,null,toast))
     store.dispatch(getActivityLog(odcId[0],1,5,null,null,req.cookies.token))
     store.dispatch(getRegionList(req.cookies.token))
     store.dispatch(getWitelList(req.cookies.token))
@@ -1289,7 +1405,6 @@ export const getServerSideProps = async (props) => wrapper.getServerSideProps(st
                   data: selectedOdcSplitpanelStatus, 
                   ODCdetailData: store.getState().ODCs.selectedOdcSplitpanelDetail.data,
                   activityLog: store.getState().ODCs.activity_log_list,
-                  userData: store.getState().Users.userData.data || [{id:0,name:""}],
                   regionList: store.getState().ODCs.region_list || [{id:0,name:""}],
                   witelList: store.getState().ODCs.witel_list || [{id:0,region_id: 0,name:""}],
                   datelList: store.getState().ODCs.datel_list || [{id:0,region_id: 0,witel_id: 0,name:""}],
@@ -1313,13 +1428,12 @@ const mapStateToProps = state => ({
     coreFeederDataClient: state.ODCs.client.coreFeederData,
 });
 const mapFunctionToProps = {
-    getOcdSplitpanelStatus,
-    setSelectedCoreFeeder,
-    updateODCData,
-    deleteSelectedCoreFeeder,
-    upsertODCFile,
-    updateNotes,
-    updateODCPort,
-    getActivityLog
+    setSelectedCoreFeeder_odcSaga: setSelectedCoreFeeder,
+    updateODCData, // used in navbar component
+    deleteSelectedCoreFeeder_odcSaga: deleteSelectedCoreFeeder,
+    upsertODCFile_odcSaga: upsertODCFile,
+    updateNotes_odcSaga: updateNotes,
+    updateODCPort_odcSaga:updateODCPort,
+    getActivityLog_odcSaga: getActivityLog
 }
 export default connect(mapStateToProps,mapFunctionToProps)(withAuth(Odc));

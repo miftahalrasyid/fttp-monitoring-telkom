@@ -1084,11 +1084,11 @@ function* updateODCData({payload:{
               });
               yield call(addActivityLog,({payload:{odcId:odc_id,table_name:`ODC`,action:`User mengupdate`,token}}))
               
-              yield call(getODCPage,({payload:{page:1,rowsPerPage,region:null,witel:null,datel:null,sto:null,sortBy:null,sortOrder:null,token,toast}}))
-              //   if(rowsPerPage)
-            //   yield put({type:GET_ODC_PAGE,payload:{page:0,rowsPerPage,sortOrder:{name:"",direction:"asc"},token,errorState:""}})
-            //   else
-            //   yield put({type:GET_ODC_SPLITPANEL_STATUS,payload:{odcId:odc_id[0],token,toast}})
+            //   yield call(getODCPage,({payload:{page:1,rowsPerPage,region:null,witel:null,datel:null,sto:null,sortBy:null,sortOrder:null,token,toast}}))
+                if(rowsPerPage)
+              yield put({type:GET_ODC_PAGE,payload:{page:0,rowsPerPage,sortOrder:{name:"",direction:"asc"},token,errorState:""}})
+              else
+              yield put({type:GET_ODC_SPLITPANEL_STATUS,payload:{odcId:odc_id[0],token,toast}})
         }
     } catch (error) {
         console.log("saga update odc error" ,error)

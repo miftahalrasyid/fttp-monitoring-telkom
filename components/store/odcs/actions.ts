@@ -29,7 +29,7 @@ import {
     GET_ACTIVITYLOG,
     GET_DASHBOARD_CARD
 } from './actionTypes'
-import { ChangeOdcPageData, FeederDetail, GetDashCardData, IchangeODCPage, IdeleteSelectedCoreFeeder, IgetDashCard, IsetSelectedCoreFeeder, SetSelectedCoreFeederData } from './types';
+import { ChangeOdcPageData, FeederDetail, GetDashCardData, IchangeODCPage, IdeleteSelectedCoreFeeder, IgetActivityLog, IgetDashCard, IgetOcdSplitpanelDetail, IgetOcdSplitpanelStatus, IsetSelectedCoreFeeder, IupdateNotes, IupdateODCPort, SetSelectedCoreFeederData } from './types';
 export const getSplitterData = () =>({
     type: GET_SPLITTER_DATA,
 });
@@ -71,7 +71,7 @@ export const getSelectedCoreFeeder = (data) => ({
     type: GET_SELECTED_CORE_FEEDER,
     payload: data
 })
-export const getOcdSplitpanelStatus = (odcId,token,toast) => ({
+export const getOcdSplitpanelStatus = (odcId:string,token:string,toast:any):IgetOcdSplitpanelStatus => ({
     type: GET_ODC_SPLITPANEL_STATUS,
     payload: {odcId,token,toast}
 });
@@ -81,7 +81,7 @@ export const getPublicViewODC = (odcId,toast) => ({
     payload: {odcId,toast}
 });
 
-export const getOcdSplitpanelDetail = (odcId,token,toast) => ({
+export const getOcdSplitpanelDetail = (odcId:string,token:string,toast:any): IgetOcdSplitpanelDetail => ({
     type: GET_ODC_SPLITPANEL_DETAIL,
     payload: {odcId,token,toast}
 });
@@ -202,17 +202,18 @@ export const upsertODCFile = (name,odc_id,token,toast,kml,setKml,mc,setMc) => ({
     payload: {name,odc_id,token,toast,kml,setKml,mc,setMc}
 })
 
-export const updateNotes = (notes,odcId,token,toast) => ({
+export const updateNotes = (notes: string,odcId: string,token: string,toast: any): IupdateNotes => ({
     type: UPDATE_NOTES,
     payload: {notes,odcId,token,toast}
 })
 
-export const updateODCPort = (odcId,field_id,table_name,value,token,toast) => ({
+export const updateODCPort = (odcId: string,field_id: string,table_name: string,value: string,token: string,toast: any): IupdateODCPort => ({
     type: UPDATE_ODC_PORT,
     payload: {odcId,field_id,table_name,value,token,toast}
 })
 
-export const getActivityLog = (odcId,page,rowsPerPage,sortBy,sortOrder,token) => ({
+export const getActivityLog = (odcId: string,page: number,rowsPerPage: number,sortBy: string,sortOrder: string,token: string): IgetActivityLog => ({
     type: GET_ACTIVITYLOG,
     payload: {odcId,page,rowsPerPage,sortBy,sortOrder,token}
 })
+

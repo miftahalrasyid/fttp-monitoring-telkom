@@ -152,7 +152,10 @@ function Navbar(props) {
   const { odcProps = {regionList:{data:[]},witelList:"",datelList:"",stoList:"",merekList:""},odcDispatch,dataClient,odcData,email,role_name, add_user_confirmation,addNewUser,token} = props;
   // console.log("odc props",odcProps)
   // useEffect(()=>{
+useEffect(()=>{
+  console.log("data client",dataClient)
 
+},[dataClient])
   // },[odcProps.regionList])
   const {regionList,witelList,datelList,stoList,merekList,ODCdetailData} = odcProps
   const {updateODCData} = odcDispatch;
@@ -160,7 +163,8 @@ function Navbar(props) {
   const { odc_name } = odcData || {odc_name:''};
   const router = useRouter();
   const {odcId,userPath} = router.query;
-  const filteredDataclient = (odcId)?dataClient.filter(item=>item.id==odcId[0]):""
+  // const filteredDataclient = (odcId)?dataClient.filter(item=>item.id==odcId[0]):""
+  const filteredDataclient = dataClient
   // console.log("query",odcData)
   // console.log("query",userPath,odcId,router)
   const [statMenu,setStatMenu] = useState(false);
@@ -349,7 +353,7 @@ const handleFilterOnChange = (ev,inputid,values,setValues) =>{
                     ...prev.dom,
                       (prev.elm.length === 0) ? [<Link key={"link"+next} href={`/odc/${next}`} passHref>
                         <a className={indexStyles.logo}>
-                            <span className={indexStyles.logoTxt}> {odc_name?.toUpperCase()}</span>
+                            <span className={indexStyles.logoTxt}> {filteredDataclient?.odc_name || odc_name?.toUpperCase()}</span>
                         </a>
                         </Link>]:
                       <Link key={"link"+next} href={`/odc/${[...prev.elm,next].join("/")}`} passHref>
@@ -415,7 +419,7 @@ const handleFilterOnChange = (ev,inputid,values,setValues) =>{
                 <Formik
                     initialValues={{
                       tabs:0,
-                      name:ODCdetailData.name,
+                      name:filteredDataclient?.odc_name || ODCdetailData.name,
                       merek_id:ODCdetailData.merek_id,
                       port_feeder_terminasi:ODCdetailData.port_feeder_terminasi,
                       deployment_date:ODCdetailData.deployment_date,
@@ -851,7 +855,7 @@ const handleFilterOnChange = (ev,inputid,values,setValues) =>{
 }
 
 const mapStateToProps = state => ({
-  dataClient:state?.ODCs?.odcsBox,
+  dataClient:state?.ODCs?.selectedOdcSplitpanelStatus,
   add_user_confirmation: state.Users.add_user
 
 })
