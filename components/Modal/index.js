@@ -13,6 +13,7 @@ import {
     MdOutlineClose,
     MdOutlineDeleteForever
 } from 'react-icons/md';
+import ethStyles from '../../components/Eth/eth.module.css';
 import MetisMenu from '@metismenu/react';
 import 'metismenujs/dist/metismenujs.css';
 import odcStyles from '../Sidebar/sidebar.module.css';
@@ -392,7 +393,18 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
                         }
                         else{
                           setFormError(prev=>({...prev,status:false}))
-                          setSelectedCoreFeeder({odcId,type:feederModal[0].type,feeder_index:feederFocus.feeder.feeder_index,feeder_id:feederFocus.feeder.feeder_id,splitter_id:values.splitter,distribution_ids:dist_value},handleClose,token,setSubmitting,toast,router)
+                          if(feederFocus.feederElm?.style){
+                            feederFocus.feederElm.parentNode.classList.remove(ethStyles.active)
+                            feederFocus.feederElm.style.borderColor=feederFocus.feederElm.parentNode.getAttribute("data-from");
+                            // feederFocus.feederElm.setAttribute("data-to","")
+                          }
+                          if(feederFocus.splitterElm?.style)
+                            feederFocus.splitterElm.style.borderColor=feederFocus.splitterElm.parentNode.getAttribute("data-from");
+                            feederFocus.distributionElm?.forEach(item=>{
+                            if(item)
+                              item.childNodes[0].style.borderColor = item.childNodes[0].parentNode.getAttribute("data-from");
+                            })
+                          setSelectedCoreFeeder({odcId,type:feederModal[0].type,feeder_index:feederFocus.feeder.feeder_index,feeder_id:feederFocus.feeder.feeder_id,splitter_id:values.splitter,distribution_ids:dist_value,setFeederFocus},handleClose,token,setSubmitting,toast,router)
                         }
 
 

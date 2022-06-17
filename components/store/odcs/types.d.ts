@@ -60,6 +60,7 @@ export type SetSelectedCoreFeederData = {
     odcId:string,
     type:string,
     feeder_index:number,
+    setFeederFocus:any,
     feeder_id:number,
     splitter_id:number,
     distribution_ids:Array<{

@@ -373,6 +373,37 @@ function* setSelectedCoreFeederSaga({payload:{data,handleClose,token,setSubmitti
             // console.log("success added")
             setSubmitting(false)
             handleClose();
+            data.setFeederFocus({
+                distribution: [
+                {
+                  distribution_id: "",
+                  distribution_index: null,
+                  distribution_level: null,
+                  distribution_level_id: null
+                }, {
+                  distribution_id: "",
+                  distribution_index: null,
+                  distribution_level: null,
+                  distribution_level_id: null
+                }, {
+                  distribution_id: "",
+                  distribution_index: null,
+                  distribution_level: null,
+                  distribution_level_id: null
+                }, {
+                  distribution_id: "",
+                  distribution_index: null,
+                  distribution_level: null,
+                  distribution_level_id: null
+                }],
+                
+                distributionElm: [null, null, null, null],
+                feeder: {feeder_id: '', feeder_index: null, feeder_level: null},
+                feederElm: null,
+                odpName: ['', '', '', ''],
+                splitter: {splitter_id: '', splitter_index: null},
+                splitterElm: null
+              })
             toast.success(`Feeder ${data.feeder_index} berhasil ${(data.type!=="edit"?"ditambahkan":"diupdate")}`, {
                 position: "top-right",
                 autoClose: 5000,

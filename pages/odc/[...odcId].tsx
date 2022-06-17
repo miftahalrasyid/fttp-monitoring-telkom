@@ -397,7 +397,7 @@ function Odc({
        */
       /**if the feeder are idle */
       // console.log(ev.target.style.borderColor,hexToRgb("#75767e"), ev.target.parentNode.getAttribute("data-type")=="feeder")
-      if(ev.target.style.borderColor==hexToRgb("#75767e")){
+      if(ev.target.style.borderColor==hexToRgb("#75767e") && ev.target.parentNode.getAttribute("data-type")=="feeder"){
       // if(ev.target.children[1].getAttribute("fill")=="#75767e"){
         feederModal[1]({type:"add",status:true});
         if(feederFocus && (ev.target.children[1]!==feederFocus)){
@@ -405,7 +405,7 @@ function Odc({
           if(feederFocus.feederElm?.style){
             feederFocus.feederElm.parentNode.classList.remove(ethStyles.active)
             feederFocus.feederElm.style.borderColor=feederFocus.feederElm.parentNode.getAttribute("data-from");
-            feederFocus.feederElm.setAttribute("data-to","")
+            // feederFocus.feederElm.setAttribute("data-to","")
           }
           if(feederFocus.splitterElm?.style)
             feederFocus.splitterElm.style.borderColor=feederFocus.splitterElm.parentNode.getAttribute("data-from");
@@ -461,7 +461,7 @@ function Odc({
       // console.log(ev.target.children[1].getAttribute("fill"))
       else if((ev.target.style.borderColor=="blue" || ev.target.style.borderColor==hexToRgb("#ee2d24")) && ev.target.parentNode.getAttribute("data-type")=="feeder"){
       // else if(ev.target.children[1].getAttribute("fill")=="blue" && ev.target.getAttribute("data-type")=="feeder"){
-        ev.target.setAttribute("data-to","#ffda00")
+        // ev.target.setAttribute("data-to","#ffda00")
         setFeederFocus(()=>{
 
           /* ketika klik feeder used lainnya*/
@@ -470,7 +470,7 @@ function Odc({
             if(feederFocus.feederElm?.style){
               feederFocus.feederElm.parentNode.classList.remove(ethStyles.active)
               feederFocus.feederElm.style.borderColor=feederFocus.feederElm.parentNode.getAttribute("data-from");
-              feederFocus.feederElm.setAttribute("data-to","")
+              // feederFocus.feederElm.setAttribute("data-to","")
             }
             if(feederFocus.splitterElm?.style)
               feederFocus.splitterElm.style.borderColor=feederFocus.splitterElm.parentNode.getAttribute("data-from");
@@ -565,13 +565,13 @@ function Odc({
           //  document.querySelector(`[data-id="${splitter.splitter_index}"]`).children[1].style.fill="#ffda00"
           // console.log("selected feeder",passive_out,splitter,document.querySelector(`[data-id="${splitter.splitter_index}"]`))
         });
-        console.log("blue",ev.target.style.borderColor == "blue",hexToRgb("#ffda00"))
+        // console.log("blue",ev.target.style.borderColor == "blue",hexToRgb("#ffda00"))
       }
       /**if the feeder already focused */
       // else if(((ev.target.getAttribute("data-to") || false) && hexToRgb(ev.target.getAttribute("data-to")))==hexToRgb("#ffda00") && ev.target.parentNode.getAttribute("data-type")=="feeder"){
       else if(ev.target.style.borderColor==hexToRgb("#ffda00") && ev.target.parentNode.getAttribute("data-type")=="feeder"){
       // else if(ev.target.children[1].getAttribute("fill")=="#ffda00" && ev.target.getAttribute("data-type")=="feeder"){
-        console.log("feederFocus",feederFocus,feederModal[0])
+        // console.log("feederFocus",feederFocus,feederModal[0])
         setFeederFocus(()=>{
 
           /* ketika klik feeder used lainnya*/
@@ -580,7 +580,7 @@ function Odc({
             if(feederFocus.feederElm?.style){
               feederFocus.feederElm.parentNode.classList.remove(ethStyles.active)
               feederFocus.feederElm.style.borderColor=feederFocus.feederElm.parentNode.getAttribute("data-from");
-              feederFocus.feederElm.setAttribute("data-to","")
+              // feederFocus.feederElm.setAttribute("data-to","")
             }
             if(feederFocus.splitterElm?.style)
               feederFocus.splitterElm.style.borderColor=feederFocus.splitterElm.parentNode.getAttribute("data-from");
@@ -651,7 +651,7 @@ function Odc({
               (distribution.childNodes[0] as HTMLElement).style.borderColor = "#ffda00";
             }
             splitter.style.borderColor = "#ffda00";
-            console.log("ethstyles",ethStyles)
+            // console.log("ethstyles",ethStyles)
             ev.target.parentNode.classList.add(ethStyles.active)
             ev.target.style.borderColor = "#ffda00";
             
@@ -679,7 +679,7 @@ function Odc({
         feederModal[1]({type:"edit",status:true});
         console.log("feederFocus",feederFocus,feederModal[0])
       }
-      else if( ev.target.parentNode.getAttribute("data-type")=="distribution"){
+      else if( ev.target.style.borderColor!=hexToRgb("#75767e") && ev.target.parentNode.getAttribute("data-type")=="distribution"){
         
       // else if(ev.target.children[1].getAttribute("fill")=="blue" && ev.target.getAttribute("data-type")=="distribution"){
         const [{data:dataDist=[{
