@@ -354,6 +354,7 @@ function Odc({
     const feederModal = useState({type:"",status:false});
     
     // const [feederFocus,setFeederFocus] = useState(false); 
+
     const [feederFocus,setFeederFocus] = useState(
       {
         distribution: [
@@ -700,7 +701,12 @@ function Odc({
        */
       // console.log(ev.target)
       //   console.log("feeder click",feederModal[0])
+      
     },[feederModal,feederFocus,panel.data,viewOdcClient])
+    console.log("render again",viewOdcClient)
+    useEffect(()=>{
+      console.log("panel data change",panel.data)
+    },[viewOdcClient])
     /**
      * startpoint route /odc/odc-ktm-fs
      */

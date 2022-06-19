@@ -5,6 +5,7 @@ import Button from '@mui/material/Button';
 
 function Eth({id="",key="",rak_level="",columns=[],clickHandler=(ev)=>{},status,isActive=false,from}) {
   // console.log("eth",inUsed?.ids.find(item=> item==id));
+  console.log("change",status)
   // console.log("from",from)
   // console.log("from eth",columns,status)
   if(isActive){
@@ -21,9 +22,9 @@ function Eth({id="",key="",rak_level="",columns=[],clickHandler=(ev)=>{},status,
   useEffect(()=>{
     ethRef?.current?.setAttribute("data-id",id)
     ethRef?.current?.setAttribute("data-rak",rak_level)
-    ethRef?.current?.setAttribute("data-from",status ==='used'?'blue':status ==="priority"?"#ee2d24":'#75767e')
     ethRef?.current?.setAttribute("data-type",from)
   },[])
+  ethRef?.current?.setAttribute("data-from",status ==='used'?'blue':status ==="priority"?"#ee2d24":'#75767e')
   // return <div className={`${styles.ethContainer}`} >
   return <div ref={ethRef} onClick={clickHandler} className={`${styles.ethContainer} ${from=="feeder"? styles.feederPorts : ""}`} style={columnStyle}>
       {/* <div className={`${styles.ethHotspot}`}>

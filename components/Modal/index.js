@@ -124,15 +124,31 @@ function Modal(props) {
     } = props;
     const router = useRouter();
     const {odcId} = router.query;
-    console.log("feeder modal", feederModal,odcId,router.asPath.split("/")[1])
+    // console.log("feeder modal", feederModal,odcId,router.asPath.split("/")[1])
     const [availDistribution,setAvailDistribution] = useState(panelData.filter(pn=>pn.type==='distribution').map(ds=>{
       
-      return ds.data.map(dsit=>({id: dsit.id,index:dsit.index ,status:dsit.status,rak_index:ds.rak_index,rak_level:ds.rak_level}))
+      return ds.data.map(dsit=>{
+          console.log("dist",dsit)
+        return {id: dsit.id,index:dsit.index ,status:dsit.status,rak_index:ds.rak_index,rak_level:ds.rak_level}})
     }) || [])
     useEffect(()=>{
-      // console.log("avail dist",availDistribution)
-    },[availDistribution])
-
+      console.log("avail dist",availDistribution)
+    },[availDistribution,panelData])
+useEffect(()=>{
+  console.log("on update core feeder",panelData)
+  var panelDataUpdate = panelData.filter(pn=>pn.type==='distribution').map(ds=>{
+      
+    return ds.data.map(dsit=>{
+        console.log("dist",dsit)
+      return {id: dsit.id,index:dsit.index ,status:dsit.status,rak_index:ds.rak_index,rak_level:ds.rak_level}})
+  }) || []
+  setAvailDistribution(panelDataUpdate)
+  setDistributionOnChange(prev=>prev.map((item,idx)=>{
+      item.mapped = panelDataUpdate;
+      return item
+   
+  }))
+},[feederModal[0],panelData])
 const [distributionOnChange,setDistributionOnChange] = useState([
   {mapped:availDistribution,selected:{id: "",index:"" ,status:"",rak_index:"",rak_level:""}},
   {mapped:availDistribution,selected:{id: "",index:"" ,status:"",rak_index:"",rak_level:""}},
@@ -147,20 +163,19 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
       let selectedDist = distributionOnChange[poid];
       // let selectedIndex = distributionOnChange[poid].index
       setValues(prev=>({...prev,["dist_port_"+(poid+1)]:ev.target.value}))
-      // console.log("avail dist on change",poid,distributionOnChange[0])
+      console.log("avail dist on change",poid,distributionOnChange[0])
       /**
        * change available option value on each distribution input when one or more input was selected
        */
       if(distributionOnChange[poid].selected.id!==""){
         // console.log("avail splice",(distributionOnChange[0].selected.rak_index)*(distributionOnChange[0].selected.index-1))
+        
         setAvailDistribution(prev=>((prev
           .map((rak,idx)=>{
             if((selectedDist.selected.rak_index)==(idx+1))
               rak.splice((selectedDist.selected.rak_index)*(selectedDist.selected.index-1),0,selectedDist.selected)
             return rak
             .filter((elm)=>{
-              // if(elm.id==ev.target.value)  
-              // prev.splice((distributionOnChange[0].selected.rak_index)*(distributionOnChange[0].selected.index-1),0,distributionOnChange[0].selected)
               return elm.id!==ev.target.value
             })
             .map(dsit=>{
@@ -200,7 +215,27 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
        * get selected value on first distribution input and adjust available option
        */
       else{
-
+        /** change attempt */
+        // setAvailDistribution(prev=>prev.map((item=>{
+        //   console.log("avail distribution",item)
+        //   item.map(port=>{
+        //     if(port.id==feederFocus?.distribution[poid]?.distribution_id){
+        //       console.log("port found",port.id)
+        //       port.status = "idle"
+        //     }
+        //     return port
+        //   })
+        //   console.log("rak change",item)
+        //   return item
+        // })));
+        // console.log("proof",distributionOnChange[0].mapped)
+        // setDistributionOnChange(prev=>prev.map((item,idx)=>{
+        //   // feederFocus.
+        //   console.log("evo",item.mapped)
+        //   return {mapped:item.mapped,selected:(ev.target.value==0)?{id: "",index:"" ,status:"",rak_index:"",rak_level:""}:item.mapped.map(rak=>{
+        //             return rak.filter((elm)=>elm.id==ev.target.value)
+        //           }).filter(fl=>fl).flat()[0]}
+        // }))
         setAvailDistribution(prev=>((prev
           .map(rak=>rak
             .filter((elm)=>elm.id!==ev.target.value)
@@ -233,7 +268,7 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
   //   default:
   //     break;
   // }
-},[availDistribution])
+},[availDistribution,feederFocus])
 
     const [feed=false,setFeed] = feederModal || [];
     const handleClose = () => setFeed(prev=>({...prev,status:false}));
@@ -360,6 +395,7 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
                         // return values
                       }}
                       // validateOnBlur={true}
+                      validateOnMount={true}
                       validateOnChange={true}
                       onSubmit={(values,{setSubmitting})=>{
                         // console.log(values)
@@ -480,12 +516,13 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
                                           <option key={"dist_po1"+feederFocus.distribution[0].distribution_index} value={feederFocus.distribution[0].distribution_id}>{(feederFocus?.distribution[0].distribution_level%2==0)?"D"+feederFocus?.distribution[0]?.distribution_level_id+"-"+(feederFocus.distribution[0].distribution_index+12):"D"+feederFocus?.distribution[0]?.distribution_level_id+"-"+feederFocus.distribution[0].distribution_index}</option>
                                         }
                                         {distributionOnChange[0].mapped.map((item,idx)=>{
+                                          console.log("distribution on change",feederFocus.distribution[0].distribution_id)
                                           //level rak
                                           // console.log("ds",item)
                                         
                                         return  item.map((dsitem,idx1)=>{
                                           // level port
-                                          // console.log("dsiteman",dsitem)
+                                          console.log("dsiteman",dsitem)
                                           // console.log("dsitem",(dsitem.rak_level%2==0)?"D"+dsitem.rak_index+"-"+(dsitem.index+13):"D"+dsitem.rak_index+"-"+dsitem.index)
                                             if(dsitem.status!=="used"){
                                               return <option key={"dist_po1"+"D"+dsitem.rak_index+"_"+dsitem.index} value={dsitem.id}>{"D"+dsitem.rak_index+"-"+dsitem.index}</option>
