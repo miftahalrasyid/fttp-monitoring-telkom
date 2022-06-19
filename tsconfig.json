@@ -23,7 +23,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-  ],
+, "components/Modal/index.js"  ],
   "exclude": [
     "node_modules"
   ]
