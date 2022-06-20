@@ -35,16 +35,13 @@ import {MdOutlineVisibilityOff,MdOutlineVisibility} from 'react-icons/md'
 import { wrapper } from '../components/store';
 import {useRouter} from 'next/router'
 import { END } from 'redux-saga';
-  const CustomButton = styled(Button)(({ theme }) => ({
-    background: theme.status.primary,
-  }));
 function Reset_password({isLoading,checkLogin,isValid,resetPassword}) {
   const router = useRouter();
     var [error, setError] = useState({status:false,msg:"",token:""});
-    var [activeTabId, setActiveTabId] = useState(0);
-    var [nameValue, setNameValue] = useState("");
-    var [loginValue, setLoginValue] = useState("");
-    var [passwordValue, setPasswordValue] = useState("");
+    // var [activeTabId, setActiveTabId] = useState(0);
+    // var [nameValue, setNameValue] = useState("");
+    // var [loginValue, setLoginValue] = useState("");
+    // var [passwordValue, setPasswordValue] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [showRePassword, setShowRePassword] = useState(false);
 
@@ -113,7 +110,7 @@ const [valuesConfirm, setValuesConfirm] = useState({
             initialValues={{ repassword: '', password: ''}}
             initialErrors={{repassword  :"test",password: ""}}
             validate={values => {
-              const errors = {};
+              const errors: any = {};
               // if (!values.email) {
               //   errors.email = '*Required';
               // } else if (

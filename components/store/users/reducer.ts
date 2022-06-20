@@ -7,7 +7,8 @@ import {
     ADD_USER_DATA_FAILED,
     DELETE_USER_DATA,
     DELETE_USER_DATA_SUCCESSFUL,
-    DELETE_USER_DATA_FAILED
+    DELETE_USER_DATA_FAILED,
+    SET_TABEL_ROWS_PER_PAGE_SUCCESSFUL
 } from './actionTypes'
 import { HYDRATE } from 'next-redux-wrapper';
 const INIT_STATE = {
@@ -17,6 +18,7 @@ const INIT_STATE = {
         deleteUser:false
     },
     userData:"",
+    tableRowsPerPage:0,
     add_user:"",
     delete_user:""
 }
@@ -114,6 +116,11 @@ const user = (state=INIT_STATE,action) => {
                 },
                 delete_user: action.payload
             };
+        case SET_TABEL_ROWS_PER_PAGE_SUCCESSFUL:
+            return{
+                ...state,
+                tableRowsPerPage: action.payload
+            }
     
         default:
             return state;

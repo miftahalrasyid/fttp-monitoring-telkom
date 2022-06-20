@@ -16,6 +16,7 @@ import splitterStyle from '../../components/Splitter/splitter.module.css';
 import { 
   styled as styledCustom
 } from "@mui/material/styles";
+import {ButtonProps} from "@mui/material"
 import { END } from 'redux-saga';
 import { 
   getRegionList,
@@ -32,12 +33,12 @@ import {
 } from '../../components/store/odcs/actions';
 import {getUserData} from '../../components/store/users/actions';
 import { toast } from 'react-toastify';
-const CustomButton = styledCustom(Button)(({theme,itemType})=>({
+const CustomButton = styledCustom(Button)<ButtonProps>(({theme,itemType})=>({
   position: itemType =="floating"? "absolute !important":itemType=="download" ? "absolute !important":"unset !important",
   bottom: itemType =="floating" ? "17%":itemType == 'download' ? "10%":"",
   backgroundColor:"#C7417F !important",
   color: "white !important"
-}))
+} as any))
 function Viewonly_ODC({
   data:ODCData,
   userData,
@@ -248,12 +249,12 @@ function Viewonly_ODC({
               /** kondisi jika tidak passthrough */
               const splitter = (!pass_through)?document.querySelector(`[data-id="${currPa.splitter.splitter_index}"][data-type="splitter"]`).children[0]:null;
               if(!pass_through)
-              splitter.style.borderColor = "#ffda00";
+              (splitter as HTMLElement).style.borderColor = "#ffda00";
               const distribution = (currPa.distribution)?document.querySelector(`[data-id="${currPa.distribution.distribution_index}"][data-rak="${currPa.distribution.distribution_level}"]`):null;
               if(currPa.distribution){
-                distribution.childNodes[0].style.borderColor = "#ffda00";
+                (distribution.childNodes[0] as HTMLElement).style.borderColor = "#ffda00";
               }
-              splitter.style.borderColor = "#ffda00";
+              (splitter as HTMLElement).style.borderColor = "#ffda00";
               console.log("ethstyles",ethStyles)
               ev.target.parentNode.classList.add(ethStyles.active)
               ev.target.style.borderColor = "#ffda00";
@@ -282,7 +283,7 @@ function Viewonly_ODC({
         /**if the feeder already focused */
         else if(ev.target.style.borderColor==hexToRgb("#ffda00") && ev.target.parentNode.getAttribute("data-type")=="feeder"){
         // else if(ev.target.children[1].getAttribute("fill")=="#ffda00" && ev.target.getAttribute("data-type")=="feeder"){
-          feederModal[1]({type:"edit",status:"true"});
+          feederModal[1]({type:"edit",status:true});
         }
         else if( ev.target.parentNode.getAttribute("data-type")=="distribution"){
           
@@ -397,7 +398,6 @@ function Viewonly_ODC({
           </div>
           <div className='odcpanel row'>
           <div className={styles.splitPanelWrapper} style={{height:"1000px"}}>
-                {console.log("splitter position",splitter.position)}
                 <Splitter x={splitter.position?(splitter.position.split(" ")[1] == "left" ? "0":""):""} y={splitter.position.split(" ")[0] == "top" ? "0":""}>
                   {splitter.data.map(s_item=>
                   <Eth from="splitter" key={"sp"+s_item.index} id={s_item.index} status={s_item.status}
@@ -428,8 +428,8 @@ function Viewonly_ODC({
                     <h4 className={splitterStyle.cardTitle}>Video</h4>
                   </div>
                   <div className={`${splitterStyle.videoContainer}`}>
-                    <iframe frameBorder="0" scrolling="no" marginHeight="0" marginWidth="0" width="315" height="auto"
-                      type="text/html"
+                    <iframe frameBorder="0" scrolling="no" marginHeight={0} marginWidth={0} width="315" height="auto"
+                      // type="text/html"
                       src="https://www.youtube.com/embed/_cAIkgb5I0E?autoplay=0&fs=0&iv_load_policy=3&showinfo=0&rel=0&cc_load_policy=0&start=0&end=0&origin=http://youtubeembedcode.com"></iframe>
                   </div>
                 </div>
@@ -541,10 +541,7 @@ function Viewonly_ODC({
                       {/* <a target="_blank" href="https://icons8.com/icon/111876/xls">XLS</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a> */}
                         
                         <Dropzone
-                  accept='image/xls, image/xlsx'
-                  onDrop={acceptedFiles =>
-                    handleAcceptedKMLFiles(acceptedFiles)
-                  }
+                  disabled
               >
                   {({ getRootProps, getInputProps }) => (
                   <div className={`dropzone ${styles.dropzoneCustom}`} style={ {paddingBottom: "3rem"}}>
@@ -571,7 +568,7 @@ function Viewonly_ODC({
                   </div>
                   )}
               </Dropzone>
-              {(kml_name) && <CustomButton itemType='download' variant='standard' onClick={handleKmlDownload}>Unduh</CustomButton>}
+              {(kml_name) && <CustomButton itemType='download' variant={'standard' as any} onClick={handleKmlDownload}>Unduh</CustomButton>}
               
                       </div>
                     </div>
@@ -590,10 +587,7 @@ function Viewonly_ODC({
                     <div className={`${splitterStyle.splitContainer} ${splitterStyle.kmlCardContainer}`}>
                       <div className={styles.uploadFileWrapper}>
                       <Dropzone
-                  accept='image/xls, image/xlsx'
-                  onDrop={acceptedFiles =>
-                    handleAcceptedMCFiles(acceptedFiles)
-                  }
+                  disabled
               >
                   {({ getRootProps, getInputProps }) => (
                   <div className={`dropzone ${styles.dropzoneCustom}`} style={ {paddingBottom: "3rem"}}>
@@ -622,7 +616,7 @@ function Viewonly_ODC({
                   </div>
                   )}
               </Dropzone>
-              {( mc_name) && <CustomButton itemType='download' variant='standard' onClick={handleMCDownload}>Unduh</CustomButton>}
+              {( mc_name) && <CustomButton itemType='download' variant={'standard' as any} onClick={handleMCDownload}>Unduh</CustomButton>}
                       </div>
                     </div>
                   </div>
@@ -631,7 +625,7 @@ function Viewonly_ODC({
           <div className={`row`}>
             <div className={`${styles.notesContainer}`}>
               Notes: 
-              <textarea name="" id="" cols="30" rows="10"></textarea>
+              <textarea name="" id="" cols={30} rows={10}></textarea>
               <Button variant={"outlined"}><a>Edit</a></Button>
 
             </div>

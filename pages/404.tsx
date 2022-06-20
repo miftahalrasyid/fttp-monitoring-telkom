@@ -10,7 +10,8 @@ import {
   import {
   Button
   } from "@material-ui/core";
-  const CustomButtonEdit= styledCustom(Button)(({ theme }) => ({
+import { ButtonProps } from '@mui/material';
+  const CustomButtonEdit= styledCustom(Button)<ButtonProps>(({ theme }) => ({
     borderColor: theme.status.primary,
     color: theme.status.primary,
   }));

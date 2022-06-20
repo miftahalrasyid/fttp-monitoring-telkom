@@ -13,10 +13,38 @@ import {
     DELETE_USER_DATA_FAILED,
     UPDATE_USER_DATA,
     UPDATE_USER_DATA_SUCCESSFUL,
-    UPDATE_USER_DATA_FAILED
+    UPDATE_USER_DATA_FAILED,
+    SET_ROWS_PER_PAGE,
+    SET_TABEL_ROWS_PER_PAGE_SUCCESSFUL
 } from './actionTypes'
+import { GetUserData, IaddUserData, IdeleteUserData, IgetUserData, IsetTableRowsPerPage, IupdateUserData } from './types';
 
-function* getUserData({payload:{page,rowsPerPage,sortOrder,token,errorState,toast}}){
+/**
+ * 
+ * @param {requestOptions} getUserDataCall 
+ * @returns 
+ */
+ const getUserDataCall = (data: GetUserData, requestOptions) => fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/api/get-users?sorting=${data.sortBy || ""}&direction=${data.sortOrder || ""}&limit=${data.rowsPerPage}&offset=${data.page!==0?data.page:1}`,requestOptions).then(res=>res.json())
+/**
+ * 
+ * @param {requestOptions} addUserDataCall 
+ * @returns 
+ */
+ const addUserDataCall = (requestOptions) => fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/api/add-user`,requestOptions).then(res=>res.json())
+/**
+ * 
+ * @param {requestOptions} deleteUserDataCall 
+ * @returns 
+ */
+ const deleteUserDataCall = (user_id,requestOptions) => fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/api/delete-user/${user_id}`,requestOptions).then(res=>res.json())
+/**
+ * 
+ * @param {requestOptions} deleteUserDataCall 
+ * @returns 
+ */
+ const updateUserDataCall = (user_id,requestOptions) => fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/api/update-user/${user_id}`,requestOptions).then(res=>res.json())
+
+function* getUserData({payload:{data,token,errorState,toast}}: IgetUserData){
 
     // try {
     //     const res = yield fetch("https://my-project-1550730936778.firebaseio.com/user.json").then(res=>res.json());
@@ -46,8 +74,8 @@ function* getUserData({payload:{page,rowsPerPage,sortOrder,token,errorState,toas
         //         progress: undefined,
         //       });
         // }
-        console.log("get user params",page,rowsPerPage,sortOrder,token)
-        const res = yield fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/api/get-users?&limit=${rowsPerPage}&offset=${page!==0?page:1}`,requestOptions).then(res=>res.json()).then(result => {
+        console.log("get user params",data)
+        const res = yield getUserDataCall(data, requestOptions).then(result => {
             if(!result.success){
                 if(result.msg=='Method must be one of: OPTIONS')
                     return put({type:GET_USER_DATA_FAILED,payload:{success:false,data:[],msg:"Gagal memanggil API"}})
@@ -55,7 +83,7 @@ function* getUserData({payload:{page,rowsPerPage,sortOrder,token,errorState,toas
                     return put({type:GET_USER_DATA_FAILED,payload:{success:result.success,data:[],msg:result.msg || result.message}})
             }
             else {
-                return {success:result.success,data:result.data,count:result.total_rows,sortOrder,page:page-1}
+                return {success:result.success,data:result.data,count:result.total_rows,sortOrder:data.sortOrder,page:data.page-1}
             }
         });
         // console.log("get user data",res)
@@ -79,7 +107,7 @@ function* getUserData({payload:{page,rowsPerPage,sortOrder,token,errorState,toas
     }
 }
 
-function* addUserData({payload:{email,password,role,token,setSubmitting,handleAddUserClose,toast}}){
+function* addUserData({payload:{email,password,role,token,setSubmitting,handleAddUserClose,toast}}: IaddUserData){
     // console.log("data submit",email,password,role)
     try {
         if(!navigator.onLine) {
@@ -109,8 +137,9 @@ function* addUserData({payload:{email,password,role,token,setSubmitting,handleAd
         body: formdata,
         redirect: 'follow'
         };
-        const res = yield fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/api/add-user`,requestOptions)
-        .then(res=>res.json())
+        const res = yield addUserDataCall(requestOptions)
+        // const res = yield fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/api/add-user`,requestOptions)
+        // .then(res=>res.json())
         .then(result=>{
             // console.log("error sgga",result)
             if(!result.success){
@@ -176,7 +205,7 @@ function* addUserData({payload:{email,password,role,token,setSubmitting,handleAd
     }
 }
 
-function* deleteUserData({payload:{email,idx,user_id,token,setSubmitting,deleteRowHandleClose,toast}}){
+function* deleteUserData({payload:{email,idx,user_id,token,setSubmitting,deleteRowHandleClose,toast}}: IdeleteUserData){
     // console.log("data submit",email,password,role)
     try {
         if(!navigator.onLine) {
@@ -201,8 +230,8 @@ function* deleteUserData({payload:{email,idx,user_id,token,setSubmitting,deleteR
         headers: myHeaders,
         redirect: 'follow'
         };
-        const res = yield fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/api/delete-user/${user_id}`,requestOptions)
-        .then(res=>res.json())
+        const res = yield deleteUserDataCall(user_id,requestOptions)
+        // .then(res=>res.json())
         .then(result=>{
             // console.log("error sgga",result)
             if(!result.success){
@@ -286,7 +315,7 @@ function* updateUserData({
         setSubmitting,
         handleClose,
         toast
-    }}){
+    }}: IupdateUserData){
     try {
         /** jika offline */
         if(!navigator.onLine) {
@@ -320,8 +349,9 @@ function* updateUserData({
         body: formdata,
         redirect: 'follow'
         };
-        const res = yield fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/api/update-user/${user_id}`,requestOptions)
-        .then(res=>res.json())
+        const res = yield updateUserDataCall(user_id,requestOptions)
+        // const res = yield fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/api/update-user/${user_id}`,requestOptions)
+        // .then(res=>res.json())
         .then(result=>{
             // console.log("error sgga",result)
             if(!result.success){
@@ -393,9 +423,18 @@ function* updateUserData({
     }
 }
 
+function* setTableRowsPerPage({payload:{value}}:IsetTableRowsPerPage){
+    try {
+        yield put({type: SET_TABEL_ROWS_PER_PAGE_SUCCESSFUL,payload:value})
+    } catch (error) {
+        
+    }
+}
+
 function* watchUserData(){
     yield takeEvery(GET_USER_DATA,getUserData);
     yield takeEvery(ADD_USER_DATA,addUserData);
+    yield takeEvery(SET_ROWS_PER_PAGE,setTableRowsPerPage)
     yield takeEvery(DELETE_USER_DATA,deleteUserData);
     yield takeEvery(UPDATE_USER_DATA,updateUserData);
 }

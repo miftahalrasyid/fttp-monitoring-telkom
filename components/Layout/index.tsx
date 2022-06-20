@@ -30,7 +30,7 @@ export default function Layout(props) {
         stoList,
         merekList
     } = props;
-    console.log("email",email)
+    // console.log("email",email)
 
     const [closeState,setCloseState] = useState(true);
     const closeMenu = useCallback(event=>{

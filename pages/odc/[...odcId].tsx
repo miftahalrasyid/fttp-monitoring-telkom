@@ -76,6 +76,8 @@ declare module '@mui/material/styles' {
       success?: string;
       primary?: string;
       darkgray?: string;
+      warning?: string;
+      info?: string;
     };
   }
 }
@@ -85,10 +87,7 @@ declare module '@mui/material/styles' {
 //       flexDirection: "column",
 //     },
 //   }))
-type CustomButtonProps = ButtonProps & {
-  itemType?:string
-}
-const CustomButton = styledCustom(Button)<CustomButtonProps>(({itemType})=>({
+const CustomButton = styledCustom(Button)<ButtonProps>(({itemType})=>({
   position: (itemType == "floating" ? "absolute!important" : itemType=="download" ? "absolute!important" : "unset!important") as any,
   bottom: itemType =="floating" ? "17%":itemType == 'download' ? "10%":"",
   backgroundColor:"#C7417F !important",
@@ -287,6 +286,7 @@ customCreateTheme({
     },
   }
 });
+
 function Odc({
     data:ODCData,
     userData,
@@ -352,7 +352,6 @@ function Odc({
       sto_name,
       splitter={splitter:{position:[]},data:[],position:"top left"},panel={data:[],position:"top left"}} = (viewOdcClient || false)? viewOdcClient:ODCData;
     const feederModal = useState({type:"",status:false});
-    
     // const [feederFocus,setFeederFocus] = useState(false); 
 
     const [feederFocus,setFeederFocus] = useState(
@@ -703,10 +702,7 @@ function Odc({
       //   console.log("feeder click",feederModal[0])
       
     },[feederModal,feederFocus,panel.data,viewOdcClient])
-    console.log("render again",viewOdcClient)
-    useEffect(()=>{
-      console.log("panel data change",panel.data)
-    },[viewOdcClient])
+    // console.log("render again",viewOdcClient)
     /**
      * startpoint route /odc/odc-ktm-fs
      */
@@ -788,7 +784,7 @@ function Odc({
     }
     /** upload kml variables*/
     const [KMLSelectedFiles,setKMLSelectedFiles] = useState([])
-    console.log("kml ",kml_name,KMLSelectedFiles.length==0 && (kml_name || false))
+    // console.log("kml ",kml_name,KMLSelectedFiles.length==0 && (kml_name || false))
     const handleAcceptedKMLFiles = files => {
       files.map((file,idx) => {
         console.log("uploaded file",file,file.type,file.type.split("/")[1]!==('png' || 'jpeg' || 'jpg'))
@@ -889,7 +885,6 @@ function Odc({
           </div>
           <div className='odcpanel row'>
           <div className={styles.splitPanelWrapper} style={{height:"1000px"}}>
-                {console.log("splitter position",splitter.position)}
                 <Splitter x={splitter.position?(splitter.position.split(" ")[1] == "left" ? "0":""):""} y={splitter.position.split(" ")[0] == "top" ? "0":""}>
                   {splitter.data.map(s_item=>
                   <Eth from="splitter" key={"sp"+s_item.index} id={s_item.index} status={s_item.status}

@@ -20,6 +20,7 @@ import {
     RESET_PASSWORD,
     RESET_PASSWORD_SUCCESSFUL
 } from "./actionTypes";
+import { Ichecklogin, IforgotPasswordRequest, IotpVerify, IresetPassword, IuserVerify, IverifyResetCode } from './types';
 
 // var myHeaders = new Headers();
 // myHeaders.append("Cookie", "PHPSESSID=ff3rj3truemcrr1bj0r1j2fnir");
@@ -30,7 +31,38 @@ var requestOptions = {
     // redirect: 'follow'
   };
 
-function* checklogin({payload:{email,password,history,errorState,setSubmitting}}){
+/**
+ * 
+ * @param {requestOptions} checkLoginCall 
+ * @returns 
+ */
+const checkLoginCall = (requestOptions) => fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/login`,requestOptions).then(res=>res.json())
+/**
+ * 
+ * @param {requestOptions} otpVerifyCall 
+ * @returns 
+ */
+const otpVerifyCall = (requestOptions) => fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/verify-otp`,requestOptions).then(res=>res.json())
+/**
+ * 
+ * @param {requestOptions} forgotPasswordRequestCall 
+ * @returns 
+ */
+const forgotPasswordRequestCall = (requestOptions) => fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/forgot-password`,requestOptions).then(res=>res.json())
+/**
+ * 
+ * @param {requestOptions} verifyResetCodeCall 
+ * @returns 
+ */
+const verifyResetCodeCall = (requestOptions) => fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/verify-forgot-password`,requestOptions).then(res=>res.json())
+/**
+ * 
+ * @param {requestOptions} resetPasswordCall 
+ * @returns 
+ */
+const resetPasswordCall = (requestOptions) => fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/update-password`,requestOptions).then(res=>res.json())
+
+function* checklogin({payload:{email,password,history,errorState,setSubmitting}}:Ichecklogin){
     try {
         // console.log("email",email,window,window.navigator.onLine,errorState)
         // console.log("password",password)
@@ -44,7 +76,7 @@ function* checklogin({payload:{email,password,history,errorState,setSubmitting}}
         // yield put(verifyUser(false,true))
         let res;
         if(typeof window !== 'undefined')
-        res = yield fetch(`/login`,{...requestOptions,body: formData}).then(response => response.json())
+        res = yield checkLoginCall({...requestOptions,body: formData})
         .then( result => {
             console.log("result", result)
             if(!result.success){
@@ -71,24 +103,17 @@ function* checklogin({payload:{email,password,history,errorState,setSubmitting}}
     }
 }
 
-function* otpVerify({payload:{value,history,setError}}){
+function* otpVerify({payload:{value,history,setError}}: IotpVerify){
     
     
     try {
-        console.log("otpVerify")
+        // console.log("otpVerify")
         var formData = new FormData();
         formData.append("otp",value);
         // console.log(email)
-        let res;
-        if(typeof window !== 'undefined')
-        // res = yield fetch("/api/feeder-status-graph?region=&witel=&datel=&sto",requestOptions).then(res=>res.json());
-        res = yield fetch(`/verify-otp`, {...requestOptions,body:formData}).then(response => response.json())
+        let res = yield otpVerifyCall({...requestOptions,body:formData})
         .catch(error => console.log('error', error));
-        else
-        res = yield fetch(`${process.env.NEXT_PUBLIC_API_HOST}/verify-otp`, {...requestOptions,body:formData})
-        .then(response => response.json())
-        .catch(error => console.log('error', error));
-        console.log("otp verify",res)
+        // console.log("otp verify",res)
         if(res.success){
             setError("")
             // console.log("go to odc",history)
@@ -105,7 +130,7 @@ function* otpVerify({payload:{value,history,setError}}){
         console.log("otp verify error ",error)
     }
 }
-function* userVerify({payload:{status,errorCon,token}}){
+function* userVerify({payload:{status,errorCon,token}}: IuserVerify){
     try {
 
         // console.log("user verify", status,errorCon)
@@ -138,8 +163,8 @@ function* userVerify({payload:{status,errorCon,token}}){
         
     }
 }
-function* forgotPasswordRequest({payload:{email}}){
-    console.log("password requested")
+function* forgotPasswordRequest({payload:{email}}:IforgotPasswordRequest){
+    // console.log("password requested")
     try {
         const myHeaders = new Headers();
         const formdata = new FormData();
@@ -150,7 +175,8 @@ function* forgotPasswordRequest({payload:{email}}){
             body: formdata,
             redirect: 'follow'
         };
-        const res = yield fetch("/forgot-password",requestOptions).then(rest=>rest.json()).then(result=>{
+        const res = yield forgotPasswordRequestCall(requestOptions).then(result=>{
+        // const res = yield fetch("/forgot-password",requestOptions).then(rest=>rest.json()).then(result=>{
 
         });
         yield put({type: FORGOT_PASSWORD_REQUEST_SUCCESSFUL})
@@ -163,7 +189,7 @@ function* forgotPasswordRequest({payload:{email}}){
         
     }
 }
-function* verifyResetCode({payload:{code}}){
+function* verifyResetCode({payload:{code}}: IverifyResetCode){
     try {
         // console.log("verifyresetcode called");
         var myHeaders = new Headers();
@@ -175,7 +201,8 @@ function* verifyResetCode({payload:{code}}){
             body: formdata,
             redirect: 'follow'
           };
-        const res = yield fetch(`${typeof window == 'undefined' ? process.env.NEXT_PUBLIC_API_HOST:""}/verify-forgot-password`,requestOptions).then(rest=>rest.json()).then(result=>{
+        const res = yield verifyResetCodeCall(requestOptions).then(result=>{
+        // const res = yield fetch(`${typeof window == 'undefined' ? process.env.NEXT_PUBLIC_API_HOST:""}/verify-forgot-password`,requestOptions).then(rest=>rest.json()).then(result=>{
             return result
         })
         // console.log("result",res)
@@ -187,7 +214,7 @@ function* verifyResetCode({payload:{code}}){
         console.log("error verify code",error)
     }
 }
-function* resetPassword({payload:{code,password,setError,setSubmitting}}){
+function* resetPassword({payload:{code,password,setError,setSubmitting}}: IresetPassword){
     try {
         var myHeaders = new Headers();
         var formdata = new FormData();
@@ -199,7 +226,7 @@ function* resetPassword({payload:{code,password,setError,setSubmitting}}){
             body: formdata,
             redirect: 'follow'
         };
-        const res = yield fetch("/update-password",requestOptions).then(rest=>rest.json()).then(result=>{
+        const res = yield resetPasswordCall(requestOptions).then(result=>{
             if(!result.success){
                 setSubmitting(false)
                 setError(prev=>({...prev,msg: "terjadi kesalahan server"}))

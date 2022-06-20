@@ -4,7 +4,7 @@ import Link from 'next/link';
 import styles from './odc_evolve.module.css';
 import Card from '../../components/Card';
 import dynamic from 'next/dynamic';
-const ApexChart = dynamic(()=>import('react-apexcharts'),{ssr:false});
+const ApexChart = dynamic(()=>import('react-apexcharts'),{ssr:false}) as any;
 // import Chart from "react-apexcharts";
 import { connect } from 'react-redux';
 import {
@@ -34,7 +34,7 @@ import {
 } from '../../components/store/odcs/actions';
 import {otpVerificationSuccessfull} from "../../components/store/auth/actions";
 import withAuth from '../../components/Auth';
-const DynamicMUIDataTable = dynamic(() => import('mui-datatables'),{ ssr: false });
+const DynamicMUIDataTable = dynamic(() => import('mui-datatables'),{ ssr: false }) as any;
 import {styled } from '@mui/material/styles';
 import {
   Button,
@@ -45,7 +45,8 @@ import {
   } from "@material-ui/core";
 import {
   Button as newButton,
-  FormControl,InputLabel
+  ButtonProps,
+  FormControl,InputLabel, InputLabelProps, TabsProps, TextFieldProps
 } from '@mui/material'
 // import { makeStyles } from '@material-ui/styles';
 import { createTheme, MuiThemeProvider,makeStyles } from "@material-ui/core/styles";
@@ -57,7 +58,7 @@ import TextField from '@mui/material/TextField';
 import { Formik } from 'formik';
 import { toast } from 'react-toastify';
 import { map } from '@firebase/util';
-const CustomTextField = styled(TextField)(({ theme }) => ({
+const CustomTextField = styled(TextField)<TextFieldProps>(({ theme }) => ({
   color: theme.status.primary,
   '.MuiInputLabel-root.Mui-focused': {
     color: theme.status.primary,
@@ -87,12 +88,12 @@ const CustomTab = styled(Tab)(({theme})=>({
     color: "black!important"
   },
 }))
-const CustomTabs = styled(Tabs)(({theme})=>({
+const CustomTabs = styled(Tabs)<TabsProps>(({theme})=>({
   '.MuiTabs-indicator': {
     backgroundColor: theme.status.primary,
   },
 }))
-const CustomButton = styled(Button)(({theme,btntype})=>({
+const CustomButton = styled(Button)<ButtonProps>(({theme,btntype})=>({
   background:btntype=="green"?theme.status.success:"transparent",
   color:"white!important",
   padding:"6px 16px !important",
@@ -310,13 +311,13 @@ function ODC(props) {
     {label: "4",value:1},
     {label: "2",value:2},
   ]
-  const CustomButtonModal = styled(newButton)(({ theme, btntype }) => {
+  const CustomButtonModal = styled(newButton)<ButtonProps>(({ theme, btntype }) => {
     // console.log("custom button modal", theme, etc)
     return {
     background: btntype == 'submit' ? theme.status.success:theme.status.primary,
     color:"white!important",
   }});
-  const CustomInputLabel = styled(InputLabel)(({ theme }) => ({
+  const CustomInputLabel = styled(InputLabel)<InputLabelProps>(({ theme }) => ({
     '&.Mui-focused':{
       color: theme.status.primary,
   
@@ -401,7 +402,7 @@ function ODC(props) {
             // background:"rgba(255,255,255,0.3)"
           },
           "head":{
-            backgroundImage:"linear-gradient(to right,rgba(178,98,98,0.3),rgb(255 228 228 / 30%))",
+            // backgroundImage:"linear-gradient(to right,rgba(178,98,98,0.3),rgb(255 228 228 / 30%))",
             backgroundImage:"linear-gradient(to right,rgb(237 167 88 / 30%),rgb(253 243 236 / 30%))",
           },
         }
@@ -473,7 +474,7 @@ function ODC(props) {
             '&[class*="iconActive"]':{
               color: '#ee2d24 !important'
             }
-          },
+          } as any,
           
         }
       },
@@ -486,30 +487,7 @@ function ODC(props) {
       },
     }
   });
-  const getMuiThemea = () =>
-  createTheme({
-    status: {
-      primary: "#ee2d24!important",
-      darkgray: "darkgray!important"
-    },
-    overrides: {
-      MUIDataTableHeadCell:{
-        toolButton:{
-          justifyContent:"center"
 
-        }
-      },
-      MUIDataTableToolbar:{
-        icon:{'&:hover': {color: '#ee2d24'}},
-        iconActive:{color:'#ee2d24'}
-      },
-      MUIDataTableBodyCell: {
-        root: {
-          whiteSpace: "nowrap"
-        },
-      },
-    },
-  });
   const [datatable, setDatatable] = React.useState([[]])
     React.useEffect(()=>{
     
@@ -517,9 +495,9 @@ function ODC(props) {
         setTimeout(()=>{
           // console.log("odc",document.querySelector('[itemref="odcDetailModal"]'))
           if(document.querySelector('[itemref="odcDetailModal"]'))
-          document.querySelector('[itemref="odcDetailModal"]').style.top = "50%";
+          (document.querySelector('[itemref="odcDetailModal"]') as HTMLElement).style.top = "50%";
           if(document.querySelector('[itemref="odcDeleteModal"]'))
-          document.querySelector('[itemref="odcDeleteModal"]').style.top = "50%";
+          (document.querySelector('[itemref="odcDeleteModal"]') as HTMLElement).style.top = "50%";
         },50)
       setDatatable(odc_list.data.map((item,idx)=>([
         item.row_number,
@@ -708,11 +686,11 @@ function ODC(props) {
     }
 
     const [regionListClient,setRegionListClient] = useState("");
-    const [submittedFilter,setSubmittedFilter] = useState("");
-    const [witelListClient,setWitelListClient] = useState("");
-    const [datelListClient,setDatelListClient] = useState("");
-    const [stoListClient,setSTOListClient] = useState("");
-    const [feederChartName, setFeederChartName] = useState([]);
+    const [submittedFilter,setSubmittedFilter] = useState({ regional: '', witel: '', datel: '', sto: ''});
+    const [witelListClient,setWitelListClient] = useState<Array<{id:number,region_id: number,name:string}>>();
+    const [datelListClient,setDatelListClient] = useState<Array<{id:number,region_id: number,witel_id: number,name:string}>>();
+    const [stoListClient,setSTOListClient] = useState<Array<{id:number,region_id: number,witel_id: number,datel_id: number, name:string}>>();
+    const [feederChartName, setFeederChartName] = useState({regional:"",witel:"",datel:"",sto:"null"});
     const [singleConfirmDeletePopup, setSingleConfirmDeletePopup] = useState(false)
     const singleConfirmDeletePopupOpen = (selectedConfirmDeleteValue) => {
       console.log("selectedConfirmDeleteValue",selectedConfirmDeleteValue)
@@ -733,7 +711,7 @@ function ODC(props) {
       setSingleModalPopup(true);
     }
     const [selectedModalValue,setSelectedModalValue] = useState({odc_id:"",name:"",region_id:"",witel_id:"",datel_id:"",sto_id:"",deployment_date:"",rak_oa:"",panel:"",port:"",rowsPerPage:0});
-    const singleModalPopupClose = (selectedModalId) => {
+    const singleModalPopupClose = () => {
       setSingleModalPopup(false)
     };
     // console.log("selectedModalValue",selectedModalValue)
@@ -742,11 +720,11 @@ function ODC(props) {
     useEffect(()=>{
       console.log(feederChartName)
       console.log("filter change",Object.entries(feederChartName).map(([key,value])=>{
-        if(key == "regional" && value!=0)
+        if(key == "regional" && value!="0")
         return key+" "+regionList?.data.filter(item=>item.id.toString() == value)[0]?.name || ""
-        if(key == "witel" && value!=0)
+        if(key == "witel" && value!="0")
         return key+" "+witelList?.data.filter(item=>item.id.toString() == value)[0]?.name || ""
-        if(key == "datel" && value!=0)
+        if(key == "datel" && value!="0")
         return key+" "+datelList?.data.filter(item=>item.id.toString() == value)[0]?.name || ""
       }))
     },[feederChartName])
@@ -764,7 +742,7 @@ function ODC(props) {
           <p className={styles.last_update}>Last Update : {deck_value?.last_update}</p>
 
           <Formik 
-          initialValues={{ regional: 0, witel: 0, datel: 0, sto: 0}}
+          initialValues={{ regional: "0", witel: "0", datel: "0", sto: "0"}}
           validate={(values)=>{
             setFeederChartName(values)
             setWitelListClient(witelList?.data?.filter(item=>(values.regional == "0") ? item.region_id.toString() !== values.regional:item.region_id.toString() === values.regional))
@@ -776,7 +754,7 @@ function ODC(props) {
 
             // return values
           }}
-          validateOnChange={"true"}
+          validateOnChange={true}
           onSubmit={(values)=>{
             // console.log("cookie",document.cookie.split(" "))
             getFeederGraph(values || { regional: '', witel: '', datel: '', sto: ''},token);
@@ -787,19 +765,19 @@ function ODC(props) {
 
 
             feederChartRef.current.innerHTML = "Feeder Mapping - "+ Object.entries(feederChartName).map(([key,value])=>{
-              if(key == "regional" && value!=0)
+              if(key == "regional" && value!="0")
               return key+" "+regionList?.data.filter(item=>item.id.toString() == value)[0]?.name || ""
-              if(key == "witel" && value!=0)
+              if(key == "witel" && value!="0")
               return key+" "+witelList?.data.filter(item=>item.id.toString() == value)[0]?.name || ""
-              if(key == "datel" && value!=0)
+              if(key == "datel" && value!="0")
               return key+" "+datelList?.data.filter(item=>item.id.toString() == value)[0]?.name || ""
             }).filter(x=>x!==undefined).join(" - ");
             distribusiChartRef.current.innerHTML = "Distribution Mapping - "+ Object.entries(feederChartName).map(([key,value])=>{
-              if(key == "regional" && value!=0)
+              if(key == "regional" && value!="0")
               return key+" "+regionList?.data.filter(item=>item.id.toString() == value)[0]?.name || ""
-              if(key == "witel" && value!=0)
+              if(key == "witel" && value!="0")
               return key+" "+witelList?.data.filter(item=>item.id.toString() == value)[0]?.name || ""
-              if(key == "datel" && value!=0)
+              if(key == "datel" && value!="0")
               return key+" "+datelList?.data.filter(item=>item.id.toString() == value)[0]?.name || ""
             }).filter(x=>x!==undefined).join(" - ");
           }}
@@ -900,7 +878,7 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                       // this.changePage(tableState.page, tableState.sortOrder);
                       break;
                     case 'sort':
-                      // console.log("sort",tableState.sortOrder)
+                      console.log("sort",tableState.sortOrder)
                       let sortConvention = "";
                       // console.log("odc name sort",tableState.sortOrder.name.toLocaleLowerCase())
                       switch (tableState.sortOrder.name.toLocaleLowerCase()) {
@@ -1270,9 +1248,9 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                               // background: "#fff",
                               width:"90%",
                               maxWidth: "480px",
-                              boxShadow: "0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 20%), 0 1px 5px 0 rgb(0 0 0 / 12%)",
+                              // boxShadow: "0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 20%), 0 1px 5px 0 rgb(0 0 0 / 12%)",
                               boxShadow: "0 1px 4px 0 rgb(0 0 0 / 14%)",
-                            }}>
+                            } as any}>
                               <div className={`${styles.card}  ${styles.cardStats}`}>
                                 <div className={`${styles.cardHeader} ${styles.cardHeaderPrimary}`}>
                                   <h4 className={styles.cardTitle}>{"Konfirmasi Delete"}</h4>
@@ -1339,9 +1317,9 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                           // background: "#fff",
                           width:"90%",
                           maxWidth: "600px",
-                          boxShadow: "0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 20%), 0 1px 5px 0 rgb(0 0 0 / 12%)",
+                          // boxShadow: "0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 20%), 0 1px 5px 0 rgb(0 0 0 / 12%)",
                           boxShadow: "0 1px 4px 0 rgb(0 0 0 / 14%)",
-                        }}>
+                        } as any}>
                             {/* <Box sx={styles.card}> */}
                           <div className={`${styles.card}  ${styles.cardStats}`}>
                             <div className={`${styles.cardHeader} ${styles.cardHeaderPrimary}`}>
@@ -1354,6 +1332,7 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                               <Formik
                               initialValues={{
                                 tabs:0,
+                                notes:"",
                                 odcId: selectedModalValue.odc_id,
                                 nama_odc: selectedModalValue.name.toLocaleUpperCase(),
                                 region_id: selectedModalValue.region_id,
@@ -1366,7 +1345,7 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                                 port: selectedModalValue.port,
                                 rowsPerPage: selectedModalValue.rowsPerPage
                               }}
-                              validateOnChange={"true"}
+                              validateOnChange={true}
                                 validate={(value)=>{
                                   console.log("new value",value.tabs)
                                 }}
@@ -1563,9 +1542,9 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                               // background: "#fff",
                               width:"90%",
                               maxWidth: "480px",
-                              boxShadow: "0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 20%), 0 1px 5px 0 rgb(0 0 0 / 12%)",
+                              // boxShadow: "0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 20%), 0 1px 5px 0 rgb(0 0 0 / 12%)",
                               boxShadow: "0 1px 4px 0 rgb(0 0 0 / 14%)",
-                            }}>
+                            } as any}>
                               <div className={`${styles.card}  ${styles.cardStats}`}>
                                 <div className={`${styles.cardHeader} ${styles.cardHeaderPrimary}`}>
                                   <h4 className={styles.cardTitle}>{"Konfirmasi Delete"}</h4>
@@ -1630,22 +1609,22 @@ export const getServerSideProps = async (props) => wrapper.getServerSideProps(st
   store.dispatch(getMerekList(req.cookies.token,toast))
   store.dispatch(END)
   await store.sagaTask.toPromise();
-  console.log("feeder graph",store.getState().ODCs.graph_feeder)
-  console.log("region list",store.getState().ODCs.region_list)
-  console.log("witel list",store.getState().ODCs.witel_list)
-  console.log("datel list",store.getState().ODCs.datel_list)
-  console.log("sto list",store.getState().ODCs.sto_list)
-  console.log("merek list",store.getState().ODCs.sto_list)
-  console.log("odc page",store.getState().ODCs.odc_page)
-  console.log("token",req.cookies.token)
+  // console.log("feeder graph",store.getState().ODCs.graph_feeder)
+  // console.log("region list",store.getState().ODCs.region_list)
+  // console.log("witel list",store.getState().ODCs.witel_list)
+  // console.log("datel list",store.getState().ODCs.datel_list)
+  // console.log("sto list",store.getState().ODCs.sto_list)
+  // console.log("merek list",store.getState().ODCs.sto_list)
+  // console.log("odc page",store.getState().ODCs.odc_page)
+  // console.log("token",req.cookies.token)
       return {
         props:{
           odc_list:store.getState().ODCs.odc_page || {isLoading: false,page: 1, sortOrder: {name:"",direction:"asc"},data:[],count:0},
           // data:store.getState().ODCs.odcsBox,
           deck_value: store.getState().ODCs.dashboard_card_list,
           token: req.cookies.token,
-          email: jwt(req.cookies.token).email,
-          role_name: jwt(req.cookies.token).role_name,
+          email: (jwt(req.cookies.token) as any).email,
+          role_name: (jwt(req.cookies.token) as any).role_name,
           feederGraph: store.getState().ODCs.graph_feeder || {group:{idle:[],used:[],broken:[]},xaxis:[]},
           distributionGraph: store.getState().ODCs.graph_distribution || {group:{idle:[],used:[],broken:[]},xaxis:[]},
           regionList: store.getState().ODCs.region_list || [{id:0,name:""}],

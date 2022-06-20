@@ -10,6 +10,7 @@ import {
 } from "@mui/material/styles";
 import {ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
 export const statusTheme = {
   // primary: "#ee2d24!important",
   primary: "#B10040!important",
@@ -18,6 +19,45 @@ export const statusTheme = {
   success: "#009873!important",
   darkgray: "darkgray!important",
   info: "#1976d2!important"
+}
+declare module '@mui/material/styles' {
+  // fix the type error when calling `createTheme()` with a custom theme option
+  interface ThemeOptions {
+    status?: {
+      success?: string;
+      primary?: string;
+      darkgray?: string;
+      warning?: string;
+      info?: string;
+    };
+  }
+  type ButtonProps = {
+    btntype?:string,
+    theme?: ThemeOptions,
+    itemType?:string
+  } 
+  type TabsProps ={
+    theme?: ThemeOptions,
+  }
+  type CircularProgressProps = {
+    svgtype?:string,
+    btncolor?:string,
+    theme?: ThemeOptions
+  } 
+  type InputLabelProps = {
+    theme?: ThemeOptions
+  }
+  type TextFieldProps = {
+    theme?: ThemeOptions,
+    label?: string
+  }
+  type FormControlProps = {
+    theme?: ThemeOptions,
+    label?: string
+  }
+  type NativeSelectProps = {
+    theme?: ThemeOptions,
+  }
 }
 export const tema = createThemeCustom({
   status:statusTheme,
@@ -90,13 +130,13 @@ export const tema = createThemeCustom({
         }
       }
     },
-    MuiTypography:{
-      styleOverrides:{
-        root:{
-          fontFamily:"'GothamRounded-Book' !important"
-        }
-      }
-    },
+    // MuiTypography:{
+    //   styleOverrides:{
+    //     root:{
+    //       fontFamily:"'GothamRounded-Book' !important"
+    //     }
+    //   }
+    // },
     MuiButtonBase:{
       styleOverrides:{
         root:{
@@ -112,7 +152,7 @@ export const tema = createThemeCustom({
           // background:"rgba(255,255,255,0.3)"
         },
         "head":{
-          backgroundImage:"linear-gradient(to right,rgba(178,98,98,0.3),rgb(255 228 228 / 30%))",
+          // backgroundImage:"linear-gradient(to right,rgba(178,98,98,0.3),rgb(255 228 228 / 30%))",
           backgroundImage:"linear-gradient(to right,rgb(237 167 88 / 30%),rgb(253 243 236 / 30%))",
         },
       }
@@ -183,7 +223,7 @@ export const tema = createThemeCustom({
           '&[class*="iconActive"]':{
             color: '#ee2d24 !important'
           }
-        },
+        } as any,
         
       }
     },

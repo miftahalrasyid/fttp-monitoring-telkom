@@ -32,7 +32,8 @@ import {
 } from "@mui/material/styles";
 import { wrapper } from '../components/store';
 import { END } from 'redux-saga';
-const CustomButton = styledCustom(Button)(({ theme }) => ({
+import { ButtonProps } from '@mui/material';
+const CustomButton = styledCustom(Button)<ButtonProps>(({ theme }) => ({
   borderColor: theme.status.primary,
   color:theme.status.primary,
   textDecoration: "none",
@@ -106,7 +107,7 @@ function Forgot_password({requestForgotPassword,isRequestConfirm}) {
             <Formik 
             initialValues={{ email: '', password: '' }}
             validate={values => {
-              const errors = {};
+              const errors: any = {};
               if (!values.email) {
                 errors.email = '*Required';
               } else if (

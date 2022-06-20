@@ -1,6 +1,7 @@
 import React,{useCallback, useState, useEffect} from 'react'
 import withAuth from '../../components/Auth';
-import {Modal,Box,FormControl,InputLabel,NativeSelect, Typography} from '@material-ui/core';
+import {Modal,Box,InputLabel,NativeSelect, Typography} from '@material-ui/core';
+import FormControl from '@mui/material/FormControl';
 import { createTheme, MuiThemeProvider,styled } from "@material-ui/core/styles";
 import {createTheme as customCreateTheme, ThemeProvider} from "@mui/material/styles";
 import dynamic from 'next/dynamic';
@@ -10,7 +11,7 @@ import {
 } from "@mui/material/styles";
 import {ToastContainer, toast } from 'react-toastify';
 
-const DynamicMUIDataTable = dynamic(() => import('mui-datatables'),{ ssr: false });
+const DynamicMUIDataTable = dynamic(() => import('mui-datatables'),{ ssr: false }) as any;
 import {
   MdOutlineDateRange,
   MdOpenInBrowser,
@@ -24,7 +25,8 @@ import {
   getUserData,
   addNewUser,
   updateUserData,
-  deleteUser
+  deleteUser,
+  setTableRowsPerPage
 } from '../../components/store/users/actions'
 import { wrapper } from '../../components/store';
 import { END } from 'redux-saga';
@@ -34,28 +36,28 @@ import {
 // import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import { Formik } from 'formik';
-import { CircularProgress } from '@mui/material';
+import { ButtonProps, CircularProgress, CircularProgressProps, InputLabelProps, NativeSelectProps, TextFieldProps } from '@mui/material';
 
-const CustomButtonModal = styledCustom(Button)(({ theme, btntype }) => ({
+const CustomButtonModal = styledCustom(Button)<ButtonProps>(({ theme, btntype }) => ({
   background: btntype == 'submit' ? theme.status.success: btntype == 'cancel'? "gray !important":theme.status.primary,
   color:"white !important",
 }));
-const CustomCircularProgress = styledCustom(CircularProgress)(({theme,btncolor})=>({
+const CustomCircularProgress = styledCustom(CircularProgress)<CircularProgressProps>(({theme,btncolor})=>({
   color: btncolor== "success" ? theme.status.success: theme.status.primary
 }))
-const CustomButton = styledCustom(Button)(({ theme }) => ({
+const CustomButton = styledCustom(Button)<ButtonProps>(({ theme }) => ({
   color: theme.status.primary,
 }));
-const CustomButtonModalGray = styledCustom(Button)(({ theme }) => ({
+const CustomButtonModalGray = styledCustom(Button)<ButtonProps>(({ theme }) => ({
   background: theme.status.darkgray,
 }));
-const CustomInputLabel = styledCustom(InputLabel)(({ theme }) => ({
+const CustomInputLabel = styledCustom(InputLabel)<InputLabelProps>(({ theme }) => ({
   '&.Mui-focused':{
     color: theme.status.primary,
 
   }
 }));
-const CustomTextField = styledCustom(TextField)(({ theme }) => ({
+const CustomTextField = styledCustom(TextField)<TextFieldProps>(({ theme }) => ({
   color: theme.status.primary,
   '.MuiInputLabel-root.Mui-focused': {
     color: theme.status.primary,
@@ -68,7 +70,7 @@ const CustomTextField = styledCustom(TextField)(({ theme }) => ({
     borderColor: theme.status.primary
   },
 }));
-const CustomNativeSelect = styledCustom(NativeSelect)(({ theme }) => ({
+const CustomNativeSelect = styledCustom(NativeSelect)<NativeSelectProps>(({ theme }) => ({
 
   '&::after': {
     borderColor: theme.status.primary
@@ -147,7 +149,7 @@ customCreateTheme({
           // background:"rgba(255,255,255,0.3)"
         },
         "head":{
-          backgroundImage:"linear-gradient(to right,rgba(178,98,98,0.3),rgb(255 228 228 / 30%))",
+          // backgroundImage:"linear-gradient(to right,rgba(178,98,98,0.3),rgb(255 228 228 / 30%))",
           backgroundImage:"linear-gradient(to right,rgb(237 167 88 / 30%),rgb(253 243 236 / 30%))",
         },
       }
@@ -209,7 +211,7 @@ customCreateTheme({
           '&[class*="iconActive"]':{
             color: '#ee2d24 !important'
           }
-        },
+        } as any,
         
       }
     },
@@ -228,9 +230,26 @@ function User({
   email,
   deleteUser,
   token,
-  getUserData,
-  user_list_client={success:false,data:[],total_rows:""},
+  user_rowsPerPage,
+  getUserData_userSaga,
+  user_list_client={success:false,data:[],total_rows:"",count:""},
   updateUserData
+}:{
+  user_list:{
+    success:boolean,
+    count:number,
+    data:Array<any>,
+    sortOrder:string,
+    page:number,
+    msg?:string
+  },
+  user_rowsPerPage: number,
+  email: string,
+  deleteUser:any,
+  token:string,
+  getUserData_userSaga:typeof getUserData,
+  user_list_client:any,
+  updateUserData: any
 }) {
   const [datatable, setDatatable] = React.useState([[]]);
   // console.log("total rows",user_list)
@@ -282,13 +301,13 @@ const [submitting,setSubmitting] = useState(user_list.data.map(item=>({status:fa
   React.useEffect(()=>{
     setTimeout(()=>{
       if(document.querySelector('[itemref="userDetailModal"]'))
-      document.querySelector('[itemref="userDetailModal"]').style.top = "50%";
+      (document.querySelector('[itemref="userDetailModal"]') as HTMLElement).style.top = "50%";
       if(document.querySelector('[itemref="userDeleteModal"]'))
-      document.querySelector('[itemref="userDeleteModal"]').style.top = "50%";
+      (document.querySelector('[itemref="userDeleteModal"]') as HTMLElement).style.top = "50%";
     },50);
 if(!user_list_client.success)
   setDatatable(user_list?.data?.map((item,idx)=>([
-    idx+1,
+    item.row_number,
     item.email,
     item.role_name,
     item.user_status,
@@ -304,7 +323,7 @@ useEffect(()=>{
     setOpenDeleteRowModal(user_list_client.data.map(item=>({status:false})));
     setSubmitting(user_list_client.data.map(item=>({status:false})));
     setDatatable(user_list_client?.data?.map((item,idx)=>([
-      idx+1,
+      item.row_number,
       item.email,
       item.role_name,
       item.user_status,
@@ -355,17 +374,17 @@ useEffect(()=>{
       progress: undefined,
     });
   }
-  if(!error.success){
-    toast.error(user_list.msg, {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
-  }
+  // if(!error.success){
+  //   toast.error(user_list.msg, {
+  //     position: "top-right",
+  //     autoClose: 5000,
+  //     hideProgressBar: false,
+  //     closeOnClick: true,
+  //     pauseOnHover: true,
+  //     draggable: true,
+  //     progress: undefined,
+  //   });
+  // }
 },[user_list,error]);
 
 
@@ -387,6 +406,13 @@ useEffect(()=>{
                   print: false,
                   serverSide:true,
                   count:user_list_client?.count || user_list?.count,
+                  rowsPerPage: user_rowsPerPage || 5,
+                  rowsPerPageOptions:[5,10,25,50,100],
+                  onTableInit:(test,tableState) =>{
+                    // console.log("table init",tableState.rowsPerPage)
+                    setTableRowsPerPage(tableState.rowsPerPage)
+                    getUserData_userSaga({page:tableState.page+1,rowsPerPage:tableState.rowsPerPage,sortBy:null,sortOrder:null},token,null,toast)
+                  },
                   onTableChange: (action, tableState) => {
                     console.log(action, tableState);
             
@@ -395,17 +421,44 @@ useEffect(()=>{
             
                     switch (action) {
                       case 'changePage':
-                        getUserData(tableState.page+1,tableState.rowsPerPage, tableState.sortOrder,token)
+                        console.log("change rows per page")
+                        setTableRowsPerPage(tableState.rowsPerPage)
+                        getUserData_userSaga({page:tableState.page+1,rowsPerPage:tableState.rowsPerPage, sortBy:tableState.name,sortOrder:tableState.sortOrder.direction},token,null,toast)
                         // this.changePage(tableState.page, tableState.sortOrder);
                         break;
                       case 'propsUpdate':
                         // getUserData(tableState.page+1,tableState.rowsPerPage, tableState.sortOrder,token)
-                        // break;
+                        break;
                       case 'sort':
+                        console.log("odc name sort",tableState.sortOrder?.name?.toLocaleLowerCase())
+                        let sortConvention = "";
+                        switch (tableState.sortOrder?.name?.toLocaleLowerCase() || "") {
+                          case "no":
+                            // console.log("odc name")
+                            sortConvention = "row_number"
+                            break;
+                          case "email":
+                            // console.log("odc name")
+                            sortConvention = "email"
+                            break;
+                          case "role":
+                            // console.log("odc name")
+                            sortConvention = "role_name"
+                            break;
+                          case "status":
+                            // console.log("odc name")
+                            sortConvention = "user_status"
+                            break;
+                        
+                          default:
+                            break;
+                        }
+                        getUserData_userSaga({page:tableState.page+1,rowsPerPage:tableState.rowsPerPage, sortBy:sortConvention,sortOrder:tableState.sortOrder.direction},token,null,toast)
                         // this.sort(tableState.page, tableState.sortOrder);
                         break;
                       default:
                         console.log('action not handled.');
+                        break;
                     }
                   },
                 }} 
@@ -415,10 +468,10 @@ useEffect(()=>{
                   name: "No" , 
                   options:{
                     customBodyRender:(value, tableMeta, update)=> {
-                      console.log("table meta",tableMeta)
+                      // console.log("table meta",tableMeta)
                       // let rowIndex = (tableMeta.rowData[1])?Number(tableMeta.rowIndex) + 1: "";
                       // let newValue = tableMeta.rowData[0]
-                      let newNumber = tableMeta.tableState.page*tableMeta.tableState.rowsPerPage+tableMeta.rowData[0]
+                      let newNumber = tableMeta.rowData[0]
                       // return ( <span>{rowIndex}</span> )
                       return ( <span>{newNumber}</span> )
                     },
@@ -460,6 +513,7 @@ useEffect(()=>{
                 },{
                   name: "Aksi",
                   options:{
+                    sort:false,
                     customBodyRender:(value, tableMeta, update) => {
                       // console.log("aksi",tableMeta.rowData[3])
                       let newValue = tableMeta.rowData[4]
@@ -492,7 +546,7 @@ useEffect(()=>{
                                   maxWidth: "600px",
                                   // boxShadow: "0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 20%), 0 1px 5px 0 rgb(0 0 0 / 12%)",
                                   // boxShadow: "0 1px 4px 0 rgb(0 0 0 / 14%)",
-                                }}>
+                                } as any}>
                                 {/* <Box sx={odcStyles.card}> */}
                                   <div className={`${odcStyles.card} ${odcStyles.cardStats}`}>
                                     <div className={`${odcStyles.cardHeader} ${odcStyles.cardHeaderPrimary}`}>
@@ -512,7 +566,9 @@ useEffect(()=>{
                                           status:tableMeta.rowData[5],
                                         }}
                                         validate={values => {
-                                          const errors = {};
+                                          const errors = {} as {
+                                            email: string
+                                          };
                                           if (!values.email) {
                                             errors.email = '*Wajib diisi';
                                           } else if (
@@ -559,23 +615,21 @@ useEffect(()=>{
                                                 <CustomTextField id="standard-basic" name='password' label="Password" type={"password"} onChange={handleChange} onBlur={handleBlur} variant="standard" defaultValue={values.password} />
                                               </div>
                                               <div className={`col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
-                                              <FormControl key='role' variant="standard" sx={{ m: 1, minWidth: 124 }}>
-                                              <CustomInputLabel id="demo-simple-select-standard-label">Role</CustomInputLabel>
-                      
-                                              <CustomNativeSelect onChange={handleChange} onBlur={handleBlur} defaultValue={values.role} inputProps={{
-                                                  name: 'role',
-                                                  id: 'uncontrolled-native',
-                                                  }}>
-                                                    <option key={"role-admin"} value="1"> Admin </option>
-                                                    <option key={"role-user"} value="2"> User </option>
-                                              </CustomNativeSelect>
+                                              <FormControl key='role' variant="standard" sx={{  minWidth: 124 } as any}>
+                                                <CustomInputLabel id="demo-simple-select-standard-label">Role</CustomInputLabel>
+                                                <CustomNativeSelect onChange={handleChange} onBlur={handleBlur} defaultValue={values.role} inputProps={{
+                                                    name: 'role',
+                                                    id: 'uncontrolled-native',
+                                                    }}>
+                                                      <option key={"role-admin"} value="1"> Admin </option>
+                                                      <option key={"role-user"} value="2"> User </option>
+                                                </CustomNativeSelect>
                                               </FormControl>
                                               </div>
                                               
                                               <div className={`col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
-                                              <FormControl key={"status"} variant="standard" sx={{ m: 1, minWidth: 124 }}>
+                                              <FormControl key={"status"} variant="standard" sx={{minWidth: 124 }}>
                                               <CustomInputLabel  id="demo-simple-select-standard-label">Status</CustomInputLabel>
-                      
                                               <CustomNativeSelect onChange={handleChange} onBlur={handleBlur} defaultValue={values.status.toString()} inputProps={{
                                                   name: 'status',
                                                   id: 'uncontrolled-native',
@@ -645,9 +699,9 @@ useEffect(()=>{
                                   // background: "#fff",
                                   width:"90%",
                                   maxWidth: "480px",
-                                  boxShadow: "0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 20%), 0 1px 5px 0 rgb(0 0 0 / 12%)",
+                                  // boxShadow: "0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 20%), 0 1px 5px 0 rgb(0 0 0 / 12%)",
                                   boxShadow: "0 1px 4px 0 rgb(0 0 0 / 14%)",
-                                }}>
+                                } as any}>
                                   <div className={`${odcStyles.card}  ${odcStyles.cardStats}`}>
                                     <div className={`${odcStyles.cardHeader} ${odcStyles.cardHeaderPrimary}`}>
                                       <h4 className={odcStyles.cardTitle}>{"Konfirmasi Delete"}</h4>
@@ -708,7 +762,7 @@ useEffect(()=>{
 
 export const getServerSideProps = async (props) => wrapper.getServerSideProps(store => async ({req, res, ...etc}) => {
   // const {params:{odcId=[]}} = props;
-  const {role} = jwt(req.cookies.token);
+  const {role} = jwt(req.cookies.token) as any;
   console.log("token value",jwt(req.cookies.token))
   if(!req.cookies.token || role!==1)
   return {
@@ -717,10 +771,10 @@ export const getServerSideProps = async (props) => wrapper.getServerSideProps(st
       destination: "/"
     }
   }
-  store.dispatch(getUserData(1,10, {name:"",direction:"asc"},req.cookies.token,null,toast))
+  store.dispatch(getUserData({page:1,rowsPerPage:5, sortBy:null,sortOrder:null},req.cookies.token,null,toast))
   store.dispatch(END)
   await store.sagaTask.toPromise();
-
+console.log("get user data",store.getState().Users.userData)
   // const {ODCs:{selectedOdcSplitpanelStatus}} = store.getState();
   // if(odcId.length!==0 && selectedOdcSplitpanelStatus==={}){
     if(role!==1){
@@ -734,7 +788,7 @@ export const getServerSideProps = async (props) => wrapper.getServerSideProps(st
     console.log("user list",store.getState()?.Users?.userData)
           return {
               props:{ 
-                user_list: store.getState()?.Users?.userData || {success:false,data:[],count:0,sortOrder:{name:"",direction:"asc"},page:1},
+                user_list: store.getState()?.Users?.userData || {success:false,count:0,data:[],sortOrder:"",page:0},
                 user_list_loading: store.getState()?.Users?.loading?.getUser || false,
                 token: req.cookies.token
               },
@@ -744,11 +798,12 @@ export const getServerSideProps = async (props) => wrapper.getServerSideProps(st
     })(props);
 const mapStateToProps = state =>({
   user_list_client: state.Users.userData,
+  user_rowsPerPage: state.Users.tableRowsPerPage
 })
 
 const mapDispatchToProps = {
   addNewUser,
-  getUserData,
+  getUserData_userSaga:getUserData,
   updateUserData,
   deleteUser,
 }

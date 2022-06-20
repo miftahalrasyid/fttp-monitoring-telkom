@@ -18,15 +18,16 @@ import MetisMenu from '@metismenu/react';
 import 'metismenujs/dist/metismenujs.css';
 import odcStyles from '../Sidebar/sidebar.module.css';
 import {Modal as MUIModal,Box} from '@material-ui/core';
-import { CircularProgress, FormControl,FormHelperText,Input,InputLabel } from '@mui/material';
+import { ButtonProps, CircularProgress,CircularProgressProps,TextFieldProps,FormControlProps, FormControl,FormHelperText,Input,InputLabel, InputLabelProps, ThemeOptions } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import NativeSelect from '@mui/material/NativeSelect';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/router';
-const CustomButtonModal = styledCustom(Button)(({ theme, btntype }) => ({
+
+const CustomButtonModal = styledCustom(Button)<ButtonProps>(({ theme, btntype }) => ({
     background: btntype == 'submit' ? theme.status.success: btntype == 'delete' ? theme.status.primary: btntype == 'canceldelete' ? theme.status.darkgray: theme.status.primary,
 }));
-const CustomCircularProgress = styledCustom(CircularProgress)(({theme, svgtype})=>({
+const CustomCircularProgress = styledCustom(CircularProgress)<CircularProgressProps>(({theme, svgtype})=>({
   "svg":{
     color: svgtype == 'delete' ? theme.status.primary : theme.status.success
   }
@@ -40,7 +41,7 @@ const CustomNativeSelect = styledCustom(NativeSelect)(({theme})=>({
   }
   // color: theme.status.primary,
 }))
-const CustomFormControl = styledCustom(FormControl)(({theme,label})=>({
+const CustomFormControl = styledCustom(FormControl)<FormControlProps>(({theme,label})=>({
   width: "100%",
   ".MuiInputLabel-root":{
     transform:"translateY(-7px)"
@@ -53,14 +54,14 @@ const CustomFormControl = styledCustom(FormControl)(({theme,label})=>({
     marginTop: "9px",
   }
 }))
-const CustomInputLabel = styledCustom(InputLabel)(({ theme }) => ({
+const CustomInputLabel = styledCustom(InputLabel)<InputLabelProps>(({ theme }) => ({
   transform: "translate(0, -1.5px) scale(0.75) !important",
   '&.Mui-focused':{
     color: theme.status.primary,
 
   }
 }));
-const CustomTextField = styledCustom(TextField)(({ theme, label }) => ({
+const CustomTextField = styledCustom(TextField)<TextFieldProps>(({ theme, label }) => ({
   color: theme.status.primary,
   '.MuiInputLabel-root.Mui-focused': {
     color: theme.status.primary,
@@ -79,12 +80,34 @@ const CustomTextField = styledCustom(TextField)(({ theme, label }) => ({
     borderColor: theme.status.primary
   },
 }));
+export type IfeederFocus = {
+  distribution: Array<{
+    distribution_id: string,
+    distribution_index: number,
+    distribution_level: number,
+    distribution_level_id: number
+  }>,
+  distributionElm: Array<any>,
+  feeder: {
+    feeder_id: string, 
+    feeder_index: number, 
+    feeder_level: number
+  },
+  feederElm: any,
+  odpName: String[],
+  splitter: {
+    splitter_id: string, 
+    splitter_index: number,
+    status: string
+  },
+  splitterElm: HTMLElement & any
+}
 function Modal(props) {
     const {
       header="feeder 2",
-      splitter,
+      // splitter,
       token,
-      passive_out,
+      // passive_out,
       feederModal,
       dispatchFn:{setSelectedCoreFeeder,deleteSelectedCoreFeeder},
       feederFocus= {
@@ -121,6 +144,38 @@ function Modal(props) {
       setFeederFocus,
       splitterData,
       panelData=[{type:""}]
+    }: {
+      header: string,
+      token: string,
+      feederModal: any,
+      dispatchFn: { 
+        setSelectedCoreFeeder: any, 
+        deleteSelectedCoreFeeder: any
+      },
+      feederFocus: {
+        distribution: Array<{
+          distribution_id: string,
+          distribution_index: number,
+          distribution_level: number,
+          distribution_level_id: number
+        }>,
+        distributionElm: Array<any>,
+        feeder: {
+          feeder_id: string, 
+          feeder_index: number, 
+          feeder_level: number
+        },
+        feederElm: any,
+        odpName: String[],
+        splitter: {
+          splitter_id: string, 
+          splitter_index: number
+        },
+        splitterElm: HTMLElement & any
+      },
+      setFeederFocus:any,
+      splitterData: Array<{id:string,index:number,status:string}>,
+      panelData:Array<any>
     } = props;
     const router = useRouter();
     const {odcId} = router.query;
@@ -128,18 +183,18 @@ function Modal(props) {
     const [availDistribution,setAvailDistribution] = useState(panelData.filter(pn=>pn.type==='distribution').map(ds=>{
       
       return ds.data.map(dsit=>{
-          console.log("dist",dsit)
+          // console.log("dist",dsit)
         return {id: dsit.id,index:dsit.index ,status:dsit.status,rak_index:ds.rak_index,rak_level:ds.rak_level}})
     }) || [])
     useEffect(()=>{
-      console.log("avail dist",availDistribution)
+      // console.log("avail dist",availDistribution)
     },[availDistribution,panelData])
 useEffect(()=>{
-  console.log("on update core feeder",panelData)
+  // console.log("on update core feeder",panelData)
   var panelDataUpdate = panelData.filter(pn=>pn.type==='distribution').map(ds=>{
       
     return ds.data.map(dsit=>{
-        console.log("dist",dsit)
+        // console.log("dist",dsit)
       return {id: dsit.id,index:dsit.index ,status:dsit.status,rak_index:ds.rak_index,rak_level:ds.rak_level}})
   }) || []
   setAvailDistribution(panelDataUpdate)
@@ -148,12 +203,12 @@ useEffect(()=>{
       return item
    
   }))
-},[feederModal[0],panelData])
-const [distributionOnChange,setDistributionOnChange] = useState([
-  {mapped:availDistribution,selected:{id: "",index:"" ,status:"",rak_index:"",rak_level:""}},
-  {mapped:availDistribution,selected:{id: "",index:"" ,status:"",rak_index:"",rak_level:""}},
-  {mapped:availDistribution,selected:{id: "",index:"" ,status:"",rak_index:"",rak_level:""}},
-  {mapped:availDistribution,selected:{id: "",index:"" ,status:"",rak_index:"",rak_level:""}},
+},[panelData])
+const [distributionOnChange,setDistributionOnChange] = useState<Array<{mapped: Array<any>, selected: { id: string, index:number, status:string,rak_index:number,rak_level:number}}>>([
+  {mapped:availDistribution,selected:{id: "",index:null ,status:"",rak_index:null,rak_level:null}},
+  {mapped:availDistribution,selected:{id: "",index:null ,status:"",rak_index:null,rak_level:null}},
+  {mapped:availDistribution,selected:{id: "",index:null ,status:"",rak_index:null,rak_level:null}},
+  {mapped:availDistribution,selected:{id: "",index:null ,status:"",rak_index:null,rak_level:null}},
 ]);
 const onchg1 = useCallback((ev,poid,setValues)=>{
   // console.log("dist on change",availDistribution,)
@@ -163,7 +218,7 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
       let selectedDist = distributionOnChange[poid];
       // let selectedIndex = distributionOnChange[poid].index
       setValues(prev=>({...prev,["dist_port_"+(poid+1)]:ev.target.value}))
-      console.log("avail dist on change",poid,distributionOnChange[0])
+      // console.log("avail dist on change",poid,distributionOnChange[0])
       /**
        * change available option value on each distribution input when one or more input was selected
        */
@@ -268,7 +323,7 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
   //   default:
   //     break;
   // }
-},[availDistribution,feederFocus])
+},[distributionOnChange])
 
     const [feed=false,setFeed] = feederModal || [];
     const handleClose = () => setFeed(prev=>({...prev,status:false}));
@@ -286,9 +341,9 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
       setTimeout(()=>{
         // console.log("odc",document.querySelector('[itemref="detailFeederModal"]'))
         if(document.querySelector('[itemref="detailFeederModal"]'))
-        document.querySelector('[itemref="detailFeederModal"]').style.top = "50%";
+        (document.querySelector('[itemref="detailFeederModal"]') as HTMLElement).style.top = "50%";
         if(document.querySelector('[itemref="detailFeederDeleteModal"]'))
-        document.querySelector('[itemref="detailFeederDeleteModal"]').style.top = "50%";
+        (document.querySelector('[itemref="detailFeederDeleteModal"]') as HTMLElement).style.top = "50%";
       },50)
     },[feed,openDeleteRowModal])
     // useEffect(()=>{
@@ -335,9 +390,9 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
                 <Box itemRef='detailFeederModal' sx={{
                   // position: "absolute",
                   top: "48%",
-                  "div":{
-                      margin:0
-                  }
+                  // "div":{
+                  //     margin:0
+                  // }
                 }} className={odcStyles.modalBox}>
                  
                   <div className={`${odcStyles.card}  ${odcStyles.cardStats}`}>
@@ -354,13 +409,22 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
                         odp_name_2: (feederFocus.odpName)?feederFocus.odpName[1] : "",
                         odp_name_3: (feederFocus.odpName)?feederFocus.odpName[2] : "",
                         odp_name_4: (feederFocus.odpName)?feederFocus.odpName[3] : "",
+                        dist_port_1_stat: "",
+                          dist_port_2_stat: "",
+                          dist_port_3_stat: "",
+                          dist_port_4_stat: "",
                         dist_port_1: feederFocus?.distribution[0]?.distribution_id?feederFocus?.distribution[0]?.distribution_id:"",
                         dist_port_2: feederFocus?.distribution[1]?.distribution_id?feederFocus?.distribution[1]?.distribution_id:"",
                         dist_port_3: feederFocus?.distribution[2]?.distribution_id?feederFocus?.distribution[2]?.distribution_id:"",
                         dist_port_4: feederFocus?.distribution[3]?.distribution_id?feederFocus?.distribution[3]?.distribution_id:"",
                       }}
                       validate={(values)=>{
-                        var errors = {}
+                        var errors = {} as {
+                          dist_port_1_stat: string,
+                          dist_port_2_stat: string,
+                          dist_port_3_stat: string,
+                          dist_port_4_stat: string,
+                        }
                         
                         if(values.odp_name_1!==""){
                           errors.dist_port_1_stat = "port dist 1 tidak boleh kosong";
@@ -390,8 +454,8 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
                         if(values.odp_name_4=="" || values.dist_port_4!==""){
                           errors.dist_port_4_stat = "";
                         }
-                        // console.log("errors",Object.values(errors).some(itm=>itm!=""))
-                        return Object.values(errors).some(itm=>itm!="")?errors:false
+                        console.log("errors",Object.values(errors).some(itm=>itm!=""))
+                        return Object.values(errors).some(itm=>itm!="") && {}
                         // return values
                       }}
                       // validateOnBlur={true}
@@ -516,13 +580,13 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
                                           <option key={"dist_po1"+feederFocus.distribution[0].distribution_index} value={feederFocus.distribution[0].distribution_id}>{(feederFocus?.distribution[0].distribution_level%2==0)?"D"+feederFocus?.distribution[0]?.distribution_level_id+"-"+(feederFocus.distribution[0].distribution_index+12):"D"+feederFocus?.distribution[0]?.distribution_level_id+"-"+feederFocus.distribution[0].distribution_index}</option>
                                         }
                                         {distributionOnChange[0].mapped.map((item,idx)=>{
-                                          console.log("distribution on change",feederFocus.distribution[0].distribution_id)
+                                          // console.log("distribution on change",feederFocus.distribution[0].distribution_id)
                                           //level rak
                                           // console.log("ds",item)
                                         
                                         return  item.map((dsitem,idx1)=>{
                                           // level port
-                                          console.log("dsiteman",dsitem)
+                                          // console.log("dsiteman",dsitem)
                                           // console.log("dsitem",(dsitem.rak_level%2==0)?"D"+dsitem.rak_index+"-"+(dsitem.index+13):"D"+dsitem.rak_index+"-"+dsitem.index)
                                             if(dsitem.status!=="used"){
                                               return <option key={"dist_po1"+"D"+dsitem.rak_index+"_"+dsitem.index} value={dsitem.id}>{"D"+dsitem.rak_index+"-"+dsitem.index}</option>
@@ -720,9 +784,9 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
                           // background: "#fff",
                           width:"90%",
                           maxWidth: "480px",
-                          boxShadow: "0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 20%), 0 1px 5px 0 rgb(0 0 0 / 12%)",
+                          // boxShadow: "0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 20%), 0 1px 5px 0 rgb(0 0 0 / 12%)",
                           boxShadow: "0 1px 4px 0 rgb(0 0 0 / 14%)",
-                        }}>
+                        } as any}>
                           <div className={`${odcStyles.card}  ${odcStyles.cardStats}`}>
                             <div className={`${odcStyles.cardHeader} ${odcStyles.cardHeaderPrimary}`}>
                               <h4 className={odcStyles.cardTitle}>{"Konfirmasi Delete"}</h4>

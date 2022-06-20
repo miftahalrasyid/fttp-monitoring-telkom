@@ -7,7 +7,7 @@ import { MdMenu } from 'react-icons/md';
 import Image from 'next/image';
 import Link from 'next/link';
 // import {Modal,Box,FormControl,InputLabel,NativeSelect, CircularProgress,Backdrop} from '@material-ui/core';
-import { Modal,Box,FormControl,InputLabel, NativeSelect, CircularProgress, Backdrop } from '@mui/material'
+import { Modal,Box,FormControl,InputLabel, NativeSelect, CircularProgress, Backdrop, TabsProps, TextFieldProps, ButtonProps, CircularProgressProps, InputLabelProps } from '@mui/material'
 import { 
   styled as styledCustom
 } from "@mui/material/styles";
@@ -34,14 +34,14 @@ import {
   BsFillFilePersonFill
 } from 'react-icons/bs';
 import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
+import Tab, { TabProps } from '@mui/material/Tab';
 import TextField from '@mui/material/TextField';
 import {
   addNewUser
-} from '../../components/store/users/actions';
+} from '../store/users/actions';
 import {
   
-} from '../../components/store/odcs/actions'
+} from '../store/odcs/actions'
 // import {
 //   MdOutlineAddBox,
 // } from 'react-icons/md';
@@ -66,13 +66,13 @@ const rawData = [{
   },
 
 }]
-const CustomTab = styledCustom(Tab)(({theme})=>({
+const CustomTab = styledCustom(Tab)<TabProps>(({theme})=>({
   color:"gray!important",
   '&.MuiTab-root.Mui-selected': {
     color: "black!important"
   },
 }))
-const CustomTabs = styledCustom(Tabs)(({theme})=>({
+const CustomTabs = styledCustom(Tabs)<TabsProps>(({theme})=>({
   '.MuiTabs-indicator': {
     backgroundColor: theme.status.primary,
   },
@@ -88,7 +88,7 @@ const CustomFormControl = styledCustom(FormControl)(({theme})=>({
     marginTop: "9px",
   }
 }))
-const CustomTextField = styledCustom(TextField)((props) => ({
+const CustomTextField = styledCustom(TextField)<TextFieldProps>((props) => ({
   // test:console.log("customText field",props),
   color: props.theme.status.primary,
   '.MuiInputLabel-root.Mui-focused': {
@@ -105,33 +105,33 @@ const CustomTextField = styledCustom(TextField)((props) => ({
     borderColor: props.theme.status.primary
   },
 }));
-const CustomButtonModal = styledCustom(Button)(({ theme, btntype }) => ({
+const CustomButtonModal = styledCustom(Button)<ButtonProps>(({ theme, btntype }) => ({
   background: btntype == 'submit' ? theme.status.success:theme.status.primary,
   // background: btntype == 'submit' ? '#1ebc51!important':theme.status.primary,
 }));
-const CustomButtonEdit= styledCustom(Button)(({ theme }) => ({
+const CustomButtonEdit= styledCustom(Button)<ButtonProps>(({ theme }) => ({
   borderColor: theme.status.primary,
   color: theme.status.primary,
 }));
-const CustomCircularProgress = styledCustom(CircularProgress)(({theme})=>({
+const CustomCircularProgress = styledCustom(CircularProgress)<CircularProgressProps>(({theme})=>({
   color: theme.status.success
 }))
-const CustomButtonStatus= styledCustom(Button)(({ theme }) => ({
+const CustomButtonStatus= styledCustom(Button)<ButtonProps>(({ theme }) => ({
   borderColor: theme.status.success,
   color: theme.status.success,
 }));
-const CustomButtonActivityLog= styledCustom(Button)(({ theme }) => ({
+const CustomButtonActivityLog= styledCustom(Button)<ButtonProps>(({ theme }) => ({
   borderColor: theme.status.warning,
   color: theme.status.warning,
 }));
-const CustomButtonDownload= styledCustom(Button)(({ theme }) => ({
+const CustomButtonDownload= styledCustom(Button)<ButtonProps>(({ theme }) => ({
   borderColor: theme.status.info,
   color: theme.status.info,
 }));
-const CustomButtonModalGray = styledCustom(Button)(({ theme }) => ({
-  background: theme.status.darkgray,
-}));
-const CustomInputLabel = styledCustom(InputLabel)(({ theme }) => ({
+// const CustomButtonModalGray = styledCustom(Button)<ButtonProps>(({ theme }) => ({
+//   background: theme.status.darkgray,
+// }));
+const CustomInputLabel = styledCustom(InputLabel)<InputLabelProps>(({ theme }) => ({
   '&.Mui-focused':{
     color: theme.status.primary,
 
@@ -152,10 +152,10 @@ function Navbar(props) {
   const { odcProps = {regionList:{data:[]},witelList:"",datelList:"",stoList:"",merekList:""},odcDispatch,dataClient,odcData,email,role_name, add_user_confirmation,addNewUser,token} = props;
   // console.log("odc props",odcProps)
   // useEffect(()=>{
-useEffect(()=>{
-  console.log("data client",dataClient)
+// useEffect(()=>{
+//   console.log("data client",dataClient)
 
-},[dataClient])
+// },[dataClient])
   // },[odcProps.regionList])
   const {regionList,witelList,datelList,stoList,merekList,ODCdetailData} = odcProps
   const {updateODCData} = odcDispatch;
@@ -208,14 +208,14 @@ useEffect(()=>{
     setTimeout(()=>{
       
       if(document.querySelector('[itemref="testing"]'))
-      document.querySelector('[itemref="testing"]').style.top = "50%";
+      (document.querySelector('[itemref="testing"]') as HTMLElement).style.top = "50%";
     },50)
     if(typeof odcId === 'object'){
       setWitelListClient(witelList.data.filter(item=>item.region_id==ODCdetailData.region_id))
       setDatelListClient(datelList.data.filter(item=>item.region_id==ODCdetailData.region_id).filter(item=>item.witel_id==ODCdetailData.witel_id))
       setSTOListClient(stoList.data.filter(item=>item.region_id==ODCdetailData.region_id).filter(item=>item.witel_id==ODCdetailData.witel_id).filter(item=>item.datel_id==ODCdetailData.datel_id))
     }
-  },[open])
+  },[open,datelList,ODCdetailData,odcId,stoList,witelList])
   // console.log("sto id",witelListClient)
   /**
    * modal popup for users page
@@ -226,8 +226,8 @@ useEffect(()=>{
 
   /** add users confirmation */
   const [error,setError] = useState();
-  useEffect(()=>{
-    console.log("error",error,add_user_confirmation)
+  // useEffect(()=>{
+  //   console.log("error",error,add_user_confirmation)
     // if(!error?.success)
     // toast.error(error?.msg, {
     //   position: "top-right",
@@ -250,7 +250,7 @@ useEffect(()=>{
     //   });
     // }
     // document.body.append(<ToastContainer style={{zIndex:"99999999999"}}/>)
-  },[error])
+  // },[error])
   // const {email,role_name} = (typeof window !== "undefined") ? jwt(getCookie("token")) : {email:"",role_name:""};
 // console.log("odcid",odcId)
 // console.log("odc props", odcData)
@@ -419,6 +419,7 @@ const handleFilterOnChange = (ev,inputid,values,setValues) =>{
                 <Formik
                     initialValues={{
                       tabs:0,
+                      notes:"",
                       name:filteredDataclient?.odc_name || ODCdetailData.name,
                       merek_id:ODCdetailData.merek_id,
                       port_feeder_terminasi:ODCdetailData.port_feeder_terminasi,
@@ -474,7 +475,7 @@ const handleFilterOnChange = (ev,inputid,values,setValues) =>{
                     <div className={`${odcStyles.cardBody} card-body row`}>
                     <div className={odcStyles.tabLink}>
                       <CustomTabs value={values.tabs} onChange={(ev,newValue)=>handleOnChange(ev,newValue,setValues)} onBlur={handleBlur} aria-label="basic tabs example">
-                        <CustomTab label="ODC" {...a11yProps()} />
+                        <CustomTab label="ODC" {...a11yProps(0)} />
                         <CustomTab label="OA" {...a11yProps(1)} />
                       </CustomTabs>
                     </div>
@@ -661,7 +662,7 @@ const handleFilterOnChange = (ev,inputid,values,setValues) =>{
                   */}
 
                   
-                  <Link href={`/odc/${odcId.join('/')}/status`} passHref>
+                  <Link href={`/odc/${(odcId as any).join('/')}/status`} passHref>
                   <a>
                     <CustomButtonStatus variant="outlined" color='primary' size="large">
                       {/*
@@ -670,7 +671,7 @@ const handleFilterOnChange = (ev,inputid,values,setValues) =>{
                     </CustomButtonStatus>
                   </a>
                   </Link>
-                  <Link href={`/odc/${odcId.join('/')}/activity log`} passHref>
+                  <Link href={`/odc/${(odcId as any).join('/')}/activity log`} passHref>
                   <a>
                   <CustomButtonActivityLog variant="outlined" color='primary' size="large">
                     {/* <MdOutlineAddBox/>  */}
@@ -727,7 +728,10 @@ const handleFilterOnChange = (ev,inputid,values,setValues) =>{
                       <Formik
                       initialValues={{email:'',password:'',role:'2'}}
                       validate={values => {
-                        const errors = {};
+                        const errors = {} as {
+                          email: string,
+                          password: string
+                        };
                         if (!values.email) {
                           errors.email = '*Wajib diisi';
                         } else if (

@@ -17,7 +17,7 @@ import {
   getSTOList,
   getMerekList,
   addODCData,
-} from '../../components/store/odcs/actions';
+} from '../store/odcs/actions';
 import {Formik} from 'formik';
 import styles from './sidebar_evolve.module.css';
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
@@ -36,9 +36,13 @@ import {
   Tabs,
   Tab,
   TextField,
+  InputLabelProps,
+  TextFieldProps,
+  TabsProps,
+  ButtonProps,
 } from '@mui/material';
 import { toast } from 'react-toastify';
-const CustomInputLabel = styled(InputLabel)(({ theme }) => ({
+const CustomInputLabel = styled(InputLabel)<InputLabelProps>(({ theme }) => ({
   transform: "translate(0, -1.5px) scale(0.75) !important",
   '&.Mui-focused':{
     color: theme.status.primary,
@@ -48,7 +52,7 @@ const CustomInputLabel = styled(InputLabel)(({ theme }) => ({
     borderBottomColor: theme.status.primary
   }
 }));
-const CustomTextField = styled(TextField)(({ theme }) => ({
+const CustomTextField = styled(TextField)<TextFieldProps>(({ theme }) => ({
   width:"100%",
     color: theme.status.primary,
     '.MuiInputLabel-root.Mui-focused': {
@@ -64,7 +68,7 @@ const CustomTab = styled(Tab)(({theme})=>({
     color: "black!important"
   },
 }))
-const CustomTabs = styled(Tabs)(({theme})=>({
+const CustomTabs = styled(Tabs)<TabsProps>(({theme})=>({
   '.MuiTabs-indicator': {
     backgroundColor: theme.status.primary,
   },
@@ -80,7 +84,7 @@ const CustomFormControl = styled(FormControl)(({theme})=>({
     marginTop: "9px",
   }
 }))
-const CustomButton = styled(Button)(({theme,btntype})=>({
+const CustomButton = styled(Button)<ButtonProps>(({theme,btntype})=>({
   background:btntype=="green"?theme.status.success:theme.status.primary,
   color:"white!important",
   width:"170px",
@@ -89,7 +93,7 @@ const CustomButton = styled(Button)(({theme,btntype})=>({
     // color:"white!important",
     // borderRadius:"2rem!important"
 }))
-const CustomButtonModal = styled(Button)(({ theme, btntype }) => ({
+const CustomButtonModal = styled(Button)<ButtonProps>(({ theme, btntype }) => ({
     background: btntype == 'submit' ? theme.status.success:theme.status.primary,
   }));
   function a11yProps(index) {
@@ -99,7 +103,7 @@ const CustomButtonModal = styled(Button)(({ theme, btntype }) => ({
     };
   }
 function Index_evolve({odcProps,token,addODCData,...etc}) {
-    console.log("odc props",odcProps,etc)
+    // console.log("odc props",odcProps,etc)
     const {
       regionList,
       witelList,
@@ -148,7 +152,7 @@ function Index_evolve({odcProps,token,addODCData,...etc}) {
         setTimeout(()=>{
           console.log("odc",document.querySelector('[itemref="addOdcSidbarModal"]'))
           if(document.querySelector('[itemref="addOdcSidbarModal"]'))
-          document.querySelector('[itemref="addOdcSidbarModal"]').style.top = "50%";
+          (document.querySelector('[itemref="addOdcSidbarModal"]') as HTMLElement).style.top = "50%";
         },50)
       },[open])
       // const getCookie = (cname)=> {
@@ -166,30 +170,34 @@ function Index_evolve({odcProps,token,addODCData,...etc}) {
       //   }
       //   return "";
       // }
-      if(typeof window !== 'undefined' && typeof document !== 'undefined'){
-        console.log("document",typeof document)
+      // if(typeof window !== 'undefined' && typeof document !== 'undefined'){
+      //   console.log("document",typeof document)
 
-        console.log("token",document.cookie)
-      }
+      //   console.log("token",document.cookie)
+      // }
       const [role_name,setRole] = useState("")
       useEffect(()=>{
         // console.log("token sidebar",token)
-        setRole(jwt(token).role_name)
+        setRole((jwt(token) as any).role_name)
         getRegionList(token)
         getWitelList(token)
         getDatelList(token)
         getSTOList(token)
         getMerekList(token)
-      },[])
+      },[getRegionList,
+        getWitelList,
+        getDatelList,
+        getSTOList,
+        getMerekList,token])
 
       // const {role_name} = (typeof window !== 'undefined') ? jwt(getCookie("token")): { role_name: ""}
       // const {role_name} = jwt(getCookie("token"));
 
       /** tambah ODC use state */
       const [regionListClient,setRegionListClient] = useState("");
-      const [witelListClient,setWitelListClient] = useState("");
-      const [datelListClient,setDatelListClient] = useState("");
-      const [stoListClient,setSTOListClient] = useState("");
+      const [witelListClient,setWitelListClient] = useState(witelList?.data || []);
+      const [datelListClient,setDatelListClient] = useState(datelList?.data || []);
+      const [stoListClient,setSTOListClient] = useState(stoList?.data || []);
       // console.log("region list",regionList.data,witelListClient)
       useEffect(()=>{
         
@@ -280,7 +288,7 @@ function Index_evolve({odcProps,token,addODCData,...etc}) {
                     maxWidth: "600px",
                     // boxShadow: "0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 20%), 0 1px 5px 0 rgb(0 0 0 / 12%)",
                     // boxShadow: "0 1px 4px 0 rgb(0 0 0 / 14%)",
-                  }}>
+                  } as any}>
                   {/* <Box sx={styles.card}> */}
                     <div className={`${styles.card}`}>
                       <div className={`${styles.cardHeader} ${styles.cardHeaderPrimary}`}>
