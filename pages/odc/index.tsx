@@ -1343,7 +1343,7 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                                 rak_oa: selectedModalValue.rak_oa,
                                 panel: selectedModalValue.panel,
                                 port: selectedModalValue.port,
-                                rowsPerPage: selectedModalValue.rowsPerPage
+                                rowsPerPage: odc_rowsPerPage
                               }}
                               validateOnChange={true}
                                 validate={(value)=>{
@@ -1562,7 +1562,7 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                                     <div className={styles.actionContainer}>
         
                                           <div >
-                                            <CustomButtonModal btntype={'submit'} onClick={()=>deleteODCData(selectedConfirmDeletePopup.name,selectedConfirmDeletePopup.odc_id,token,singleConfirmDeletePopupClose,toast)}>
+                                            <CustomButtonModal btntype={'submit'} onClick={()=>deleteODCData(selectedConfirmDeletePopup.name,selectedConfirmDeletePopup.odc_id,odc_rowsPerPage,token,singleConfirmDeletePopupClose,toast)}>
                                               {"Submit"}
                                             </CustomButtonModal>
                                           </div>

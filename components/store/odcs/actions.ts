@@ -162,9 +162,9 @@ export const addODCData = (
 });
 
 
-export const deleteODCData = (odc_name,odc_id,token,deleteRowHandleClose,toast)=>({
+export const deleteODCData = (odc_name,odc_id,odc_rowsPerPage,token,deleteRowHandleClose,toast)=>({
     type: DELETE_ODC_DATA,
-    payload: {odc_name,odc_id,token,deleteRowHandleClose,toast}
+    payload: {odc_name,odc_id,odc_rowsPerPage,token,deleteRowHandleClose,toast}
 })
 
 export const updateODCData = (

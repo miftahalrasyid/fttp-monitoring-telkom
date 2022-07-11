@@ -187,6 +187,7 @@ export interface IdeleteODCData {
     payload: {
         odc_name:string,
         odc_id:string,
+        odc_rowsPerPage: number,
         token:string,
         deleteRowHandleClose:any,
         toast:any}
