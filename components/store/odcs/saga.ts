@@ -981,7 +981,7 @@ function* addODCData({payload:{
                 progress: undefined,
               });
               yield call(addActivityLog,({payload:{odcId:res.odcId,table_name:`ODC`,action:`User menambahkan`,token}}))
-              yield call(getODCPage,({payload:{data:{page:0,rowsPerPage:10,sortBy:"",sortOrder:""},token,toast}}))
+              yield call(getODCPage,({payload:{data:{page:0,rowsPerPage:5,sortBy:"",sortOrder:""},token,toast}}))
             // yield put({type:GET_ODC_PAGE,payload:{page:1,rowsPerPage,sortOrder:{name:"",direction:"asc"},token}})
         }
     } catch (error) {
@@ -1120,7 +1120,7 @@ function* updateODCData({payload:{
               
             //   yield call(getODCPage,({payload:{page:1,rowsPerPage,region:null,witel:null,datel:null,sto:null,sortBy:null,sortOrder:null,token,toast}}))
                 if(rowsPerPage){
-                    yield call(getODCPage,({payload:{data:{page:0,rowsPerPage:10,sortBy:"",sortOrder:""},token,toast}}))
+                    yield call(getODCPage,({payload:{data:{page:0,rowsPerPage:5,sortBy:"",sortOrder:""},token,toast}}))
                 }
               else
               yield put({type:GET_ODC_SPLITPANEL_STATUS,payload:{odcId:odc_id[0],token,toast}})
@@ -1208,7 +1208,7 @@ function* deleteODCData({payload:{odc_name,odc_id,token,deleteRowHandleClose,toa
                 progress: undefined,
               });
               yield call(addActivityLog,({payload:{odcId:odc_id,table_name:`ODC`,action:`User mendelete`,token}}))
-              yield call(getODCPage,({payload:{data:{page:0,rowsPerPage:10,sortBy:"",sortOrder:""},token,toast}}))
+              yield call(getODCPage,({payload:{data:{page:0,rowsPerPage:5,sortBy:"",sortOrder:""},token,toast}}))
         }
         else{
             yield res
