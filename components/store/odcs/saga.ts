@@ -834,7 +834,7 @@ function* getODCPage(props) {
         },
         redirect: 'follow'
       };
-    //   console.log("on odc page change",page,rowsPerPage,sortOrder)
+      console.log("on odc page change",data)
     try {
         let res = yield getOdcPageCall(data,requestOptions)
         .then(result => {
@@ -863,6 +863,8 @@ function* getODCPage(props) {
             yield put({type:GET_ODC_PAGE_SUCCESSFUL,payload:res})
         }
     } catch (error) {
+        console.log(error)
+        if(toast)
         toast.error("Maaf, ada kesalahan teknis", {
             position: "top-right",
             autoClose: 5000,
@@ -966,7 +968,7 @@ function* addODCData({payload:{
             }
         });        
         if(res.success){
-            console.log("success added")
+            console.log("success added",res)
             setSubmitting(false)
             handleClose();
             toast.success(name+" berhasil ditambahkan", {
@@ -979,7 +981,8 @@ function* addODCData({payload:{
                 progress: undefined,
               });
               yield call(addActivityLog,({payload:{odcId:res.odcId,table_name:`ODC`,action:`User menambahkan`,token}}))
-            yield put({type:GET_ODC_PAGE,payload:{page:1,rowsPerPage,sortOrder:{name:"",direction:"asc"},token}})
+              yield call(getODCPage,({payload:{data:{page:0,rowsPerPage:10,sortBy:"",sortOrder:""},token,toast}}))
+            // yield put({type:GET_ODC_PAGE,payload:{page:1,rowsPerPage,sortOrder:{name:"",direction:"asc"},token}})
         }
     } catch (error) {
         console.log("saga add odc error" ,error)
@@ -1116,8 +1119,9 @@ function* updateODCData({payload:{
               yield call(addActivityLog,({payload:{odcId:odc_id,table_name:`ODC`,action:`User mengupdate`,token}}))
               
             //   yield call(getODCPage,({payload:{page:1,rowsPerPage,region:null,witel:null,datel:null,sto:null,sortBy:null,sortOrder:null,token,toast}}))
-                if(rowsPerPage)
-              yield put({type:GET_ODC_PAGE,payload:{page:0,rowsPerPage,sortOrder:{name:"",direction:"asc"},token,errorState:""}})
+                if(rowsPerPage){
+                    yield call(getODCPage,({payload:{data:{page:0,rowsPerPage:10,sortBy:"",sortOrder:""},token,toast}}))
+                }
               else
               yield put({type:GET_ODC_SPLITPANEL_STATUS,payload:{odcId:odc_id[0],token,toast}})
         }
@@ -1204,7 +1208,7 @@ function* deleteODCData({payload:{odc_name,odc_id,token,deleteRowHandleClose,toa
                 progress: undefined,
               });
               yield call(addActivityLog,({payload:{odcId:odc_id,table_name:`ODC`,action:`User mendelete`,token}}))
-              yield put({type:GET_ODC_PAGE,payload:{page:0,rowsPerPage:10,sortOrder:{name:"",direction:"asc"},token,errorState:""}})
+              yield call(getODCPage,({payload:{data:{page:0,rowsPerPage:10,sortBy:"",sortOrder:""},token,toast}}))
         }
         else{
             yield res
@@ -1573,7 +1577,7 @@ function* addActivityLog(browse){
     
     try {
         var myHeaders = new Headers();
-    myHeaders.append("Authorization", "Bearer "+token);
+        myHeaders.append("Authorization", "Bearer "+token);
         var formdata = new FormData();
         formdata.append("odc_id", odcId);
         formdata.append("table_name", table_name);

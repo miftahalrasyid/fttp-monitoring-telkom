@@ -29,7 +29,7 @@ function Eth({id="",key="",rak_level="",columns=0,clickHandler=(ev)=>{},status,i
   return <div ref={ethRef} onClick={clickHandler} className={`${styles.ethContainer} ${from=="feeder"? styles.feederPorts : ""}`} style={columnStyle}>
       {/* <div className={`${styles.ethHotspot}`}>
       </div> */}
-        <div className={styles.portBorder} style={{borderColor:status ==='used'?'blue':status ==="priority"?"#ee2d24":'#75767e'}}>
+        <div className={styles.portBorder} style={{borderColor:status ==='used'?'blue':status === "priority"?"#ee2d24":status === 'broken'?'black':'#75767e'}}>
           <p>{id}</p>
         </div>
       {/* <MdOutlineViewSidebar fill={status==='used'?'blue':status==='priority'?'#ee2d24':'#75767e'} /> */}

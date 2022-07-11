@@ -689,10 +689,13 @@ function Odc({
           status:"",
           passive_out:[], 
         }]}] = panel.data.filter(pnl=>pnl.rak_level.toString()===ev.target.parentNode.getAttribute('data-rak'));
-        const [{passive_out:[{name,po_index,splitter:{splitter_index}}]}] = dataDist.filter(dt=>dt.index.toString()==ev.target.parentNode.getAttribute('data-id'));
-        // {name,po_index,splitter:{splitter_index}}
-        // console.log("distribution port click data",passive_out);
-        alert("ODP Name: "+name+"\n"+"Splitter: "+splitter_index+"\nPassive Out: "+po_index)
+        console.log('data dist',dataDist.filter(dt=>dt.index.toString()==ev.target.parentNode.getAttribute('data-id')))
+        if(dataDist.filter(dt=>dt.index.toString()==ev.target.parentNode.getAttribute('data-id'))[0].passive_out || false){
+          const [{passive_out:[{name,po_index,splitter:{splitter_index}}]}] = dataDist.filter(dt=>dt.index.toString()==ev.target.parentNode.getAttribute('data-id'));
+          // {name,po_index,splitter:{splitter_index}}
+          // console.log("distribution port click data",passive_out);
+          alert("ODP Name: "+name+"\n"+"Splitter: "+splitter_index+"\nPassive Out: "+po_index)
+        }
       }
       
       /**
@@ -1176,13 +1179,13 @@ function Odc({
                   {splitter.data.map(item=><FormControl key={item.id} variant="standard" sx={{ m: 1, minWidth: 132,marginTop:"0.5rem"}}>
                     <InputLabel id="demo-simple-select-standard-label">Splitter {item.index}</InputLabel>
 
-                    <NativeSelect defaultValue={item.status=="used" ? 10:item.status=='priority' ? 20:30} onChange={(ev)=>{console.log(splitter,item,ev.target.options[ev.target.selectedIndex].text); return updateODCPort_odcSaga(odcId[0],item.id,'splitter',ev.target.options[ev.target.selectedIndex].text,token,toast)}} inputProps={{
+                    <NativeSelect defaultValue={item.status=="used" ? 10:item.status=='priority' ? 20 : item.status=="broken" ? 30:40} onChange={(ev)=>{console.log(splitter,item,ev.target.options[ev.target.selectedIndex].text); return updateODCPort_odcSaga(odcId[0],item.id,'splitter',ev.target.options[ev.target.selectedIndex].text,token,toast)}} inputProps={{
                         name: 'age',
                         id: 'uncontrolled-native',
                         }}>
                           {(item.status=="used" || item.status=="priority") && [{status:"used",value:10},{status:"priority",value:20}].map(item=><option key={"sp"+item.status} value={item.value}> {item.status}</option>)}
                           {/* {(item.status=="used" || item.status=="priority" || item.status=="broken") && [{status:"used",value:10},{status:"priority",value:20},{status:"broken",value:30}].map(item=><option key={"sp"+item.status} value={item.value}> {item.status}</option>)} */}
-                          {(item.status=="idle" || item.status=="broken") && ["idle","broken"].map(item=><option key={"sp"+item} value={10}> {item}</option>)}
+                          {(item.status=="idle" || item.status=="broken") && [{status:"idle",value:40},{status:"broken",value:30}].map(item=><option key={"sp"+item.status} value={item.value}> {item.status}</option>)}
                     </NativeSelect>
                     </FormControl>
                   )}
@@ -1199,7 +1202,7 @@ function Odc({
                         {/* {ODCData.panel.data.length}
                         {item.data.length} */}
                        
-                     <NativeSelect  defaultValue={distFeed.status=="used" ? 10:distFeed.status=='priority' ? 20 : 30} onChange={(ev)=>{console.log(distFeed,item.type,ev.target.options[ev.target.selectedIndex].text);return updateODCPort_odcSaga(odcId[0],distFeed.id,item.type ,ev.target.options[ev.target.selectedIndex].text,token,toast)}} inputProps={{
+                     <NativeSelect  defaultValue={distFeed.status=="used" ? 10:distFeed.status=='priority' ? 20 : distFeed.status=="broken" ? 30:40} onChange={(ev)=>{console.log(distFeed,item.type,ev.target.options[ev.target.selectedIndex].text);return updateODCPort_odcSaga(odcId[0],distFeed.id,item.type ,ev.target.options[ev.target.selectedIndex].text,token,toast)}} inputProps={{
                        name: 'age',
                        id: 'uncontrolled-native',
                       }}>
@@ -1207,7 +1210,7 @@ function Odc({
                           {(distFeed.status=="used" || distFeed.status=="priority") && [{status:"used",value:10},{status:"priority",value:20}].map(item=><option key={"sp"+item.status} value={item.value}> {item.status}</option>)}
                           {/* {(distFeed.status=="used" || distFeed.status=="priority" || distFeed.status=="broken") && [{status:"used",value:10},{status:"priority",value:20},{status:"broken",value:30}].map(item=><option key={"sp"+item.status} value={item.value}> {item.status}</option>)} */}
                           {/* {(distFeed.status=="used" || distFeed.status=="priority") && [{status:"used",value:10},{status:"priority",value:20}].map(item=><option key={"sp"+item.status} value={item.value}> {item.status}</option>)} */}
-                          {(distFeed.status=="idle") && ["idle","broken"].map(item=><option key={"sp"+item} value={10}> {item}</option>)}
+                          {(distFeed.status=="idle" || distFeed.status=="broken") && [{status:"idle",value:40},{status:"broken",value:30}].map(item=><option key={"sp"+item.status} value={item.value}> {item.status}</option>)}
                     </NativeSelect>
                     </FormControl>
                         })}
