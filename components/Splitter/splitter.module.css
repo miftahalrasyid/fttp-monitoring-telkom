@@ -1,7 +1,9 @@
 
 .splitWrapper{
     /* border-radius: 3px; */
-    position:absolute;
+    /* position:absolute; */
+    position:relative;
+    display:inline-block;
     /* max-width:100%; */
     min-width:375px;
     padding: 0 1rem 1rem;
@@ -11,11 +13,13 @@
     position: relative;
     display:flex;
     flex-wrap: wrap;
-    margin: 0 0.5rem;
+    /* margin: 0 0.5rem; */
+    justify-content: center;
+    gap:0.8rem;
     /* column-count: 9; */
 }
 .splitContainer div{
-    margin-bottom: 0.5rem;
+    /* margin-bottom: 0.5rem; */
 }
 .splitContainer h6{
     margin-bottom: 1.5rem;
@@ -64,7 +68,9 @@
 }
 .videoWrapper{
         /* border-radius: 3px; */
-        position:absolute;
+        position:relative;
+        display:inline-block;
+        /* position:absolute; */
         /* max-width:100%; */
         min-width:377px;
         width:377px;

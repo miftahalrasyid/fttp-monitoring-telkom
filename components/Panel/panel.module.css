@@ -1,6 +1,8 @@
 .panelWrapper{
     border-radius: 3px;
-    position:absolute;
+    /* position:absolute; */
+    position:relative;
+    display:inline-block;
     /* max-width:100%; */
     min-width:755px;
     padding: 1rem;

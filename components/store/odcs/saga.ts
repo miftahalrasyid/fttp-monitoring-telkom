@@ -964,11 +964,11 @@ function* addODCData({payload:{
                 }
             }
             else {
-                return {success:result.success,data:result.data}
+                return {success:result.success,odc_id: result.odc_id,data:result.data}
             }
         });        
         if(res.success){
-            console.log("success added",res)
+            // console.log("success added",res)
             setSubmitting(false)
             handleClose();
             toast.success(name+" berhasil ditambahkan", {
@@ -980,8 +980,10 @@ function* addODCData({payload:{
                 draggable: true,
                 progress: undefined,
               });
-              yield call(addActivityLog,({payload:{odcId:res.odcId,table_name:`ODC`,action:`User menambahkan`,token}}))
-              yield call(getODCPage,({payload:{data:{page:0,rowsPerPage,sortBy:"",sortOrder:""},token,toast}}))
+              yield call(addActivityLog,({payload:{odcId:res.odc_id,table_name:`ODC`,action:`User menambahkan`,token}}))
+              if(rowsPerPage){
+                yield call(getODCPage,({payload:{data:{page:0,rowsPerPage,sortBy:"",sortOrder:""},token,toast}}))
+              }
             // yield put({type:GET_ODC_PAGE,payload:{page:1,rowsPerPage,sortOrder:{name:"",direction:"asc"},token}})
         }
     } catch (error) {

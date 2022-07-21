@@ -384,10 +384,19 @@ function Index_evolve({odcProps,token,addODCData,...etc}) {
                             setSTOListClient(stoList?.data?.filter(item=>item.region_id.toString() === values.regional).filter(item=>item.witel_id.toString() == values.witel))
                           }
                          */
-
+                        /** menentukan nilai port feeder terminasi berdasarkan kapasitas port yang diinginkan */
+                        switch (values.capacity) {
+                          case 288:
+                            values.port_feeder_terminasi = "48";
+                            break;
+                        
+                          default:
+                            values.port_feeder_terminasi = "24";
+                            break;
+                        }
                         }}
                         onSubmit={(values,{setSubmitting})=>{
-                          console.log("on submit",values)
+                          // console.log("on submit",values)
                           addODCData(values.name,values.merek_id,values.port_feeder_terminasi,values.deployment_date,values.capacity,null,values.panel_oa,values.rak_oa,values.port,values.name,values.region_id,values.witel_id,values.datel_id,values.sto_id,token,setSubmitting,handleClose,toast,odc_rowsPerPage)
                         }}
                       >
@@ -486,7 +495,21 @@ function Index_evolve({odcProps,token,addODCData,...etc}) {
                                   </CustomFormControl>
                                 </div>
                                 <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                  <CustomTextField id="standard-basic" name='capacity' value={values.capacity} onChange={handleChange} onBlur={handleBlur} label="Kapasitas" variant="standard" />
+                                  {/* <CustomTextField id="standard-basic" name='capacity' value={values.capacity} onChange={handleChange} onBlur={handleBlur} label="Kapasitas" variant="standard" /> */}
+                                  <CustomFormControl key='capacity' variant="standard" >
+                                    <CustomInputLabel id="demo-simple-select-standard-label">Kapasitas</CustomInputLabel>
+
+                                    <NativeSelect value={values.capacity} onChange={(ev)=>{
+                                      setValues(prev=>({...prev,capacity:parseInt(ev.target.value),port_feeder_terminasi:(ev.target.value == "144" ? "24": "48")}))
+                                      console.log(values.capacity)
+                                    }} onBlur={handleBlur} inputProps={{
+                                    name: 'capacity',
+                                    id: 'uncontrolled-native',
+                                    }}>
+                                      {[{value:144,label:"144"},{value:288,label:"288"}].map(item=><option key={"capacity-"+item.label} value={item.value}>{item.label}</option>)}
+
+                                    </NativeSelect>
+                                  </CustomFormControl>
                                 </div>
                                 <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
                                   {/* <CustomTextField id="standard-basic" onChange={handleChange} onBlur={handleBlur} label="Merek" variant="standard" /> */}
@@ -550,7 +573,7 @@ function Index_evolve({odcProps,token,addODCData,...etc}) {
                           <div className='row'>
                           {/* <Typography> */}
                              <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                <CustomTextField id="standard-basic" name='port_feeder_terminasi' value={values.port_feeder_terminasi} onChange={handleChange} onBlur={handleBlur} label="Port Feeder Terminasi" variant="standard" />
+                                <CustomTextField style={{pointerEvents:"none"}} id="standard-basic" name='port_feeder_terminasi' value={values.port_feeder_terminasi} onChange={handleChange} onBlur={handleBlur} label="Port Feeder Terminasi" variant="standard" />
                               </div>
                               <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
                                 <CustomTextField id="standard-basic" name='rak_oa' value={values.rak_oa} onChange={handleChange} onBlur={handleBlur} label="Rak OA" variant="standard" />
