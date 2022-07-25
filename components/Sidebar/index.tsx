@@ -42,7 +42,7 @@ import {
   ButtonProps,
 } from '@mui/material';
 import { toast } from 'react-toastify';
-const CustomInputLabel = styled(InputLabel)<InputLabelProps>(({ theme }) => ({
+const CustomInputLabel = styled(InputLabel)<InputLabelProps>(({ theme  }) => ({
   transform: "translate(0, -1.5px) scale(0.75) !important",
   '&.Mui-focused':{
     color: theme.status.primary,
@@ -52,11 +52,14 @@ const CustomInputLabel = styled(InputLabel)<InputLabelProps>(({ theme }) => ({
     borderBottomColor: theme.status.primary
   }
 }));
-const CustomTextField = styled(TextField)<TextFieldProps>(({ theme }) => ({
+const CustomTextField = styled(TextField)<TextFieldProps>(({ theme, texttype }) => ({
   width:"100%",
     color: theme.status.primary,
     '.MuiInputLabel-root.Mui-focused': {
       color: theme.status.primary,
+    },
+    '.MuiInputBase-input':{
+      textTransform: texttype
     },
     '.MuiInput-root::after': {
       borderColor: theme.status.primary
@@ -206,6 +209,54 @@ function Index_evolve({odcProps,token,addODCData,...etc}) {
         setValues(prev=>({...prev,tabs: newValue}));
         // handleChange(event,newValue)
       };
+      /**
+       * select option rule
+       */
+       const handleFilterOnChange = (ev,inputid,values,setValues) =>{
+        let dmp = {region_id:values.region_id?.toString(),witel_id:values.witel_id?.toString(),datel_id:values.datel_id?.toString(),sto_id:values.sto_id?.toString()};
+        [{region_id:['region_id',regionList.data]},{witel_id:['region_id',witelList.data]},{datel_id:['witel_id',datelList.data]},{sto_id:['datel_id',stoList.data]}].forEach(item=>{
+          dmp[inputid] = ev.target.value;
+          dmp.region_id = regionList.data.find(item=>item.id == dmp.region_id)?.id.toString();
+          for (const key1 in item) {
+            /**
+             * mengubah nilai filter child yang memiliki id parent sesuai dengan opsi yang kita ubah
+             */
+            if (Object.hasOwnProperty.call(item, key1) && key1!=inputid && key1!='region_id') {
+              /** 
+               * get the first children for certain parent id on the array 
+               * ambil data pertama subitem yang memiliki item id yang sesuai 
+               * */
+              dmp[key1] = item[key1][1].find(item2=>item2[item[key1][0]] == dmp[item[key1][0]])?.id;
+            }
+            else{
+      
+            }
+          }
+          // return key == inputid
+        })
+        // console.log("key2",dmp)
+        switch (inputid) {
+          case "region_id":
+            //set witel options
+            setWitelListClient(witelList.data.filter(item=>item.region_id.toString()==dmp.region_id))
+          case "witel_id":
+            //set datel options
+            setDatelListClient(datelList.data.filter(item=>item.witel_id==dmp.witel_id))
+          case "datel_id":
+            //set sto options
+            setSTOListClient(stoList.data.filter(item=>item.datel_id.toString()==dmp.datel_id))
+          case "sto_id":
+            // console.log("values", values)
+            /**
+             * set all values
+             */
+            setValues(prev=>({...prev,...dmp}))
+          break;
+        
+          default:
+            break;
+        }
+      }
   return (
     <div className={`${styles.verticalMenu}`}>
     <div className={styles.sidebarLogo}>
@@ -265,7 +316,7 @@ function Index_evolve({odcProps,token,addODCData,...etc}) {
 
           <p>
 
-            <CustomButton btntype={"green"} onClick={handleOpen} variant='contained' > Tambah ODC</CustomButton>
+            <CustomButton btntype={"green"} onClick={handleOpen} variant='contained'>Tambah ODC</CustomButton>
             <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description">
                  <div>
@@ -302,7 +353,7 @@ function Index_evolve({odcProps,token,addODCData,...etc}) {
                       <Formik 
                         initialValues={{
                           tabs:0,
-                          name:"test",
+                          name:"ODC",
                           merek_id:(merekList)?merekList?.data[0].id.toString() : "",
                           port_feeder_terminasi:"24",
                           deployment_date:"mar-2022",
@@ -323,77 +374,7 @@ function Index_evolve({odcProps,token,addODCData,...etc}) {
                         validateOnChange={true}
                         validateOnMount={true}
                         validate={(values)=>{
-                          console.log("all values",values)
-                          // console.log("witel",values.witel,witelList?.data?.filter(item=>item.region_id.toString() === values.regional))
-                          // console.log("datel",values.datel,witelList?.data?.filter(item=>item.region_id.toString() === values.regional),datelList?.data?.filter(item=>item.region_id.toString() == values.regional)
-                          // .filter(item=>item.witel_id.toString() == witelList?.data?.filter(item=>item.region_id.toString() === values.regional).filter(item=>item.id==values.witel)[0]?.id.toString()))
-                          // console.log("sto",values.datel_id,stoList?.data?.filter(item=>item.region_id.toString() === values.region_id),stoList?.data?.filter(item=>item.region_id.toString() === values.region_id)
-                          // .filter(item=>item.witel_id.toString() == stoList?.data?.filter(item=>item.region_id.toString() === values.region_id).filter(item=>item.witel_id==values.witel_id)[0]?.id.toString()))
-                          // console.log("witel count",values.witel)
-
-                          setWitelListClient(witelList?.data?.filter(item=>item.region_id.toString() === values.region_id))
-                          // setDatelListClient(datelList?.data?.filter(item=>item.region_id.toString() == values.regional)
-                          // .filter(item=>item.witel_id.toString() == witelList?.data?.filter(item=>item.region_id.toString() === values.regional).filter(item=>item.id==values.witel)[0]?.id.toString()))
-                          setDatelListClient(datelList?.data?.filter(item=>item.region_id.toString() == values.region_id).filter(item=>item.witel_id.toString() == values.witel_id))
-                          if(datelList?.data?.filter(item=>item.region_id.toString() == values.region_id).length==1){
-                            setDatelListClient(datelList?.data?.filter(item=>item.region_id.toString() == values.region_id))
-                          }
-                          setSTOListClient(stoList?.data?.filter(item=>item.region_id.toString() === values.region_id).filter(item=>item.witel_id.toString() == values.witel_id).filter(item=>item.datel_id.toString() == values.datel_id))
-
-                          /* fungsi komparasi region witel datel (jika sama select option langsung ditentukan)*/
-                          for(var i = 1; i < stoList?.data?.filter(item=>item.region_id.toString() === values.region_id).filter(item=>item.witel_id.toString() == values.witel_id).length; i++)
-                          { 
-                            let a = stoList?.data?.filter(
-                              item=>item.region_id.toString() === values.region_id
-                            )
-                            .filter(
-                              item=>item.witel_id.toString() == values.witel_id
-                            )[i];
-                            let b = stoList?.data?.filter(
-                              item=>item.region_id.toString() === values.region_id
-                            )
-                            .filter(
-                              item=>item.witel_id.toString() == values.witel_id
-                            )[i-1];
-                            let currentName = JSON.stringify({
-                              region:a.region_id,witel:a.witel_id,datel:a.datel_id
-                            }); 
-                            let firstName = JSON.stringify({
-                              region:b.region_id,witel:b.witel_id,datel:b.datel_id
-                            });
-                            if(firstName == currentName)
-                            {
-                              // return true;
-                              // console.log(stoList?.data?.filter(item=>item.region_id.toString() === values.regional).filter(item=>item.witel_id.toString() == values.witel).length,i+1)
-                              if(stoList?.data?.filter(item=>item.region_id.toString() === values.region_id).filter(item=>item.witel_id.toString() == values.witel_id).length==i+1)
-                              setSTOListClient(stoList?.data?.filter(item=>item.region_id.toString() === values.region_id).filter(item=>item.witel_id.toString() == values.witel_id))
-                            }
-                            else{
-                              break;
-                            }
-                          }     
-                          if(stoList?.data?.filter(item=>item.region_id.toString() === values.region_id).length==1 && stoList?.data?.filter(item=>item.region_id.toString() === values.region_id).filter(item=>item.witel_id.toString() == values.witel_id).length==0){
-                            setSTOListClient(stoList?.data?.filter(item=>item.region_id.toString() === values.region_id))
-                          }
-                          
-                          /** very important 
-                          if(stoList?.data?.filter(item=>item.region_id.toString() === values.regional).filter(item=>item.witel_id.toString() == values.witel)[0].region_id == stoList?.data?.filter(item=>item.region_id.toString() === values.regional).filter(item=>item.witel_id.toString() == values.witel)[1].region_id &&
-                          stoList?.data?.filter(item=>item.region_id.toString() === values.regional).filter(item=>item.witel_id.toString() == values.witel)[0].witel_id == stoList?.data?.filter(item=>item.region_id.toString() === values.regional).filter(item=>item.witel_id.toString() == values.witel)[1].witel_id && 
-                          stoList?.data?.filter(item=>item.region_id.toString() === values.regional).filter(item=>item.witel_id.toString() == values.witel)[0].datel_id == stoList?.data?.filter(item=>item.region_id.toString() === values.regional).filter(item=>item.witel_id.toString() == values.witel)[1].datel_id 
-                          ){
-                            setSTOListClient(stoList?.data?.filter(item=>item.region_id.toString() === values.regional).filter(item=>item.witel_id.toString() == values.witel))
-                          }
-                         */
-                        /** menentukan nilai port feeder terminasi berdasarkan kapasitas port yang diinginkan */
-                        switch (values.capacity) {
-                          case 288:
-                            values.port_feeder_terminasi = "48";
-                            break;
-                        
-                          default:
-                            values.port_feeder_terminasi = "24";
-                            break;
-                        }
+                         
                         }}
                         onSubmit={(values,{setSubmitting})=>{
                           // console.log("on submit",values)
@@ -432,14 +413,14 @@ function Index_evolve({odcProps,token,addODCData,...etc}) {
                           <div className='row'>
                             {/* <Typography> */}
                             <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                  <CustomTextField id="standard-basic" name='name' value={values.name} onChange={handleChange} onBlur={handleBlur} label="Nama ODC" variant="standard" />
+                                  <CustomTextField texttype="uppercase" id="standard-basic" name='name' value={values.name} onChange={handleChange} onBlur={handleBlur} label="Nama ODC" variant="standard" />
                                 </div>
                                 <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
                                   {/* <CustomTextField id="standard-basic" onChange={handleChange} onBlur={handleBlur} value={values.name} label="Regional" variant="standard" /> */}
                                   <CustomFormControl key='regional' variant="standard" >
                                     <CustomInputLabel id="demo-simple-select-standard-label">Regional</CustomInputLabel>
 
-                                    <NativeSelect value={values.region_id} onChange={handleChange} onBlur={handleBlur} inputProps={{
+                                    <NativeSelect value={values.region_id} onChange={(ev)=>handleFilterOnChange(ev,"region_id",values,setValues)} onBlur={handleBlur} inputProps={{
                                     name: 'region_id',
                                     id: 'uncontrolled-native',
                                     }}>
@@ -454,7 +435,7 @@ function Index_evolve({odcProps,token,addODCData,...etc}) {
                                   <CustomFormControl key='witel' variant="standard" >
                                     <CustomInputLabel id="demo-simple-select-standard-label">Witel</CustomInputLabel>
 
-                                    <NativeSelect value={values.witel_id} onChange={handleChange} onBlur={handleBlur} inputProps={{
+                                    <NativeSelect value={values.witel_id} onChange={(ev)=>handleFilterOnChange(ev,"witel_id",values,setValues)} onBlur={handleBlur} inputProps={{
                                     name: 'witel_id',
                                     id: 'uncontrolled-native',
                                     }}>
@@ -469,7 +450,7 @@ function Index_evolve({odcProps,token,addODCData,...etc}) {
                                   <CustomFormControl key='datel' variant="standard" >
                                     <CustomInputLabel id="demo-simple-select-standard-label">Datel</CustomInputLabel>
 
-                                    <NativeSelect value={values.datel_id} onChange={handleChange} onBlur={handleBlur} inputProps={{
+                                    <NativeSelect value={values.datel_id} onChange={(ev)=>handleFilterOnChange(ev,"datel_id",values,setValues)} onBlur={handleBlur} inputProps={{
                                     name: 'datel_id',
                                     id: 'uncontrolled-native',
                                     }}>
@@ -484,7 +465,7 @@ function Index_evolve({odcProps,token,addODCData,...etc}) {
                                   <CustomFormControl key='sto' variant="standard" >
                                     <CustomInputLabel id="demo-simple-select-standard-label">STO</CustomInputLabel>
 
-                                    <NativeSelect value={values.sto_id} onChange={handleChange} onBlur={handleBlur} inputProps={{
+                                    <NativeSelect value={values.sto_id} onChange={(ev)=>handleFilterOnChange(ev,"sto_id",values,setValues)} onBlur={handleBlur} inputProps={{
                                     name: 'sto_id',
                                     id: 'uncontrolled-native',
                                     }}>
@@ -638,11 +619,11 @@ function Index_evolve({odcProps,token,addODCData,...etc}) {
   )
 }
 const mapStateToProps = state =>({
-  regionList: state.ODCs.region_list,
-  witelList: state.ODCs.witel_list,
-  datelList: state.ODCs.datel_list,
-  stoList: state.ODCs.sto_list,
-  merekList: state.ODCs.merek_list
+  // regionList: state.ODCs.region_list,
+  // witelList: state.ODCs.witel_list,
+  // datelList: state.ODCs.datel_list,
+  // stoList: state.ODCs.sto_list,
+  // merekList: state.ODCs.merek_list
 });
 const mapDispatchToProps = {
   addODCData,

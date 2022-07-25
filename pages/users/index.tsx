@@ -1,4 +1,4 @@
-import React,{useCallback, useState, useEffect} from 'react'
+import React,{useCallback, useState, useEffect, useRef} from 'react'
 import withAuth from '../../components/Auth';
 import {Modal,Box,InputLabel,NativeSelect, Typography} from '@material-ui/core';
 import FormControl from '@mui/material/FormControl';
@@ -26,8 +26,16 @@ import {
   addNewUser,
   updateUserData,
   deleteUser,
-  setTableRowsPerPage
+  setTableRowsPerPage as IsetTableRowsPerPage
 } from '../../components/store/users/actions'
+import { 
+  getRegionList,
+  getWitelList,
+  getDatelList,
+  getSTOList,
+  getMerekList,
+  addODCData,
+} from '../../components/store/odcs/actions';
 import { wrapper } from '../../components/store';
 import { END } from 'redux-saga';
 import {
@@ -36,7 +44,8 @@ import {
 // import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import { Formik } from 'formik';
-import { ButtonProps, CircularProgress, CircularProgressProps, InputLabelProps, NativeSelectProps, TextFieldProps } from '@mui/material';
+import { ButtonProps, CircularProgress, CircularProgressProps, InputAdornment, InputLabelProps, NativeSelectProps, TextFieldProps } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 const CustomButtonModal = styledCustom(Button)<ButtonProps>(({ theme, btntype }) => ({
   background: btntype == 'submit' ? theme.status.success: btntype == 'cancel'? "gray !important":theme.status.primary,
@@ -233,7 +242,8 @@ function User({
   user_rowsPerPage,
   getUserData_userSaga,
   user_list_client={success:false,data:[],total_rows:"",count:""},
-  updateUserData
+  updateUserData,
+  setTableRowsPerPage
 }:{
   user_list:{
     success:boolean,
@@ -249,55 +259,61 @@ function User({
   token:string,
   getUserData_userSaga:typeof getUserData,
   user_list_client:any,
-  updateUserData: any
+  updateUserData: any,
+  setTableRowsPerPage: typeof IsetTableRowsPerPage
 }) {
   const [datatable, setDatatable] = React.useState([[]]);
+  const [newTableState,setNewTableState] = useState({page:0,rowsPerPage:5,search_text:null,sort:{orderBy:null,direction:null}})
+  const delay = useRef(null);
+  console.log("rows per page user",user_rowsPerPage)
+  /**
+   * single modal popup
+   */
+   const [selectedModalValue,setSelectedModalValue] = useState({
+      email:"",
+      password:"",
+      role:"",
+      status:"",
+      id:"",
+   });
+   const [singleModalPopup,setSingleModalPopup] = useState(false);
+   const singleModalPopupOpen = (selectedModalId) => {
+    // console.log("selectedModalValue",selectedModalId)
+    setSelectedModalValue(selectedModalId)
+    setSingleModalPopup(true);
+  }
+  const singleModalPopupClose = () => {
+    setSingleModalPopup(false)
+  };
+    /**
+   * single modal delete
+   */
+     const [singleConfirmDeletePopup, setSingleConfirmDeletePopup] = useState(false);
+     const [selectedConfirmDeletePopup,setSelectedConfirmDeletePopup] = useState({id:"",email:"",rowsPerPage:0});
+     const singleConfirmDeletePopupOpen = (selectedConfirmDeleteValue) => {
+       setSelectedConfirmDeletePopup(selectedConfirmDeleteValue);
+       setSingleConfirmDeletePopup(true);
+     }
+     const singleConfirmDeletePopupClose = () =>{
+       setSingleConfirmDeletePopup(false);
+     }
   // console.log("total rows",user_list)
   var [error, setError] = useState({status:false,msg:""});
   const [open, setOpen] = React.useState(user_list.data.map(item=>({status:false})));
-  const handleOpen = useCallback((row)=>{
-    setOpen(prev=>{
-      prev[row].status = true;
-      return {...prev}
-    });
-  },[setOpen])
-  const handleClose = useCallback((row)=>{
-    setOpen(prev=>{
-      prev[row].status = false;
-      return {...prev}
-    });
-  },[setOpen])
+
 
   const [openDeleteRowModal, setOpenDeleteRowModal] = React.useState(user_list.data.map(item=>({status:false})));
-  const deleteRowHandleOpen = useCallback((row)=>{
-    setOpenDeleteRowModal(prev=>{
-      prev[row].status = true;
-      return {...prev}
-    })
-  },[setOpenDeleteRowModal])
-  const deleteRowHandleClose = useCallback((row)=>{
-    setOpenDeleteRowModal(prev=>{
-      prev[row].status = false;
-      return {...prev}
-    })
-  },[setOpenDeleteRowModal])
+
 
   /** delete user */
-const [submitting,setSubmitting] = useState(user_list.data.map(item=>({status:false})));
-  useEffect(()=>{
-  },[submitting])
-  const delete_user = useCallback((idx)=>{
+const [deleteSubmitting,setDeleteSubmitting] = useState(false);
+  const delete_user = useCallback(()=>{
       // console.log("submitting",idx,user_list?.data,user_list?.data[idx])
-      setSubmitting(prev=>{
-        prev[idx].status = true;
-        return {...prev}
-      })
 
-      deleteUser(user_list_client.success ? user_list_client.data[idx].email: user_list?.data[idx].email,
-        idx,
-        user_list_client.success ? user_list_client.data[idx].id: user_list?.data[idx].id,
-        token,setSubmitting,deleteRowHandleClose,toast);
-    },[setSubmitting,token,user_list?.data,deleteUser,deleteRowHandleClose,user_list_client?.data,user_list_client?.success])
+      deleteUser(selectedConfirmDeletePopup.email,
+        selectedConfirmDeletePopup.id,
+        token,newTableState.page+1,newTableState.rowsPerPage,newTableState.sort,setDeleteSubmitting,singleConfirmDeletePopupClose,toast);
+    },[selectedConfirmDeletePopup,setDeleteSubmitting,token,deleteUser])
   React.useEffect(()=>{
     setTimeout(()=>{
       if(document.querySelector('[itemref="userDetailModal"]'))
@@ -313,15 +329,14 @@ if(!user_list_client.success)
     item.user_status,
     item.role,
     item.status,
+    item.id
 ])))
 
 },[user_list?.data,open,openDeleteRowModal,user_list_client?.success])
 useEffect(()=>{
   if(user_list_client.success){
-    console.log("fetch new data", user_list_client)
-    setOpen(user_list_client.data.map(item=>({status:false})));
-    setOpenDeleteRowModal(user_list_client.data.map(item=>({status:false})));
-    setSubmitting(user_list_client.data.map(item=>({status:false})));
+    // console.log("fetch new data", user_list_client)
+    // setSubmitting(user_list_client.data.map(item=>({status:false})));
     setDatatable(user_list_client?.data?.map((item,idx)=>([
       item.row_number,
       item.email,
@@ -329,7 +344,7 @@ useEffect(()=>{
       item.user_status,
       item.role,
       item.status,
-
+      item.id
     ])))
   }
 },[
@@ -387,7 +402,7 @@ useEffect(()=>{
   // }
 },[user_list,error]);
 
-
+const [showPassword, setShowPassword] = useState(false);
   return (<div className={odcStyles.mainContent}>
     {/* <ToastContainer/> */}
     {/* <div className={`container-fluid`}>
@@ -405,13 +420,15 @@ useEffect(()=>{
                   selectableRows:"none",
                   print: false,
                   serverSide:true,
+                  searchText:newTableState.search_text,
                   count:user_list_client?.count || user_list?.count,
-                  rowsPerPage: user_rowsPerPage || 5,
+                  page: newTableState.page,
+                  rowsPerPage: newTableState.rowsPerPage,
                   rowsPerPageOptions:[5,10,25,50,100],
                   onTableInit:(test,tableState) =>{
                     // console.log("table init",tableState.rowsPerPage)
                     setTableRowsPerPage(tableState.rowsPerPage)
-                    getUserData_userSaga({page:tableState.page+1,rowsPerPage:tableState.rowsPerPage,sortBy:null,sortOrder:null},token,null,toast)
+                    getUserData_userSaga({page:tableState.page+1,rowsPerPage:tableState.rowsPerPage,sortBy:null,sortOrder:null,email:null},token,null,toast)
                   },
                   onTableChange: (action, tableState) => {
                     console.log(action, tableState);
@@ -420,17 +437,31 @@ useEffect(()=>{
                     // examine the state as a whole and do whatever they want
             
                     switch (action) {
-                      case 'changePage':
-                        console.log("change rows per page")
+                      case "changeRowsPerPage":
                         setTableRowsPerPage(tableState.rowsPerPage)
-                        getUserData_userSaga({page:tableState.page+1,rowsPerPage:tableState.rowsPerPage, sortBy:tableState.name,sortOrder:tableState.sortOrder.direction},token,null,toast)
+                        setNewTableState(prev=>({...prev,rowsPerPage:tableState.rowsPerPage}))
+                        getUserData_userSaga({page:newTableState.page+1,rowsPerPage:tableState.rowsPerPage, sortBy:newTableState.sort.orderBy,sortOrder:newTableState.sort.direction,email:null},token,null,toast)
+                      break;
+                      case 'changePage':
+                        setNewTableState(prev=>({...prev,page:tableState.page}))
+                        getUserData_userSaga({page:tableState.page+1,rowsPerPage:newTableState.rowsPerPage, sortBy:newTableState.sort.orderBy,sortOrder:newTableState.sort.direction,email:null},token,null,toast)
                         // this.changePage(tableState.page, tableState.sortOrder);
                         break;
+                      case "search":
+                        console.log("activate search",tableState.searchText)
+                        setNewTableState(prev=>({...prev,search_text:tableState.searchText}))
+                        clearTimeout(delay.current);
+                        delay.current = setTimeout(()=>{
+                          // changeODCPage({page:newTableState.page,rowsPerPage:newTableState.rowsPerPage, region:submittedFilter.regional,witel:submittedFilter.witel,datel:submittedFilter.datel,sto:submittedFilter.sto,sortBy:newTableState.sort.orderBy,sortOrder:newTableState.sort.direction,name:tableState.searchText},token,toast)
+                          getUserData_userSaga({page:tableState.page+1,rowsPerPage:newTableState.rowsPerPage, sortBy:newTableState.sort.orderBy,sortOrder:newTableState.sort.direction,email:newTableState.search_text},token,null,toast)
+                        },500)
+                        // setSearch_text(tableState.searchText)
+                      break;
                       case 'propsUpdate':
                         // getUserData(tableState.page+1,tableState.rowsPerPage, tableState.sortOrder,token)
                         break;
                       case 'sort':
-                        console.log("odc name sort",tableState.sortOrder?.name?.toLocaleLowerCase())
+                        // console.log("odc name sort",tableState.sortOrder?.name?.toLocaleLowerCase())
                         let sortConvention = "";
                         switch (tableState.sortOrder?.name?.toLocaleLowerCase() || "") {
                           case "no":
@@ -453,7 +484,8 @@ useEffect(()=>{
                           default:
                             break;
                         }
-                        getUserData_userSaga({page:tableState.page+1,rowsPerPage:tableState.rowsPerPage, sortBy:sortConvention,sortOrder:tableState.sortOrder.direction},token,null,toast)
+                        setNewTableState(prev=>({...prev,page:0,sort:{orderBy:sortConvention,direction:tableState.sortOrder.direction.toLocaleUpperCase()}}))
+                        getUserData_userSaga({page:0,rowsPerPage:newTableState.rowsPerPage, sortBy:sortConvention,sortOrder:tableState.sortOrder.direction,email:null},token,null,toast)
                         // this.sort(tableState.page, tableState.sortOrder);
                         break;
                       default:
@@ -508,9 +540,21 @@ useEffect(()=>{
                       let newValue = tableMeta.rowData[3]
                       return ( <span>{newValue}</span> )
                     },
-                    display:"false"
+                    display:'excluded',
+                    filter:false
                   }
                 },{
+                  name: "id",
+                  options:{
+                    customBodyRender:(value, tableMeta, update) => {
+                      let newValue = tableMeta.rowData[6]
+                      return ( <span>{newValue}</span> )
+                    },
+                    display:'excluded',
+                    filter:false
+                  }
+                },
+                {
                   name: "Aksi",
                   options:{
                     sort:false,
@@ -518,13 +562,36 @@ useEffect(()=>{
                       // console.log("aksi",tableMeta.rowData[3])
                       let newValue = tableMeta.rowData[4]
                       return (       <div key={0} className={odcStyles.tableAction}>
-                        <CustomButton onClick={()=>handleOpen(tableMeta.rowData[0]-1)} variant='text'>
+                        <CustomButton onClick={()=>singleModalPopupOpen(
+                      {
+                        email:tableMeta.rowData[1],
+                        password:"",
+                        role:tableMeta.rowData[4] || "",
+                        status:tableMeta.rowData[5],
+                        id: tableMeta.rowData[6]
+                        // region_id: 
+                      }
+                      )} variant='text'>
                           <MdRemoveRedEye fill='#3124c1'/>
                         </CustomButton>
-                        <CustomButton onClick={()=>deleteRowHandleOpen(tableMeta.rowData[0]-1)} variant='text'>
+                        <CustomButton onClick={()=>singleConfirmDeletePopupOpen({
+                          email:tableMeta.rowData[1],
+                          id: tableMeta.rowData[6],
+                        })} variant='text'>
                            <MdDeleteForever fill='#B10040'/>
                         </CustomButton>
-                        <Modal open={open[tableMeta.rowData[0]-1]?.status} onClose={()=>handleClose(tableMeta.rowData[0]-1)} aria-labelledby="modal-modal-title"
+
+                    </div> )
+                    },
+                    filter:false
+                  },
+                }]}
+                />:null}
+
+                {/* </ThemeProvider> */}
+            </ThemeProvider>
+            </div>
+            <Modal open={singleModalPopup} onClose={()=>singleModalPopupClose()} aria-labelledby="modal-modal-title"
                                 aria-describedby="modal-modal-description">
                                                   <div>
                               <div className={odcStyles.closebtn}>
@@ -560,10 +627,14 @@ useEffect(()=>{
                                     <div className={`${odcStyles.cardBody} card-body row ${odcStyles.customCardBodyUser}`}>
                                       <Formik
                                         initialValues={{
-                                          email:tableMeta.rowData[1],
-                                          password:"",
-                                          role:tableMeta.rowData[4] || "",
-                                          status:tableMeta.rowData[5],
+                                          email:selectedModalValue.email,
+                                          password:selectedModalValue.password,
+                                          role:selectedModalValue.role,
+                                          status:selectedModalValue.status,
+                                          id: selectedModalValue.id,
+                                          page: newTableState.page,
+                                          rowsPerPage: newTableState.rowsPerPage,
+                                          sort: newTableState.sort,
                                         }}
                                         validate={values => {
                                           const errors = {} as {
@@ -585,11 +656,13 @@ useEffect(()=>{
                                             values.password,
                                             values.role,
                                             values.status,
-                                            tableMeta.rowData[0]-1,
-                                            user_list_client.success ? user_list_client.data[tableMeta.rowData[0]-1].id: user_list?.data[tableMeta.rowData[0]-1].id,
+                                            values.id,
                                             token,
+                                            values.page+1,
+                                            values.rowsPerPage,
+                                            values.sort,
                                             setSubmitting,
-                                            handleClose,
+                                            singleModalPopupClose,
                                             toast);
                                         }}
                                       >
@@ -603,7 +676,7 @@ useEffect(()=>{
                                           isSubmitting,
                                         })=>(
                                           <form className={odcStyles.form} onSubmit={handleSubmit}>
-                                            {tableMeta.rowData[5]}
+                                            {/* {tableMeta.rowData[5]} */}
                                             <div className={`row ${odcStyles.formGap}`}>
                                               {/* <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
                                                 <CustomTextField id="standard-basic" label="Name" variant="standard" defaultValue={item.name} />
@@ -612,12 +685,43 @@ useEffect(()=>{
                                                 <CustomTextField id="standard-basic" name='email' label="Email" variant="standard" onChange={handleChange} onBlur={handleBlur} defaultValue={values.email} />
                                               </div>
                                               <div className={`col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
-                                                <CustomTextField id="standard-basic" name='password' label="Password" type={"password"} onChange={handleChange} onBlur={handleBlur} variant="standard" defaultValue={values.password} />
+                                              <CustomTextField
+                                                  id="standard-basic" name='password' label="Password" 
+                                                  type = { showPassword ? "text" : "password" }
+                                                  size = "small"
+                                                  variant="standard"
+                                                  onChange = { handleChange }
+                                                  onBlur={handleBlur}
+                                                  value = { values.password }
+                                                  InputProps = {
+                                                  {
+                                                    endAdornment: ( 
+                                                    <InputAdornment position="end"> {
+                                                      showPassword ? ( 
+                                                        <Visibility 
+                                                          onClick = {()=>
+                                                            setShowPassword(prev=>!prev)
+                                                          }
+                                                          />
+                                                        ) : ( 
+                                                        <VisibilityOff onClick = {
+                                                          ()=>
+                                                          setShowPassword(prev=>!prev)
+                                                          }
+                                                          />
+                                                        )
+                                                      } 
+                                                      </InputAdornment>
+                                                    ),
+                                                  }
+                                                }
+                                                />
+                                                {/* <CustomTextField id="standard-basic" name='password' label="Password" type={"password"} onChange={handleChange} onBlur={handleBlur} variant="standard" defaultValue={values.password} /> */}
                                               </div>
                                               <div className={`col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
                                               <FormControl key='role' variant="standard" sx={{  minWidth: 124 } as any}>
                                                 <CustomInputLabel id="demo-simple-select-standard-label">Role</CustomInputLabel>
-                                                <CustomNativeSelect onChange={handleChange} onBlur={handleBlur} defaultValue={values.role} inputProps={{
+                                                <CustomNativeSelect onChange={handleChange} onBlur={handleBlur} value={values.role} inputProps={{
                                                     name: 'role',
                                                     id: 'uncontrolled-native',
                                                     }}>
@@ -653,7 +757,7 @@ useEffect(()=>{
                 
                                             <div className={`col-md-12 col-lg-4 `}>
 
-                                              {!submitting[tableMeta.rowData[0]-1]?.status ? 
+                                              {!isSubmitting? 
                                                 (<CustomButtonModal btntype={"submit"} type={"submit"} disabled={isSubmitting}>
                                                 {"Submit"}
                                               </CustomButtonModal>) 
@@ -661,7 +765,7 @@ useEffect(()=>{
                                                 }
                                             </div>
                                             <div className={`col-md-12 col-lg-4 `}>
-                                              <CustomButtonModal btntype={"cancel"} onClick={()=>handleClose(tableMeta.rowData[0]-1)}>
+                                              <CustomButtonModal btntype={"cancel"} onClick={()=>singleModalPopupClose()}>
                                                 {"Cancel"}
                                               </CustomButtonModal>
                                             </div>
@@ -678,8 +782,8 @@ useEffect(()=>{
                                   </div>
                                   </Box>
                               </div>
-                        </Modal>
-                        <Modal open={openDeleteRowModal[tableMeta.rowData[0]-1]?.status} onClose={()=>deleteRowHandleClose(tableMeta.rowData[0]-1)} >
+            </Modal>
+            <Modal open={singleConfirmDeletePopup} onClose={()=>singleConfirmDeletePopupClose} >
                         <div>
                               <div className={odcStyles.closebtn}>
                                 <MdOutlineClose/>
@@ -713,21 +817,21 @@ useEffect(()=>{
                                       <div className={odcStyles.confirmationWrapper}>
                                         <div className={`col-md-12`}>
                                         <Typography variant='h6' className={odcStyles.confirmationTitle}>
-                                          Anda yakin akan menghapus user {tableMeta.rowData[1]} ?
+                                          Anda yakin akan menghapus user {selectedConfirmDeletePopup.email} ?
                                         </Typography>
                                         </div>
                                         <div className={odcStyles.actionContainer}>
                 
                                               <div >
-                                                {!submitting[tableMeta.rowData[0]-1]?.status ? 
-                                                (<CustomButtonModal onClick={()=>delete_user(tableMeta.rowData[0]-1)}>
+                                                {!deleteSubmitting ? 
+                                                (<CustomButtonModal onClick={delete_user}>
                                                   {"Delete"}
                                                 </CustomButtonModal>) 
                                                 :<CustomCircularProgress size={24} style={{ position: 'relative', top: 4,display:"flex",margin:"auto"}} /> 
                                                 }
                                               </div>
                                               <div >
-                                                <CustomButtonModal btntype={"cancel"} onClick={()=>deleteRowHandleClose(tableMeta.rowData[0]-1)} >
+                                                <CustomButtonModal btntype={"cancel"} onClick={()=>singleConfirmDeletePopupClose()} >
                                                   {"Cancel"}
                                                 </CustomButtonModal>
                                               </div>
@@ -741,17 +845,7 @@ useEffect(()=>{
                                   </div>
                                 </Box>
                               </div>
-                        </Modal>
-                    </div> )
-                    },
-                    filter:false
-                  },
-                }]}
-                />:null}
-
-                {/* </ThemeProvider> */}
-            </ThemeProvider>
-            </div>
+            </Modal>
           {/* </div>
         </div>
       </div>
@@ -771,7 +865,15 @@ export const getServerSideProps = async (props) => wrapper.getServerSideProps(st
       destination: "/"
     }
   }
-  store.dispatch(getUserData({page:1,rowsPerPage:5, sortBy:null,sortOrder:null},req.cookies.token,null,toast))
+  store.dispatch(getUserData({page:1,rowsPerPage:5, sortBy:null,sortOrder:null,email:null},req.cookies.token,null,toast))
+  /**
+   * untuk button add odc pada page users
+   */
+  store.dispatch(getRegionList(req.cookies.token))
+  store.dispatch(getWitelList(req.cookies.token))
+  store.dispatch(getDatelList(req.cookies.token))
+  store.dispatch(getSTOList(req.cookies.token))
+  store.dispatch(getMerekList(req.cookies.token,toast))
   store.dispatch(END)
   await store.sagaTask.toPromise();
 console.log("get user data",store.getState().Users.userData)
@@ -790,7 +892,15 @@ console.log("get user data",store.getState().Users.userData)
               props:{ 
                 user_list: store.getState()?.Users?.userData || {success:false,count:0,data:[],sortOrder:"",page:0},
                 user_list_loading: store.getState()?.Users?.loading?.getUser || false,
-                token: req.cookies.token
+                token: req.cookies.token,
+                /**
+                 * untuk button add odc pada page users
+                 */
+                regionList: store.getState().ODCs.region_list || [{id:0,name:""}],
+                witelList: store.getState().ODCs.witel_list || [{id:0,region_id: 0,name:""}],
+                datelList: store.getState().ODCs.datel_list || [{id:0,region_id: 0,witel_id: 0,name:""}],
+                stoList: store.getState().ODCs.sto_list || [{id:0,region_id: 0,witel_id: 0,datel_id: 0, name:""}],
+                merekList: store.getState().ODCs.merek_list || [{id: "",name: "",splitter_position: "",splitter_capacity: ""}]
               },
           } 
 
@@ -806,5 +916,6 @@ const mapDispatchToProps = {
   getUserData_userSaga:getUserData,
   updateUserData,
   deleteUser,
+  setTableRowsPerPage:IsetTableRowsPerPage
 }
 export default connect(mapStateToProps,mapDispatchToProps)(withAuth(User))

@@ -11,18 +11,18 @@ export const getUserData = (data:GetUserData,token:string,errorState:any,toast:a
     payload: {data,token,errorState,toast}
 });
 
-export const addNewUser = (email,password,role,token,setSubmitting,handleAddUserClose,toast) => ({
+export const addNewUser = (email,password,role,token,rowsPerPage,setSubmitting,handleAddUserClose,toast) => ({
     type: ADD_USER_DATA,
-    payload: {email,password,role,token,setSubmitting,handleAddUserClose,toast}
+    payload: {email,password,role,token,rowsPerPage,setSubmitting,handleAddUserClose,toast}
 });
 
-export const deleteUser = (email,idx,user_id,token,setSubmitting,deleteRowHandleClose,toast)=>({
+export const deleteUser = (email,user_id,token,page,rowsPerPage,sort,setSubmitting,deleteRowHandleClose,toast)=>({
     type: DELETE_USER_DATA,
-    payload: {email,idx,user_id,token,setSubmitting,deleteRowHandleClose,toast}
+    payload: {email,user_id,token,page,rowsPerPage,sort,setSubmitting,deleteRowHandleClose,toast}
 })
-export const updateUserData = (email,password,role,status,idx,user_id,token,setSubmitting,handleClose,toast)=>({
+export const updateUserData = (email,password,role,status,user_id,token,page,rowsPerPage,sort,setSubmitting,handleClose,toast)=>({
     type: UPDATE_USER_DATA,
-    payload: {email,password,role,status,idx,user_id,token,setSubmitting,handleClose,toast}
+    payload: {email,password,role,status,user_id,token,page,rowsPerPage,sort,setSubmitting,handleClose,toast}
 })
 export const setTableRowsPerPage = (value)=>({
     type: SET_ROWS_PER_PAGE,

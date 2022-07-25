@@ -61,6 +61,12 @@ export const DELETE_ODC_DATA_FAILED = "delete_odc_data_failed";
 export const SET_ROWS_PER_PAGE = "set_table_rows_per_page";
 export const SET_TABEL_ROWS_PER_PAGE_SUCCESSFUL = "set_table_rows_per_page_successful";
 
+export const SET_TABEL_PAGE = "set_table_page";
+export const SET_TABEL_PAGE_SUCCESSFUL = "set_table_page_successful";
+
+export const SET_TABEL_SORT = "set_table_sort";
+export const SET_TABEL_SORT_SUCCESSFUL = "set_table_sort_successful";
+
 export const UPSERT_ODC_FILE = "upsert_odc_file";
 export const UPSERT_ODC_FILE_FAILED = "upsert_odc_file_failed";
 

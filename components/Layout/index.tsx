@@ -28,14 +28,15 @@ export default function Layout(props) {
         witelList,
         datelList,
         stoList,
-        merekList
+        merekList,
+        user_rowsPerPage
     } = props;
-    // console.log("email",email)
+    // console.log("email",regionList)
 
     const [closeState,setCloseState] = useState(true);
     const closeMenu = useCallback(event=>{
         setCloseState(!closeState);
-        console.log(event.target.parentNode.querySelector("#closeToggle"));
+        // console.log(event.target.parentNode.querySelector("#closeToggle"));
         event.target.parentNode.querySelector("#closeToggle").click();
         event.target.style.opacity = "0";
         setTimeout(()=>{
@@ -48,7 +49,7 @@ export default function Layout(props) {
     return <div className={styles.layoutWrapper}>
         <Sidebar odcProps={{regionList,witelList,datelList,stoList,merekList,odc_rowsPerPage}} token={token}/>
         <div className={styles.topGap}>
-            <Navbar odcProps={{regionList,witelList,datelList,stoList,merekList,ODCdetailData}} odcDispatch={{updateODCData}} odcData={data} email={email} role_name={role_name} token={token}/>
+            <Navbar odcProps={{regionList,witelList,datelList,stoList,merekList,ODCdetailData}} user_rowsPerPage={user_rowsPerPage} odcDispatch={{updateODCData}} odcData={data} email={email} role_name={role_name} token={token}/>
 
             {children}
             <div className={styles.overlay} onClick={closeMenu}></div>

@@ -27,7 +27,9 @@ import {
     UPDATE_NOTES,
     UPDATE_ODC_PORT,
     GET_ACTIVITYLOG,
-    GET_DASHBOARD_CARD
+    GET_DASHBOARD_CARD,
+    SET_TABEL_PAGE,
+    SET_TABEL_SORT
 } from './actionTypes'
 import { ChangeOdcPageData, FeederDetail, GetDashCardData, IchangeODCPage, IdeleteSelectedCoreFeeder, IgetActivityLog, IgetDashCard, IgetOcdSplitpanelDetail, IgetOcdSplitpanelStatus, IsetSelectedCoreFeeder, IupdateNotes, IupdateODCPort, SetSelectedCoreFeederData } from './types';
 export const getSplitterData = () =>({
@@ -124,6 +126,14 @@ export const setTableRowsPerPage = (value)=>({
     type: SET_ROWS_PER_PAGE,
     payload:{value}
 })
+export const setTablePage = (value)=>({
+    type: SET_TABEL_PAGE,
+    payload:{value}
+})
+export const setTableSort = (value)=>({
+    type: SET_TABEL_SORT,
+    payload:{value}
+})
 
 export const addODCData = (
     name,
@@ -162,9 +172,9 @@ export const addODCData = (
 });
 
 
-export const deleteODCData = (odc_name,odc_id,odc_rowsPerPage,token,deleteRowHandleClose,toast)=>({
+export const deleteODCData = (odc_name,odc_id,page,rowsPerPage,sort,token,deleteRowHandleClose,toast)=>({
     type: DELETE_ODC_DATA,
-    payload: {odc_name,odc_id,odc_rowsPerPage,token,deleteRowHandleClose,toast}
+    payload: {odc_name,odc_id,page,rowsPerPage,sort,token,deleteRowHandleClose,toast}
 })
 
 export const updateODCData = (
@@ -179,7 +189,7 @@ export const updateODCData = (
     witel_id,
     datel_id,
     sto_id
-    ,odc_id,token,setSubmitting,handleClose,toast,rowsPerPage)=>({
+    ,odc_id,token,setSubmitting,handleClose,toast,page,rowsPerPage,sort)=>({
     type: UPDATE_ODC_DATA,
     payload: {
         name,
@@ -193,7 +203,7 @@ export const updateODCData = (
         witel_id,
         datel_id,
         sto_id,
-        odc_id,token,setSubmitting,handleClose,toast,rowsPerPage
+        odc_id,token,setSubmitting,handleClose,toast,page,rowsPerPage,sort
     }
 })
 

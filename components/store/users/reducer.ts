@@ -39,7 +39,6 @@ const user = (state=INIT_STATE,action) => {
                     ...state.loading,
                     getUser:true
                 },
-                userData:"",
             };
         case GET_USER_DATA_SUCCESSFUL:
             

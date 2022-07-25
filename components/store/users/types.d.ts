@@ -2,7 +2,8 @@ type GetUserData = {
     rowsPerPage:number, 
     page:number,
     sortBy:string,
-    sortOrder:string
+    sortOrder:string,
+    email: string,
 }
 export interface IgetUserData {
     type: string,
@@ -20,6 +21,7 @@ export interface IaddUserData {
         password:string,
         role:string,
         token:string,
+        rowsPerPage:string,
         setSubmitting:any,
         handleAddUserClose:any,
         toast:any
@@ -32,6 +34,12 @@ export interface IdeleteUserData {
         idx:number,
         user_id:string,
         token:string,
+        page:number,
+        rowsPerPage:number,
+        sort:{
+            sortBy:string,
+            sortOrder:string,
+        }
         setSubmitting:any,
         deleteRowHandleClose: any,
         toast:any
@@ -47,6 +55,12 @@ export interface IupdateUserData {
         status:string,
         user_id:string,
         token:string,
+        page:number,
+        rowsPerPage:number,
+        sort:{
+            sortBy:string,
+            sortOrder:string,
+        }
         setSubmitting:any,
         handleClose: any,
         toast:any

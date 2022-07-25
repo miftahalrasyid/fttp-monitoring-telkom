@@ -50,6 +50,8 @@ import { GET_SPLITTER_DATA,
   GET_DASHBOARD_CARD,
   GET_DASHBOARD_CARD_SUCCESSFUL,
   GET_DASHBOARD_CARD_FAILED,
+  SET_TABEL_PAGE_SUCCESSFUL,
+  SET_TABEL_SORT_SUCCESSFUL,
 } from "./actionTypes";
 import { HYDRATE } from 'next-redux-wrapper';
 
@@ -77,6 +79,8 @@ export const INIT_STATE = {
     dashboard_card_list:{},
     activity_log_list:[],
     tableRowsPerPage:0,
+    tablePage:0,
+    tableSort:{},
     add_odc_list:"",
     delete_odc_list:"",
     odc_page:"",
@@ -528,6 +532,16 @@ const odcs = (state=INIT_STATE,action) => {
             return{
               ...state,
               tableRowsPerPage: action.payload
+            }
+      case SET_TABEL_PAGE_SUCCESSFUL:
+            return{
+              ...state,
+              tablePage: action.payload
+            }
+      case SET_TABEL_SORT_SUCCESSFUL:
+            return{
+              ...state,
+              tableSort: action.payload
             }
       case UPSERT_ODC_FILE:
         return {

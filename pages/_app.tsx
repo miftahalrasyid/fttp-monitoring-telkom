@@ -45,11 +45,12 @@ declare module '@mui/material/styles' {
     theme?: ThemeOptions
   } 
   type InputLabelProps = {
-    theme?: ThemeOptions
+    theme?: ThemeOptions,
   }
   type TextFieldProps = {
     theme?: ThemeOptions,
-    label?: string
+    label?: string,
+    texttype?: string,
   }
   type FormControlProps = {
     theme?: ThemeOptions,

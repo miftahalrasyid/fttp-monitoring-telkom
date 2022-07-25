@@ -1,6 +1,6 @@
 
 
-import {put,takeEvery,all,fork} from 'redux-saga/effects';
+import {put,call,takeEvery,all,fork} from 'redux-saga/effects';
 import {
     GET_USER_DATA,
     GET_USER_DATA_SUCCESSFUL,
@@ -16,7 +16,7 @@ import {
     UPDATE_USER_DATA_FAILED,
     SET_ROWS_PER_PAGE,
     SET_TABEL_ROWS_PER_PAGE_SUCCESSFUL
-} from './actionTypes'
+} from './actionTypes';
 import { GetUserData, IaddUserData, IdeleteUserData, IgetUserData, IsetTableRowsPerPage, IupdateUserData } from './types';
 
 /**
@@ -24,7 +24,7 @@ import { GetUserData, IaddUserData, IdeleteUserData, IgetUserData, IsetTableRows
  * @param {requestOptions} getUserDataCall 
  * @returns 
  */
- const getUserDataCall = (data: GetUserData, requestOptions) => fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/api/get-users?sorting=${data.sortBy || ""}&direction=${data.sortOrder || ""}&limit=${data.rowsPerPage}&offset=${data.page!==0?data.page:1}`,requestOptions).then(res=>res.json())
+ const getUserDataCall = (data: GetUserData, requestOptions) => fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/api/get-users?sorting=${data.sortBy || ""}&direction=${data.sortOrder || ""}&limit=${data.rowsPerPage}&offset=${data.page!==0?data.page:1}&email=${data.email || ""}`,requestOptions).then(res=>res.json())
 /**
  * 
  * @param {requestOptions} addUserDataCall 
@@ -44,8 +44,8 @@ import { GetUserData, IaddUserData, IdeleteUserData, IgetUserData, IsetTableRows
  */
  const updateUserDataCall = (user_id,requestOptions) => fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/api/update-user/${user_id}`,requestOptions).then(res=>res.json())
 
-function* getUserData({payload:{data,token,errorState,toast}}: IgetUserData){
-
+function* getUserData(props){
+    const {payload:{data,token,errorState,toast}}: IgetUserData = props;
     // try {
     //     const res = yield fetch("https://my-project-1550730936778.firebaseio.com/user.json").then(res=>res.json());
     //     // console.log("filtered", res, filtered[0],odcId)
@@ -107,7 +107,7 @@ function* getUserData({payload:{data,token,errorState,toast}}: IgetUserData){
     }
 }
 
-function* addUserData({payload:{email,password,role,token,setSubmitting,handleAddUserClose,toast}}: IaddUserData){
+function* addUserData({payload:{email,password,role,token,rowsPerPage,setSubmitting,handleAddUserClose,toast}}: IaddUserData){
     // console.log("data submit",email,password,role)
     try {
         if(!navigator.onLine) {
@@ -175,8 +175,8 @@ function* addUserData({payload:{email,password,role,token,setSubmitting,handleAd
             }
         });        
         if(res.success){
-            console.log("success added")
-            setSubmitting(false)
+            // console.log("success added");
+            setSubmitting(false);
             handleAddUserClose();
             toast.success(res.data.email+" berhasil ditambahkan", {
                 position: "top-right",
@@ -186,8 +186,9 @@ function* addUserData({payload:{email,password,role,token,setSubmitting,handleAd
                 pauseOnHover: true,
                 draggable: true,
                 progress: undefined,
-              });
-            yield put({type:GET_USER_DATA,payload:{page:0,rowsPerPage:10,sortOrder:{name:"",direction:"asc"},token,errorState:""}})
+            });
+              yield call(getUserData,({payload:{data:{page:0,rowsPerPage, sortBy:null,sortOrder:null},token,errorState:"",toast}}));
+            // yield put({type:GET_USER_DATA,payload:{page:0,rowsPerPage:10,sortOrder:{name:"",direction:"asc"},token,errorState:""}})
         }
         else{
             yield res
@@ -205,7 +206,7 @@ function* addUserData({payload:{email,password,role,token,setSubmitting,handleAd
     }
 }
 
-function* deleteUserData({payload:{email,idx,user_id,token,setSubmitting,deleteRowHandleClose,toast}}: IdeleteUserData){
+function* deleteUserData({payload:{email,user_id,token,page,rowsPerPage,sort,setSubmitting,deleteRowHandleClose,toast}}: IdeleteUserData){
     // console.log("data submit",email,password,role)
     try {
         if(!navigator.onLine) {
@@ -235,10 +236,7 @@ function* deleteUserData({payload:{email,idx,user_id,token,setSubmitting,deleteR
         .then(result=>{
             // console.log("error sgga",result)
             if(!result.success){
-                setSubmitting(prev=>{
-                    prev[idx].status = false;
-                    return {...prev}
-                })
+                setSubmitting(false)
                 if(result.msg=='Method must be one of: OPTIONS'){
                     toast.error("Gagal memanggil API", {
                         position: "top-right",
@@ -271,11 +269,8 @@ function* deleteUserData({payload:{email,idx,user_id,token,setSubmitting,deleteR
             }
         });        
         if(res.success){
-            deleteRowHandleClose(idx)
-            setSubmitting(prev=>{
-                prev[idx].status = false;
-                return {...prev}
-            })
+            deleteRowHandleClose()
+            setSubmitting(false)
             toast.success(email+" berhasil di delete", {
                 position: "top-right",
                 autoClose: 5000,
@@ -285,12 +280,14 @@ function* deleteUserData({payload:{email,idx,user_id,token,setSubmitting,deleteR
                 draggable: true,
                 progress: undefined,
               });
-              yield put({type:GET_USER_DATA,payload:{page:0,rowsPerPage:10,sortOrder:{name:"",direction:"asc"},token,errorState:""}})
+              yield call(getUserData,({payload:{data:{page,rowsPerPage, sortBy:sort.sortBy,sortOrder:sort.sortOrder},token,errorState:"",toast}}));
+            //   yield put({type:GET_USER_DATA,payload:{page:0,rowsPerPage:10,sortOrder:{name:"",direction:"asc"},token,errorState:""}})
         }
         else{
             yield res
         }
     } catch (error) {
+        console.log("delete error",error)
         toast.error("terjadi kesalahan server", {
             position: "top-right",
             autoClose: 5000,
@@ -309,9 +306,11 @@ function* updateUserData({
         password,
         role,
         status,
-        idx,
         user_id,
         token,
+        page,
+        rowsPerPage,
+        sort,
         setSubmitting,
         handleClose,
         toast
@@ -355,10 +354,7 @@ function* updateUserData({
         .then(result=>{
             // console.log("error sgga",result)
             if(!result.success){
-                setSubmitting(prev=>{
-                    prev[idx].status = false;
-                    return {...prev}
-                })
+                setSubmitting(false)
                 if(result.msg=='Method must be one of: OPTIONS'){
                     toast.error("Gagal memanggil API", {
                         position: "top-right",
@@ -391,11 +387,8 @@ function* updateUserData({
             }
         });        
         if(res.success){
-            handleClose(idx)
-            setSubmitting(prev=>{
-                prev[idx].status = false;
-                return {...prev}
-            })
+            handleClose()
+            setSubmitting(false)
             toast.success("user berhasil di update", {
                 position: "top-right",
                 autoClose: 5000,
@@ -405,7 +398,8 @@ function* updateUserData({
                 draggable: true,
                 progress: undefined,
               });
-              yield put({type:GET_USER_DATA,payload:{page:0,rowsPerPage:10,sortOrder:{name:"",direction:"asc"},token,errorState:""}})
+              yield call(getUserData,({payload:{data:{page,rowsPerPage, sortBy:sort.sortBy,sortOrder:sort.sortOrder},token,errorState:"",toast}}));
+            //   yield put({type:GET_USER_DATA,payload:{page:0,rowsPerPage:10,sortOrder:{name:"",direction:"asc"},token,errorState:""}})
         }
         else{
             yield res
@@ -427,7 +421,7 @@ function* setTableRowsPerPage({payload:{value}}:IsetTableRowsPerPage){
     try {
         yield put({type: SET_TABEL_ROWS_PER_PAGE_SUCCESSFUL,payload:value})
     } catch (error) {
-        
+        console.log(error)
     }
 }
 

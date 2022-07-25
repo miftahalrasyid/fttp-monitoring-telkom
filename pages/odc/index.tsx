@@ -25,11 +25,13 @@ import {
   getDatelList,
   getSTOList,
   getMerekList,
-  changeODCPage,
+  changeODCPage as IchangeODCPage,
   addODCData,
   updateODCData,
   deleteODCData,
-  setTableRowsPerPage,
+  setTableRowsPerPage as IsetTableRowsPerPage,
+  setTableSort,
+  setTablePage,
   getDashCard
 } from '../../components/store/odcs/actions';
 import {otpVerificationSuccessfull} from "../../components/store/auth/actions";
@@ -194,7 +196,8 @@ function ODC(props) {
     witelList,
     updateODCData,
     deleteODCData,
-    setTableRowsPerPage,
+    setTableSort,
+    setTablePage,
     getDatelList,
     datelList,
     odc_rowsPerPage,
@@ -202,11 +205,14 @@ function ODC(props) {
     stoList,
     token,
     odc_list_client,
-    changeODCPage,
     deck_value,
     deck_value_client,
-    getDashCard
-  } = props
+    getDashCard,
+    odc_page,
+    odc_sort
+  }= props
+  const { setTableRowsPerPage}:{setTableRowsPerPage: typeof IsetTableRowsPerPage} = props
+  const {changeODCPage}:{changeODCPage: typeof IchangeODCPage} = props
   console.log("data",odc_list,isUserVerifyLoading)
   // const [open, setOpen] = React.useState(false);
   // const [openDeleteRowModal, setOpenDeleteRowModal] = React.useState(false);
@@ -226,65 +232,44 @@ function ODC(props) {
     // handleChange(event,newValue)
   };
   const handleFilterOnChange = (ev,inputid,values,setValues) =>{
-    // console.log("input id",inputid,ev.target.value)
-    // console.log("all values",values)
-    // setValues(prev=>({...prev,[inputid]:ev.target.value.toString()}))
     let dmp = {region_id:values.region_id?.toString(),witel_id:values.witel_id?.toString(),datel_id:values.datel_id?.toString(),sto_id:values.sto_id?.toString()};
-    [{region_id:['region_id',regionList.data]},{witel_id:['region_id',witelList.data]},{datel_id:['witel_id',datelList.data]},{sto_id:['datel_id',stoList.data]}].filter(item=>{
+    [{region_id:['region_id',regionList.data]},{witel_id:['region_id',witelList.data]},{datel_id:['witel_id',datelList.data]},{sto_id:['datel_id',stoList.data]}].forEach(item=>{
       dmp[inputid] = ev.target.value;
-      // console.log("witel_id",dmp,dmp.region_id,witelList.data.find(item=>item.region_id==dmp.region_id)?.id.toString() || "" )
-      // console.log(item)
-      const [[key,filterValue]] = Object.entries(item);
-      // console.log(key)
       dmp.region_id = regionList.data.find(item=>item.id == dmp.region_id)?.id.toString();
       for (const key1 in item) {
+        /**
+         * mengubah nilai filter child yang memiliki id parent sesuai dengan opsi yang kita ubah
+         */
         if (Object.hasOwnProperty.call(item, key1) && key1!=inputid && key1!='region_id') {
+          /** 
+           * get the first children for certain parent id on the array 
+           * ambil data pertama subitem yang memiliki item id yang sesuai 
+           * */
           dmp[key1] = item[key1][1].find(item2=>item2[item[key1][0]] == dmp[item[key1][0]])?.id;
         }
         else{
   
         }
       }
-      return key == inputid
+      // return key == inputid
     })
+    // console.log("key2",dmp)
     switch (inputid) {
-  
       case "region_id":
-        // console.log("region list", {[inputid]:ev.target.value.toString()})
+        //set witel options
         setWitelListClient(witelList.data.filter(item=>item.region_id.toString()==dmp.region_id))
-        //set region id
-        setValues(({...values,[inputid]:dmp[inputid]}))
       case "witel_id":
-        // console.log("datel list", datelList.data.filter(item=>item.region_id.toString()==dmp.region_id),dmp.region_id)
-        // setDatelListClient(datelList.data.filter(item=>item.witel_id.toString()==dmp.datel_id[0].witel))
-        setDatelListClient(datelList.data.filter(item=>item.region_id.toString()==dmp.region_id)
-        .filter(item=>item.witel_id==dmp.witel_id))
-        //set witel id
-        setValues(({...values,[inputid]:dmp[inputid]}))
-        
-        // setDatelListClient(datelList.data.filter)
-        
+        //set datel options
+        setDatelListClient(datelList.data.filter(item=>item.witel_id==dmp.witel_id))
       case "datel_id":
-        // console.log("sto list",setSTOListClient(stoList.data
-        //   .filter(
-        //     item=>item.region_id.toString()==dmp.region_id
-        //   )),dmp.datel_id)
-        setSTOListClient(stoList.data
-          .filter(
-            item=>item.region_id.toString()==dmp.region_id
-          )
-          .filter(
-            item=>item.witel_id==dmp.witel_id
-          )
-          .filter(
-            item=>item.datel_id.toString()==dmp.datel_id
-          ))
-        //set datel id
-        setValues(({...values,[inputid]:dmp[inputid]}))
-  
-        // setDatelListClient(datelList.data.filter)
+        //set sto options
+        setSTOListClient(stoList.data.filter(item=>item.datel_id.toString()==dmp.datel_id))
       case "sto_id":
-        setValues(({...values,[inputid]:dmp[inputid]}))
+        // console.log("values", values)
+        /**
+         * set all values
+         */
+        setValues(prev=>({...prev,...dmp}))
       break;
     
       default:
@@ -410,7 +395,7 @@ function ODC(props) {
       MuiTableHead:{
         styleOverrides:{
           root:{
-            "div:first-child":{
+            "div:first-of-type":{
               display:"flex",
               justifyContent:"center",
             }
@@ -487,7 +472,7 @@ function ODC(props) {
       },
     }
   });
-
+  // console.log("rows perpage",odc_rowsPerPage)
   const [datatable, setDatatable] = React.useState([[]])
     React.useEffect(()=>{
     
@@ -684,7 +669,7 @@ function ODC(props) {
       }
       return "";
     }
-
+    const [newTableState,setNewTableState] = useState({page:0,rowsPerPage:5,search_text:null,sort:{orderBy:null,direction:null}})
     const [regionListClient,setRegionListClient] = useState("");
     const [submittedFilter,setSubmittedFilter] = useState({ regional: '', witel: '', datel: '', sto: ''});
     const [witelListClient,setWitelListClient] = useState<Array<{id:number,region_id: number,name:string}>>();
@@ -714,6 +699,7 @@ function ODC(props) {
     const singleModalPopupClose = () => {
       setSingleModalPopup(false)
     };
+    const delay = useRef(null);
     // console.log("selectedModalValue",selectedModalValue)
     const feederChartRef = useRef(null);
     const distribusiChartRef = useRef(null);
@@ -759,7 +745,8 @@ function ODC(props) {
             // console.log("cookie",document.cookie.split(" "))
             getFeederGraph(values || { regional: '', witel: '', datel: '', sto: ''},token);
             getDistributionGraph(values || { regional: '', witel: '', datel: '', sto: ''},token);
-            changeODCPage({page:1,rowsPerPage:odc_rowsPerPage, region:values.regional,witel:values.witel,datel:values.datel,sto:values.sto,sortBy:null,sortOrder:null},token,toast)
+            changeODCPage({page:1,rowsPerPage:newTableState.rowsPerPage, region:values.regional,witel:values.witel,datel:values.datel,sto:values.sto,sortBy:null,sortOrder:null,name:null},token,toast)
+            // changeODCPage({page:1,rowsPerPage:odc_rowsPerPage, region:values.regional,witel:values.witel,datel:values.datel,sto:values.sto,sortBy:null,sortOrder:null,name:null},token,toast)
             getDashCard({region:values.regional,witel:values.witel,datel:values.datel,sto:values.sto},token,toast)
             setSubmittedFilter(values || { regional: '', witel: '', datel: '', sto: ''});
 
@@ -852,13 +839,16 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                 selectableRows:"none",
                 print: false,
                 serverSide:true,
+                searchText:newTableState.search_text,
                 count: odc_list_client?.count || odc_list?.count,
-                rowsPerPage: odc_rowsPerPage || 5,
+                page:newTableState.page,
+                rowsPerPage: newTableState.rowsPerPage || 5,
+                // rowsPerPage: odc_rowsPerPage || 5,
                 rowsPerPageOptions:[5,10,25,50,100],
                 onTableInit:(test,tableState) =>{
-                  console.log("table init",tableState.rowsPerPage)
+                  // console.log("table init",tableState.rowsPerPage)
                   setTableRowsPerPage(tableState.rowsPerPage)
-                  changeODCPage({page:tableState.page+1,rowsPerPage:tableState.rowsPerPage, region:submittedFilter.regional,witel:submittedFilter.witel,datel:submittedFilter.datel,sto:submittedFilter.sto,sortBy:null,sortOrder:null},token,toast)
+                  changeODCPage({page:tableState.page+1,rowsPerPage:tableState.rowsPerPage, region:submittedFilter.regional,witel:submittedFilter.witel,datel:submittedFilter.datel,sto:submittedFilter.sto,sortBy:null,sortOrder:null,name:null},token,toast)
                 },
                 onTableChange: (action, tableState) => {
                   console.log(action, tableState);
@@ -869,16 +859,31 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                     case 'changeRowsPerPage':
                       // console.log("change rows per page",tableState.rowsPerPage)
                       setTableRowsPerPage(tableState.rowsPerPage)
-                      changeODCPage({page:tableState.page+1,rowsPerPage:tableState.rowsPerPage, region:submittedFilter.regional,witel:submittedFilter.witel,datel:submittedFilter.datel,sto:submittedFilter.sto,sortBy:null,sortOrder:null},token,toast)
+                      setNewTableState(prev=>({...prev,rowsPerPage:tableState.rowsPerPage}))
+                      // setTableRowsPerPage(tableState.rowsPerPage);
+                      changeODCPage({page:newTableState.page+1,rowsPerPage:tableState.rowsPerPage, region:submittedFilter.regional,witel:submittedFilter.witel,datel:submittedFilter.datel,sto:submittedFilter.sto,sortBy:newTableState.sort.orderBy,sortOrder:newTableState.sort.direction,name:null},token,toast)
                     break;
                     case 'changePage':
+                      // console.log("on page",newTableState.sort)
+                      setNewTableState(prev=>({...prev,page:tableState.page}))
+                      // setTablePage(tableState.page);
                       // console.log("change page",tableState.sortOrder)
                       //changeODCPage(limit,offset,region,witel,datel,sto,sortby,direction,token,toast)
-                      changeODCPage({page:tableState.page+1,rowsPerPage:tableState.rowsPerPage, region:submittedFilter.regional,witel:submittedFilter.witel,datel:submittedFilter.datel,sto:submittedFilter.sto,sortBy:null,sortOrder:null},token,toast)
+                      changeODCPage({page:tableState.page+1,rowsPerPage:newTableState.rowsPerPage, region:submittedFilter.regional,witel:submittedFilter.witel,datel:submittedFilter.datel,sto:submittedFilter.sto,sortBy:newTableState.sort.orderBy,sortOrder:newTableState.sort.direction,name:null},token,toast)
                       // this.changePage(tableState.page, tableState.sortOrder);
                       break;
+                    case "search":
+                      console.log("activate search",tableState.searchText)
+                      setNewTableState(prev=>({...prev,search_text:tableState.searchText}))
+                      clearTimeout(delay.current);
+                      delay.current = setTimeout(()=>{
+                        changeODCPage({page:newTableState.page,rowsPerPage:newTableState.rowsPerPage, region:submittedFilter.regional,witel:submittedFilter.witel,datel:submittedFilter.datel,sto:submittedFilter.sto,sortBy:newTableState.sort.orderBy,sortOrder:newTableState.sort.direction,name:tableState.searchText},token,toast)
+                      },500)
+                      // setSearch_text(tableState.searchText)
+                    break;
                     case 'sort':
-                      console.log("sort",tableState.sortOrder)
+                      
+                      // console.log("sort",tableState.sortOrder)
                       let sortConvention = "";
                       // console.log("odc name sort",tableState.sortOrder.name.toLocaleLowerCase())
                       switch (tableState.sortOrder.name.toLocaleLowerCase()) {
@@ -914,7 +919,10 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                         default:
                           break;
                       }
-                      changeODCPage({page:tableState.page+1,rowsPerPage:tableState.rowsPerPage, region:submittedFilter.regional,witel:submittedFilter.witel,datel:submittedFilter.datel,sto:submittedFilter.sto,sortBy:sortConvention,sortOrder:tableState.sortOrder.direction.toLocaleUpperCase()},token,toast)
+                      // console.log("on sort",newTableState.page)
+                      setNewTableState(prev=>({...prev,page:0,sort:{orderBy:sortConvention,direction:tableState.sortOrder.direction.toLocaleUpperCase()}}))
+                      // setTableSort({sortBy:sortConvention,sortOrder:tableState.sortOrder.direction.toLocaleUpperCase()})
+                      changeODCPage({page:0,rowsPerPage:newTableState.rowsPerPage, region:submittedFilter.regional,witel:submittedFilter.witel,datel:submittedFilter.datel,sto:submittedFilter.sto,sortBy:sortConvention,sortOrder:tableState.sortOrder.direction.toLocaleUpperCase(),name:null},token,toast)
                       // this.sort(tableState.page, tableState.sortOrder);
                       break;
                     default:
@@ -930,6 +938,7 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                   customBodyRender:(value, tableMeta, update) => {
                   //   console.log("row render",tableMeta)
                   let newNumber = tableMeta.rowData[0]
+                  // let newNumber = tableMeta.rowData[0]+odc_page*odc_rowsPerPage
                   return ( <span>{newNumber}</span> )
                   // },
             //       filterOptions: {
@@ -971,7 +980,7 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                 options:{
                   customBodyRender:(value, tableMeta, update) => {
                     let newValue = tableMeta.rowData[1]
-                    return ( <span style={{whiteSpace:"nowrap"}}>{newValue}</span>)
+                    return ( <span style={{whiteSpace:"nowrap",textTransform: 'uppercase'}}>{newValue}</span>)
                   },
                   filter:false
                 }
@@ -1136,8 +1145,9 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                     let newValue = tableMeta.rowData[19]
                     return ( <span>{newValue}</span> )
                   },
+                  
                   filter:false,
-                  display:false,
+                  display:'excluded',
                 }
               },{
                 name: "region_id",
@@ -1148,7 +1158,7 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                     return ( <span>{newValue}</span> )
                   },
                   filter:false,
-                  display:false,
+                  display:'excluded',
                 }
               },{
                 name: "witel_id",
@@ -1159,7 +1169,7 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                     return ( <span>{newValue}</span> )
                   },
                   filter:false,
-                  display:false,
+                  display:'excluded',
                 }
               },{
                 name: "datel_id",
@@ -1170,7 +1180,7 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                     return ( <span>{newValue}</span> )
                   },
                   filter:false,
-                  display:false,
+                  display:'excluded',
                 }
               },{
                 name: "sto_id",
@@ -1181,7 +1191,7 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                     return ( <span>{newValue}</span> )
                   },
                   filter:false,
-                  display:false,
+                  display:'excluded',
                 }
               },{
                 name: "Aksi",
@@ -1229,65 +1239,6 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                       <MdDeleteForever />
                     </CustomButton> */}
 
-                    <Modal open={openDeleteRowModal[tableMeta.rowData[0]-1]?.status} onClose={()=>deleteRowHandleClose(tableMeta.rowData[0]-1)} >
-                    <div>
-                          <div className={styles.closebtn}>
-                            <MdOutlineClose/>
-                          </div>
-                            <Box itemRef='odcDeleteModal' sx={{
-                              position: "absolute",
-                              top: "48%",
-                              left: "50%",
-                              transition: 'all 0.3s ease-out',
-                              transform: "translate(-50%, -50%)",
-                              border: 0,
-                              /* margin-bottom: 30px;
-                              margin-top: 30px; */
-                              borderRadius: "6px",
-                              color: "#333",
-                              // background: "#fff",
-                              width:"90%",
-                              maxWidth: "480px",
-                              // boxShadow: "0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 20%), 0 1px 5px 0 rgb(0 0 0 / 12%)",
-                              boxShadow: "0 1px 4px 0 rgb(0 0 0 / 14%)",
-                            } as any}>
-                              <div className={`${styles.card}  ${styles.cardStats}`}>
-                                <div className={`${styles.cardHeader} ${styles.cardHeaderPrimary}`}>
-                                  <h4 className={styles.cardTitle}>{"Konfirmasi Delete"}</h4>
-                                  <div className={styles.stats}>
-                                    proses ini akan menghapus data odc secara permanen. mohon di cek kembali
-                                  </div>
-                                </div>
-                                <div className={`${styles.cardBody} card-body row`}>
-                                  <div className={styles.confirmationWrapper}>
-                                    <div className={`col-md-12`}>
-                                    <Typography variant='h6' className={styles.confirmationTitle}>
-                                      Anda yakin akan menghapus {tableMeta.rowData[1]} ?
-                                    </Typography>
-                                    </div>
-                                    <div className={styles.actionContainer}>
-        
-                                          <div >
-                                            <CustomButtonModal btntype={'submit'}>
-                                              {"Submit"}
-                                            </CustomButtonModal>
-                                          </div>
-                                          <div >
-                                            <CustomButtonModal onClick={()=>deleteRowHandleClose(tableMeta.rowData[0]-1)}>
-                                              {"Cancel"}
-                                            </CustomButtonModal>
-                                          </div>
-                                    </div>
-                                  </div>
-        
-        
-                                
-                                </div>
-        
-                              </div>
-                            </Box>
-                          </div>
-                    </Modal>
                   </div> )
                   },
                   filter:false
@@ -1343,7 +1294,9 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                                 rak_oa: selectedModalValue.rak_oa,
                                 panel: selectedModalValue.panel,
                                 port: selectedModalValue.port,
-                                rowsPerPage: odc_rowsPerPage
+                                page: odc_page,
+                                sort: odc_sort,
+                                rowsPerPage: newTableState.rowsPerPage
                               }}
                               validateOnChange={true}
                                 validate={(value)=>{
@@ -1363,7 +1316,7 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                                     values.witel_id,
                                     values.datel_id,
                                     values.sto_id
-                                    ,values.odcId,token,setSubmitting,singleModalPopupClose,toast,values.rowsPerPage)
+                                    ,values.odcId,token,setSubmitting,singleModalPopupClose,toast,values.page+1,values.rowsPerPage,values.sort)
                                 }}
                               >
                                 {({
@@ -1392,7 +1345,7 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                                       <div className={`row ${styles.formGap}`}>
                                         {/* <Typography> */}
                                           <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
-                                            <CustomTextField id="standard-basic" label="Nama ODC" name='nama_odc' onChange={handleChange} value={values.nama_odc} onBlur={handleBlur} variant="standard" />
+                                            <CustomTextField texttype='uppercase' id="standard-basic" label="Nama ODC" name='nama_odc' onChange={handleChange} value={values.nama_odc} onBlur={handleBlur} variant="standard" />
                                           </div>
                                           <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
                                             <CustomFormControl key='regional' variant="standard" >
@@ -1562,7 +1515,7 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                                     <div className={styles.actionContainer}>
         
                                           <div >
-                                            <CustomButtonModal btntype={'submit'} onClick={()=>deleteODCData(selectedConfirmDeletePopup.name,selectedConfirmDeletePopup.odc_id,odc_rowsPerPage,token,singleConfirmDeletePopupClose,toast)}>
+                                            <CustomButtonModal btntype={'submit'} onClick={()=>deleteODCData(selectedConfirmDeletePopup.name,selectedConfirmDeletePopup.odc_id,newTableState.page+1,odc_rowsPerPage,newTableState.sort,token,singleConfirmDeletePopupClose,toast)}>
                                               {"Submit"}
                                             </CustomButtonModal>
                                           </div>
@@ -1599,7 +1552,7 @@ export const getServerSideProps = async (props) => wrapper.getServerSideProps(st
   }
   store.dispatch(getODCsBox())
   store.dispatch(getDashCard({region:null,witel:null,datel:null,sto:null},req.cookies.token,toast))
-  store.dispatch(changeODCPage({page:1,rowsPerPage:5, region:null,witel:null,datel:null,sto:null,sortBy:null,sortOrder:null},req.cookies.token,toast))
+  store.dispatch(IchangeODCPage({page:1,rowsPerPage:5, region:null,witel:null,datel:null,sto:null,sortBy:null,sortOrder:null,name:null},req.cookies.token,toast))
   store.dispatch(getFeederGraph({ regional: '', witel: '', datel: '', sto: ''},req.cookies.token))
   store.dispatch(getDistributionGraph({ regional: '', witel: '', datel: '', sto: ''},req.cookies.token))
   store.dispatch(getRegionList(req.cookies.token))
@@ -1638,6 +1591,8 @@ export const getServerSideProps = async (props) => wrapper.getServerSideProps(st
 const mapStateToProps = state => ({
   isUserVerifyLoading: state.Auth.loading.verifyUser,
   odc_rowsPerPage: state.ODCs.tableRowsPerPage,
+  odc_page: state.ODCs.tablePage,
+  odc_sort: state.ODCs.tableSort,
   odc_list_client: state.ODCs.odc_page,
   deck_value_client: state.ODCs.dashboard_card_list,
   feederGraphClient: state.ODCs.graph_feeder,
@@ -1653,10 +1608,12 @@ getWitelList,
 getDatelList,
 getSTOList,
 updateODCData,
-changeODCPage,
+changeODCPage:IchangeODCPage,
 addODCData,
 deleteODCData,
-setTableRowsPerPage,
+setTableRowsPerPage: IsetTableRowsPerPage,
+setTablePage,
+setTableSort,
 getDashCard
 // getDistributionGraph,
 }

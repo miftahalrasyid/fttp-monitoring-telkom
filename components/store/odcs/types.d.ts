@@ -1,4 +1,4 @@
-import { GET_DASHBOARD_CARD } from "./actionTypes";
+import { GET_DASHBOARD_CARD, SET_ROWS_PER_PAGE, SET_TABEL_PAGE, SET_TABEL_SORT } from "./actionTypes";
 
 export interface IgetFeederGraph {
     type: typeof GET_GRAPH_FEEDER;
@@ -20,7 +20,8 @@ export type ChangeOdcPageData = {
     datel:string | number,
     sto:string | number,
     sortBy:string | number,
-    sortOrder:string
+    sortOrder:string,
+    name: string,
 }
 export type GetDashCardData = {
     region:string | number,
@@ -158,6 +159,18 @@ export interface IsetTableRowsPerPage {
         value:number
     }
 }
+export interface IsetTablePage {
+    type: typeof SET_TABEL_PAGE,
+    payload:{
+        value:number
+    }
+}
+export interface IsetTableSort {
+    type: typeof SET_TABEL_SORT,
+    payload:{
+        value:number
+    }
+}
 export interface IaddODCData {
     type: typeof ADD_ODC_DATA,
     payload: {
@@ -187,7 +200,12 @@ export interface IdeleteODCData {
     payload: {
         odc_name:string,
         odc_id:string,
-        odc_rowsPerPage: number,
+        page:number,
+        rowsPerPage: number,
+        sort:{
+            sortBy:string,
+            sortOrder:string,
+        }
         token:string,
         deleteRowHandleClose:any,
         toast:any}
@@ -211,7 +229,12 @@ export interface IupdateODCData {
         setSubmitting:any,
         handleClose:any,
         toast:any,
-        rowsPerPage:any
+        page:number,
+        rowsPerPage:any,
+        sort:{
+            sortBy:string,
+            sortOrder:string,
+        }
     }
 }
 export interface IupsertODCFile {

@@ -58,9 +58,13 @@ import {
     GET_ACTIVITYLOG_SUCCESSFUL,
     GET_DASHBOARD_CARD,
     GET_DASHBOARD_CARD_FAILED,
-    GET_DASHBOARD_CARD_SUCCESSFUL
+    GET_DASHBOARD_CARD_SUCCESSFUL,
+    SET_TABEL_PAGE_SUCCESSFUL,
+    SET_TABEL_PAGE,
+    SET_TABEL_SORT_SUCCESSFUL,
+    SET_TABEL_SORT
 } from './actionTypes';
-import {IdeleteSelectedCoreFeeder, IgetDistributionGraph, IgetFeederGraph, IsetSelectedCoreFeeder,IgetOcdSplitpanelStatus, IgetOcdSplitpanelDetail, IgetRegionList, IgetWitelList, IgetDatelList, IgetSTOList, IgetMerekList, IgetPublicViewODC, IaddODCData, IupdateODCData, IdeleteODCData, IsetTableRowsPerPage, IupsertODCFile, IupdateNotes, IupdateODCPort, IgetActivityLog, IchangeODCPage, ChangeOdcPageData, IgetDashCard, GetDashCardData} from './types';
+import {IdeleteSelectedCoreFeeder, IgetDistributionGraph, IgetFeederGraph, IsetSelectedCoreFeeder,IgetOcdSplitpanelStatus, IgetOcdSplitpanelDetail, IgetRegionList, IgetWitelList, IgetDatelList, IgetSTOList, IgetMerekList, IgetPublicViewODC, IaddODCData, IupdateODCData, IdeleteODCData, IsetTableRowsPerPage, IupsertODCFile, IupdateNotes, IupdateODCPort, IgetActivityLog, IchangeODCPage, ChangeOdcPageData, IgetDashCard, GetDashCardData, IsetTablePage, IsetTableSort} from './types';
 import {changeODCPage} from './actions'
 // import firebase from '../../Firebase';
 /**
@@ -146,7 +150,7 @@ const getMerekListCall = (requestOptions) => fetch(`${(typeof window !== 'undefi
  * @param {*} requestOptions 
  * @returns 
  */
-const getOdcPageCall = (data: ChangeOdcPageData,requestOptions:any): Promise<any> => fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/api/odc-paginate?limit=${data.rowsPerPage}&offset=${data.page!==0?data.page:1}&region=${data.region || ""}&witel=${data.witel || ""}&datel=${data.datel || ""}&sto=${data.sto || ""}&sorting=${data.sortBy || ""}&direction=${data.sortOrder || ""}`,requestOptions).then(res=>res.json())
+const getOdcPageCall = (data: ChangeOdcPageData,requestOptions:any): Promise<any> => fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/api/odc-paginate?limit=${data.rowsPerPage}&offset=${data.page!==0?data.page:1}&region=${data.region || ""}&witel=${data.witel || ""}&datel=${data.datel || ""}&sto=${data.sto || ""}&sorting=${data.sortBy || ""}&direction=${data.sortOrder || ""}&name=${data.name || ""}`,requestOptions).then(res=>res.json())
 /**
  * 
  * @param {*} requestOptions 
@@ -834,7 +838,7 @@ function* getODCPage(props) {
         },
         redirect: 'follow'
       };
-      console.log("on odc page change",data)
+    //   console.log("on odc page change",data);
     try {
         let res = yield getOdcPageCall(data,requestOptions)
         .then(result => {
@@ -1013,7 +1017,7 @@ function* updateODCData({payload:{
     witel_id,
     datel_id,
     sto_id
-    ,odc_id,token,setSubmitting,handleClose,toast,rowsPerPage
+    ,odc_id,token,setSubmitting,handleClose,toast,page,rowsPerPage,sort
 }}: IupdateODCData){
     // console.log("updateODCData",odc_id)
     try {
@@ -1122,7 +1126,7 @@ function* updateODCData({payload:{
               
             //   yield call(getODCPage,({payload:{page:1,rowsPerPage,region:null,witel:null,datel:null,sto:null,sortBy:null,sortOrder:null,token,toast}}))
                 if(rowsPerPage){
-                    yield call(getODCPage,({payload:{data:{page:0,rowsPerPage,sortBy:"",sortOrder:""},token,toast}}))
+                    yield call(getODCPage,({payload:{data:{page,rowsPerPage,...sort},token,toast}}))
                 }
               else
               yield put({type:GET_ODC_SPLITPANEL_STATUS,payload:{odcId:odc_id[0],token,toast}})
@@ -1141,7 +1145,7 @@ function* updateODCData({payload:{
     }
 }
 
-function* deleteODCData({payload:{odc_name,odc_id,odc_rowsPerPage:rowsPerPage,token,deleteRowHandleClose,toast}}: IdeleteODCData){
+function* deleteODCData({payload:{odc_name,odc_id,page,rowsPerPage,sort,token,deleteRowHandleClose,toast}}: IdeleteODCData){
     try {
         if(!navigator.onLine) {
             toast.error("Anda tidak terhubung dengan internet", {
@@ -1210,7 +1214,7 @@ function* deleteODCData({payload:{odc_name,odc_id,odc_rowsPerPage:rowsPerPage,to
                 progress: undefined,
               });
               yield call(addActivityLog,({payload:{odcId:odc_id,table_name:`ODC`,action:`User mendelete`,token}}))
-              yield call(getODCPage,({payload:{data:{page:0,rowsPerPage,sortBy:"",sortOrder:""},token,toast}}))
+              yield call(getODCPage,({payload:{data:{page,rowsPerPage,sortBy:sort.sortBy,sortOrder:sort.sortOrder},token,toast}}))
         }
         else{
             yield res
@@ -1285,6 +1289,27 @@ function* setTableRowsPerPage({payload:{value}}:IsetTableRowsPerPage){
         
     }
 }
+function* setTablePage({payload:{value}}:IsetTablePage){
+    try {
+        yield put({type: SET_TABEL_PAGE_SUCCESSFUL,payload:value})
+    } catch (error) {
+        
+    }
+}
+function* setTableSort({payload:{value}}:IsetTableSort){
+    try {
+        yield put({type: SET_TABEL_SORT_SUCCESSFUL,payload:value})
+    } catch (error) {
+        
+    }
+}
+// function* setTableRowsPerPage({payload:{value}}:IsetTableRowsPerPage){
+//     try {
+//         yield put({type: SET_TABEL_ROWS_PER_PAGE_SUCCESSFUL,payload:value})
+//     } catch (error) {
+        
+//     }
+// }
 
 function* upsertFile({payload:{name,odc_id,token,toast,kml,setKml,mc,setMc}}: IupsertODCFile){
     // console.log("saga kml",kml,odc_id,token)
@@ -1661,6 +1686,8 @@ function* watchODCsData(){
     yield takeEvery(DELETE_ODC_DATA,deleteODCData)
 
     yield takeEvery(SET_ROWS_PER_PAGE,setTableRowsPerPage)
+    yield takeEvery(SET_TABEL_PAGE,setTablePage)
+    yield takeEvery(SET_TABEL_SORT,setTableSort)
 
     yield takeEvery(UPSERT_ODC_FILE,upsertFile)
 

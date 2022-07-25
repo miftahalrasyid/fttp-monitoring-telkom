@@ -37,7 +37,7 @@ import Tabs from '@mui/material/Tabs';
 import Tab, { TabProps } from '@mui/material/Tab';
 import TextField from '@mui/material/TextField';
 import {
-  addNewUser
+  addNewUser as IaddNewUser
 } from '../store/users/actions';
 import {
   
@@ -149,8 +149,9 @@ function a11yProps(index) {
 
 function Navbar(props) {
   const odc_edit_modal = useRef(null);
-  const { odcProps = {regionList:{data:[]},witelList:"",datelList:"",stoList:"",merekList:""},odcDispatch,dataClient,odcData,email,role_name, add_user_confirmation,addNewUser,token} = props;
-  // console.log("odc props",odcProps)
+  const { odcProps = {regionList:{data:[]},witelList:"",datelList:"",stoList:"",merekList:""},odcDispatch,dataClient,odcData,email,role_name, add_user_confirmation,token,user_rowsPerPage} = props;
+  const {addNewUser}:{addNewUser: typeof IaddNewUser} = props
+  // console.log("odc props",user_rowsPerPage)
   // useEffect(()=>{
 // useEffect(()=>{
 //   console.log("data client",dataClient)
@@ -745,7 +746,7 @@ const handleFilterOnChange = (ev,inputid,values,setValues) =>{
                         return errors;
                       }}
                       onSubmit={(values,{setSubmitting})=>{
-                        addNewUser(values.email,values.password,values.role,token,setSubmitting,handleAddUserClose,toast)
+                        addNewUser(values.email,values.password,values.role,token,user_rowsPerPage,setSubmitting,handleAddUserClose,toast)
                       }}
                       >
                         {({
@@ -864,7 +865,7 @@ const mapStateToProps = state => ({
 
 })
 const mapDispatchToProps = {
-  addNewUser
+  addNewUser:IaddNewUser
 }
 
 export default connect(mapStateToProps,mapDispatchToProps)(Navbar);
