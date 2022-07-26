@@ -239,7 +239,7 @@ export const tema = createThemeCustom({
 });
 function MyApp({ Component, pageProps }) {
   if(typeof window !="undefined"){
-    console.log("window",process.env.NEXT_SERVER_TEST_1)
+    // console.log("window",process.env.NEXT_SERVER_TEST_1)
 
     initFirebaseBackend();
   }

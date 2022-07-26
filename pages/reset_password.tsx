@@ -16,6 +16,7 @@ import {
   import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Input from '@mui/material/Input';
+import correctImg from '../public/img/correct.png';
 import InputLabel from '@mui/material/InputLabel';
 import InputAdornment from '@mui/material/InputAdornment';
 import FormControl from '@mui/material/FormControl';
@@ -44,7 +45,7 @@ function Reset_password({isLoading,checkLogin,isValid,resetPassword}) {
     // var [passwordValue, setPasswordValue] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [showRePassword, setShowRePassword] = useState(false);
-
+  var [resetPasswordConfirm,setResetPasswordConfirm] = useState(false);
 const [values, setValues] = useState({
   amount: '',
   password: '',
@@ -59,6 +60,7 @@ const [valuesConfirm, setValuesConfirm] = useState({
   weightRange: '',
   showPassword: false,
 });
+console.log(!resetPasswordConfirm)
   return (
     <div className={styles.containerWrapper}>
       
@@ -100,8 +102,8 @@ const [valuesConfirm, setValuesConfirm] = useState({
       </Tabs> */}
       {/* {activeTabId === 0 && ( */}
       <React.Fragment>
-      <div className={styles.baloon} style={{height: isValid ? "500px": "250px"}}>
-    <div className={styles.form}>
+       <div className={styles.baloon} style={{height: isValid ? "500px": "250px"}}>
+       {!resetPasswordConfirm ?<div className={styles.form}>
         
         <>
         <h2>Ubah password</h2>
@@ -110,7 +112,10 @@ const [valuesConfirm, setValuesConfirm] = useState({
             initialValues={{ repassword: '', password: ''}}
             initialErrors={{repassword  :"test",password: ""}}
             validate={values => {
-              const errors: any = {};
+              const errors= {} as {
+                password:string,
+                repassword:string
+              };
               // if (!values.email) {
               //   errors.email = '*Required';
               // } else if (
@@ -122,7 +127,7 @@ const [valuesConfirm, setValuesConfirm] = useState({
                 errors.password = "password tidak sama";
               }
               console.log("errors",errors)
-              return Object.values(errors).some(itm=>itm!="")?errors:false;
+              return errors;
             }}
             // validateOnMount={true}
             validateOnBlur={false}
@@ -130,7 +135,7 @@ const [valuesConfirm, setValuesConfirm] = useState({
             onSubmit={(values, { setSubmitting }) => {
               
               // return errors 
-              resetPassword(router.query.code,values.password,setError,setSubmitting)
+              resetPassword(router.query.code,values.password,setError,setResetPasswordConfirm)
               // setTimeout(() => {
               //   alert(JSON.stringify(values, null, 2));
               //   setSubmitting(false);
@@ -199,15 +204,36 @@ const [valuesConfirm, setValuesConfirm] = useState({
                 </div>
                 {/* <button className={styles.submitBtn} type="submit"> */}
                 
-                <button className={styles.submitBtn} type="submit" disabled={isSubmitting}>
+                <button className={styles.submitBtn} type="submit" >
+                {/* <button className={styles.submitBtn} type="submit" disabled={resetPasswordConfirm}> */}
                   Ubah
                 </button>
               </form>
             )}
           </Formik> : <h6 className={styles.danger}>link ubah password telah melebihi masa pakai, silahkan reset kembali password anda</h6>}
         </>
-    </div>
+    </div>:<div className={styles.confirmationPageWrapper}>
+      <div>
+    <Image src={correctImg} alt="correctImg" width={50} height={50}/>
+        </div>
+        <div className={styles.confirmGroup}>
+        
+    <h3>Password anda telah berhasil di reset</h3>
+    <p className={styles.confirmationDetail}>
+      Silahkan kembali untuk melakukan login ulang   
+    </p>
+        </div>
+    <Link href={"/"}>
+      <a className={styles.decorationNone}>
+      <button className={styles.backBtn} >
+      Kembali
+      </button>
+      </a>
+    </Link>
+  </div>  }
   </div>
+  
+
       </React.Fragment>
       
 </div>

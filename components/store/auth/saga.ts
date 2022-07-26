@@ -216,6 +216,7 @@ function* verifyResetCode({payload:{code}}: IverifyResetCode){
 }
 function* resetPassword({payload:{code,password,setError,setSubmitting}}: IresetPassword){
     try {
+        console.log("reset saga")
         var myHeaders = new Headers();
         var formdata = new FormData();
         formdata.append("code", code);
@@ -228,17 +229,18 @@ function* resetPassword({payload:{code,password,setError,setSubmitting}}: Ireset
         };
         const res = yield resetPasswordCall(requestOptions).then(result=>{
             if(!result.success){
-                setSubmitting(false)
+                setSubmitting(true)
                 setError(prev=>({...prev,msg: "terjadi kesalahan server"}))
             }
             return result
         });
         if(res.success){
-            
+            setSubmitting(true)
+            console.log("reset successful")
             yield put({type: RESET_PASSWORD_SUCCESSFUL})
         }
     } catch (error) {
-
+        // setSubmitting(false)
     }
 }
 

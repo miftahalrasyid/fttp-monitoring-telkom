@@ -24,7 +24,7 @@ import {
   import telkom_bg from "../public/img/telkom_bg.jpeg";
   import logo_paperless from '../public/img/logo_paperless.png';
 import main_img from "../public/img/main_img.png";
-  import { checkLogin, verifyOtp,requestForgotPassword} from "../components/store/auth/actions";
+  import { checkLogin, verifyOtp,requestForgotPassword,forgotPageClosed} from "../components/store/auth/actions";
   import correctImg from '../public/img/correct.png';
 
 import { 
@@ -39,7 +39,7 @@ const CustomButton = styledCustom(Button)<ButtonProps>(({ theme }) => ({
   textDecoration: "none",
 }));
 
-function Forgot_password({requestForgotPassword,isRequestConfirm}) {
+function Forgot_password({requestForgotPassword,isRequestConfirm,forgotPageClosed}) {
   const router = useRouter();
     var [error, setError] = useState(null);
     var [activeTabId, setActiveTabId] = useState(0);
@@ -107,7 +107,9 @@ function Forgot_password({requestForgotPassword,isRequestConfirm}) {
             <Formik 
             initialValues={{ email: '', password: '' }}
             validate={values => {
-              const errors: any = {};
+              const errors= {} as {
+                email:string,
+              };
               if (!values.email) {
                 errors.email = '*Required';
               } else if (
@@ -187,7 +189,7 @@ function Forgot_password({requestForgotPassword,isRequestConfirm}) {
     </p>
         </div>
     <Link href={"/"}>
-      <a className={styles.decorationNone}>
+      <a className={styles.decorationNone} onClick={forgotPageClosed}>
       <button className={styles.backBtn} >
       Kembali
       </button>
@@ -209,6 +211,7 @@ const mapStateToProps = state =>({
     isRequestConfirm: state.Auth.openConfirmationPage,
   });
   const mapDispatchToProps = {
-    requestForgotPassword
+    requestForgotPassword,
+    forgotPageClosed
   }
 export default connect(mapStateToProps,mapDispatchToProps)(Forgot_password)

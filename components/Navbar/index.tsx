@@ -158,7 +158,7 @@ function Navbar(props) {
 
 // },[dataClient])
   // },[odcProps.regionList])
-  const {regionList,witelList,datelList,stoList,merekList,ODCdetailData} = odcProps
+  const {regionList,witelList,datelList,stoList,merekList,ODCdetail:ODCdetailData} = odcProps
   const {updateODCData} = odcDispatch;
   // console.log("raw data",ODCdetailData)
   const { odc_name } = odcData || {odc_name:''};
@@ -263,66 +263,47 @@ const handleOnChange = (ev,newValues,setValues) =>{
 /**
  * select option with filter
  */
-const handleFilterOnChange = (ev,inputid,values,setValues) =>{
-  // console.log("input id",inputid,ev.target.value)
-  // console.log("all values",values)
-  // setValues(prev=>({...prev,[inputid]:ev.target.value.toString()}))
+ const handleFilterOnChange = (ev,inputid,values,setValues) =>{
   let dmp = {region_id:values.region_id?.toString(),witel_id:values.witel_id?.toString(),datel_id:values.datel_id?.toString(),sto_id:values.sto_id?.toString()};
-  [{region_id:['region_id',regionList.data]},{witel_id:['region_id',witelList.data]},{datel_id:['witel_id',datelList.data]},{sto_id:['datel_id',stoList.data]}].filter(item=>{
+  [{region_id:['region_id',regionList.data]},{witel_id:['region_id',witelList.data]},{datel_id:['witel_id',datelList.data]},{sto_id:['datel_id',stoList.data]}].forEach(item=>{
     dmp[inputid] = ev.target.value;
-    // console.log("witel_id",dmp,dmp.region_id,witelList.data.find(item=>item.region_id==dmp.region_id)?.id.toString() || "" )
-    // console.log(item)
-    const [[key,filterValue]] = Object.entries(item);
-    // console.log(key)
     dmp.region_id = regionList.data.find(item=>item.id == dmp.region_id)?.id.toString();
     for (const key1 in item) {
+      /**
+       * mengubah nilai filter child yang memiliki id parent sesuai dengan opsi yang kita ubah
+       */
       if (Object.hasOwnProperty.call(item, key1) && key1!=inputid && key1!='region_id') {
+        /** 
+         * get the first children for certain parent id on the array 
+         * ambil data pertama subitem yang memiliki item id yang sesuai 
+         * */
         dmp[key1] = item[key1][1].find(item2=>item2[item[key1][0]] == dmp[item[key1][0]])?.id;
       }
       else{
 
       }
     }
-    return key == inputid
+    // return key == inputid
   })
+  // console.log("key2",dmp)
   switch (inputid) {
-
     case "region_id":
-      // console.log("region list", {[inputid]:ev.target.value.toString()})
+      //set witel options
       setWitelListClient(witelList.data.filter(item=>item.region_id.toString()==dmp.region_id))
-      //set region id
-      setValues(({...values,[inputid]:dmp[inputid]}))
     case "witel_id":
-      // console.log("datel list", datelList.data.filter(item=>item.region_id.toString()==dmp.region_id),dmp.region_id)
-      // setDatelListClient(datelList.data.filter(item=>item.witel_id.toString()==dmp.datel_id[0].witel))
-      setDatelListClient(datelList.data.filter(item=>item.region_id.toString()==dmp.region_id)
-      .filter(item=>item.witel_id==dmp.witel_id))
-      //set witel id
-      setValues(({...values,[inputid]:dmp[inputid]}))
-      
-      // setDatelListClient(datelList.data.filter)
-      
+      //set datel options
+      setDatelListClient(datelList.data.filter(item=>item.witel_id==dmp.witel_id))
     case "datel_id":
-      // console.log("sto list",setSTOListClient(stoList.data
-      //   .filter(
-      //     item=>item.region_id.toString()==dmp.region_id
-      //   )),dmp.datel_id)
-      setSTOListClient(stoList.data
-        .filter(
-          item=>item.region_id.toString()==dmp.region_id
-        )
-        .filter(
-          item=>item.witel_id==dmp.witel_id
-        )
-        .filter(
-          item=>item.datel_id.toString()==dmp.datel_id
-        ))
-      //set datel id
-      setValues(({...values,[inputid]:dmp[inputid]}))
-
-      // setDatelListClient(datelList.data.filter)
+      //set sto options
+      setSTOListClient(stoList.data.filter(item=>item.datel_id.toString()==dmp.datel_id))
     case "sto_id":
-      setValues(({...values,[inputid]:dmp[inputid]}))
+      // console.log("values", values)
+      setValues(prev=>({...prev,sto_id:ev.target.value}))
+      /**
+       * set all values
+       */
+      if( inputid !=="sto_id")
+        setValues(prev=>({...prev,...dmp}))
     break;
   
     default:

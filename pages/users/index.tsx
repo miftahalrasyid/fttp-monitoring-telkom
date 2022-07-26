@@ -265,7 +265,7 @@ function User({
   const [datatable, setDatatable] = React.useState([[]]);
   const [newTableState,setNewTableState] = useState({page:0,rowsPerPage:5,search_text:null,sort:{orderBy:null,direction:null}})
   const delay = useRef(null);
-  console.log("rows per page user",user_rowsPerPage)
+  // console.log("rows per page user",user_rowsPerPage)
   /**
    * single modal popup
    */
@@ -313,7 +313,7 @@ const [deleteSubmitting,setDeleteSubmitting] = useState(false);
       deleteUser(selectedConfirmDeletePopup.email,
         selectedConfirmDeletePopup.id,
         token,newTableState.page+1,newTableState.rowsPerPage,newTableState.sort,setDeleteSubmitting,singleConfirmDeletePopupClose,toast);
-    },[selectedConfirmDeletePopup,setDeleteSubmitting,token,deleteUser])
+    },[selectedConfirmDeletePopup,setDeleteSubmitting,token,deleteUser,newTableState])
   React.useEffect(()=>{
     setTimeout(()=>{
       if(document.querySelector('[itemref="userDetailModal"]'))
@@ -358,9 +358,9 @@ useEffect(()=>{
   // openDeleteRowModal,
   // submitting
 ])
-useEffect(()=>{
-  console.log("new datatable", datatable)
-},[datatable])
+// useEffect(()=>{
+  // console.log("new datatable", datatable)
+// },[datatable])
 /** error condition */
 useEffect(()=>{
   // console.log("user_liset",user_list)
@@ -431,7 +431,7 @@ const [showPassword, setShowPassword] = useState(false);
                     getUserData_userSaga({page:tableState.page+1,rowsPerPage:tableState.rowsPerPage,sortBy:null,sortOrder:null,email:null},token,null,toast)
                   },
                   onTableChange: (action, tableState) => {
-                    console.log(action, tableState);
+                    // console.log(action, tableState);
             
                     // a developer could react to change on an action basis or
                     // examine the state as a whole and do whatever they want
@@ -453,13 +453,13 @@ const [showPassword, setShowPassword] = useState(false);
                         clearTimeout(delay.current);
                         delay.current = setTimeout(()=>{
                           // changeODCPage({page:newTableState.page,rowsPerPage:newTableState.rowsPerPage, region:submittedFilter.regional,witel:submittedFilter.witel,datel:submittedFilter.datel,sto:submittedFilter.sto,sortBy:newTableState.sort.orderBy,sortOrder:newTableState.sort.direction,name:tableState.searchText},token,toast)
-                          getUserData_userSaga({page:tableState.page+1,rowsPerPage:newTableState.rowsPerPage, sortBy:newTableState.sort.orderBy,sortOrder:newTableState.sort.direction,email:newTableState.search_text},token,null,toast)
+                          getUserData_userSaga({page:tableState.page+1,rowsPerPage:newTableState.rowsPerPage, sortBy:newTableState.sort.orderBy,sortOrder:newTableState.sort.direction,email:tableState.searchText},token,null,toast)
                         },500)
                         // setSearch_text(tableState.searchText)
                       break;
-                      case 'propsUpdate':
+                      // case 'propsUpdate':
                         // getUserData(tableState.page+1,tableState.rowsPerPage, tableState.sortOrder,token)
-                        break;
+                        // break;
                       case 'sort':
                         // console.log("odc name sort",tableState.sortOrder?.name?.toLocaleLowerCase())
                         let sortConvention = "";
@@ -489,7 +489,7 @@ const [showPassword, setShowPassword] = useState(false);
                         // this.sort(tableState.page, tableState.sortOrder);
                         break;
                       default:
-                        console.log('action not handled.');
+                        // console.log('action not handled.');
                         break;
                     }
                   },
@@ -682,11 +682,11 @@ const [showPassword, setShowPassword] = useState(false);
                                                 <CustomTextField id="standard-basic" label="Name" variant="standard" defaultValue={item.name} />
                                               </div> */}
                                               <div className={`col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
-                                                <CustomTextField id="standard-basic" name='email' label="Email" variant="standard" onChange={handleChange} onBlur={handleBlur} defaultValue={values.email} />
+                                                <CustomTextField  name='email' label="Email" variant="standard" onChange={handleChange} onBlur={handleBlur} defaultValue={values.email} />
                                               </div>
                                               <div className={`col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
                                               <CustomTextField
-                                                  id="standard-basic" name='password' label="Password" 
+                                                   name='password' label="Password" 
                                                   type = { showPassword ? "text" : "password" }
                                                   size = "small"
                                                   variant="standard"

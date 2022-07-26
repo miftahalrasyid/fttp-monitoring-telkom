@@ -74,7 +74,7 @@ function* getUserData(props){
         //         progress: undefined,
         //       });
         // }
-        console.log("get user params",data)
+        // console.log("get user params",data)
         const res = yield getUserDataCall(data, requestOptions).then(result => {
             if(!result.success){
                 if(result.msg=='Method must be one of: OPTIONS')

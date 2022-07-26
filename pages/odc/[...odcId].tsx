@@ -48,7 +48,7 @@ import {
   getOcdSplitpanelDetail,
   updateODCData,
   setSelectedCoreFeeder,
-  deleteSelectedCoreFeeder,
+  deleteSelectedCoreFeeder as IdeleteSelectedCoreFeeder,
   upsertODCFile,
   updateNotes,
   updateODCPort,
@@ -294,12 +294,13 @@ function Odc({
     activity_log_client,
     getActivityLog_odcSaga,
     viewOdcClient,
-    deleteSelectedCoreFeeder_odcSaga,
+    deleteSelectedCoreFeeder,
     token,
     updateNotes_odcSaga,
     updateODCPort_odcSaga,
     setSelectedCoreFeeder_odcSaga,
-    upsertODCFile_odcSaga
+    upsertODCFile_odcSaga,
+    ODCdetailDataClient
     }:{
       getActivityLog_odcSaga: typeof getActivityLog,
       data: any,
@@ -307,13 +308,15 @@ function Odc({
       activity_log_client: any, 
       userData: any,
       viewOdcClient: any,
-      deleteSelectedCoreFeeder_odcSaga:typeof deleteSelectedCoreFeeder,
+      deleteSelectedCoreFeeder:typeof IdeleteSelectedCoreFeeder,
       token:any,
       updateNotes_odcSaga: typeof updateNotes,
       updateODCPort_odcSaga: typeof updateODCPort,
       setSelectedCoreFeeder_odcSaga: typeof setSelectedCoreFeeder,
       upsertODCFile_odcSaga: typeof upsertODCFile
+      ODCdetailDataClient: any
     }) {
+      console.log("odcdetail data [...odcid]",ODCdetailDataClient)
       const notes = useRef(null);
       // console.log("ODC Data",ODCData)
         /**
@@ -740,7 +743,7 @@ function Odc({
         item.created_at,
         item.action 
       ])))
-      console.log("activity log client",activity_log_client)
+      // console.log("activity log client",activity_log_client)
       // console.log("re render data",(viewOdcClient || false)?viewOdcClient:ODCData)
     },[activity_log_client])
     /** upload mc variables*/
@@ -1039,7 +1042,11 @@ function Odc({
                       {/* <a target="_blank" href="https://icons8.com/icon/111876/xls">XLS</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a> */}
                         
                         <Dropzone
-                  accept={'image/xls, image/xlsx' as any}
+                  accept={{
+                    'image/jpeg': [],
+                    'image/png': []
+                  } as any}
+                  // accept={'image/xls, image/xlsx' as any}
                   onDrop={acceptedFiles =>
                     handleAcceptedKMLFiles(acceptedFiles)
                   }
@@ -1102,7 +1109,10 @@ function Odc({
                     <div className={`${splitterStyle.splitContainer} ${splitterStyle.kmlCardContainer}`}>
                       <div className={styles.uploadFileWrapper}>
                       <Dropzone
-                  accept={'image/xls, image/xlsx' as any}
+                  accept={{
+                    'image/jpeg': [],
+                    'image/png': []
+                  } as any}
                   onDrop={acceptedFiles =>
                     handleAcceptedMCFiles(acceptedFiles)
                   }
@@ -1438,6 +1448,7 @@ export const getServerSideProps = async (props) => wrapper.getServerSideProps(st
       })(props);
 
 const mapStateToProps = state => ({
+    ODCdetailDataClient:state?.ODCs.selectedOdcSplitpanelDetail?.data|| [],
     dataClient:state?.ODCs?.odcsBox,
     activity_log_client: state?.ODCs?.activity_log_list,
     loading: state.ODCs.loading.get,
@@ -1448,7 +1459,7 @@ const mapStateToProps = state => ({
 const mapFunctionToProps = {
     setSelectedCoreFeeder_odcSaga: setSelectedCoreFeeder,
     updateODCData, // used in navbar component
-    deleteSelectedCoreFeeder_odcSaga: deleteSelectedCoreFeeder,
+    deleteSelectedCoreFeeder: IdeleteSelectedCoreFeeder,
     upsertODCFile_odcSaga: upsertODCFile,
     updateNotes_odcSaga: updateNotes,
     updateODCPort_odcSaga:updateODCPort,

@@ -131,7 +131,9 @@ function Index_evolve({odcProps,token,addODCData,...etc}) {
         setValue(newValue);
       };
     const handleLogout = () =>{
-      document.cookie = 'token=; Max-Age=0'
+      document.cookie = 'token=; Max-Age=0; path=/; domain=' + location.hostname
+      // console.log("logout");
+      // document.cookie = 'token=; Max-Age=0'
       router.push("/")
     }
     const useStyles = makeStyles(theme => ({
@@ -153,7 +155,7 @@ function Index_evolve({odcProps,token,addODCData,...etc}) {
     
         // console.log("odc",odc_edit_modal.current,document.querySelector('[itemref="testing"]'))
         setTimeout(()=>{
-          console.log("odc",document.querySelector('[itemref="addOdcSidbarModal"]'))
+          // console.log("odc",document.querySelector('[itemref="addOdcSidbarModal"]'))
           if(document.querySelector('[itemref="addOdcSidbarModal"]'))
           (document.querySelector('[itemref="addOdcSidbarModal"]') as HTMLElement).style.top = "50%";
         },50)
@@ -247,16 +249,28 @@ function Index_evolve({odcProps,token,addODCData,...etc}) {
             setSTOListClient(stoList.data.filter(item=>item.datel_id.toString()==dmp.datel_id))
           case "sto_id":
             // console.log("values", values)
+            setValues(prev=>({...prev,sto_id:ev.target.value}))
             /**
              * set all values
              */
+            if(inputid!=="sto_id")
+            /** dmp berisi seluruh values select option yang otomatis dipilih */
             setValues(prev=>({...prev,...dmp}))
           break;
         
           default:
-            break;
+            break; 
         }
       }
+      useEffect(()=>{
+        setWitelListClient(witelList?.data?.filter(item=>item.region_id.toString() === regionList.data[0].id.toString()))
+        setDatelListClient(datelList?.data?.filter(item=>item.region_id.toString() === regionList.data[0].id.toString())
+        .filter(item=>item.witel_id.toString() == witelList?.data?.filter(item=>item.region_id.toString() === regionList.data[0].id.toString())[0].id.toString()))
+        setSTOListClient(stoList?.data?.filter(item=>item.region_id.toString() === regionList.data[0].id.toString())
+        .filter(item=>item.witel_id.toString() == witelList?.data?.filter(item=>item.region_id.toString() === regionList.data[0].id.toString())[0].id.toString())
+        .filter(item=>item.datel_id.toString() == datelList?.data?.filter(item=>item.region_id.toString() === regionList.data[0].id.toString())
+        .filter(item=>item.witel_id.toString() == witelList?.data?.filter(item=>item.region_id.toString() === regionList.data[0].id.toString())[0].id.toString())[0].id.toString()))
+      },[])
   return (
     <div className={`${styles.verticalMenu}`}>
     <div className={styles.sidebarLogo}>
@@ -309,7 +323,7 @@ function Index_evolve({odcProps,token,addODCData,...etc}) {
     </SimpleBar>
       <div className={styles.action}>
           <div className={styles.sidebarImage}>
-              <Image src={sidebar_img} width={180} height={210} alt={'sidebar_img'}/>
+              <Image src={sidebar_img} priority width={180} height={210} alt={'sidebar_img'}/>
           </div>
           <p>Action</p>
           <div className={styles.actionBtn}>
@@ -374,6 +388,7 @@ function Index_evolve({odcProps,token,addODCData,...etc}) {
                         validateOnChange={true}
                         validateOnMount={true}
                         validate={(values)=>{
+                          /** set regioin witel datel sto options based on initial values */
                          
                         }}
                         onSubmit={(values,{setSubmitting})=>{
@@ -439,6 +454,7 @@ function Index_evolve({odcProps,token,addODCData,...etc}) {
                                     name: 'witel_id',
                                     id: 'uncontrolled-native',
                                     }}>
+                                       {/* <option key={"witel-"+0} value={0}></option> */}
                                       {((witelListClient || false)?witelListClient?.map(item=>({label:item.name,value:item.id})):witelList?.data?.map(item=>({label:item.name,value:item.id})) || []).map(item=>(
                                         <option key={"witel-"+item.label} value={item.value}>{item.label}</option>
                                       ))}

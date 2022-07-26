@@ -266,10 +266,12 @@ function ODC(props) {
         setSTOListClient(stoList.data.filter(item=>item.datel_id.toString()==dmp.datel_id))
       case "sto_id":
         // console.log("values", values)
+        setValues(prev=>({...prev,sto_id:ev.target.value}))
         /**
          * set all values
          */
-        setValues(prev=>({...prev,...dmp}))
+        if( inputid !=="sto_id")
+          setValues(prev=>({...prev,...dmp}))
       break;
     
       default:
@@ -474,16 +476,20 @@ function ODC(props) {
   });
   // console.log("rows perpage",odc_rowsPerPage)
   const [datatable, setDatatable] = React.useState([[]])
+  let timeout = useRef(null);
     React.useEffect(()=>{
-    
+      let isTimeoutSubscribed = true;
+          
+            setTimeout(()=>{
+              if (isTimeoutSubscribed) {
+                // console.log("odc",document.querySelector('[itemref="odcDetailModal"]'))
+                if(document.querySelector('[itemref="odcDetailModal"]'))
+                (document.querySelector('[itemref="odcDetailModal"]') as HTMLElement).style.top = "50%";
+                if(document.querySelector('[itemref="odcDeleteModal"]'))
+                (document.querySelector('[itemref="odcDeleteModal"]') as HTMLElement).style.top = "50%";
+              }
+            },50)
         // console.log("odc",odc_edit_modal.current,document.querySelector('[itemref="testing"]'))
-        setTimeout(()=>{
-          // console.log("odc",document.querySelector('[itemref="odcDetailModal"]'))
-          if(document.querySelector('[itemref="odcDetailModal"]'))
-          (document.querySelector('[itemref="odcDetailModal"]') as HTMLElement).style.top = "50%";
-          if(document.querySelector('[itemref="odcDeleteModal"]'))
-          (document.querySelector('[itemref="odcDeleteModal"]') as HTMLElement).style.top = "50%";
-        },50)
       setDatatable(odc_list.data.map((item,idx)=>([
         item.row_number,
         item.name,
@@ -509,10 +515,13 @@ function ODC(props) {
         item.witel_id,
         item.datel_id,
         item.sto_id
-      ])))
-    },[rawData,openDeleteRowModal])
+      ])));
+      return ()=>{
+        isTimeoutSubscribed = false;
+      }
+    },[openDeleteRowModal,odc_list])
     useEffect(()=>{
-      console.log("odc list client use effect",odc_list_client.success,odc_list_client.data)
+      // console.log("odc list client use effect",odc_list_client.success,odc_list_client.data)
       if(odc_list_client?.success || false)
       setDatatable(odc_list_client.data.map((item,idx)=>([
         item.row_number,
@@ -713,7 +722,7 @@ function ODC(props) {
         if(key == "datel" && value!="0")
         return key+" "+datelList?.data.filter(item=>item.id.toString() == value)[0]?.name || ""
       }))
-    },[feederChartName])
+    },[feederChartName,datelList,regionList,witelList])
     /** get dashboard deck card */
   return (<div className={styles.mainContent}>
           <div className={styles.cardWrapper}>
@@ -730,13 +739,13 @@ function ODC(props) {
           <Formik 
           initialValues={{ regional: "0", witel: "0", datel: "0", sto: "0"}}
           validate={(values)=>{
-            setFeederChartName(values)
-            setWitelListClient(witelList?.data?.filter(item=>(values.regional == "0") ? item.region_id.toString() !== values.regional:item.region_id.toString() === values.regional))
-            setDatelListClient(datelList?.data?.filter(item=>(values.regional == "0") ? item.region_id.toString() !== values.regional:item.region_id.toString() === values.regional)
-            .filter(item=>(values.witel == "0") ? item.witel_id.toString() !== values.witel:item.witel_id.toString() === values.witel))
-            setSTOListClient(stoList?.data?.filter(item=>(values.regional == "0") ? item.region_id.toString() !== values.regional:item.region_id.toString() === values.regional)
-            .filter(item=>(values.witel == "0") ? item.witel_id.toString() !== values.witel:item.witel_id.toString() === values.witel)
-            .filter(item=>(values.datel == "0") ? item.datel_id.toString() !== values.datel:item.datel_id.toString() === values.datel))
+            // setFeederChartName(values)
+            // setWitelListClient(witelList?.data?.filter(item=>(values.regional == "0") ? item.region_id.toString() !== values.regional:item.region_id.toString() === values.regional))
+            // setDatelListClient(datelList?.data?.filter(item=>(values.regional == "0") ? item.region_id.toString() !== values.regional:item.region_id.toString() === values.regional)
+            // .filter(item=>(values.witel == "0") ? item.witel_id.toString() !== values.witel:item.witel_id.toString() === values.witel))
+            // setSTOListClient(stoList?.data?.filter(item=>(values.regional == "0") ? item.region_id.toString() !== values.regional:item.region_id.toString() === values.regional)
+            // .filter(item=>(values.witel == "0") ? item.witel_id.toString() !== values.witel:item.witel_id.toString() === values.witel)
+            // .filter(item=>(values.datel == "0") ? item.datel_id.toString() !== values.datel:item.datel_id.toString() === values.datel))
 
             // return values
           }}
@@ -1294,8 +1303,8 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                                 rak_oa: selectedModalValue.rak_oa,
                                 panel: selectedModalValue.panel,
                                 port: selectedModalValue.port,
-                                page: odc_page,
-                                sort: odc_sort,
+                                page: newTableState.page,
+                                sort: newTableState.sort,
                                 rowsPerPage: newTableState.rowsPerPage
                               }}
                               validateOnChange={true}

@@ -26,7 +26,7 @@ const INIT_STATE = {
 const user = (state=INIT_STATE,action) => {
     switch (action.type) {
         case HYDRATE:
-            console.log("HYDRATE LOGIN",action.payload)
+            // console.log("HYDRATE LOGIN",action.payload)
             return {
                 ...state,
                 ...action.payload

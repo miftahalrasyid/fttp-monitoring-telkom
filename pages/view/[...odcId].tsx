@@ -397,29 +397,18 @@ function Viewonly_ODC({
             
           </div>
           <div className='odcpanel row'>
-          <div className={styles.splitPanelWrapper} style={{height:"1000px"}}>
+          <div className={styles.splitPanelWrapper} >
+          {/* <div className={styles.splitPanelWrapper} style={{height:"1000px"}}> */}
+          <div className={`${styles.grouper}`}>
                 <Splitter x={splitter.position?(splitter.position.split(" ")[1] == "left" ? "0":""):""} y={splitter.position.split(" ")[0] == "top" ? "0":""}>
                   {splitter.data.map(s_item=>
                   <Eth from="splitter" key={"sp"+s_item.index} id={s_item.index} status={s_item.status}
+                  // <Eth from="splitter" key={"sp"+s_item.index} id={s_item.index} status={s_item.status}
                     columns={splitter.data.length} />
                   )}
                 </Splitter>
-                <Panel x={splitter?.position.split(" ")[1] == "left" ? "375":""} y={splitter.position.split(" ")[0] == "top" ? "0":""}>
-                {/* <Panel x={panel.position.left} y={panel.position.top}> */}
-                {panel.data.map((r_item,idx)=>{
-                  // console.log("odc data panel",r_item.rak_index)
-                    return <Rak key={'r'+r_item.rak_level} distributor_level_id={r_item.rak_index} last_feeder={panel.data.filter(item=>item.type==="feeder").length} level={r_item.rak_level} type={r_item.type} datalen={12}>
-                      {r_item.data.map(p_item=>
-                      /** odd even to define 13-24 */
-                        <Eth from={r_item.type} clickHandler={panelClickHandler} key={"port"+p_item.index} rak_level={r_item.rak_level} id={p_item.index} status={p_item.status}
-                        // <Eth from={r_item.type} clickHandler={panelClickHandler} key={"port"+p_item.index} rak_level={r_item.rak_level} id={((idx+1)%2===0)?(p_item.index+12):p_item.index} status={p_item.status}
-                        columns={r_item.data.length} />
-                      )}
-                    </Rak>
-                
-                })}
-                </Panel>
-                <div className={`${splitterStyle.videoWrapper}`} style={{left: (splitter.position.split(" ")[1]=="left"? "0px":""),top:(splitter.position.split(" ")[0]=="top"? "320px":"")}}>
+                <div className={`${splitterStyle.videoWrapper}`} style={{left: (splitter.position.split(" ")[1]=="left"? "0px":""),top:(splitter.position.split(" ")[0]=="top"? "":"")}}>
+                {/* <div className={`${splitterStyle.videoWrapper}`} style={{left: (splitter.position.split(" ")[1]=="left"? "0px":""),top:(splitter.position.split(" ")[0]=="top"? "320px":"")}}> */}
               {/* <div className={`${splitterStyle.splitWrapper}`} style={{top:"250px",left:"0px"}}> */}
                 <div className={`${splitterStyle.card}`}>
                   <div className={`${splitterStyle.cardHeader} ${splitterStyle.cardHeaderBlue}`} style={{zIndex:"1"}}>
@@ -435,7 +424,8 @@ function Viewonly_ODC({
                 </div>
               {/* </div> */}
               </div>
-              <div className={`${splitterStyle.legendWrapper}`} style={{left: (splitter.position.split(" ")[1]=="left"? "0px":""),top:(splitter.position.split(" ")[0]=="top"? "600px":"")}}>
+              <div className={`${splitterStyle.legendWrapper}`} style={{left: (splitter.position.split(" ")[1]=="left"? "0px":""),top:(splitter.position.split(" ")[0]=="top"? "":"")}}>
+              {/* <div className={`${splitterStyle.legendWrapper}`} style={{left: (splitter.position.split(" ")[1]=="left"? "0px":""),top:(splitter.position.split(" ")[0]=="top"? "600px":"")}}> */}
               {/* <div className={`${splitterStyle.splitWrapper}`} style={{top:"250px",left:"0px"}}> */}
                 <div className={`${splitterStyle.card}`}>
                   <div className={`${splitterStyle.cardHeader} ${splitterStyle.cardHeaderPurple}`} style={{zIndex:"1"}}>
@@ -517,6 +507,24 @@ function Viewonly_ODC({
                   </div>
                   </div>
                 </div>
+                </div>
+                <Panel x={splitter?.position.split(" ")[1] == "left" ? "0px":""} y={splitter.position.split(" ")[0] == "top" ? "0":""}>
+                {/* <Panel x={splitter?.position.split(" ")[1] == "left" ? "375":""} y={splitter.position.split(" ")[0] == "top" ? "0":""}> */}
+                {/* <Panel x={panel.position.left} y={panel.position.top}> */}
+                {panel.data.map((r_item,idx)=>{
+                  // console.log("odc data panel",r_item.rak_index)
+                    return <Rak key={'r'+r_item.rak_level} distributor_level_id={r_item.rak_index} last_feeder={panel.data.filter(item=>item.type==="feeder").length} level={r_item.rak_level} type={r_item.type} datalen={12}>
+                      {r_item.data.map(p_item=>
+                      /** odd even to define 13-24 */
+                        <Eth from={r_item.type} clickHandler={panelClickHandler} key={"port"+p_item.index} rak_level={r_item.rak_level} id={p_item.index} status={p_item.status}
+                        // <Eth from={r_item.type} clickHandler={panelClickHandler} key={"port"+p_item.index} rak_level={r_item.rak_level} id={((idx+1)%2===0)?(p_item.index+12):p_item.index} status={p_item.status}
+                        columns={r_item.data.length} />
+                      )}
+                    </Rak>
+                
+                })}
+                </Panel>
+
               </div>
               {/* <div className={styles.odcFiles}> */}
               <Modal token={token} dispatchFn={{setSelectedCoreFeeder,deleteSelectedCoreFeeder}} open={feederModal[0].status} header={"Feeder "+feederFocus.feeder.feeder_index} splitterData={splitter.data} panelData={panel.data} feederModal={feederModal} feederFocus={feederFocus}/>
@@ -626,7 +634,6 @@ function Viewonly_ODC({
             <div className={`${styles.notesContainer}`}>
               Notes: 
               <textarea name="" id="" cols={30} rows={10}></textarea>
-              <Button variant={"outlined"}><a>Edit</a></Button>
 
             </div>
           </div>

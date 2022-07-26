@@ -59,7 +59,7 @@ const CustomButton = styledCustom(Button)<CustomButtonProps>(({ theme })=> ({
   },
 }));
 const theme = createTheme();
-function Index_evolve(props) {
+function Index(props) {
   const useStyles = makeStyles((theme) => {
     console.log("use styles",theme)
     return {
@@ -439,4 +439,4 @@ const mapDispatchToProps = {
   forgotPageClosed,
   verifyOtp
 }
-export default connect(mapStateToProps,mapDispatchToProps)(withRouter(Index_evolve));
+export default connect(mapStateToProps,mapDispatchToProps)(withRouter(Index));

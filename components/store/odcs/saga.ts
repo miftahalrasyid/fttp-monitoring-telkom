@@ -694,7 +694,7 @@ function* getDatelList({payload:{token}}: IgetDatelList) {
     }
 }
 function* getSTOList({payload:{token}}: IgetSTOList) {
-    console.log("STO list",token)
+    // console.log("STO list",token)
     var requestOptions = {
         method: 'GET',
         headers: {
@@ -737,7 +737,7 @@ function* getMerekList({payload:{token,toast}}: IgetMerekList){
         //     return; 
         // }
         
-        console.log("get merek list")
+        // console.log("get merek list")
         
         const res = yield getMerekListCall(requestOptions)
         
@@ -776,7 +776,7 @@ function* getMerekList({payload:{token,toast}}: IgetMerekList){
         });   
         
         if(res.success){
-            console.log("merek list response ",res)
+            // console.log("merek list response ",res)
             yield put({type:GET_MEREK_LIST_SUCCESSFUL,payload:res})
         }
     } catch (error) {
@@ -1128,8 +1128,11 @@ function* updateODCData({payload:{
                 if(rowsPerPage){
                     yield call(getODCPage,({payload:{data:{page,rowsPerPage,...sort},token,toast}}))
                 }
-              else
-              yield put({type:GET_ODC_SPLITPANEL_STATUS,payload:{odcId:odc_id[0],token,toast}})
+              else{
+
+                  yield put({type:GET_ODC_SPLITPANEL_STATUS,payload:{odcId:odc_id[0],token,toast}})
+                  yield put({type:GET_ODC_SPLITPANEL_DETAIL,payload:{odcId:odc_id[0],token,toast}})
+              }
         }
     } catch (error) {
         console.log("saga update odc error" ,error)

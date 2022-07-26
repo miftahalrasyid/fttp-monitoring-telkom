@@ -23,6 +23,7 @@ export default function Layout(props) {
         token,
         updateODCData,
         ODCdetailData,
+        ODCdetailDataClient,
         odc_rowsPerPage,
         regionList,
         witelList,
@@ -45,11 +46,16 @@ export default function Layout(props) {
         },333)
     },[closeState])
     // console.log("option list", regionList,witelList,datelList,stoList,merekList)
-  
+    const [ODCdetail,setODCdetail] = useState(ODCdetailData);
+    useEffect(()=>{
+        // console.log("layout odcdetaildata",ODCdetailDataClient)
+        if(ODCdetailDataClient?.length!==0)
+        setODCdetail(ODCdetailDataClient)
+    },[ODCdetailDataClient])
     return <div className={styles.layoutWrapper}>
         <Sidebar odcProps={{regionList,witelList,datelList,stoList,merekList,odc_rowsPerPage}} token={token}/>
         <div className={styles.topGap}>
-            <Navbar odcProps={{regionList,witelList,datelList,stoList,merekList,ODCdetailData}} user_rowsPerPage={user_rowsPerPage} odcDispatch={{updateODCData}} odcData={data} email={email} role_name={role_name} token={token}/>
+            <Navbar odcProps={{regionList,witelList,datelList,stoList,merekList,ODCdetail}} user_rowsPerPage={user_rowsPerPage} odcDispatch={{updateODCData}} odcData={data} email={email} role_name={role_name} token={token}/>
 
             {children}
             <div className={styles.overlay} onClick={closeMenu}></div>

@@ -69,7 +69,7 @@ function FirebaseBackEnd() {
 let _firebaseSDK = null;
 
 function initFirebaseBackend(config){
-    console.log("init firebase",config)
+    // console.log("init firebase",config)
     if(!_firebaseSDK){
         _firebaseSDK = new FirebaseBackEnd(config)
     }

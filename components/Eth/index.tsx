@@ -3,7 +3,7 @@ import {MdOutlineViewSidebar} from 'react-icons/md';
 import styles from './eth.module.css';
 import Button from '@mui/material/Button';
 
-function Eth({id="",key="",rak_level="",columns=0,clickHandler=(ev)=>{},status,isActive=false,from}) {
+function Eth({id="",rak_level="",columns=0,clickHandler=(ev)=>{},status,isActive=false,from}) {
   // console.log("eth",inUsed?.ids.find(item=> item==id));
   // console.log("change",status)
   // console.log("from",from)
@@ -15,7 +15,7 @@ function Eth({id="",key="",rak_level="",columns=0,clickHandler=(ev)=>{},status,i
   const ethRef = useRef(null);
   const columnStyle = {
       flexShrink: 1,
-      flexBasis: ((from==="splitter")?(100/(columns/3)):(100/(columns)))+"%",
+      flexBasis: ((from==="splitter")?(100/(columns/2)):(100/(columns)))+"%",
       // background:"#6abd7c",
       cursor:status==="used"&&(from!=="splitter")?"pointer":"auto"
   }

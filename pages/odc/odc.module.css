@@ -30,8 +30,8 @@
 .splitPanelWrapper{
     position:relative;
     column-count:2;
-    /* display:flex;
-    flex-wrap: wrap; */
+    display: flex;
+    gap: 0.5rem;
     margin: 0;
     /* max-width: 375px; */
 }
@@ -300,9 +300,14 @@
     line-height: 0;
     margin-bottom: 0 !important;
 }
+.dropzoneHotspot div{
+    flex-shrink: 0;
+    flex-basis: 20px;
+}
 .hrLine{
     width: 100%;
-    margin-bottom: 2.5rem !important;
+    flex-basis: 75px !important;
+    /* margin-bottom: 2.5rem !important; */
     position: relative;
 }
 .hrLine p{
@@ -331,7 +336,8 @@
     display:flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    /* justify-content: center; */
+    justify-content: flex-start;
     width: 100%;
     height: 100%;
     /* min-height: 200px; */
@@ -346,8 +352,8 @@
     color:#838689;
 }
 .dropzoneCustom{
-    width:100%;
-    height:100%;
+    width: 100%;
+    height: 100%;
     text-align: center;
     margin-bottom: 0 !important;
 }
@@ -360,11 +366,13 @@
     box-sizing: content-box;
     flex-direction: column;
     align-items: center;
+    /* justify-content: center; */
     justify-content: center;
 }
 .dropzoneHotspot{
     height: 98px !important;
 }
+
 .filesCard{
     max-width: 370px;
     /* float:right; */
@@ -372,7 +380,8 @@
 }
 .uploadContainer{
     min-width: 500px;
-    position:absolute;
+    /* position:absolute; */
+    position:relative;
     /* left: 2.5rem; */
     /* max-width:100%; */
     padding: 0 1rem 1rem;
@@ -507,7 +516,7 @@
 .fileDetail{
     display:flex;
     gap: 1rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 0.5rem;
     text-align: center;
 }
 .fileDetail :first-of-type{
