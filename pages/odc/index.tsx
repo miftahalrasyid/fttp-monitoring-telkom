@@ -860,7 +860,7 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                   changeODCPage({page:tableState.page+1,rowsPerPage:tableState.rowsPerPage, region:submittedFilter.regional,witel:submittedFilter.witel,datel:submittedFilter.datel,sto:submittedFilter.sto,sortBy:null,sortOrder:null,name:null},token,toast)
                 },
                 onTableChange: (action, tableState) => {
-                  console.log(action, tableState);
+                  // console.log(action, tableState);
           
                   // a developer could react to change on an action basis or
                   // examine the state as a whole and do whatever they want

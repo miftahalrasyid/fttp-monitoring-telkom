@@ -316,7 +316,7 @@ function Odc({
       upsertODCFile_odcSaga: typeof upsertODCFile
       ODCdetailDataClient: any
     }) {
-      console.log("odcdetail data [...odcid]",ODCdetailDataClient)
+      // console.log("odcdetail data [...odcid]",ODCdetailDataClient)
       const notes = useRef(null);
       // console.log("ODC Data",ODCData)
         /**
@@ -692,7 +692,7 @@ function Odc({
           status:"",
           passive_out:[], 
         }]}] = panel.data.filter(pnl=>pnl.rak_level.toString()===ev.target.parentNode.getAttribute('data-rak'));
-        console.log('data dist',dataDist.filter(dt=>dt.index.toString()==ev.target.parentNode.getAttribute('data-id')))
+        // console.log('data dist',dataDist.filter(dt=>dt.index.toString()==ev.target.parentNode.getAttribute('data-id')))
         if(dataDist.filter(dt=>dt.index.toString()==ev.target.parentNode.getAttribute('data-id'))[0].passive_out || false){
           const [{passive_out:[{name,po_index,splitter:{splitter_index}}]}] = dataDist.filter(dt=>dt.index.toString()==ev.target.parentNode.getAttribute('data-id'));
           // {name,po_index,splitter:{splitter_index}}
@@ -895,7 +895,7 @@ function Odc({
           <div className={`${styles.grouper}`}>
           <Splitter x={splitter.position?(splitter.position.split(" ")[1] == "left" ? "0":""):""} y={splitter.position.split(" ")[0] == "top" ? "0":""}>
                   {splitter.data.map(s_item=>
-                  <Eth from="splitter" key={"sp"+s_item.index} id={s_item.index} status={s_item.status}
+                  <Eth from="splitter" key={"eth"+s_item.index} id={s_item.index} status={s_item.status}
                     columns={splitter.data.length} />
                   )}
                 </Splitter>
@@ -1063,22 +1063,22 @@ function Odc({
                         {/* <div className="mb-3">
                             <i className="display-4 text-muted ri-upload-cloud-2-line"></i>
                         </div> */}
-                        {KMLSelectedFiles.length==0 && (kml_name=="" || kml_name==null) ? [<div key={"downloadIcon"} className={styles.downloadIcon}>
+                        {KMLSelectedFiles.length==0 && (kml_name=="" || kml_name==null) ? [<div key={"kml_downloadIcon"} className={styles.downloadIcon}>
                           <BsDownload  />
-                        </div>,<h6 key={"subtitle"}>klik disini untuk upload file</h6>]: 
-                        KMLSelectedFiles.length==0 && (kml_name || false) ? [<div key={"fileSelected"} className={styles.fileSelected}>
+                        </div>,<h6 key={"kml_subtitle"}>klik disini untuk upload file</h6>]: 
+                        KMLSelectedFiles.length==0 && (kml_name || false) ? [<div key={"kml_fileSelected"} className={styles.fileSelected}>
                         <AiOutlineFile  />
-                      </div>, <div className={styles.fileDetail} key={"saved_kml"}>
+                      </div>, <div className={styles.fileDetail} key={"kml_saved_kml"}>
                           <span >{kml_name}</span>
                           <span> {kml_size}</span>
                         </div>,
-                        <h6 key={"subtitle"} className={`${styles.inst}`}>
+                        <h6 key={"kml_inst"} className={`${styles.inst}`}>
                           klik area sekitar untuk memperbarui file
                         </h6>,
-                        <div key={"hr"} className={`${styles.hrLine}`}> <p>atau</p><hr ></hr></div>]: 
-                        [<div key={"fileSelected"} className={styles.fileSelected}>
+                        <div key={"kml_hr"} className={`${styles.hrLine}`}> <p>atau</p><hr ></hr></div>]: 
+                        [<div key={"kml_fileSelected_2"} className={styles.fileSelected}>
                         <AiOutlineFile  />
-                      </div>,KMLSelectedFiles.map(item=><div className={styles.fileDetail} key={item.idx}>
+                      </div>,KMLSelectedFiles.map(item=><div className={styles.fileDetail} key={"kml"+item.idx}>
                           <span>{item.name}</span>
                           <span> {item.formattedSize}</span>
                         </div>)]
@@ -1130,22 +1130,22 @@ function Odc({
                         {/* <div className="mb-3">
                             <i className="display-4 text-muted ri-upload-cloud-2-line"></i>
                         </div> */}
-                        {MCSelectedFiles.length==0 && (mc_name=="" || mc_name==null) ? [<div key={"downloadIcon"} className={styles.downloadIcon}>
+                        {MCSelectedFiles.length==0 && (mc_name=="" || mc_name==null) ? [<div key={"mc_downloadIcon"} className={styles.downloadIcon}>
                           <BsDownload  />
-                        </div>,<h6 key={"subtitle"}>klik disini untuk upload file</h6>]:
-                        MCSelectedFiles.length==0 && (mc_name || false) ? [<div key={"fileSelected"} className={styles.fileSelected}>
+                        </div>,<h6 key={"mc_subtitle"}>klik disini untuk upload file</h6>]:
+                        MCSelectedFiles.length==0 && (mc_name || false) ? [<div key={"mc_fileSelected"} className={styles.fileSelected}>
                         <AiOutlineFile  />
-                      </div>, <div className={styles.fileDetail} key={"saved_mc"}>
+                      </div>, <div className={styles.fileDetail} key={"mc_saved_mc"}>
                           <span >{mc_name}</span>
                           <span> {mc_size}</span>
                         </div>,
-                        <h6 key={"subtitle"} className={`${styles.inst}`}>
+                        <h6 key={"mc_inst"} className={`${styles.inst}`}>
                           klik area sekitar untuk memperbarui file
                         </h6>,
-                        <div key={"hr"} className={`${styles.hrLine}`}> <p>atau</p><hr ></hr></div>]: [<div key={"fileSelected"} className={styles.fileSelected}>
+                        <div key={"mc_hr"} className={`${styles.hrLine}`}> <p>atau</p><hr ></hr></div>]: [<div key={"mc_fileSelected_2"} className={styles.fileSelected}>
                           <AiOutlineFile  />
                         </div>,
-                        MCSelectedFiles.map(item=><div className={styles.fileDetail} key={item.idx}>
+                        MCSelectedFiles.map(item=><div className={styles.fileDetail} key={"mc"+item.idx}>
                           <span>{item.name}</span>
                           <span> {item.formattedSize}</span>
                           
@@ -1194,7 +1194,7 @@ function Odc({
               <div className="card-body table-responsive">
                 <div className={styles.splitterStatusContainer}>
                   <Typography> Splitter </Typography>
-                  {splitter.data.map(item=><FormControl key={item.id} variant="standard" sx={{ m: 1, minWidth: 132,marginTop:"0.5rem"}}>
+                  {splitter.data.map((item,idx)=><FormControl key={"splitter"+item.id} variant="standard" sx={{ m: 1, minWidth: 132,marginTop:"0.5rem"}}>
                     <InputLabel id="demo-simple-select-standard-label">Splitter {item.index}</InputLabel>
 
                     <NativeSelect defaultValue={item.status=="used" ? 10:item.status=='priority' ? 20 : item.status=="broken" ? 30:40} onChange={(ev)=>{console.log(splitter,item,ev.target.options[ev.target.selectedIndex].text); return updateODCPort_odcSaga(odcId[0],item.id,'splitter',ev.target.options[ev.target.selectedIndex].text,token,toast)}} inputProps={{
@@ -1211,10 +1211,10 @@ function Odc({
                 <div className={styles.feederStatusContainer}>
               <Typography> Panel </Typography>
               <div>
-                  {panel.data.map(item=>(<>
+                  {panel.data.map((item,idx)=>(<div key={"panel_container"+idx}>
                     {item.data.map(distFeed=>{
                       
-                      return <FormControl key={distFeed.index} variant="standard" sx={{ m: 1, minWidth: 97,marginTop:item.type == 'distribution' && item.rak_index == '1' && distFeed.index<=12 ? "2rem":"0.5rem" }}>
+                      return <FormControl key={"panel"+distFeed.index} variant="standard" sx={{ m: 1, minWidth: 97,marginTop:item.type == 'distribution' && item.rak_index == '1' && distFeed.index<=12 ? "2rem":"0.5rem" }}>
                      <InputLabel id="demo-simple-select-standard-label" className={styles.portLabel}> { ((item.rak_level)%2===0)?item.type+item.rak_index+" "+(distFeed.index):item.type+item.rak_index+" "+distFeed.index }</InputLabel>
                      {/* <InputLabel id="demo-simple-select-standard-label" className={styles.portLabel}> { ((item.rak_level)%2===0)?item.type+item.rak_index+" "+(distFeed.index+12):item.type+item.rak_index+" "+distFeed.index }</InputLabel> */}
                         {/* {ODCData.panel.data.length}
@@ -1225,14 +1225,14 @@ function Odc({
                        id: 'uncontrolled-native',
                       }}>
                              {/* (item.status=="used") ? ["used","priority"].map(item=><option key={"sp"+item} value={10}> {item}</option>) : ["idle","broken"].map(item=><option key={"sp"+item} value={10}> {item}</option>) */}
-                          {(distFeed.status=="used" || distFeed.status=="priority") && [{status:"used",value:10},{status:"priority",value:20}].map(item=><option key={"sp"+item.status} value={item.value}> {item.status}</option>)}
+                          {(distFeed.status=="used" || distFeed.status=="priority") && [{status:"used",value:10},{status:"priority",value:20}].map(item=><option key={"pnl"+item.status} value={item.value}> {item.status}</option>)}
                           {/* {(distFeed.status=="used" || distFeed.status=="priority" || distFeed.status=="broken") && [{status:"used",value:10},{status:"priority",value:20},{status:"broken",value:30}].map(item=><option key={"sp"+item.status} value={item.value}> {item.status}</option>)} */}
                           {/* {(distFeed.status=="used" || distFeed.status=="priority") && [{status:"used",value:10},{status:"priority",value:20}].map(item=><option key={"sp"+item.status} value={item.value}> {item.status}</option>)} */}
-                          {(distFeed.status=="idle" || distFeed.status=="broken") && [{status:"idle",value:40},{status:"broken",value:30}].map(item=><option key={"sp"+item.status} value={item.value}> {item.status}</option>)}
+                          {(distFeed.status=="idle" || distFeed.status=="broken") && [{status:"idle",value:40},{status:"broken",value:30}].map(item=><option key={"pnl"+item.status} value={item.value}> {item.status}</option>)}
                     </NativeSelect>
                     </FormControl>
                         })}
-                    </>)
+                    </div>)
                   )}
                   </div>
                 </div>
@@ -1276,7 +1276,7 @@ function Odc({
                                           setTableRowsPerPage(tableState.rowsPerPage)
                                         },
                                         onTableChange: (action, tableState) => {
-                                          console.log(action, tableState);
+                                          // console.log(action, tableState);
                                   
                                           // a developer could react to change on an action basis or
                                           // examine the state as a whole and do whatever they want

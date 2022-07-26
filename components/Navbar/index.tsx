@@ -348,7 +348,7 @@ const handleOnChange = (ev,newValues,setValues) =>{
                     ...prev,
                     dom: [
                       ...prev.dom,
-                      (prev.elm.length === 0) ? [<Link href={odcId[odcId.length-2] || ""} key={"arrow"}><a><MdKeyboardArrowLeft /></a></Link>,<Link key={"link"+next} href={`/odc/${next}`} passHref>
+                      (prev.elm.length === 0) ? [<Link href={'/odc/'+odcId[odcId.length-2] || ""} key={"arrow"}><a><MdKeyboardArrowLeft /></a></Link>,<Link key={"link"+next} href={`/odc/${next}`} passHref>
                         <a className={indexStyles.logo}>
                             <span className={indexStyles.logoTxt}> {odc_name?.toUpperCase()}</span>
                         </a>
