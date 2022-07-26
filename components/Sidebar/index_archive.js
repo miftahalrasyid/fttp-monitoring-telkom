@@ -126,7 +126,7 @@ function Sidebar() {
     
       // console.log("odc",odc_edit_modal.current,document.querySelector('[itemref="testing"]'))
       setTimeout(()=>{
-        console.log("odc",document.querySelector('[itemref="addOdcSidbarModal"]'))
+        // console.log("odc",document.querySelector('[itemref="addOdcSidbarModal"]'))
         if(document.querySelector('[itemref="addOdcSidbarModal"]'))
         document.querySelector('[itemref="addOdcSidbarModal"]').style.top = "50%";
       },50)
