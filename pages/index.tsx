@@ -320,7 +320,7 @@ function Index(props) {
                 <li>
                   buka link dibawah, lalu masukkan token ke dalam chat
                 </li>
-                <Link href={"https://t.me/yoga_test01bot"}>
+                <Link href={"https://t.me/odc_telebot"}>
                 <a >
                 <Typography variant="body1" className={styles.telegramToken}>
                   https://t.me/odc_telebot
