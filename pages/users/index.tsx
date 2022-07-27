@@ -857,7 +857,7 @@ const [showPassword, setShowPassword] = useState(false);
 export const getServerSideProps = async (props) => wrapper.getServerSideProps(store => async ({req, res, ...etc}) => {
   // const {params:{odcId=[]}} = props;
   const {role} = jwt(req.cookies.token) as any;
-  console.log("token value",jwt(req.cookies.token))
+  // console.log("token value",jwt(req.cookies.token))
   if(!req.cookies.token || role!==1)
   return {
     redirect:{
@@ -887,7 +887,7 @@ export const getServerSideProps = async (props) => wrapper.getServerSideProps(st
     }
   //     }
   //     else{
-    console.log("user list",store.getState()?.Users?.userData)
+    // console.log("user list",store.getState()?.Users?.userData)
           return {
               props:{ 
                 user_list: store.getState()?.Users?.userData || {success:false,count:0,data:[],sortOrder:"",page:0},

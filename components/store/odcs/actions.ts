@@ -222,8 +222,8 @@ export const updateODCPort = (odcId: string,field_id: string,table_name: string,
     payload: {odcId,field_id,table_name,value,token,toast}
 })
 
-export const getActivityLog = (odcId: string,page: number,rowsPerPage: number,sortBy: string,sortOrder: string,token: string): IgetActivityLog => ({
+export const getActivityLog = (odcId: string,page: number,rowsPerPage: number,sortBy: string,sortOrder: string,token: string,email: string): IgetActivityLog => ({
     type: GET_ACTIVITYLOG,
-    payload: {odcId,page,rowsPerPage,sortBy,sortOrder,token}
+    payload: {odcId,page,rowsPerPage,sortBy,sortOrder,token,email}
 })
 

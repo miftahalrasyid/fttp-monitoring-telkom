@@ -356,7 +356,8 @@ function Odc({
       splitter={splitter:{position:[]},data:[],position:"top left"},panel={data:[],position:"top left"}} = (viewOdcClient || false)? viewOdcClient:ODCData;
     const feederModal = useState({type:"",status:false});
     // const [feederFocus,setFeederFocus] = useState(false); 
-
+    const [newTableState,setNewTableState] = useState({page:0,rowsPerPage:5,search_text:null,sort:{orderBy:null,direction:null}})
+    const delay = useRef(null);
     const [feederFocus,setFeederFocus] = useState(
       {
         distribution: [
@@ -1269,7 +1270,9 @@ function Odc({
                                       options={{
                                         serverSide:true,
                                         count: activityLog?.count ,
-                                        rowsPerPage: 5,
+                                        searchText:newTableState.search_text,
+                                        page: newTableState.page,
+                                        rowsPerPage: newTableState.rowsPerPage || 5,
                                         rowsPerPageOptions:[5,10,25,50,100],
                                         onTableInit:(test,tableState) =>{
                                           console.log("table init",tableState.rowsPerPage)
@@ -1283,15 +1286,26 @@ function Odc({
                                           switch (action) {
                                             case 'changeRowsPerPage':
                                               setTableRowsPerPage(tableState.rowsPerPage)
-                                              console.log("change page")
-                                              getActivityLog_odcSaga(odcId[0],tableState.page+1,tableState.rowsPerPage,null,null,token)
+                                              // console.log("change page")
+                                              setNewTableState(prev=>({...prev,rowsPerPage:tableState.rowsPerPage}))
+                                              // getActivityLog_odcSaga(odcId[0],tableState.page+1,tableState.rowsPerPage,null,null,token)
+                                              getActivityLog_odcSaga(odcId[0],newTableState.page+1,tableState.rowsPerPage,newTableState.sort.orderBy,newTableState.sort.direction,token,null)
                                             break;
                                             case 'changePage':
+                                              setNewTableState(prev=>({...prev,page:tableState.page}))
                                               // console.log("change page",tableState.sortOrder)
                                               //changeODCPage(limit,offset,region,witel,datel,sto,sortby,direction,token,toast)
-                                              getActivityLog_odcSaga(odcId[0],tableState.page+1,tableState.rowsPerPage,null,null,token)
+                                              // getActivityLog_odcSaga(odcId[0],tableState.page+1,tableState.rowsPerPage,null,null,token)
+                                              getActivityLog_odcSaga(odcId[0],tableState.page+1,newTableState.rowsPerPage,newTableState.sort.orderBy,newTableState.sort.direction,token,null)
                                               // this.changePage(tableState.page, tableState.sortOrder);
                                               break;
+                                            case "search":
+                                              // console.log("activate search",tableState.searchText)
+                                              setNewTableState(prev=>({...prev,search_text:tableState.searchText}))
+                                              clearTimeout(delay.current);
+                                              delay.current = setTimeout(()=>{
+                                                getActivityLog_odcSaga(odcId[0],newTableState.page,newTableState.rowsPerPage,newTableState.sort.orderBy,newTableState.sort.direction,token,newTableState.search_text)
+                                              },500)
                                             case 'sort':
                                               // console.log("sort",tableState.sortOrder)
                                               let sortConvention = "";
@@ -1321,7 +1335,9 @@ function Odc({
                                                 default:
                                                   break;
                                               }
-                                              getActivityLog_odcSaga(odcId[0],tableState.page+1,tableState.rowsPerPage,sortConvention, tableState.sortOrder.direction.toLocaleLowerCase(),token)
+                                              setNewTableState(prev=>({...prev,page:0,sort:{orderBy:sortConvention,direction:tableState.sortOrder.direction.toLocaleUpperCase()}}))
+                                              // getActivityLog_odcSaga(odcId[0],tableState.page+1,tableState.rowsPerPage,sortConvention, tableState.sortOrder.direction.toLocaleLowerCase(),token)
+                                              getActivityLog_odcSaga(odcId[0],newTableState.page+1,newTableState.rowsPerPage,sortConvention,tableState.sortOrder.direction,token,null)
                                               // this.sort(tableState.page, tableState.sortOrder);
                                               break;
                                             default:
@@ -1365,7 +1381,8 @@ function Odc({
                                             customBodyRender:(value, tableMeta, update) => {
                                               let newValue = tableMeta.rowData[3]
                                               return ( <span>{newValue}</span> )
-                                            }
+                                            },
+                                            filter:false,
                                           }
                                         },{
                                           name: "Aksi",
@@ -1373,7 +1390,9 @@ function Odc({
                                             customBodyRender:(value, tableMeta, update) => {
                                               let newValue = tableMeta.rowData[4]
                                               return ( <span>{newValue}</span> )
-                                            }
+                                            },
+                                            sort:false,
+                                            filter:false
                                           }
                                         }]}
                                       />:null}
@@ -1404,7 +1423,7 @@ export const getServerSideProps = async (props) => wrapper.getServerSideProps(st
     // console.log("odc id",odcId[0])
     store.dispatch(getOcdSplitpanelStatus(odcId[0],req.cookies.token,toast));
     store.dispatch(getOcdSplitpanelDetail(odcId[0],req.cookies.token,toast));
-    store.dispatch(getActivityLog(odcId[0],1,5,null,null,req.cookies.token))
+    store.dispatch(getActivityLog(odcId[0],1,5,null,null,req.cookies.token,null))
     store.dispatch(getRegionList(req.cookies.token))
     store.dispatch(getWitelList(req.cookies.token))
     store.dispatch(getDatelList(req.cookies.token))

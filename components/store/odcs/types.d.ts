@@ -273,6 +273,7 @@ export interface IgetActivityLog {
         rowsPerPage:number,
         sortBy:string,
         sortOrder:string,
-        token:string
+        token:string,
+        email: string
     }
 }

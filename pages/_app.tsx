@@ -2,7 +2,7 @@
 import '../styles/globals.css';
 import { wrapper } from '../components/store';
 import 'bootstrap/dist/css/bootstrap.css';
-import {initFirebaseBackend} from '../components/Firebase/index';
+// import {initFirebaseBackend} from '../components/Firebase/index';
 import { 
   createTheme as createThemeCustom, 
   ThemeProvider,
@@ -241,7 +241,7 @@ function MyApp({ Component, pageProps }) {
   if(typeof window !="undefined"){
     // console.log("window",process.env.NEXT_SERVER_TEST_1)
 
-    initFirebaseBackend();
+    // initFirebaseBackend();
   }
   return  <ThemeProvider theme={tema}>
     <Component {...pageProps} />

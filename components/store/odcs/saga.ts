@@ -210,7 +210,7 @@ const addActivityLogCall = (requestOptions) => fetch(`${typeof window !== 'undef
  * @param {*} requestOptions 
  * @returns 
  */
-const getActivityLogCall = (odcId,page,rowsPerPage,sortBy,sortOrder,requestOptions) => fetch(`${typeof window !== 'undefined' ? "" : process.env.NEXT_PUBLIC_API_HOST}/api/get-log?limit=${rowsPerPage}&offset=${page!==0?page:1}&odc_id=${odcId}&sorting=${sortBy || ""}&direction=${sortOrder || ""}`,requestOptions).then(rest=>rest.json())
+const getActivityLogCall = (odcId,page,rowsPerPage,sortBy,sortOrder,email,requestOptions) => fetch(`${typeof window !== 'undefined' ? "" : process.env.NEXT_PUBLIC_API_HOST}/api/get-log?limit=${rowsPerPage}&offset=${page!==0?page:1}&odc_id=${odcId}&sorting=${sortBy || ""}&direction=${sortOrder || ""}&email=${email || ""}`,requestOptions).then(rest=>rest.json())
 /**
  * 
  * @param {region,witel,datel,sto} data 
@@ -1631,7 +1631,7 @@ function* addActivityLog(browse){
         
     }
 }
-function* getActivityLog({payload:{odcId,page,rowsPerPage,sortBy,sortOrder,token}}: IgetActivityLog){
+function* getActivityLog({payload:{odcId,page,rowsPerPage,sortBy,sortOrder,token,email}}: IgetActivityLog){
     try {
         console.log("get activity log",odcId)
         var myHeaders = new Headers();
@@ -1644,7 +1644,7 @@ function* getActivityLog({payload:{odcId,page,rowsPerPage,sortBy,sortOrder,token
         redirect: 'follow'
         };
         // console.log("fetch url",`${typeof window !== 'undefined' ? "" : process.env.NEXT_PUBLIC_API_HOST}/api/get-log?limit=${rowsPerPage}&offset=${page!==0?page:1}&odc_id=${odcId}&sorting=${sortBy || ""}&direction=${sortOrder || ""}`)
-        var res = yield getActivityLogCall(odcId,page,rowsPerPage,sortBy,sortOrder,requestOptions)
+        var res = yield getActivityLogCall(odcId,page,rowsPerPage,sortBy,sortOrder,email,requestOptions)
         .then(result=>{
 
             return {success:result.success,data:result.data,count:result.total_rows,sortOrder,page:page-1};
