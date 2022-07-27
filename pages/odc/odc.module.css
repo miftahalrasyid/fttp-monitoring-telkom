@@ -3,6 +3,7 @@
     margin:auto;
     padding: 30px 15px;
     overflow: scroll;
+    overflow-x: hidden;
     width: 100%;
     min-height: calc(100vh - 123px);
     overflow: scroll;

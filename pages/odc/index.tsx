@@ -698,7 +698,7 @@ function ODC(props) {
     const [selectedConfirmDeletePopup,setSelectedConfirmDeletePopup] = useState({odc_id:"",name:"",rowsPerPage:0});
     const [singleModalPopup,setSingleModalPopup] = useState(false);
     const singleModalPopupOpen = (selectedModalId) => {
-      // console.log("selectedModalValue",selectedModalId)
+      console.log("selectedModalValue",selectedModalId)
       setWitelListClient(witelList.data.filter(item=>item.region_id==selectedModalId.region_id))
       setDatelListClient(datelList.data.filter(item=>item.region_id==selectedModalId.region_id).filter(item=>item.witel_id==selectedModalId.witel_id))
       setSTOListClient(stoList.data.filter(item=>item.region_id==selectedModalId.region_id).filter(item=>item.witel_id==selectedModalId.witel_id).filter(item=>item.datel_id==selectedModalId.datel_id))
@@ -742,13 +742,13 @@ function ODC(props) {
           <Formik 
           initialValues={{ regional: "0", witel: "0", datel: "0", sto: "0"}}
           validate={(values)=>{
-            // setFeederChartName(values)
-            // setWitelListClient(witelList?.data?.filter(item=>(values.regional == "0") ? item.region_id.toString() !== values.regional:item.region_id.toString() === values.regional))
-            // setDatelListClient(datelList?.data?.filter(item=>(values.regional == "0") ? item.region_id.toString() !== values.regional:item.region_id.toString() === values.regional)
-            // .filter(item=>(values.witel == "0") ? item.witel_id.toString() !== values.witel:item.witel_id.toString() === values.witel))
-            // setSTOListClient(stoList?.data?.filter(item=>(values.regional == "0") ? item.region_id.toString() !== values.regional:item.region_id.toString() === values.regional)
-            // .filter(item=>(values.witel == "0") ? item.witel_id.toString() !== values.witel:item.witel_id.toString() === values.witel)
-            // .filter(item=>(values.datel == "0") ? item.datel_id.toString() !== values.datel:item.datel_id.toString() === values.datel))
+            setFeederChartName(values)
+            setWitelListClient(witelList?.data?.filter(item=>(values.regional == "0") ? item.region_id.toString() !== values.regional:item.region_id.toString() === values.regional))
+            setDatelListClient(datelList?.data?.filter(item=>(values.regional == "0") ? item.region_id.toString() !== values.regional:item.region_id.toString() === values.regional)
+            .filter(item=>(values.witel == "0") ? item.witel_id.toString() !== values.witel:item.witel_id.toString() === values.witel))
+            setSTOListClient(stoList?.data?.filter(item=>(values.regional == "0") ? item.region_id.toString() !== values.regional:item.region_id.toString() === values.regional)
+            .filter(item=>(values.witel == "0") ? item.witel_id.toString() !== values.witel:item.witel_id.toString() === values.witel)
+            .filter(item=>(values.datel == "0") ? item.datel_id.toString() !== values.datel:item.datel_id.toString() === values.datel))
 
             // return values
           }}
