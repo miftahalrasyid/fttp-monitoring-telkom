@@ -876,7 +876,7 @@ export const getServerSideProps = async (props) => wrapper.getServerSideProps(st
   store.dispatch(getMerekList(req.cookies.token,toast))
   store.dispatch(END)
   await store.sagaTask.toPromise();
-console.log("get user data",store.getState().Users.userData)
+// console.log("get user data",store.getState().Users.userData)
   // const {ODCs:{selectedOdcSplitpanelStatus}} = store.getState();
   // if(odcId.length!==0 && selectedOdcSplitpanelStatus==={}){
     if(role!==1){
@@ -892,15 +892,15 @@ console.log("get user data",store.getState().Users.userData)
               props:{ 
                 user_list: store.getState()?.Users?.userData || {success:false,count:0,data:[],sortOrder:"",page:0},
                 user_list_loading: store.getState()?.Users?.loading?.getUser || false,
-                token: req.cookies.token,
                 /**
                  * untuk button add odc pada page users
                  */
-                // regionList: store.getState().ODCs.region_list || [{id:0,name:""}],
-                // witelList: store.getState().ODCs.witel_list || [{id:0,region_id: 0,name:""}],
-                // datelList: store.getState().ODCs.datel_list || [{id:0,region_id: 0,witel_id: 0,name:""}],
-                // stoList: store.getState().ODCs.sto_list || [{id:0,region_id: 0,witel_id: 0,datel_id: 0, name:""}],
-                // merekList: store.getState().ODCs.merek_list || [{id: "",name: "",splitter_position: "",splitter_capacity: ""}]
+                regionList: store.getState().ODCs.region_list || [{id:0,name:""}],
+                witelList: store.getState().ODCs.witel_list || [{id:0,region_id: 0,name:""}],
+                datelList: store.getState().ODCs.datel_list || [{id:0,region_id: 0,witel_id: 0,name:""}],
+                stoList: store.getState().ODCs.sto_list || [{id:0,region_id: 0,witel_id: 0,datel_id: 0, name:""}],
+                merekList: store.getState().ODCs.merek_list || [{id: "",name: "",splitter_position: "",splitter_capacity: ""}],
+                token: req.cookies.token,
               },
           } 
 
