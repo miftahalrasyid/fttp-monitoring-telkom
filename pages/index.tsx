@@ -323,7 +323,8 @@ function Index(props) {
                 <Link href={"https://t.me/yoga_test01bot"}>
                 <a >
                 <Typography variant="body1" className={styles.telegramToken}>
-                  https://t.me/yoga_test01bot
+                  https://t.me/odc_telebot
+                  {/* https://t.me/yoga_test01bot */}
                 </Typography>
                 </a>
                 </Link>
