@@ -1129,7 +1129,6 @@ function* updateODCData({payload:{
                     yield call(getODCPage,({payload:{data:{page,rowsPerPage,...sort},token,toast}}))
                 }
               else{
-
                   yield put({type:GET_ODC_SPLITPANEL_STATUS,payload:{odcId:odc_id[0],token,toast}})
                   yield put({type:GET_ODC_SPLITPANEL_DETAIL,payload:{odcId:odc_id[0],token,toast}})
               }

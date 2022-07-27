@@ -420,6 +420,7 @@ const [showPassword, setShowPassword] = useState(false);
                   selectableRows:"none",
                   print: false,
                   serverSide:true,
+                  // filter:false,
                   searchText:newTableState.search_text,
                   count:user_list_client?.count || user_list?.count,
                   page: newTableState.page,
@@ -449,11 +450,11 @@ const [showPassword, setShowPassword] = useState(false);
                         break;
                       case "search":
                         console.log("activate search",tableState.searchText)
-                        setNewTableState(prev=>({...prev,search_text:tableState.searchText}))
+                        setNewTableState(prev=>({...prev,page:0,search_text:tableState.searchText}))
                         clearTimeout(delay.current);
                         delay.current = setTimeout(()=>{
                           // changeODCPage({page:newTableState.page,rowsPerPage:newTableState.rowsPerPage, region:submittedFilter.regional,witel:submittedFilter.witel,datel:submittedFilter.datel,sto:submittedFilter.sto,sortBy:newTableState.sort.orderBy,sortOrder:newTableState.sort.direction,name:tableState.searchText},token,toast)
-                          getUserData_userSaga({page:tableState.page+1,rowsPerPage:newTableState.rowsPerPage, sortBy:newTableState.sort.orderBy,sortOrder:newTableState.sort.direction,email:tableState.searchText},token,null,toast)
+                          getUserData_userSaga({page:0,rowsPerPage:newTableState.rowsPerPage, sortBy:newTableState.sort.orderBy,sortOrder:newTableState.sort.direction,email:tableState.searchText},token,null,toast)
                         },500)
                         // setSearch_text(tableState.searchText)
                       break;

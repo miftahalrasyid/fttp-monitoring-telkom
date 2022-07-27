@@ -850,6 +850,7 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
               options={{
                 selectableRows:"none",
                 print: false,
+                // filter: false,
                 serverSide:true,
                 searchText:newTableState.search_text,
                 count: odc_list_client?.count || odc_list?.count,
@@ -886,10 +887,10 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                       break;
                     case "search":
                       console.log("activate search",tableState.searchText)
-                      setNewTableState(prev=>({...prev,search_text:tableState.searchText}))
+                      setNewTableState(prev=>({...prev,page:0,search_text:tableState.searchText}))
                       clearTimeout(delay.current);
                       delay.current = setTimeout(()=>{
-                        changeODCPage({page:newTableState.page,rowsPerPage:newTableState.rowsPerPage, region:submittedFilter.regional,witel:submittedFilter.witel,datel:submittedFilter.datel,sto:submittedFilter.sto,sortBy:newTableState.sort.orderBy,sortOrder:newTableState.sort.direction,name:tableState.searchText},token,toast)
+                        changeODCPage({page:0,rowsPerPage:newTableState.rowsPerPage, region:submittedFilter.regional,witel:submittedFilter.witel,datel:submittedFilter.datel,sto:submittedFilter.sto,sortBy:newTableState.sort.orderBy,sortOrder:newTableState.sort.direction,name:tableState.searchText},token,toast)
                       },500)
                       // setSearch_text(tableState.searchText)
                     break;
@@ -1312,7 +1313,7 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                               }}
                               validateOnChange={true}
                                 validate={(value)=>{
-                                  console.log("new value",value.tabs)
+                                  // console.log("new value",value.tabs)
                                 }}
                                 onSubmit={(values,{setSubmitting})=>{
                                   console.log(values)

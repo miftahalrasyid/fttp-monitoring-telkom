@@ -557,6 +557,11 @@ and (max-width: 1080px)  {
         margin-right: 0;
     }
 }
+@media screen and (min-width: 1440px) {
+    .splitPanelWrapper{
+        justify-content: center;
+    }
+}
 @media (min-width: 768px){
     .hr{
         display:flex;
