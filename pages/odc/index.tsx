@@ -726,8 +726,8 @@ function ODC(props) {
     },[feederChartName,datelList,regionList,witelList])
     /** get dashboard deck card */
   return (<div className={styles.mainContent}>
+          <SimpleBar autoHide={true}>
           <div className={styles.cardWrapper}>
-          <SimpleBar className={styles.simplebar}>
             <Card title='Total ODC' value={deck_value_client?.total_odc || deck_value?.total_odc} unit='unit' primaryFill={"#FF72BE"} secondaryFill={'#006ED3'}/>
             <Card title='Core Feeder Idle' value={deck_value_client?.total_feeder_idle || deck_value?.total_feeder_idle} unit='ports' primaryFill={"#6FB400"} secondaryFill={'#006ED3'}/>
             <Card title='Core Feeder Used' value={deck_value_client?.total_feeder_used || deck_value?.total_feeder_used} unit='ports' primaryFill={"#00C092"} secondaryFill={'#006ED3'}/>
@@ -735,8 +735,8 @@ function ODC(props) {
             <Card title='Core Distribusi Idle' value={deck_value_client?.total_distribution_idle || deck_value?.total_distribution_idle} unit='ports' primaryFill={"#36DBFF"} secondaryFill={'#006ED3'}/>
             <Card title='Core Distribusi Used' value={deck_value_client?.total_distribution_used || deck_value?.total_distribution_used} unit='ports' primaryFill={"#00BBE4"} secondaryFill={'#006ED3'}/>
             <Card title='Core Distribusi Broken' value={deck_value_client?.total_distribution_broken || deck_value?.total_distribution_broken} unit='ports' primaryFill={"#51C0FF"} secondaryFill={'#006ED3'}/>
-          </SimpleBar>
           </div>
+          </SimpleBar>
           <p className={styles.last_update}>Last Update : {deck_value?.last_update}</p>
 
           <Formik 

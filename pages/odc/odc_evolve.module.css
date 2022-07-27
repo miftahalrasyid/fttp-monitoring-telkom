@@ -7,6 +7,9 @@
     min-height: calc(100vh - 123px);
     height: calc(100vh - 123px);
 }
+.cardWrapper .simplebar-content{
+    display: flex !important;
+}
 .odcBackdrop{
     position: absolute;
     top: 0;
