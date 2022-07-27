@@ -3,6 +3,7 @@
     margin:auto;
     padding: 30px 0;
     overflow: scroll;
+    overflow-x: hidden;
     width: 100%;
     min-height: calc(100vh - 123px);
     height: calc(100vh - 123px);
@@ -29,6 +30,7 @@
     padding: 2rem 3rem;
     grid-gap: 1rem;
     gap: 1.7rem;
+    overflow-y: hidden;
 }
 .closebtn{
     color: white;
