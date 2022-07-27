@@ -33,4 +33,8 @@ yarn-error.log*
 # vercel
 .vercel
 
+#docker
+.dockerignore
+Dockerfile
+
 node_modules.nosync

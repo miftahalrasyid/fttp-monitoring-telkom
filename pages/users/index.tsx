@@ -896,11 +896,11 @@ console.log("get user data",store.getState().Users.userData)
                 /**
                  * untuk button add odc pada page users
                  */
-                regionList: store.getState().ODCs.region_list || [{id:0,name:""}],
-                witelList: store.getState().ODCs.witel_list || [{id:0,region_id: 0,name:""}],
-                datelList: store.getState().ODCs.datel_list || [{id:0,region_id: 0,witel_id: 0,name:""}],
-                stoList: store.getState().ODCs.sto_list || [{id:0,region_id: 0,witel_id: 0,datel_id: 0, name:""}],
-                merekList: store.getState().ODCs.merek_list || [{id: "",name: "",splitter_position: "",splitter_capacity: ""}]
+                // regionList: store.getState().ODCs.region_list || [{id:0,name:""}],
+                // witelList: store.getState().ODCs.witel_list || [{id:0,region_id: 0,name:""}],
+                // datelList: store.getState().ODCs.datel_list || [{id:0,region_id: 0,witel_id: 0,name:""}],
+                // stoList: store.getState().ODCs.sto_list || [{id:0,region_id: 0,witel_id: 0,datel_id: 0, name:""}],
+                // merekList: store.getState().ODCs.merek_list || [{id: "",name: "",splitter_position: "",splitter_capacity: ""}]
               },
           } 
 
