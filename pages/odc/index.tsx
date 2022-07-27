@@ -874,7 +874,7 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                       setTableRowsPerPage(tableState.rowsPerPage)
                       setNewTableState(prev=>({...prev,rowsPerPage:tableState.rowsPerPage}))
                       // setTableRowsPerPage(tableState.rowsPerPage);
-                      changeODCPage({page:newTableState.page+1,rowsPerPage:tableState.rowsPerPage, region:submittedFilter.regional,witel:submittedFilter.witel,datel:submittedFilter.datel,sto:submittedFilter.sto,sortBy:newTableState.sort.orderBy,sortOrder:newTableState.sort.direction,name:null},token,toast)
+                      changeODCPage({page:newTableState.page+1,rowsPerPage:tableState.rowsPerPage, region:submittedFilter.regional,witel:submittedFilter.witel,datel:submittedFilter.datel,sto:submittedFilter.sto,sortBy:newTableState.sort.orderBy,sortOrder:newTableState.sort.direction,name:newTableState.search_text},token,toast)
                     break;
                     case 'changePage':
                       // console.log("on page",newTableState.sort)
@@ -882,7 +882,7 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                       // setTablePage(tableState.page);
                       // console.log("change page",tableState.sortOrder)
                       //changeODCPage(limit,offset,region,witel,datel,sto,sortby,direction,token,toast)
-                      changeODCPage({page:tableState.page+1,rowsPerPage:newTableState.rowsPerPage, region:submittedFilter.regional,witel:submittedFilter.witel,datel:submittedFilter.datel,sto:submittedFilter.sto,sortBy:newTableState.sort.orderBy,sortOrder:newTableState.sort.direction,name:null},token,toast)
+                      changeODCPage({page:tableState.page+1,rowsPerPage:newTableState.rowsPerPage, region:submittedFilter.regional,witel:submittedFilter.witel,datel:submittedFilter.datel,sto:submittedFilter.sto,sortBy:newTableState.sort.orderBy,sortOrder:newTableState.sort.direction,name:newTableState.search_text},token,toast)
                       // this.changePage(tableState.page, tableState.sortOrder);
                       break;
                     case "search":
@@ -935,7 +935,7 @@ options={graph.distribution.options} series={graph.distribution.series} type="ba
                       // console.log("on sort",newTableState.page)
                       setNewTableState(prev=>({...prev,page:0,sort:{orderBy:sortConvention,direction:tableState.sortOrder.direction.toLocaleUpperCase()}}))
                       // setTableSort({sortBy:sortConvention,sortOrder:tableState.sortOrder.direction.toLocaleUpperCase()})
-                      changeODCPage({page:0,rowsPerPage:newTableState.rowsPerPage, region:submittedFilter.regional,witel:submittedFilter.witel,datel:submittedFilter.datel,sto:submittedFilter.sto,sortBy:sortConvention,sortOrder:tableState.sortOrder.direction.toLocaleUpperCase(),name:null},token,toast)
+                      changeODCPage({page:0,rowsPerPage:newTableState.rowsPerPage, region:submittedFilter.regional,witel:submittedFilter.witel,datel:submittedFilter.datel,sto:submittedFilter.sto,sortBy:sortConvention,sortOrder:tableState.sortOrder.direction.toLocaleUpperCase(),name:newTableState.search_text},token,toast)
                       // this.sort(tableState.page, tableState.sortOrder);
                       break;
                     default:

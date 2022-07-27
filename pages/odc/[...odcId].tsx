@@ -1290,14 +1290,14 @@ function Odc({
                                               // console.log("change page")
                                               setNewTableState(prev=>({...prev,rowsPerPage:tableState.rowsPerPage}))
                                               // getActivityLog_odcSaga(odcId[0],tableState.page+1,tableState.rowsPerPage,null,null,token)
-                                              getActivityLog_odcSaga(odcId[0],newTableState.page+1,tableState.rowsPerPage,newTableState.sort.orderBy,newTableState.sort.direction,token,null)
+                                              getActivityLog_odcSaga(odcId[0],newTableState.page+1,tableState.rowsPerPage,newTableState.sort.orderBy,newTableState.sort.direction,token,newTableState.search_text)
                                             break;
                                             case 'changePage':
                                               setNewTableState(prev=>({...prev,page:tableState.page}))
                                               // console.log("change page",tableState.sortOrder)
                                               //changeODCPage(limit,offset,region,witel,datel,sto,sortby,direction,token,toast)
                                               // getActivityLog_odcSaga(odcId[0],tableState.page+1,tableState.rowsPerPage,null,null,token)
-                                              getActivityLog_odcSaga(odcId[0],tableState.page+1,newTableState.rowsPerPage,newTableState.sort.orderBy,newTableState.sort.direction,token,null)
+                                              getActivityLog_odcSaga(odcId[0],tableState.page+1,newTableState.rowsPerPage,newTableState.sort.orderBy,newTableState.sort.direction,token,newTableState.search_text)
                                               // this.changePage(tableState.page, tableState.sortOrder);
                                               break;
                                             case "search":
@@ -1339,7 +1339,7 @@ function Odc({
                                               }
                                               setNewTableState(prev=>({...prev,page:0,sort:{orderBy:sortConvention,direction:tableState.sortOrder.direction.toLocaleUpperCase()}}))
                                               // getActivityLog_odcSaga(odcId[0],tableState.page+1,tableState.rowsPerPage,sortConvention, tableState.sortOrder.direction.toLocaleLowerCase(),token)
-                                              getActivityLog_odcSaga(odcId[0],0,newTableState.rowsPerPage,sortConvention,tableState.sortOrder.direction,token,null)
+                                              getActivityLog_odcSaga(odcId[0],0,newTableState.rowsPerPage,sortConvention,tableState.sortOrder.direction,token,newTableState.search_text)
                                               // this.sort(tableState.page, tableState.sortOrder);
                                               break;
                                             default:

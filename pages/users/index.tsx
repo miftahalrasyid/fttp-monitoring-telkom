@@ -441,11 +441,11 @@ const [showPassword, setShowPassword] = useState(false);
                       case "changeRowsPerPage":
                         setTableRowsPerPage(tableState.rowsPerPage)
                         setNewTableState(prev=>({...prev,rowsPerPage:tableState.rowsPerPage}))
-                        getUserData_userSaga({page:newTableState.page+1,rowsPerPage:tableState.rowsPerPage, sortBy:newTableState.sort.orderBy,sortOrder:newTableState.sort.direction,email:null},token,null,toast)
+                        getUserData_userSaga({page:newTableState.page+1,rowsPerPage:tableState.rowsPerPage, sortBy:newTableState.sort.orderBy,sortOrder:newTableState.sort.direction,email:newTableState.search_text},token,null,toast)
                       break;
                       case 'changePage':
                         setNewTableState(prev=>({...prev,page:tableState.page}))
-                        getUserData_userSaga({page:tableState.page+1,rowsPerPage:newTableState.rowsPerPage, sortBy:newTableState.sort.orderBy,sortOrder:newTableState.sort.direction,email:null},token,null,toast)
+                        getUserData_userSaga({page:tableState.page+1,rowsPerPage:newTableState.rowsPerPage, sortBy:newTableState.sort.orderBy,sortOrder:newTableState.sort.direction,email:newTableState.search_text},token,null,toast)
                         // this.changePage(tableState.page, tableState.sortOrder);
                         break;
                       case "search":
@@ -486,7 +486,7 @@ const [showPassword, setShowPassword] = useState(false);
                             break;
                         }
                         setNewTableState(prev=>({...prev,page:0,sort:{orderBy:sortConvention,direction:tableState.sortOrder.direction.toLocaleUpperCase()}}))
-                        getUserData_userSaga({page:0,rowsPerPage:newTableState.rowsPerPage, sortBy:sortConvention,sortOrder:tableState.sortOrder.direction,email:null},token,null,toast)
+                        getUserData_userSaga({page:0,rowsPerPage:newTableState.rowsPerPage, sortBy:sortConvention,sortOrder:tableState.sortOrder.direction,email:newTableState.search_text},token,null,toast)
                         // this.sort(tableState.page, tableState.sortOrder);
                         break;
                       default:
