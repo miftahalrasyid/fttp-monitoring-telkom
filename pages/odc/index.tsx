@@ -742,12 +742,12 @@ function ODC(props) {
               setValues(prev=>({...prev,...dmp}))
             break;
             case 'witel':
+              dmp.witel = value;
               if(values.regional==0){
                 setRegionListClient(regionList?.data?.filter(item=>item.id==datelList?.data?.find(item=>item.id==value).region_id));
-                dmp.regional = regionList?.data?.find(item=>item.id==datelList?.data?.find(item=>item.id==value)?.region_id).id || '0';
+                dmp.regional = regionList?.data?.find(item=>item.id==witelList?.data?.find(item=>item.id==value)?.region_id).id || '0';
               }
               setWitelListClient(witelList?.data?.filter(item=>(item.region_id.toString() == dmp.regional)))
-              dmp.witel = value;
               newdatel = datelList?.data?.filter(item=>(dmp.witel == "0") ? item.witel_id.toString() !== dmp.witel:item.witel_id.toString() === dmp.witel)
               setDatelListClient(newdatel)
               newsto = stoList?.data?.filter(item=>item.witel_id.toString() === dmp.witel)
