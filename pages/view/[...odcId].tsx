@@ -397,7 +397,7 @@ function Viewonly_ODC({
             
           </div>
           <div className='odcpanel row'>
-          <div className={styles.splitPanelWrapper} >
+          <div className={`${styles.splitPanelWrapper} ${styles.splitPanelWrapper_viewOnly}`} >
           {/* <div className={styles.splitPanelWrapper} style={{height:"1000px"}}> */}
           <div className={`${styles.grouper}`}>
                 <Splitter x={splitter.position?(splitter.position.split(" ")[1] == "left" ? "0":""):""} y={splitter.position.split(" ")[0] == "top" ? "0":""}>

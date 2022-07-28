@@ -54,3 +54,32 @@ in this project, i use jwt token to prevent csrf attack. the token are implement
 unlike react js, next js are server side rendering. so the page already been rendered in the server then push it into the client view.
 
 pm2 start npm --name ditinote-odc-telkom -- start -- -p 3000
+
+pm2 stop
+
+### docker settings
+https://dev.to/kumareth/next-js-docker-made-easy-2bok
+
+how to set it up in server
+https://docs.docker.com/engine/install/ubuntu/
+https://semuada.com/articles/geek/231-cara-install-docker-di-ubuntu-20-04-focal-fossa
+
+push and pull docker 
+https://www.youtube.com/watch?v=EIHY_CY5J0k
+
+Dockerfile
+.dockerignore
+docker build . 
+
+DOCKER_BUILDKIT=1
+to make sure it only override the file that change. not entire project
+
+details on building docker 
+https://stackoverflow.com/questions/59615266/super-slow-docker-build
+
+login docker from terminal
+docker login docker.io
+
+check docker storage space
+docker system df
+

@@ -386,7 +386,7 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
                   <div className={odcStyles.closebtn}>
                     <MdOutlineClose/>
                   </div>
-                  <MetisMenu>
+                  {/* <MetisMenu> */}
                 <Box itemRef='detailFeederModal' sx={{
                   // position: "absolute",
                   top: "48%",
@@ -838,7 +838,7 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
                     </Formik>
                   </div>
                 </Box>
-                </MetisMenu>
+                {/* </MetisMenu> */}
                 </div>
               </MUIModal>
     )

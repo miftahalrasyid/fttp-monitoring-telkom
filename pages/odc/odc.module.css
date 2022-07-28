@@ -546,6 +546,11 @@ and (max-width: 1080px)  {
     
 }
 @media screen and (min-width: 1254px) {
+    .splitPanelWrapper_viewOnly{
+        justify-content: center;
+    }
+}
+@media screen and (min-width: 1254px) {
     .hr{
         display:flex;
         background: black;
@@ -562,6 +567,7 @@ and (max-width: 1080px)  {
         justify-content: center;
     }
 }
+
 @media (min-width: 768px){
     .hr{
         display:flex;

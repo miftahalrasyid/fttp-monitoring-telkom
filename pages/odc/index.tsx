@@ -106,7 +106,7 @@ const CustomButton = styled(Button)<ButtonProps>(({theme,btntype})=>({
     // borderRadius:"2rem!important"
 }))
 export function CustomSelect({defaultValue,data,name,onChange,onBlur}){
-  
+    console.log("CUSTOM SELECT",defaultValue)
   return <div className={styles.witel}>
       <select value={defaultValue} onChange={onChange} onBlur={onBlur} name={name}>
         {data.map(item=><option key={name+item.value} value={item.value}>{item.label}</option> )}
@@ -724,6 +724,92 @@ function ODC(props) {
         return key+" "+datelList?.data.filter(item=>item.id.toString() == value)[0]?.name || ""
       }))
     },[feederChartName,datelList,regionList,witelList])
+    const customHandleChange = (inputid,value,values,setValues) =>{
+      console.log(inputid,value)
+      let dmp = {regional:values.regional?.toString(),witel:values.witel?.toString(),datel:values.datel?.toString(),sto:values.sto?.toString()};
+      let newsto =[];
+      let newdatel =[];
+      let newwitel =[];
+      switch(inputid){
+            case 'regional':
+              dmp.regional = value;
+              newwitel = witelList?.data?.filter(item=>item.region_id.toString() == value)
+              setWitelListClient(newwitel);
+              newdatel = datelList?.data?.filter(item=>item.region_id.toString() === value)
+              setDatelListClient(newdatel)
+              newsto = stoList?.data?.filter(item=>item.region_id.toString() === value)
+              setSTOListClient(newsto)
+              setValues(prev=>({...prev,...dmp}))
+            break;
+            case 'witel':
+              if(values.regional==0){
+                setRegionListClient(regionList?.data?.filter(item=>item.id==datelList?.data?.find(item=>item.id==value).region_id));
+                dmp.regional = regionList?.data?.find(item=>item.id==datelList?.data?.find(item=>item.id==value)?.region_id).id || '0';
+              }
+              setWitelListClient(witelList?.data?.filter(item=>(item.region_id.toString() == dmp.regional)))
+              dmp.witel = value;
+              newdatel = datelList?.data?.filter(item=>(dmp.witel == "0") ? item.witel_id.toString() !== dmp.witel:item.witel_id.toString() === dmp.witel)
+              setDatelListClient(newdatel)
+              newsto = stoList?.data?.filter(item=>item.witel_id.toString() === dmp.witel)
+              setSTOListClient(newsto)
+              setValues(prev=>({...prev,...dmp}))
+            break;
+            case 'datel':
+              // setValues(prev=>({...prev,datel:value}))
+              // let witel = "0";
+              if(values.regional==0){
+                setRegionListClient(regionList?.data?.filter(item=>item.id==datelList?.data?.find(item=>item.id==value).region_id));
+                // setValues(prev=>({...prev,datel:value,witel:datelList?.data?.find(item=>item.id==value).witel_id}));
+                // dmp.witel = datelList?.data?.find(item=>item.id==value).witel_id
+                // console.log("regional value",value,regionList,regionList?.data?.find(item=>item.id==datelList?.data?.find(item=>item.id==value).region_id))
+                dmp.regional = regionList?.data?.find(item=>item.id==datelList?.data?.find(item=>item.id==value)?.region_id).id || '0';
+              }
+              if(values.witel==0){
+                setWitelListClient(witelList?.data?.filter(item=>item.region_id==datelList?.data?.find(item=>item.id==value).region_id));
+                dmp.witel = witelList?.data?.find(item=>item.id==datelList?.data?.find(item=>item.id==value)?.witel_id).id || '0';
+              }
+              // console.log("values datel",value,datelList?.data?.filter(item=>item.id==parseInt(value)))
+              setDatelListClient(datelList?.data?.filter(item=>item.id==parseInt(value)))
+              dmp.datel = value;
+              newsto = stoList?.data?.filter(item=>(dmp.datel == "0") ? item.datel_id.toString() !== dmp.datel:item.datel_id.toString() === dmp.datel)
+              setSTOListClient(newsto)
+              // dmp.sto = newsto[0].id;
+              setValues(prev=>({...prev,...dmp}))
+              // setValues(prev=>({...prev,datel:value}))
+              // console.log("selected datel",datelList?.data?.find(item=>item.id==value),witelList?.data?.filter(item=>item.id==datelList?.data?.find(item=>item.id==value).witel_id))
+
+            break;
+            case 'sto':
+              if(values.regional==0){
+                setRegionListClient(regionList?.data?.filter(item=>item.id==stoList?.data?.find(item=>item.id==value).region_id));
+                // setValues(prev=>({...prev,datel:value,witel:datelList?.data?.find(item=>item.id==value).witel_id}));
+                // dmp.witel = datelList?.data?.find(item=>item.id==value).witel_id
+                // console.log("regional value",value,regionList,regionList?.data?.find(item=>item.id==datelList?.data?.find(item=>item.id==value).region_id))
+                dmp.regional = regionList?.data?.find(item=>item.id==stoList?.data?.find(item=>item.id==value)?.region_id).id || '0';
+              }
+              if(values.witel==0){
+                setWitelListClient(witelList?.data?.filter(item=>item.id==stoList?.data?.find(item=>item.id==value).witel_id));
+                // setValues(prev=>({...prev,datel:value,witel:datelList?.data?.find(item=>item.id==value).witel_id}));
+                dmp.witel = witelList?.data?.find(item=>item.id==stoList?.data?.find(item=>item.id==value)?.witel_id).id || '0';
+                // dmp.witel =
+                console.log("values witel",value,values,witelList?.data?.find(item=>item.id==datelList?.data?.find(item=>item.id==value)?.witel_id).id)
+              }
+              if(values.datel==0){
+                setDatelListClient(datelList?.data?.filter(item=>item.id==stoList?.data?.find(item=>item.id==value).datel_id));
+                // setValues(prev=>({...prev,datel:value,witel:datelList?.data?.find(item=>item.id==value).witel_id}));
+                dmp.datel = datelList?.data?.find(item=>item.id==stoList?.data?.find(item=>item.id==value)?.datel_id).id || '0';
+                // dmp.witel =
+                console.log("values witel",value,values,datelList?.data?.find(item=>item.id==stoList?.data?.find(item=>item.id==value)?.datel_id).id)
+              }
+              setSTOListClient(stoList?.data?.filter(item=>item.id==parseInt(value)))
+              dmp.sto = value;
+              setValues(prev=>({...prev,...dmp}))
+            break;
+            default:
+              console.log("ga masuk")
+            break;
+          }
+    }
     /** get dashboard deck card */
   return (<div className={styles.mainContent}>
           <SimpleBar autoHide={true}>
@@ -742,19 +828,46 @@ function ODC(props) {
           <Formik 
           initialValues={{ regional: "0", witel: "0", datel: "0", sto: "0"}}
           validate={(values)=>{
+            // Object.entries(values).forEach(([key,value])=>{
+            //   console.log("values",key,value);
+            //   switch(key){
+            //     case 'regional':
+
+            //     break;
+            //     case 'witel':
+
+            //     break;
+            //     case 'datel':
+            //       if(values.witel=='0'){
+            //         setWitelListClient(witelList?.data?.filter(item=>item.id==datelList?.data?.find(item=>item.id==value).witel_id));
+            //         values.datel = datelList?.data?.find(item=>item.id==value).witel_id;
+            //       }
+            //       console.log("selected datel",datelList?.data?.find(item=>item.id==value),witelList?.data?.filter(item=>item.id==datelList?.data?.find(item=>item.id==value).witel_id))
+
+            //     break;
+            //     case 'sto':
+
+            //     break;
+            //     default:
+            //       console.log("ga masuk")
+            //     break;
+            //   }
+
+            // })
             setFeederChartName(values)
-            setWitelListClient(witelList?.data?.filter(item=>(values.regional == "0") ? item.region_id.toString() !== values.regional:item.region_id.toString() === values.regional))
-            setDatelListClient(datelList?.data?.filter(item=>(values.regional == "0") ? item.region_id.toString() !== values.regional:item.region_id.toString() === values.regional)
-            .filter(item=>(values.witel == "0") ? item.witel_id.toString() !== values.witel:item.witel_id.toString() === values.witel))
-            setSTOListClient(stoList?.data?.filter(item=>(values.regional == "0") ? item.region_id.toString() !== values.regional:item.region_id.toString() === values.regional)
-            .filter(item=>(values.witel == "0") ? item.witel_id.toString() !== values.witel:item.witel_id.toString() === values.witel)
-            .filter(item=>(values.datel == "0") ? item.datel_id.toString() !== values.datel:item.datel_id.toString() === values.datel))
+            // setWitelListClient(witelList?.data?.filter(item=>(values.regional == "0") ? item.region_id.toString() !== values.regional:item.region_id.toString() === values.regional))
+            // setDatelListClient(datelList?.data?.filter(item=>(values.regional == "0") ? item.region_id.toString() !== values.regional:item.region_id.toString() === values.regional)
+            // .filter(item=>(values.witel == "0") ? item.witel_id.toString() !== values.witel:item.witel_id.toString() === values.witel))
+            // setSTOListClient(stoList?.data?.filter(item=>(values.regional == "0") ? item.region_id.toString() !== values.regional:item.region_id.toString() === values.regional)
+            // .filter(item=>(values.witel == "0") ? item.witel_id.toString() !== values.witel:item.witel_id.toString() === values.witel)
+            // .filter(item=>(values.datel == "0") ? item.datel_id.toString() !== values.datel:item.datel_id.toString() === values.datel))
 
             // return values
           }}
           validateOnChange={true}
           onSubmit={(values)=>{
             // console.log("cookie",document.cookie.split(" "))
+            
             getFeederGraph(values || { regional: '', witel: '', datel: '', sto: ''},token);
             getDistributionGraph(values || { regional: '', witel: '', datel: '', sto: ''},token);
             changeODCPage({page:1,rowsPerPage:newTableState.rowsPerPage, region:values.regional,witel:values.witel,datel:values.datel,sto:values.sto,sortBy:null,sortOrder:null,name:null},token,toast)
@@ -785,6 +898,7 @@ function ODC(props) {
             values,
             errors,
             touched,
+            setValues,
             handleChange,
             handleBlur,
             handleSubmit,
@@ -794,28 +908,29 @@ function ODC(props) {
                   <div className={styles.toolbar}>
                     <CustomSelect 
                       defaultValue={values.regional} 
-                      onChange={handleChange}
+                      onChange={(ev)=>customHandleChange('regional',ev.target.value,values,setValues)}
                       onBlur={handleBlur}
                       data={[...[{label:"Regional",value:0}],...regionList?.data?.map(item=>({label:item.name,value:item.id}))] || []} 
                       name='regional'
                       />
                     <CustomSelect 
                       defaultValue={values.witel} 
-                      onChange={handleChange}
+                      onChange={(ev)=>customHandleChange('witel',ev.target.value,values,setValues)}
                       onBlur={handleBlur}
                       data={[{label:"Witel",value:0}].concat((witelListClient )?witelListClient?.map(item=>({label:item.name,value:item.id})):witelList?.data?.map(item=>({label:item.name,value:item.id}))) || []} 
                       name='witel'
                       />
                     <CustomSelect 
                       defaultValue={values.datel} 
-                      onChange={handleChange}
+                      onChange={(ev)=>customHandleChange('datel',ev.target.value,values,setValues)}
+                      // onChange={handleChange}
                       onBlur={handleBlur}
                       data={[{label:"Datel",value:0}].concat((datelListClient)?datelListClient?.map(item=>({label:item.name,value:item.id})):datelList?.data?.map(item=>({label:item.name,value:item.id}))) || []} 
                       name='datel'
                       />
                     <CustomSelect 
                       defaultValue={values.sto} 
-                      onChange={handleChange}
+                      onChange={(ev)=>customHandleChange('sto',ev.target.value,values,setValues)}
                       onBlur={handleBlur}
                       data={[{label:"STO",value:0}].concat((stoListClient)?stoListClient?.map(item=>({label:item.name,value:item.id})):stoList?.data?.map(item=>({label:item.name,value:item.id}))) || []} 
                       name='sto'

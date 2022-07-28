@@ -1,4 +1,4 @@
-import React,{useCallback, useState,useEffect, useRef} from 'react';
+import React,{useCallback, useState,useEffect, useRef, ReactNode} from 'react';
 import styles from './navbar.module.css';
 import { MdMenu } from 'react-icons/md';
 // import {
@@ -365,7 +365,7 @@ const handleOnChange = (ev,newValues,setValues) =>{
                     ]
                   }
                 }
-                ,{dom:[],elm:[]})}
+                ,{dom:[],elm:[]}) as ReactNode}
                 </div>}
                 {/* action navbar only show at selected odc */}
                 {((odcId || false) && odcId.length==1) ?
