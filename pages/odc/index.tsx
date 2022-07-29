@@ -725,7 +725,7 @@ function ODC(props) {
       }))
     },[feederChartName,datelList,regionList,witelList])
     const customHandleChange = (inputid,value,values,setValues) =>{
-      console.log(inputid,value)
+      // console.log(inputid,value)
       let dmp = {regional:values.regional?.toString(),witel:values.witel?.toString(),datel:values.datel?.toString(),sto:values.sto?.toString()};
       let newsto =[];
       let newdatel =[];
@@ -733,12 +733,26 @@ function ODC(props) {
       switch(inputid){
             case 'regional':
               dmp.regional = value;
-              newwitel = witelList?.data?.filter(item=>item.region_id.toString() == value)
-              setWitelListClient(newwitel);
-              newdatel = datelList?.data?.filter(item=>item.region_id.toString() === value)
-              setDatelListClient(newdatel)
-              newsto = stoList?.data?.filter(item=>item.region_id.toString() === value)
-              setSTOListClient(newsto)
+              if(dmp.regional==0){
+                newwitel = witelList?.data
+                setWitelListClient(newwitel);
+                newdatel = datelList?.data
+                setDatelListClient(newdatel)
+                newsto = stoList?.data
+                setSTOListClient(newsto)
+                
+              }
+              else{
+                newwitel = witelList?.data?.filter(item=>item.region_id.toString() == value)
+                setWitelListClient(newwitel);
+                newdatel = datelList?.data?.filter(item=>item.region_id.toString() === value)
+                setDatelListClient(newdatel)
+                newsto = stoList?.data?.filter(item=>item.region_id.toString() === value)
+                setSTOListClient(newsto)
+              }
+              dmp.witel = 0;
+                dmp.datel = 0;
+                dmp.sto = 0;
               setValues(prev=>({...prev,...dmp}))
             break;
             case 'witel':
@@ -747,62 +761,77 @@ function ODC(props) {
                 setRegionListClient(regionList?.data?.filter(item=>item.id==datelList?.data?.find(item=>item.id==value).region_id));
                 dmp.regional = regionList?.data?.find(item=>item.id==witelList?.data?.find(item=>item.id==value)?.region_id).id || '0';
               }
-              setWitelListClient(witelList?.data?.filter(item=>(item.region_id.toString() == dmp.regional)))
-              newdatel = datelList?.data?.filter(item=>(dmp.witel == "0") ? item.witel_id.toString() !== dmp.witel:item.witel_id.toString() === dmp.witel)
-              setDatelListClient(newdatel)
-              newsto = stoList?.data?.filter(item=>item.witel_id.toString() === dmp.witel)
-              setSTOListClient(newsto)
+              else if(dmp.witel==0){
+                setWitelListClient(witelList?.data?.filter(item=>(item.region_id.toString() == dmp.regional)))
+                newdatel = datelList?.data?.filter(item=>item.region_id.toString() === dmp.regional)
+                setDatelListClient(newdatel)
+                newsto = stoList?.data?.filter(item=>item.region_id.toString() === dmp.regional)
+                setSTOListClient(newsto)
+                dmp.datel = 0;
+                dmp.sto = 0;
+              }
+              else{
+                setWitelListClient(witelList?.data?.filter(item=>(item.region_id.toString() == dmp.regional)))
+                newdatel = datelList?.data?.filter(item=>(dmp.witel == "0") ? item.witel_id.toString() !== dmp.witel:item.witel_id.toString() === dmp.witel)
+                setDatelListClient(newdatel)
+                newsto = stoList?.data?.filter(item=>item.witel_id.toString() === dmp.witel)
+                setSTOListClient(newsto)
+              }
               setValues(prev=>({...prev,...dmp}))
             break;
             case 'datel':
-              // setValues(prev=>({...prev,datel:value}))
-              // let witel = "0";
+              dmp.datel = value;
               if(values.regional==0){
                 setRegionListClient(regionList?.data?.filter(item=>item.id==datelList?.data?.find(item=>item.id==value).region_id));
-                // setValues(prev=>({...prev,datel:value,witel:datelList?.data?.find(item=>item.id==value).witel_id}));
-                // dmp.witel = datelList?.data?.find(item=>item.id==value).witel_id
-                // console.log("regional value",value,regionList,regionList?.data?.find(item=>item.id==datelList?.data?.find(item=>item.id==value).region_id))
                 dmp.regional = regionList?.data?.find(item=>item.id==datelList?.data?.find(item=>item.id==value)?.region_id).id || '0';
               }
               if(values.witel==0){
-                setWitelListClient(witelList?.data?.filter(item=>item.region_id==datelList?.data?.find(item=>item.id==value).region_id));
+
+                newwitel = witelList?.data?.filter(item=>item.region_id==datelList?.data?.find(item=>item.id==value).region_id)
+                setWitelListClient(newwitel);
                 dmp.witel = witelList?.data?.find(item=>item.id==datelList?.data?.find(item=>item.id==value)?.witel_id).id || '0';
+                newdatel = datelList?.data?.filter(item=>item.witel_id==dmp.witel)
+                setDatelListClient(newdatel)
+                newsto = stoList?.data?.filter(item=>item.datel_id.toString() === dmp.datel)
+                setSTOListClient(newsto)
+                dmp.sto = 0
               }
-              // console.log("values datel",value,datelList?.data?.filter(item=>item.id==parseInt(value)))
-              setDatelListClient(datelList?.data?.filter(item=>item.id==parseInt(value)))
-              dmp.datel = value;
-              newsto = stoList?.data?.filter(item=>(dmp.datel == "0") ? item.datel_id.toString() !== dmp.datel:item.datel_id.toString() === dmp.datel)
-              setSTOListClient(newsto)
-              // dmp.sto = newsto[0].id;
+              else if(dmp.datel==0){
+                  newsto = stoList?.data?.filter(item=>item.witel_id.toString() === dmp.witel)
+                  setSTOListClient(newsto)
+                  setDatelListClient(datelList?.data?.filter(item=>item.witel_id==dmp.witel))
+                
+                dmp.sto = 0;
+              }
+              else{
+
+                setDatelListClient(datelList?.data?.filter(item=>item.witel_id==dmp.witel))
+                newsto = stoList?.data?.filter(item=>item.datel_id.toString() === dmp.datel)
+                setSTOListClient(newsto)
+              }
+             
+              
               setValues(prev=>({...prev,...dmp}))
-              // setValues(prev=>({...prev,datel:value}))
-              // console.log("selected datel",datelList?.data?.find(item=>item.id==value),witelList?.data?.filter(item=>item.id==datelList?.data?.find(item=>item.id==value).witel_id))
 
             break;
             case 'sto':
+              dmp.sto = value;
               if(values.regional==0){
                 setRegionListClient(regionList?.data?.filter(item=>item.id==stoList?.data?.find(item=>item.id==value).region_id));
-                // setValues(prev=>({...prev,datel:value,witel:datelList?.data?.find(item=>item.id==value).witel_id}));
-                // dmp.witel = datelList?.data?.find(item=>item.id==value).witel_id
-                // console.log("regional value",value,regionList,regionList?.data?.find(item=>item.id==datelList?.data?.find(item=>item.id==value).region_id))
                 dmp.regional = regionList?.data?.find(item=>item.id==stoList?.data?.find(item=>item.id==value)?.region_id).id || '0';
               }
               if(values.witel==0){
                 setWitelListClient(witelList?.data?.filter(item=>item.id==stoList?.data?.find(item=>item.id==value).witel_id));
-                // setValues(prev=>({...prev,datel:value,witel:datelList?.data?.find(item=>item.id==value).witel_id}));
                 dmp.witel = witelList?.data?.find(item=>item.id==stoList?.data?.find(item=>item.id==value)?.witel_id).id || '0';
                 // dmp.witel =
-                console.log("values witel",value,values,witelList?.data?.find(item=>item.id==datelList?.data?.find(item=>item.id==value)?.witel_id).id)
+                // console.log("values witel",value,values,witelList?.data?.find(item=>item.id==datelList?.data?.find(item=>item.id==value)?.witel_id).id)
               }
               if(values.datel==0){
                 setDatelListClient(datelList?.data?.filter(item=>item.id==stoList?.data?.find(item=>item.id==value).datel_id));
-                // setValues(prev=>({...prev,datel:value,witel:datelList?.data?.find(item=>item.id==value).witel_id}));
                 dmp.datel = datelList?.data?.find(item=>item.id==stoList?.data?.find(item=>item.id==value)?.datel_id).id || '0';
-                // dmp.witel =
                 console.log("values witel",value,values,datelList?.data?.find(item=>item.id==stoList?.data?.find(item=>item.id==value)?.datel_id).id)
               }
-              setSTOListClient(stoList?.data?.filter(item=>item.id==parseInt(value)))
-              dmp.sto = value;
+              setSTOListClient(stoList?.data?.filter(item=>item.datel_id==dmp.datel))
               setValues(prev=>({...prev,...dmp}))
             break;
             default:

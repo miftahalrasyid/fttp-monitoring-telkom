@@ -69,6 +69,7 @@ https://www.youtube.com/watch?v=EIHY_CY5J0k
 
 Dockerfile
 .dockerignore
+
 docker build . 
 
 DOCKER_BUILDKIT=1
@@ -83,3 +84,18 @@ docker login docker.io
 check docker storage space
 docker system df
 
+https://www.youtube.com/watch?v=FMncgtivhSw
+
+docker run -it --name paperlessodc --platform linux/arm64/v8 -p 3000:3000 miftahalrasyid/diginote-odc-telkom-docker:latest
+
+docker buildx create --use
+
+docker-compose up (using docker-compose.yml)
+
+
+#--push for pushing to the docker.io
+docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t miftahalrasyid/diginote-odc-telkom-docker:latest --push .
+docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v8 -t miftahalrasyid/diginote-odc-telkom-docker:latest --push .
+docker buildx build --platform linux/amd64,linux/arm64,linux/arm64/v8 -t miftahalrasyid/diginote-odc-telkom-docker:latest --push .
+
+https://jitsu.com/blog/multi-platform-docker-builds
