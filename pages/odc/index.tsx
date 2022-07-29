@@ -767,8 +767,6 @@ function ODC(props) {
                 setDatelListClient(newdatel)
                 newsto = stoList?.data?.filter(item=>item.region_id.toString() === dmp.regional)
                 setSTOListClient(newsto)
-                dmp.datel = 0;
-                dmp.sto = 0;
               }
               else{
                 setWitelListClient(witelList?.data?.filter(item=>(item.region_id.toString() == dmp.regional)))
@@ -777,6 +775,8 @@ function ODC(props) {
                 newsto = stoList?.data?.filter(item=>item.witel_id.toString() === dmp.witel)
                 setSTOListClient(newsto)
               }
+              dmp.datel = 0;
+              dmp.sto = 0;
               setValues(prev=>({...prev,...dmp}))
             break;
             case 'datel':
@@ -794,14 +794,13 @@ function ODC(props) {
                 setDatelListClient(newdatel)
                 newsto = stoList?.data?.filter(item=>item.datel_id.toString() === dmp.datel)
                 setSTOListClient(newsto)
-                dmp.sto = 0
               }
               else if(dmp.datel==0){
                   newsto = stoList?.data?.filter(item=>item.witel_id.toString() === dmp.witel)
                   setSTOListClient(newsto)
                   setDatelListClient(datelList?.data?.filter(item=>item.witel_id==dmp.witel))
                 
-                dmp.sto = 0;
+                
               }
               else{
 
@@ -810,7 +809,7 @@ function ODC(props) {
                 setSTOListClient(newsto)
               }
              
-              
+              dmp.sto = 0;
               setValues(prev=>({...prev,...dmp}))
 
             break;
