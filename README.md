@@ -60,7 +60,7 @@ pm2 stop
 ### docker settings
 https://dev.to/kumareth/next-js-docker-made-easy-2bok
 
-how to set it up in server
+how to set it up in server (portainer)
 https://docs.docker.com/engine/install/ubuntu/
 https://semuada.com/articles/geek/231-cara-install-docker-di-ubuntu-20-04-focal-fossa
 
@@ -79,7 +79,8 @@ details on building docker
 https://stackoverflow.com/questions/59615266/super-slow-docker-build
 
 login docker from terminal
-docker login docker.io
+docker login 
+docker.io/miftahalrasyid/diginote-odc-telkom-docker:latest
 
 check docker storage space
 docker system df
@@ -93,9 +94,39 @@ docker buildx create --use
 docker-compose up (using docker-compose.yml)
 
 
-#--push for pushing to the docker.io
-docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t miftahalrasyid/diginote-odc-telkom-docker:latest --push .
-docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v8 -t miftahalrasyid/diginote-odc-telkom-docker:latest --push .
-docker buildx build --platform linux/amd64,linux/arm64,linux/arm64/v8 -t miftahalrasyid/diginote-odc-telkom-docker:latest --push .
-
 https://jitsu.com/blog/multi-platform-docker-builds
+
+to copy the name of the image into the same name of the repository on docker hub
+
+docker tag <name of current REPOSITORY>:<TAG> <name of the docker username>/<name of the images>
+
+then
+
+docker push <name of the docker username>/<name of the images>:<TAG>
+
+https://stackify.com/docker-build-a-beginners-guide-to-building-docker-images/
+
+### working docker build
+docker buildx build --platform linux/amd64,linux/arm64 -t miftahalrasyid/diginote-odc-telkom-docker --push .
+
+create docker instance 
+
+docker buildx create 
+
+use next@v12.2.4-canary.9 for traceable image-optimizer module next js
+use node:node:18-alpine for less issues than 16-alpine (support image-optimizer nextjs)
+
+next.config.js for older next js version to generate standalone folder on .next
+experimental: {
+    outputStandalone: true,
+},
+
+nextjs guide using docker 
+https://nextjs.org/docs/deployment
+
+restart php 
+systemctl restart php7.4-fpm
+folder yang diexecute di fpm
+
+setting client_max_body_size di segment http pada file nginx.conf
+service nginx restart

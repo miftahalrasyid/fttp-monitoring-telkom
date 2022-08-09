@@ -568,7 +568,8 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
                                 <div className={`col-lg-4 col-md-12 ${styles.textFieldContainer}`}>
                                 {/* {feederFocus.distribution[0].distribution_index} */}
                                 <CustomFormControl sx={{pointerEvents:router.asPath.split("/")[1] == 'view' ? "none" : "all"}} key='dpo1' error={errors.dist_port_1_stat?true:false} variant="standard" >
-                                    <CustomInputLabel id="demo-simple-select-standard-label">Distribusi PO1</CustomInputLabel>
+                                    <CustomInputLabel id="demo-simple-select-standard-label">D-CORE1</CustomInputLabel>
+                                    {/* <CustomInputLabel id="demo-simple-select-standard-label">Distribusi PO1</CustomInputLabel> */}
                                     {router.asPath.split("/")[1] == 'view' ? <Input value={(feederFocus?.distribution[0]?.distribution_level || false) ? (feederFocus?.distribution[0].distribution_level%2==0)?"D"+feederFocus?.distribution[0]?.distribution_level_id+"-"+(feederFocus.distribution[0].distribution_index+12):"D"+feederFocus?.distribution[0]?.distribution_level_id+"-"+feederFocus.distribution[0].distribution_index: "Empty"}></Input>
                                     : [ <NativeSelect key={'natsel1'} /*onChange={po1ClickHandler}*/ onChange={(ev)=>onchg1(ev,0,setValues)} onBlur={handleBlur} value={values.dist_port_1} inputProps={{
                                       name: 'dist_port_1',
@@ -589,7 +590,7 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
                                           // console.log("dsiteman",dsitem)
                                           // console.log("dsitem",(dsitem.rak_level%2==0)?"D"+dsitem.rak_index+"-"+(dsitem.index+13):"D"+dsitem.rak_index+"-"+dsitem.index)
                                             if(dsitem.status!=="used"){
-                                              return <option key={"dist_po1"+"D"+dsitem.rak_index+"_"+dsitem.index} value={dsitem.id}>{"D"+dsitem.rak_index+"-"+dsitem.index}</option>
+                                              return <option key={"dist_po1"+"D"+dsitem.rak_index+"_"+dsitem.index} value={dsitem.id}>{"D"+dsitem.rak_index+"-C"+dsitem.index}</option>
                                             }
                                         })
                                         })}
@@ -611,7 +612,8 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
                                   </div>
                                   <div className={`col-lg-4 col-md-12 ${styles.textFieldContainer}`}>
                                   <CustomFormControl sx={{pointerEvents:router.asPath.split("/")[1] == 'view' ? "none" : "all"}} key='dpo2' error={errors.dist_port_2_stat?true:false} variant="standard" >
-                                    <CustomInputLabel id="demo-simple-select-standard-label">Distribusi PO2</CustomInputLabel>
+                                    {/* <CustomInputLabel id="demo-simple-select-standard-label">Distribusi PO2</CustomInputLabel> */}
+                                    <CustomInputLabel id="demo-simple-select-standard-label">D-CORE2</CustomInputLabel>
                                     {router.asPath.split("/")[1] == 'view' ? <Input value={(feederFocus?.distribution[1]?.distribution_level || false) ? (feederFocus?.distribution[1].distribution_level%2==0)?"D"+feederFocus?.distribution[1]?.distribution_level_id+"-"+(feederFocus.distribution[1].distribution_index+12):"D"+feederFocus?.distribution[1]?.distribution_level_id+"-"+feederFocus.distribution[1].distribution_index : "Empty"}></Input>
                                     :[<NativeSelect key={"natsel2"} onChange={(ev)=>onchg1(ev,1,setValues)} onBlur={handleBlur} value={values.dist_port_2} inputProps={{
                                       name: 'dist_port_2',
@@ -629,7 +631,7 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
                                           // console.log("dsiteman",dsitem)
                                           // console.log("dsitem",(dsitem.rak_level%2==0)?"D"+dsitem.rak_index+"-"+(dsitem.index+13):"D"+dsitem.rak_index+"-"+dsitem.index)
                                             if(dsitem.status!=="used")
-                                          return <option key={"dist_po2"+"D"+dsitem.rak_index+"_"+dsitem.index} value={dsitem.id}>{"D"+dsitem.rak_index+"-"+dsitem.index}</option>
+                                          return <option key={"dist_po2"+"D"+dsitem.rak_index+"_"+dsitem.index} value={dsitem.id}>{"D"+dsitem.rak_index+"-C"+dsitem.index}</option>
                                           // return <option key={"dist_po2"+"D"+dsitem.rak_index+"_"+dsitem.index} value={dsitem.id}>{(dsitem.rak_level%2==0)?"D"+dsitem.rak_index+"-"+(dsitem.index+12):"D"+dsitem.rak_index+"-"+dsitem.index}</option>
                                         })
                                         })}
@@ -651,7 +653,8 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
                                   </div>
                                   <div className={`col-lg-4 col-md-12 ${styles.textFieldContainer}`}>
                                   <CustomFormControl sx={{pointerEvents:router.asPath.split("/")[1] == 'view' ? "none" : "all"}} key='dpo3' error={errors.dist_port_3_stat?true:false} variant="standard" >
-                                    <CustomInputLabel id="demo-simple-select-standard-label">Distribusi PO3</CustomInputLabel>
+                                    <CustomInputLabel id="demo-simple-select-standard-label">D-CORE3</CustomInputLabel>
+                                    {/* <CustomInputLabel id="demo-simple-select-standard-label">Distribusi PO3</CustomInputLabel> */}
                                     {router.asPath.split("/")[1] == 'view' ? <Input value={(feederFocus?.distribution[2]?.distribution_level || false) ? (feederFocus?.distribution[1].distribution_level%2==0)?"D"+feederFocus?.distribution[2]?.distribution_level_id+"-"+(feederFocus.distribution[2].distribution_index+12):"D"+feederFocus?.distribution[2]?.distribution_level_id+"-"+feederFocus.distribution[2].distribution_index : 'Empty'}></Input>
                                     :[<NativeSelect key={'natsel3'} onChange={(ev)=>onchg1(ev,2,setValues)} onBlur={handleBlur} value={values.dist_port_3} inputProps={{
                                       name: 'dist_port_3',
@@ -669,7 +672,7 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
                                           // console.log("dsiteman",dsitem)
                                           // console.log("dsitem",(dsitem.rak_level%2==0)?"D"+dsitem.rak_index+"-"+(dsitem.index+13):"D"+dsitem.rak_index+"-"+dsitem.index)
                                             if(dsitem.status!=="used")
-                                          return <option key={"dist_po3"+"D"+dsitem.rak_index+"_"+dsitem.index} value={dsitem.id}>{"D"+dsitem.rak_index+"-"+dsitem.index}</option>
+                                          return <option key={"dist_po3"+"D"+dsitem.rak_index+"_"+dsitem.index} value={dsitem.id}>{"D"+dsitem.rak_index+"-C"+dsitem.index}</option>
                                         })
                                         })}
                                 </NativeSelect>,
@@ -690,7 +693,8 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
                                   </div>
                                   <div className={`col-lg-4 col-md-12 ${styles.textFieldContainer}`}>
                                   <CustomFormControl sx={{pointerEvents:router.asPath.split("/")[1] == 'view' ? "none" : "all"}} key='dpo4' error={errors.dist_port_4_stat?true:false} variant="standard" >
-                                    <CustomInputLabel id="demo-simple-select-standard-label">Distribusi PO4</CustomInputLabel>
+                                    <CustomInputLabel id="demo-simple-select-standard-label">D-CORE4</CustomInputLabel>
+                                    {/* <CustomInputLabel id="demo-simple-select-standard-label">Distribusi PO4</CustomInputLabel> */}
                                     {router.asPath.split("/")[1] == 'view' ? <Input value={(feederFocus?.distribution[3]?.distribution_level || false) ? (feederFocus?.distribution[1].distribution_level%2==0)?"D"+feederFocus?.distribution[3]?.distribution_level_id+"-"+(feederFocus.distribution[3].distribution_index+12):"D"+feederFocus?.distribution[3]?.distribution_level_id+"-"+feederFocus.distribution[3].distribution_index : 'Empty'}></Input>
                                     :[<NativeSelect key={'natsel4'} value={values.dist_port_4} onChange={(ev)=>onchg1(ev,3,setValues)} onBlur={handleBlur} inputProps={{
                                       name: 'dist_port_4',
@@ -708,7 +712,7 @@ const onchg1 = useCallback((ev,poid,setValues)=>{
                                           // console.log("dsiteman",dsitem)
                                           // console.log("dsitem",(dsitem.rak_level%2==0)?"D"+dsitem.rak_index+"-"+(dsitem.index+13):"D"+dsitem.rak_index+"-"+dsitem.index)
                                             if(dsitem.status!=="used")
-                                          return <option key={"dist_po4"+"D"+dsitem.rak_index+"_"+dsitem.index} value={dsitem.id}>{"D"+dsitem.rak_index+"-"+dsitem.index}</option>
+                                          return <option key={"dist_po4"+"D"+dsitem.rak_index+"_"+dsitem.index} value={dsitem.id}>{"D"+dsitem.rak_index+"-C"+dsitem.index}</option>
                                         })
                                         })}
                                 </NativeSelect>,

@@ -117,7 +117,8 @@ function* otpVerify({payload:{value,history,setError}}: IotpVerify){
         if(res.success){
             setError("")
             // console.log("go to odc",history)
-            yield document.cookie = "token="+res.data.token;
+            let date = new Date;
+            yield document.cookie = "token="+res.data.token +'; expires='+date.setDate(date.getDate() + 1)+';';
             yield history.push("/odc");
             yield put({type: OTP_VERIFICATION_SUCCESSFUL})
         }

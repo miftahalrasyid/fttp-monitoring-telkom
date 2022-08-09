@@ -8,6 +8,14 @@
     min-height: calc(100vh - 123px);
     height: calc(100vh - 123px);
 }
+.customselect:focus{
+    color:white;
+    background-color: inherit;
+}
+.customselect:focus option{
+    color:#4b4b4b;
+    background-color: white;
+}
 .cardWrapper .simplebar-content{
     display: flex !important;
 }

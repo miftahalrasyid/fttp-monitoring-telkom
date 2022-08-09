@@ -4,6 +4,7 @@ import Sidebar from '../Sidebar';
 // import Sidebar from '../Sidebar';
 import Footer from '../Footer';
 import styles from './layout.module.css';
+import Loading from '../Loading';
 
 export default function Layout(props) {
     // const LayoutDiv = (pageProps) =>{
@@ -30,10 +31,13 @@ export default function Layout(props) {
         datelList,
         stoList,
         merekList,
-        user_rowsPerPage
+        user_rowsPerPage,
+        gotopageLoading,
+        changePageTo,
+        gotopage
     } = props;
     // console.log("email",regionList)
-
+    console.log("get page loading",gotopageLoading)
     const [closeState,setCloseState] = useState(true);
     const closeMenu = useCallback(event=>{
         setCloseState(!closeState);
@@ -52,6 +56,10 @@ export default function Layout(props) {
         if(ODCdetailDataClient?.length!==0)
         setODCdetail(ODCdetailDataClient)
     },[ODCdetailDataClient])
+    // useEffect(()=>{
+        
+    //     changePageTo(location.pathname)
+    // },[])
     return <div className={styles.layoutWrapper}>
         <Sidebar odcProps={{regionList,witelList,datelList,stoList,merekList,odc_rowsPerPage}} token={token}/>
         <div className={styles.topGap}>
@@ -61,6 +69,7 @@ export default function Layout(props) {
             <div className={styles.overlay} onClick={closeMenu}></div>
         </div>
         <Footer/>
+        {gotopageLoading? <Loading/>:null}
     </div>;
     // return LayoutDiv;
 }

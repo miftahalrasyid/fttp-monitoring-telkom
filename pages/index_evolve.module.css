@@ -25,6 +25,7 @@
     height:100vh;
 }
 .backdrop > span{
+    min-width: 100%;
     width: auto !important;
     height: 100% !important;
 }
@@ -318,4 +319,34 @@
     color: red;
     flex-basis: 50%;
     text-align: center;
+}
+.logoWrapper_small{
+    position:absolute;
+}
+@media screen and (max-width: 1080px) {
+    .leftSide{
+        display:none;
+    }
+    .rightSide{
+        /* gap: 7rem; */
+        justify-content: space-evenly;
+    }
+    .footer_small{
+        position: relative;
+        color: #AAAAAA;
+        text-align: center;
+    }
+    .logoWrapper_small{
+        position:relative;
+        width: 100%;
+        height: 85px;
+    }
+    .logoContainer_small{
+        width: 133px;
+        left:0;
+        right:0;
+        margin:auto;
+        /* height: 100%; */
+        position: absolute;
+    }
 }

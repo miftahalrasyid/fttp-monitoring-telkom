@@ -146,6 +146,12 @@ function Index(props) {
             <Tab label="New User" classes={{ root: styles.tab }} />
           </Tabs> */}
           {/* {activeTabId === 0 && ( */}
+          <div className={styles.logoWrapper_small}>
+        <div className={` ${styles.logoContainer_small}`}>
+          <Image src={logo_paperless} width={230} height={162} alt={"background"}/>
+        </div>
+
+      </div>
           <React.Fragment>
           <div className={styles.baloon}>
         <div className={styles.form}>
@@ -408,7 +414,9 @@ function Index(props) {
         </div>
       </div>
           </React.Fragment>
-          
+      <div className={styles.footer_small}>
+        <p>© 2022 Telkom Indonesia, Tbk. All rights reserved</p>
+      </div>
     </div>
   </div>
   )

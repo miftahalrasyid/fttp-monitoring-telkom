@@ -7,7 +7,7 @@ import { MdMenu } from 'react-icons/md';
 import Image from 'next/image';
 import Link from 'next/link';
 // import {Modal,Box,FormControl,InputLabel,NativeSelect, CircularProgress,Backdrop} from '@material-ui/core';
-import { Modal,Box,FormControl,InputLabel, NativeSelect, CircularProgress, Backdrop, TabsProps, TextFieldProps, ButtonProps, CircularProgressProps, InputLabelProps } from '@mui/material'
+import { Modal,Box,FormControl,InputLabel, NativeSelect, CircularProgress, Backdrop, TabsProps, TextFieldProps, ButtonProps, CircularProgressProps, InputLabelProps, InputAdornment } from '@mui/material'
 import { 
   styled as styledCustom
 } from "@mui/material/styles";
@@ -40,8 +40,9 @@ import {
   addNewUser as IaddNewUser
 } from '../store/users/actions';
 import {
-  
-} from '../store/odcs/actions'
+  changePageTo as IchangePageTo
+} from '../store/layouts/actions'
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 // import {
 //   MdOutlineAddBox,
 // } from 'react-icons/md';
@@ -149,8 +150,9 @@ function a11yProps(index) {
 
 function Navbar(props) {
   const odc_edit_modal = useRef(null);
-  const { odcProps = {regionList:{data:[]},witelList:"",datelList:"",stoList:"",merekList:""},odcDispatch,dataClient,odcData,email,role_name, add_user_confirmation,token,user_rowsPerPage} = props;
+  const { odcProps = {regionList:{data:[]},witelList:"",datelList:"",stoList:"",merekList:""},odcDispatch,dataClient,odcData,email,role_name, add_user_confirmation,token,user_rowsPerPage,gotopage,gotopageLoading} = props;
   const {addNewUser}:{addNewUser: typeof IaddNewUser} = props
+  const {changePageTo}: {changePageTo: typeof IchangePageTo} = props
   // console.log("odc props",user_rowsPerPage)
   // useEffect(()=>{
 // useEffect(()=>{
@@ -310,7 +312,15 @@ const handleOnChange = (ev,newValues,setValues) =>{
       break;
   }
 }
-
+useEffect(()=>{
+  console.log("layout pathname",gotopage,location.pathname)
+  changePageTo(location.pathname)
+},[odcId])
+/** handle change page to  */
+const handleOdcActions = (pathname) =>{
+  changePageTo(pathname)
+}
+const [showPassword, setShowPassword] = useState(false);
   return  <nav id={indexStyles.topBar}>
     {/* <ToastContainer style={{zIndex:"99999999999"}}/> */}
       {/* <div className='container-fluid'></div> */}
@@ -320,7 +330,9 @@ const handleOnChange = (ev,newValues,setValues) =>{
               <Link href={"/"} passHref>
                 <a className={indexStyles.logo}>
                     {(!odcId && router.pathname.replace(/(\/.*)?\/(\S+)/,"$2") === "odc")?
-                    <span className={indexStyles.logoTxtOdc}> {`Hello, ${email.slice(0,5)}`}</span>:
+                    <span className={indexStyles.logoTxtOdc}> {`Hello, ${email.replace(/(\w+)?@\S+/,"$1")}`}</span>:
+                    // <span className={indexStyles.logoTxtOdc}> {`Hello, ${email.replace(/(\w{0,5})(.*)?@\S+/,"$1")}`}</span>:
+                    // <span className={indexStyles.logoTxt}> {(!odcId)?gotopage.replace(/(\/.*)?\/(\S+)/,"$2").toUpperCase():odcId[0].toUpperCase()}</span>
                     <span className={indexStyles.logoTxt}> {(!odcId)?router.pathname.replace(/(\/.*)?\/(\S+)/,"$2").toUpperCase():odcId[0].toUpperCase()}</span>
                     }
                     {/* <span className={indexStyles.logoTxt}> {(!odcId)?router.pathname.replace(/(\/.*)?\/(\S+)/,"$2").toUpperCase():odcId.toUpperCase()}</span> */}
@@ -645,7 +657,7 @@ const handleOnChange = (ev,newValues,setValues) =>{
 
                   
                   <Link href={`/odc/${(odcId as any).join('/')}/status`} passHref>
-                  <a>
+                  <a onClick={()=>handleOdcActions(`/odc/${(odcId as any).join('/')}/status`)}>
                     <CustomButtonStatus variant="outlined" color='primary' size="large">
                       {/*
                       <MdOutlineAddBox /> */}
@@ -654,7 +666,7 @@ const handleOnChange = (ev,newValues,setValues) =>{
                   </a>
                   </Link>
                   <Link href={`/odc/${(odcId as any).join('/')}/activity log`} passHref>
-                  <a>
+                  <a onClick={()=>handleOdcActions(`/odc/${(odcId as any).join('/')}/activity%20log`)}>
                   <CustomButtonActivityLog variant="outlined" color='primary' size="large">
                     {/* <MdOutlineAddBox/>  */}
                     Activity Log
@@ -669,6 +681,7 @@ const handleOnChange = (ev,newValues,setValues) =>{
                   </div>:null
                 }
                 {/* users action options */}
+                {/* {(gotopage=="/users")? */}
                 {(router.asPath=="/users")?
                 <div className={indexStyles.odcAction}>
                   <CustomButtonEdit onClick={handleAddUserOpen} variant="outlined" color='primary' size="large">
@@ -757,7 +770,33 @@ const handleOnChange = (ev,newValues,setValues) =>{
                         />
                       </div>
                       <div className={`col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
-                        <CustomTextField 
+                        <CustomTextField name='password' label="Password" type={ showPassword ? "text" : "password" }
+                          size="small" variant="standard" onChange={ handleChange } onBlur={handleBlur} value={
+                          values.password } InputProps={ { endAdornment: ( <InputAdornment position="end"> {
+                          showPassword ? (
+                          <Visibility onClick={()=>
+                            setShowPassword(prev=>!prev)
+                            }
+                            />
+                            ) : (
+                            <VisibilityOff onClick={ ()=>
+                              setShowPassword(prev=>!prev)
+                              }
+                              />
+                              )
+                              }
+                              </InputAdornment>
+                              ),
+                              }
+                              }
+                              />
+                              {/*
+                              <CustomTextField id="standard-basic" name='password' label="Password" type={"password"}
+                                onChange={handleChange} onBlur={handleBlur} variant="standard"
+                                defaultValue={values.password} /> */}
+                      </div>
+                      {/* <div className={`col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
+                        <CustomTextField
                         id="standard-basic" 
                         label="Password" 
                         onChange={handleChange}
@@ -768,7 +807,7 @@ const handleOnChange = (ev,newValues,setValues) =>{
                         value={values.password} 
                         error={errors.password ? true:false}
                         helperText={errors.password && touched.password && errors.password}/>
-                      </div>
+                      </div> */}
                       <div className={`col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
                         <FormControl key='role' variant="standard" sx={{ m: 1, minWidth: 124 }}>
                           <CustomInputLabel id="demo-simple-select-standard-label">Role</CustomInputLabel>
@@ -825,12 +864,13 @@ const handleOnChange = (ev,newValues,setValues) =>{
                 {/* : null)} */}
             
             </div>
+            {/* {(gotopage=="/odc")&& <div className={styles.userContainer}> */}
             {(router.asPath=="/odc")&& <div className={styles.userContainer}>
               <div className={styles.userImg}>
                 <BsFillFilePersonFill/>
               </div>
               <div className={styles.userDetail}>
-                  <h6>{email.replace(/(\w+)@\S+/,"$1")}</h6>
+                  <h6>{email?.replace(/(\w+)@\S+/,"$1")}</h6>
                  <span>{role_name}</span>
 
               </div>
@@ -842,11 +882,15 @@ const handleOnChange = (ev,newValues,setValues) =>{
 
 const mapStateToProps = state => ({
   dataClient:state?.ODCs?.selectedOdcSplitpanelStatus,
-  add_user_confirmation: state.Users.add_user
+  add_user_confirmation: state.Users.add_user,
+  gotopageLoading: state.Layout.page_loading,
+  gotopage: state.Layout.goto,
+  // gotopageLoading: state.Layout.page_loading
 
 })
 const mapDispatchToProps = {
-  addNewUser:IaddNewUser
+  addNewUser:IaddNewUser,
+  changePageTo: IchangePageTo
 }
 
 export default connect(mapStateToProps,mapDispatchToProps)(Navbar);

@@ -1,6 +1,7 @@
 .cardContainer{
     position: relative;
     min-width: 155px;
+    width:155px;
     height: 150px;
     /* float: left; */
     display: flex;

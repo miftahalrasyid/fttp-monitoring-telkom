@@ -55,6 +55,7 @@ import {
   getActivityLog,
   setTableRowsPerPage
 } from '../../components/store/odcs/actions';
+import {changePageTo as IchangePageTo} from '../../components/store/layouts/actions'
 import { wrapper,makeStore } from "../../components/store";
 // import store from '../../components/store'
 import Modal from '../../components/Modal';
@@ -300,6 +301,8 @@ function Odc({
     updateODCPort_odcSaga,
     setSelectedCoreFeeder_odcSaga,
     upsertODCFile_odcSaga,
+    changePageTo,
+    gotopage,
     ODCdetailDataClient
     }:{
       getActivityLog_odcSaga: typeof getActivityLog,
@@ -314,7 +317,9 @@ function Odc({
       updateODCPort_odcSaga: typeof updateODCPort,
       setSelectedCoreFeeder_odcSaga: typeof setSelectedCoreFeeder,
       upsertODCFile_odcSaga: typeof upsertODCFile
-      ODCdetailDataClient: any
+      ODCdetailDataClient: any,
+      gotopage: string,
+      changePageTo: typeof IchangePageTo
     }) {
       // console.log("odcdetail data [...odcid]",ODCdetailDataClient)
       const notes = useRef(null);
@@ -353,6 +358,7 @@ function Odc({
       witel_name,
       datel_name,
       sto_name,
+      // splitter={splitter:{position:[]},data:[],position:"top left"},panel={data:[],position:"top left"}} = ODCData;
       splitter={splitter:{position:[]},data:[],position:"top left"},panel={data:[],position:"top left"}} = (viewOdcClient || false)? viewOdcClient:ODCData;
     const feederModal = useState({type:"",status:false});
     // const [feederFocus,setFeederFocus] = useState(false); 
@@ -794,9 +800,10 @@ function Odc({
     // console.log("kml ",kml_name,KMLSelectedFiles.length==0 && (kml_name || false))
     const handleAcceptedKMLFiles = files => {
       files.map((file,idx) => {
-        console.log("uploaded file",file,file.type,file.type.split("/")[1]!==('png' || 'jpeg' || 'jpg'))
+        // console.log("uploaded file",file,file.type,file.type.split("/")[1]!==('png' || 'jpeg' || 'jpg'))
         let metadata:any = {};
         metadata.idx = idx;
+        // if(file.type.split("/")[1]!==('kml' || 'kmz'))
         if(file.type.split("/")[1]!==('png' || 'jpeg' || 'jpg'))
         metadata.preview = URL.createObjectURL(file)
         // else
@@ -1044,8 +1051,8 @@ function Odc({
                         
                         <Dropzone
                   accept={{
-                    'image/jpeg': [],
-                    'image/png': []
+                    'application/vnd.google-earth.kml+xml': ['.kml'],
+                    'application/vnd.google-earth.kmz': ['.kmz'],
                   } as any}
                   // accept={'image/xls, image/xlsx' as any}
                   onDrop={acceptedFiles =>
@@ -1111,8 +1118,8 @@ function Odc({
                       <div className={styles.uploadFileWrapper}>
                       <Dropzone
                   accept={{
-                    'image/jpeg': [],
-                    'image/png': []
+                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx','.xls'],
+                    'application/vnd.ms-excel': ['.xls']
                   } as any}
                   onDrop={acceptedFiles =>
                     handleAcceptedMCFiles(acceptedFiles)
@@ -1216,7 +1223,7 @@ function Odc({
                     {item.data.map(distFeed=>{
                       
                       return <FormControl key={"panel"+distFeed.index} variant="standard" sx={{ m: 1, minWidth: 97,marginTop:item.type == 'distribution' && item.rak_index == '1' && distFeed.index<=12 ? "2rem":"0.5rem" }}>
-                     <InputLabel id="demo-simple-select-standard-label" className={styles.portLabel}> { ((item.rak_level)%2===0)?item.type+item.rak_index+" "+(distFeed.index):item.type+item.rak_index+" "+distFeed.index }</InputLabel>
+                     <InputLabel id="demo-simple-select-standard-label" className={styles.portLabel}> { (item.type=="feeder"?"F":"D")+item.rak_index+"-C"+distFeed.index }</InputLabel>
                      {/* <InputLabel id="demo-simple-select-standard-label" className={styles.portLabel}> { ((item.rak_level)%2===0)?item.type+item.rak_index+" "+(distFeed.index+12):item.type+item.rak_index+" "+distFeed.index }</InputLabel> */}
                         {/* {ODCData.panel.data.length}
                         {item.data.length} */}
@@ -1381,7 +1388,9 @@ function Odc({
                                           name: "Tanggal",
                                           options:{
                                             customBodyRender:(value, tableMeta, update) => {
-                                              let newValue = tableMeta.rowData[3]
+                                              let newdate = new Date(tableMeta.rowData[3])
+                                              let newValue = newdate.toLocaleDateString().replaceAll("/","-")+" "+newdate.toLocaleTimeString()
+                                              // let newValue = tableMeta.rowData[3]
                                               return ( <span>{newValue}</span> )
                                             },
                                             filter:false,
@@ -1413,12 +1422,16 @@ function Odc({
 
 export const getServerSideProps = async (props) => wrapper.getServerSideProps(store => async ({req, res, ...etc}) => {
     // const { token } = /authUserToken=(?<token>\S+)/g.exec(req.headers.cookie)?.groups || {token: ""} ;
+    // if(!req.cookies.token)
+    // return {
+    //   redirect:{
+    //     permanent:false,
+    //     destination: "/"
+    //   }
+    // }
     if(!req.cookies.token)
     return {
-      redirect:{
-        permanent:false,
-        destination: "/"
-      }
+      notFound: true
     }
     const {params:{odcId=[]}} = props;
     // console.log("odc id req",req)
@@ -1469,6 +1482,8 @@ export const getServerSideProps = async (props) => wrapper.getServerSideProps(st
       })(props);
 
 const mapStateToProps = state => ({
+    gotopage: state.Layout.goto,
+    gotopageLoading: state.Layout.page_loading,
     ODCdetailDataClient:state?.ODCs.selectedOdcSplitpanelDetail?.data|| [],
     dataClient:state?.ODCs?.odcsBox,
     activity_log_client: state?.ODCs?.activity_log_list,
@@ -1478,6 +1493,7 @@ const mapStateToProps = state => ({
     coreFeederDataClient: state.ODCs.client.coreFeederData,
 });
 const mapFunctionToProps = {
+    changePageTo: IchangePageTo,
     setSelectedCoreFeeder_odcSaga: setSelectedCoreFeeder,
     updateODCData, // used in navbar component
     deleteSelectedCoreFeeder: IdeleteSelectedCoreFeeder,

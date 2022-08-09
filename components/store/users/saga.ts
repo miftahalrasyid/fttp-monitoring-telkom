@@ -334,10 +334,10 @@ function* updateUserData({
 
         var myHeaders = new Headers();
         myHeaders.append("Authorization", "Bearer "+token);
-        console.log("if password kosong",!password || false)
+        // console.log("if password kosong",!password || false)
         var formdata = new FormData();
         formdata.append("email", email);
-        if(!password || false)
+        if(password)
         formdata.append("password", password);
         formdata.append("role", role);
         formdata.append("status", status);

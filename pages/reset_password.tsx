@@ -242,6 +242,10 @@ console.log(!resetPasswordConfirm)
 }
 export const getServerSideProps = async (props) => wrapper.getServerSideProps(store => async({req,res,...etc})=>{
   // console.log("req res reset password",)
+  if(!etc.query.code)
+  return {
+    notFound: true
+  }
   store.dispatch(verifyResetCode(etc.query.code));
   store.dispatch(END)
   await store.sagaTask.toPromise();

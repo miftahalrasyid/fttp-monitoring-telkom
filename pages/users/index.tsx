@@ -36,6 +36,7 @@ import {
   getMerekList,
   addODCData,
 } from '../../components/store/odcs/actions';
+import {changePageTo as IchangePageTo} from '../../components/store/layouts/actions';
 import { wrapper } from '../../components/store';
 import { END } from 'redux-saga';
 import {
@@ -243,7 +244,8 @@ function User({
   getUserData_userSaga,
   user_list_client={success:false,data:[],total_rows:"",count:""},
   updateUserData,
-  setTableRowsPerPage
+  setTableRowsPerPage,
+  changePageTo
 }:{
   user_list:{
     success:boolean,
@@ -260,7 +262,8 @@ function User({
   getUserData_userSaga:typeof getUserData,
   user_list_client:any,
   updateUserData: any,
-  setTableRowsPerPage: typeof IsetTableRowsPerPage
+  setTableRowsPerPage: typeof IsetTableRowsPerPage,
+  changePageTo: typeof IchangePageTo
 }) {
   const [datatable, setDatatable] = React.useState([[]]);
   const [newTableState,setNewTableState] = useState({page:0,rowsPerPage:5,search_text:null,sort:{orderBy:null,direction:null}})
@@ -857,15 +860,16 @@ const [showPassword, setShowPassword] = useState(false);
 
 export const getServerSideProps = async (props) => wrapper.getServerSideProps(store => async ({req, res, ...etc}) => {
   // const {params:{odcId=[]}} = props;
-  const {role} = jwt(req.cookies.token) as any;
   // console.log("token value",jwt(req.cookies.token))
-  if(!req.cookies.token || role!==1)
+  if(!req.cookies.token)
   return {
-    redirect:{
-      permanent:false,
-      destination: "/"
-    }
+    notFound: true
   }
+  // redirect:{
+  //   permanent:false,
+  //   destination: "/"
+  // }
+  const {role} = jwt(req.cookies.token) as any;
   store.dispatch(getUserData({page:1,rowsPerPage:5, sortBy:null,sortOrder:null,email:null},req.cookies.token,null,toast))
   /**
    * untuk button add odc pada page users
@@ -909,10 +913,12 @@ export const getServerSideProps = async (props) => wrapper.getServerSideProps(st
     })(props);
 const mapStateToProps = state =>({
   user_list_client: state.Users.userData,
-  user_rowsPerPage: state.Users.tableRowsPerPage
+  user_rowsPerPage: state.Users.tableRowsPerPage,
+  gotopageLoading: state.Layout.page_loading
 })
 
 const mapDispatchToProps = {
+  changePageTo: IchangePageTo,
   addNewUser,
   getUserData_userSaga:getUserData,
   updateUserData,

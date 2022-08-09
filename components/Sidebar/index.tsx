@@ -18,6 +18,9 @@ import {
   getMerekList,
   addODCData,
 } from '../store/odcs/actions';
+import {
+  changePageTo as IchangePageTo
+} from '../store/layouts/actions'
 import {Formik} from 'formik';
 import styles from './sidebar_evolve.module.css';
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
@@ -121,7 +124,11 @@ function Index_evolve({odcProps,token,addODCData,...etc}) {
       getDatelList,
       getSTOList,
       getMerekList,
-    } = etc
+      gotopage,
+      gotopageLoading
+    } = etc;
+    const {changePageTo} = etc
+    // console.log("goto",gotopage)
     const router = useRouter();
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
@@ -131,10 +138,13 @@ function Index_evolve({odcProps,token,addODCData,...etc}) {
         setValue(newValue);
       };
     const handleLogout = () =>{
-      document.cookie = 'token=; Max-Age=0; path=/; domain=' + location.hostname
-      // console.log("logout");
+      // document.cookie = 'token=; Max-Age=0; path=/; domain=' + location.hostname
+      // document.cookie = 'token=; Path=/;  Domain=' + location.host +  '; Expires=Thu, 01 Jan 1970 00:00:01 GMT; SameSite=None; Secure'
+      document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+      console.log("logout",document.cookie);
       // document.cookie = 'token=; Max-Age=0'
       router.push("/")
+      // router.push(location.pathname)
     }
     const useStyles = makeStyles(theme => ({
         green: {
@@ -271,6 +281,17 @@ function Index_evolve({odcProps,token,addODCData,...etc}) {
         .filter(item=>item.datel_id.toString() == datelList?.data?.filter(item=>item.region_id.toString() === regionList.data[0].id.toString())
         .filter(item=>item.witel_id.toString() == witelList?.data?.filter(item=>item.region_id.toString() === regionList.data[0].id.toString())[0].id.toString())[0].id.toString()))
       },[])
+      const onUsersClick = () =>{
+        changePageTo("/users")
+        // console.log("refetch",gotopage,gotopageLoading)
+      }
+      const onODCsClick = () =>{
+        changePageTo("/odc")
+        // console.log("refetch",gotopage,gotopageLoading)
+      }
+      useEffect(()=>{
+        changePageTo(location.pathname)
+      },[])
   return (
     <div className={`${styles.verticalMenu}`}>
     <div className={styles.sidebarLogo}>
@@ -280,6 +301,7 @@ function Index_evolve({odcProps,token,addODCData,...etc}) {
               <span className={styles.logoLg}>
                 <span className={styles.logoImg}>
                   <Image src="/img/logo_paperless.png" alt="logo" width={156} height={110}/>
+                  {/* <img src="/img/logo_paperless.png" alt="logo" width={156} height={110}/> */}
                 </span>
               </span>
             </a>
@@ -293,10 +315,11 @@ function Index_evolve({odcProps,token,addODCData,...etc}) {
         <ul>
             <li>
                 <Link href={"/odc"}>
-                    <a>
+                    <a onClick={onODCsClick}>
                         <div className={styles.menuList}>
                             <div className={styles.menuIcon}>
                                 <Image src={home} width={27} height={27} alt={"home"}/>
+                                {/* <img src={"/img/Home.png"} width={27} height={27} alt={"home"}/> */}
                             </div>
                             <p>Home</p>
                         </div>
@@ -305,8 +328,8 @@ function Index_evolve({odcProps,token,addODCData,...etc}) {
                 </Link>
             </li>
             {(role_name==="Admin") && <li>
-              <Link href="/users">
-                <a>
+              <Link href="/users" >
+                <a onClick={onUsersClick}>
                   <div className={styles.menuList}>
                     <div className={styles.menuIcon}>
                       <IoPersonCircleOutline className={styles.sidebarSvg} />
@@ -324,6 +347,7 @@ function Index_evolve({odcProps,token,addODCData,...etc}) {
       <div className={styles.action}>
           <div className={styles.sidebarImage}>
               <Image src={sidebar_img} priority width={180} height={210} alt={'sidebar_img'}/>
+              {/* <img src={"/img/sidebarImg.png"} width={180} height={210} alt={'sidebar_img'}/> */}
           </div>
           <p>Action</p>
           <div className={styles.actionBtn}>
@@ -635,6 +659,8 @@ function Index_evolve({odcProps,token,addODCData,...etc}) {
   )
 }
 const mapStateToProps = state =>({
+  gotopage: state.Layout.goto,
+  gotopageLoading: state.Layout.page_loading
   // regionList: state.ODCs.region_list,
   // witelList: state.ODCs.witel_list,
   // datelList: state.ODCs.datel_list,
@@ -642,6 +668,7 @@ const mapStateToProps = state =>({
   // merekList: state.ODCs.merek_list
 });
 const mapDispatchToProps = {
+  changePageTo: IchangePageTo,
   addODCData,
   getRegionList,
   getWitelList,

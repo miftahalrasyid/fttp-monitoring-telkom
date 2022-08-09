@@ -1,5 +1,19 @@
 module.exports = {
+  /** to generate standalone node server */
+  // output: 'standalone',
+  experimental: {
+    outputStandalone: true,
+    // outputFileTracingRoot: path.join(__dirname, '../../')
+  },
   reactStrictMode: true,
+  images: {
+    domains: [
+      'paperlessodctelkom.xyz',
+      'www.paperlessodctelkom.xyz',
+      'localhost',
+      'localhost:3000'
+    ],
+  },
   async rewrites() {
     return [
       {
