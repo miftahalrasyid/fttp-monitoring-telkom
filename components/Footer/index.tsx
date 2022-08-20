@@ -1,9 +1,10 @@
 import React from 'react';
 import styles from './footer.module.css';
+import Link from 'next/link';
 
 function footer() {
   return <footer className={`wrapper ${styles.footerContainer}`}><div className="container-fluid">
-      Develop by SwitchBox
+    Copyright © 2022 Telkom Indonesia, Tbk. Designed & Developed by <Link href={'https://switchbox.id/'}><a style={{ textDecoration: "none" }} target={"_blank"} >SwitchBox</a></Link>
   </div></footer>;
 }
 

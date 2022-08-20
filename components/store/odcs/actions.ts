@@ -29,9 +29,10 @@ import {
     GET_ACTIVITYLOG,
     GET_DASHBOARD_CARD,
     SET_TABEL_PAGE,
-    SET_TABEL_SORT
+    SET_TABEL_SORT,
+    EXPORT_ODC
 } from './actionTypes'
-import { ChangeOdcPageData, FeederDetail, GetDashCardData, IchangeODCPage, IdeleteSelectedCoreFeeder, IgetActivityLog, IgetDashCard, IgetOcdSplitpanelDetail, IgetOcdSplitpanelStatus, IsetSelectedCoreFeeder, IupdateNotes, IupdateODCPort, SetSelectedCoreFeederData } from './types';
+import { ChangeOdcPageData, FeederDetail, GetDashCardData, IchangeODCPage, IdeleteSelectedCoreFeeder, IexportODCData, IgetActivityLog, IgetDashCard, IgetOcdSplitpanelDetail, IgetOcdSplitpanelStatus, IsetSelectedCoreFeeder, IupdateNotes, IupdateODCPort, SetSelectedCoreFeederData } from './types';
 export const getSplitterData = () =>({
     type: GET_SPLITTER_DATA,
 });
@@ -222,8 +223,13 @@ export const updateODCPort = (odcId: string,field_id: string,table_name: string,
     payload: {odcId,field_id,table_name,value,token,toast}
 })
 
-export const getActivityLog = (odcId: string,page: number,rowsPerPage: number,sortBy: string,sortOrder: string,token: string,email: string): IgetActivityLog => ({
+export const getActivityLog = (odcId: string,page: number,rowsPerPage: number,sortBy: string,sortOrder: string,token: string,email: string,filter: Array<Array<string>>): IgetActivityLog => ({
     type: GET_ACTIVITYLOG,
-    payload: {odcId,page,rowsPerPage,sortBy,sortOrder,token,email}
+    payload: {odcId,page,rowsPerPage,sortBy,sortOrder,token,email,filter}
+})
+
+export const exportODCDataFn = (odc_name: string,odcId: string,token: string,toast: any): IexportODCData => ({
+    type: EXPORT_ODC,
+    payload: {odc_name,odcId,token,toast}
 })
 

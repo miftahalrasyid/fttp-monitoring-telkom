@@ -6,8 +6,17 @@ export default class MyDocument extends Document {
   render() {
 
     return (
-      <Html lang="en">
+      <Html lang="en" data-notch="true" data-orientation="portrait">
         <Head>
+        <meta charSet={"utf-8"} /> 
+        <meta name="theme-color" content="red"></meta>
+        {/* <meta name="theme-color" content="hsla(40,95%,85%,0.5)"></meta> */}
+        <meta name='viewport' content='initial-scale=1, viewport-fit=cover'></meta>
+        <meta name="apple-mobile-web-app-status-bar-style" content="black"></meta>
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        {/* <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"/>
+        <meta name="apple-mobile-web-app-capable" content="yes"/> 
+        <meta name="apple-mobile-web-app-status-bar-style" content="black"/> */}
           {/* Not exactly required, but this is the PWA primary color */}
           {/* <meta name="theme-color" content={theme.palette.primary.main} /> */}
           <link rel="preconnect" href="https://fonts.googleapis.com"/>
@@ -15,7 +24,7 @@ export default class MyDocument extends Document {
           {/* <link href="../styles/globals.css" rel="stylesheet" /> */}
           {/* <base href="/"/> */}
           <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&display=swap" rel="stylesheet"></link>
-
+          
         </Head>
         <body>
           <Main />

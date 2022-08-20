@@ -66,6 +66,7 @@ function Index(props) {
     
     grid: {
       backgroundColor: "grey",
+      maxHeight: "319px",
       height: "46vh",
       textAlign: "center"
     },
@@ -81,7 +82,8 @@ function Index(props) {
       // marginTop: theme.spacing(8),
       display: "flex",
       flexDirection: "column",
-      alignItems: "center"
+      alignItems: "center",
+      margin:"auto"
     },
     gridmargin:{
       marginLeft: "-0.5rem"
@@ -393,7 +395,7 @@ function Index(props) {
                       <CircularProgress size={26} className={styles.loginLoader} />
                       ) : (
                         <button className={styles.submitBtn} type="submit" onClick={()=>
-                            {console.log("click"),verifyOtp(otp,router,setHelperText)}}>
+                            {verifyOtp(otp,router,setHelperText)}}>
                       Verify
                     </button>
                       // <Button type="submit" fullWidth variant="contained" color="primary" onClick={()=>

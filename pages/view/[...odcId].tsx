@@ -1,4 +1,5 @@
-import React,{useState,useCallback} from 'react'
+import React,{useState,useCallback} from 'react';
+import Link from 'next/link';
 import { wrapper } from '../../components/store'
 import {Typography} from '@mui/material';
 import Splitter from '../../components/Splitter';
@@ -33,6 +34,7 @@ import {
 } from '../../components/store/odcs/actions';
 import {getUserData} from '../../components/store/users/actions';
 import { toast } from 'react-toastify';
+import Footer from '../../components/Footer';
 const CustomButton = styledCustom(Button)<ButtonProps>(({theme,itemType})=>({
   position: itemType =="floating"? "absolute !important":itemType=="download" ? "absolute !important":"unset !important",
   bottom: itemType =="floating" ? "17%":itemType == 'download' ? "10%":"",
@@ -61,6 +63,7 @@ function Viewonly_ODC({
     mc_name,
     mc_size,
     mc_file,
+    notes:serverNotes,
     port,
     deployment_date,
     region_name,
@@ -332,6 +335,7 @@ function Viewonly_ODC({
         });
       }
   return (
+    <>
     <div className={`wrapper ${styles.odcIdWrapper} ${styles.publicView}`}>
           { ODCData &&
           <div className={styles.odcWrapper}>
@@ -633,13 +637,17 @@ function Viewonly_ODC({
           <div className={`row`}>
             <div className={`${styles.notesContainer}`}>
               Notes: 
-              <textarea name="" id="" cols={30} rows={10}></textarea>
+              <textarea name="" id="" cols={30} rows={10} defaultValue={serverNotes}></textarea>
 
             </div>
           </div>
           </div>
             }
         </div>
+        <footer className={`wrapper ${styles.footerContainer}`}><div className="container-fluid">
+          Copyright © 2022 Telkom Indonesia, Tbk. Designed & Developed by <Link href={'https://switchbox.id/'}><a target={"_blank"} >SwitchBox</a></Link>
+      </div></footer>
+        </>
   )
 }
 export const getServerSideProps = async(props) => wrapper.getServerSideProps(store=>async({req,res,...etc})=>{

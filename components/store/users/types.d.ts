@@ -4,6 +4,7 @@ type GetUserData = {
     sortBy:string,
     sortOrder:string,
     email: string,
+    filter: Array<Array<string>>
 }
 export interface IgetUserData {
     type: string,

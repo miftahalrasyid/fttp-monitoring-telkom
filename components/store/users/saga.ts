@@ -24,7 +24,7 @@ import { GetUserData, IaddUserData, IdeleteUserData, IgetUserData, IsetTableRows
  * @param {requestOptions} getUserDataCall 
  * @returns 
  */
- const getUserDataCall = (data: GetUserData, requestOptions) => fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/api/get-users?sorting=${data.sortBy || ""}&direction=${data.sortOrder || ""}&limit=${data.rowsPerPage}&offset=${data.page!==0?data.page:1}&email=${data.email || ""}`,requestOptions).then(res=>res.json())
+ const getUserDataCall = (data: GetUserData, requestOptions) => fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/api/get-users?sorting=${data.sortBy || ""}&direction=${data.sortOrder || ""}&limit=${data.rowsPerPage}&offset=${data.page!==0?data.page:1}&email=${data.email || ""}&filter_role=${(data.filter || "")?(data.filter[2][0]=='Admin'?1:data.filter[2][0]=='User'?2 : ""):""}&filter_status=${(data.filter || "")?(data.filter[3][0]=='Active'?'true':data.filter[3][0]=='Suspend'?'false':false) || "":""}`,requestOptions).then(res=>res.json())
 /**
  * 
  * @param {requestOptions} addUserDataCall 

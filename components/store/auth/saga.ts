@@ -54,7 +54,7 @@ const forgotPasswordRequestCall = (requestOptions) => fetch(`${(typeof window !=
  * @param {requestOptions} verifyResetCodeCall 
  * @returns 
  */
-const verifyResetCodeCall = (requestOptions) => fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/verify-forgot-password`,requestOptions).then(res=>res.json())
+const verifyResetCodeCall = (requestOptions) => fetch(`${process.env.NEXT_PUBLIC_API_HOST}/verify-forgot-password`,requestOptions).then(res=>res.json());
 /**
  * 
  * @param {requestOptions} resetPasswordCall 
@@ -192,21 +192,18 @@ function* forgotPasswordRequest({payload:{email}}:IforgotPasswordRequest){
 }
 function* verifyResetCode({payload:{code}}: IverifyResetCode){
     try {
-        // console.log("verifyresetcode called");
-        var myHeaders = new Headers();
-        var formdata = new FormData();
-        formdata.append("code", code);
+        // console.log("verifyresetcode called",code);
+        const myHeaders = new Headers();
+        // const formdata = new FormData();
+        // formdata.append("code",'tOuXf2pAwb5ilOZrFAUm');
         var requestOptions = {
             method: 'POST',
             headers: myHeaders,
-            body: formdata,
-            redirect: 'follow'
+            body: code,
+            redirect:'follow'
           };
-        const res = yield verifyResetCodeCall(requestOptions).then(result=>{
-        // const res = yield fetch(`${typeof window == 'undefined' ? process.env.NEXT_PUBLIC_API_HOST:""}/verify-forgot-password`,requestOptions).then(rest=>rest.json()).then(result=>{
-            return result
-        })
-        // console.log("result",res)
+          
+        const res = yield verifyResetCodeCall(requestOptions);
         if(res.success)
         yield put({type: VERIFY_RESET_CODE_SUCCESSFUL})
         else

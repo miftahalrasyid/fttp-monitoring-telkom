@@ -87,3 +87,7 @@ export const GET_ACTIVITYLOG_SUCCESSFUL= "get_activitylog_successful";
 export const GET_DASHBOARD_CARD= "get_dashboard_card";
 export const GET_DASHBOARD_CARD_FAILED= "get_dashboard_card_failed";
 export const GET_DASHBOARD_CARD_SUCCESSFUL= "get_dashboard_card_successful";
+
+export const EXPORT_ODC= "export_odc_data";
+export const EXPORT_ODC_FAILED= "get_dashboard_card_failed";
+export const EXPORT_ODC_SUCCESSFUL= "get_dashboard_card_successful";

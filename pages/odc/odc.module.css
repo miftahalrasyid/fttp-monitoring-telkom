@@ -9,7 +9,16 @@
     overflow: scroll;
     height: calc(100vh - 120px);
 }
-
+.footerContainer{
+    position: fixed;
+    border-top: 1px solid rgba(0,0,0,0.1);
+    bottom: 0;
+    z-index: 1;
+    width: 100%;
+    float: left;
+    text-align: center;
+    background-color: #ffffff;
+}
 .content{
     width: 1323px;
 }
@@ -464,12 +473,12 @@
     max-width: 600px;
 }
 .portBorder{
-    border: 2px solid black;
+    border: 4px solid black;
     /* padding: 13px; */
     display: flex;
     width: 40px;
     justify-content: center;
-    border-radius: 5px;
+    border-radius: 8px;
     align-items: center;
     height: 40px;
     margin: 0.5rem 0;

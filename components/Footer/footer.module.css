@@ -11,6 +11,9 @@
     background-color: #eeeeee;
     background: transparent;
 }
+.full_footer{
+    width: 100%;
+}
 @media screen and (max-width: 1080px){
     .footerContainer{
         left: 0;

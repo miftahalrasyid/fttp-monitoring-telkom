@@ -1,4 +1,4 @@
-import { GET_DASHBOARD_CARD, SET_ROWS_PER_PAGE, SET_TABEL_PAGE, SET_TABEL_SORT } from "./actionTypes";
+import { EXPORT_ODC, GET_DASHBOARD_CARD, SET_ROWS_PER_PAGE, SET_TABEL_PAGE, SET_TABEL_SORT } from "./actionTypes";
 
 export interface IgetFeederGraph {
     type: typeof GET_GRAPH_FEEDER;
@@ -22,6 +22,7 @@ export type ChangeOdcPageData = {
     sortBy:string | number,
     sortOrder:string,
     name: string,
+    filter: Array<Array<string>>
 }
 export type GetDashCardData = {
     region:string | number,
@@ -274,6 +275,16 @@ export interface IgetActivityLog {
         sortBy:string,
         sortOrder:string,
         token:string,
-        email: string
+        email: string,
+        filter: Array<Array<string>>
+    }
+}
+export interface IexportODCData {
+    type: string,
+    payload: {
+        odc_name:string,
+        odcId:string,
+        token:string,
+        toast: any
     }
 }

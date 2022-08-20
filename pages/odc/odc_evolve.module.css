@@ -27,7 +27,8 @@
     width: 100vw;
 }
 .odcBackdrop span{
-    width: inherit !important
+    width: inherit !important;
+    height: 100vh !important
 }
 .cardWrapper{
     display: flex;
@@ -271,14 +272,17 @@
 }
 .charts{
     display:flex;
+    /* max-width: 80%; */
     justify-content: space-around;
     flex-wrap: wrap;
     margin: 0 2rem;
     margin-top:2rem;
+    overflow: scroll;
 }
 .charts > div {
     /* display:inline-block;
     max-width: 595px; */
+    width:fit-content;
 }
 .charts > div h2{
     text-align: center;

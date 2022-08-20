@@ -1,4 +1,4 @@
-import React,{useState} from 'react';
+import React,{useEffect, useState} from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
@@ -36,8 +36,13 @@ import {MdOutlineVisibilityOff,MdOutlineVisibility} from 'react-icons/md'
 import { wrapper } from '../components/store';
 import {useRouter} from 'next/router'
 import { END } from 'redux-saga';
-function Reset_password({isLoading,checkLogin,isValid,resetPassword}) {
+function Reset_password({isLoading,checkLogin,isValid,resetPassword,verifyResetCode}) {
   const router = useRouter();
+  useEffect(()=>{
+    console.log("testing")
+    const params = new URLSearchParams(location.search)
+    verifyResetCode(params.get("code"))
+  },[])
     var [error, setError] = useState({status:false,msg:"",token:""});
     // var [activeTabId, setActiveTabId] = useState(0);
     // var [nameValue, setNameValue] = useState("");
@@ -242,11 +247,23 @@ console.log(!resetPasswordConfirm)
 }
 export const getServerSideProps = async (props) => wrapper.getServerSideProps(store => async({req,res,...etc})=>{
   // console.log("req res reset password",)
+  const myHeaders = new Headers();
+        // myHeaders.append('Content-Type', 'application/json');
+        const formdata = new FormData();
+        formdata.append("code", etc.query.code.toString());
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: formdata,
+            redirect:'follow'
+          } as any;
+  const rest = await fetch(`${process.env.NEXT_PUBLIC_API_HOST}/verify-forgot-password`,requestOptions).then(res=>res.json());
+  console.log("in line reset password",rest)
   if(!etc.query.code)
   return {
     notFound: true
   }
-  store.dispatch(verifyResetCode(etc.query.code));
+  store.dispatch(verifyResetCode(formdata));
   store.dispatch(END)
   await store.sagaTask.toPromise();
   return {
@@ -261,7 +278,8 @@ const mapStateToProps = state =>({
     isLoading: state.Auth.loading.login,
   });
   const mapDispatchToProps = {
-    resetPassword
+    resetPassword,
+    verifyResetCode
     // checkLogin,
     // verifyOtp
   }

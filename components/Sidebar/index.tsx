@@ -652,7 +652,7 @@ function Index_evolve({odcProps,token,addODCData,...etc}) {
           </div>
       </div>
       <div className={styles.footer}>
-        <p>© 2022 Telkom Indonesia, Tbk. All rights reserved</p>
+        {/* <p>© 2022 Telkom Indonesia, Tbk. All rights reserved</p> */}
       </div>
     {/* <div className={styles.sidebarBackground}></div> */}
 </div>

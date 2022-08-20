@@ -43,6 +43,7 @@ import {
   changePageTo as IchangePageTo
 } from '../store/layouts/actions'
 import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { exportODCDataFn as IexportODCDataFn } from '../store/odcs/actions';
 // import {
 //   MdOutlineAddBox,
 // } from 'react-icons/md';
@@ -153,6 +154,7 @@ function Navbar(props) {
   const { odcProps = {regionList:{data:[]},witelList:"",datelList:"",stoList:"",merekList:""},odcDispatch,dataClient,odcData,email,role_name, add_user_confirmation,token,user_rowsPerPage,gotopage,gotopageLoading} = props;
   const {addNewUser}:{addNewUser: typeof IaddNewUser} = props
   const {changePageTo}: {changePageTo: typeof IchangePageTo} = props
+  const {exportODCDataFn}: {exportODCDataFn: typeof IexportODCDataFn} = props
   // console.log("odc props",user_rowsPerPage)
   // useEffect(()=>{
 // useEffect(()=>{
@@ -313,7 +315,7 @@ const handleOnChange = (ev,newValues,setValues) =>{
   }
 }
 useEffect(()=>{
-  console.log("layout pathname",gotopage,location.pathname)
+  // console.log("layout pathname",gotopage,location.pathname)
   changePageTo(location.pathname)
 },[odcId])
 /** handle change page to  */
@@ -321,13 +323,19 @@ const handleOdcActions = (pathname) =>{
   changePageTo(pathname)
 }
 const [showPassword, setShowPassword] = useState(false);
+/** handle download */
+// console.log("odc id navbar",odc_name, global.location.pathname)
+// console.log("odc id navbar",odcId[0],odc_name, global.location)
+const handleODCDownload = () => {
+  exportODCDataFn(odc_name,odcId[0],token,toast)
+ }
   return  <nav id={indexStyles.topBar}>
     {/* <ToastContainer style={{zIndex:"99999999999"}}/> */}
       {/* <div className='container-fluid'></div> */}
             <div className={indexStyles.navbarBrandBox}>
                   {typeof odcId !== 'object'? 
                   // {typeof odcId !== 'object' || typeof userPath !== 'object'? 
-              <Link href={"/"} passHref>
+              <Link href={global.location?.pathname || ""} passHref>
                 <a className={indexStyles.logo}>
                     {(!odcId && router.pathname.replace(/(\/.*)?\/(\S+)/,"$2") === "odc")?
                     <span className={indexStyles.logoTxtOdc}> {`Hello, ${email.replace(/(\w+)?@\S+/,"$1")}`}</span>:
@@ -673,7 +681,7 @@ const [showPassword, setShowPassword] = useState(false);
                   </CustomButtonActivityLog>
                   </a>
                   </Link>
-                  <CustomButtonDownload variant="outlined" color='primary' size="large">
+                  <CustomButtonDownload variant="outlined" color='primary' size="large" onClick={handleODCDownload}>
                     {/* <MdOutlineAddBox/>  */}
                     Download
                   </CustomButtonDownload>
@@ -890,6 +898,7 @@ const mapStateToProps = state => ({
 })
 const mapDispatchToProps = {
   addNewUser:IaddNewUser,
+  exportODCDataFn:IexportODCDataFn,
   changePageTo: IchangePageTo
 }
 

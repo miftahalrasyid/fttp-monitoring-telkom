@@ -35,7 +35,7 @@ export const requestForgotPassword = (email:string) => ({
 export const forgotPageClosed = () =>({
     type: FORGOT_PASSWORD_PAGE_CLOSED
 });
-export const verifyResetCode = (code:string | string[]) => ({
+export const verifyResetCode = (code:FormData) => ({
     type: VERIFY_RESET_CODE,
     payload: {code}
 });

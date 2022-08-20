@@ -1,10 +1,10 @@
 module.exports = {
   /** to generate standalone node server */
-  // output: 'standalone',
-  experimental: {
-    outputStandalone: true,
+  output: 'standalone',
+  // experimental: {
+  //   outputStandalone: true,
     // outputFileTracingRoot: path.join(__dirname, '../../')
-  },
+  // },
   reactStrictMode: true,
   images: {
     domains: [

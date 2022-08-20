@@ -62,9 +62,12 @@ import {
     SET_TABEL_PAGE_SUCCESSFUL,
     SET_TABEL_PAGE,
     SET_TABEL_SORT_SUCCESSFUL,
-    SET_TABEL_SORT
+    SET_TABEL_SORT,
+    EXPORT_ODC_FAILED,
+    EXPORT_ODC_SUCCESSFUL,
+    EXPORT_ODC
 } from './actionTypes';
-import {IdeleteSelectedCoreFeeder, IgetDistributionGraph, IgetFeederGraph, IsetSelectedCoreFeeder,IgetOcdSplitpanelStatus, IgetOcdSplitpanelDetail, IgetRegionList, IgetWitelList, IgetDatelList, IgetSTOList, IgetMerekList, IgetPublicViewODC, IaddODCData, IupdateODCData, IdeleteODCData, IsetTableRowsPerPage, IupsertODCFile, IupdateNotes, IupdateODCPort, IgetActivityLog, IchangeODCPage, ChangeOdcPageData, IgetDashCard, GetDashCardData, IsetTablePage, IsetTableSort} from './types';
+import {IdeleteSelectedCoreFeeder, IgetDistributionGraph, IgetFeederGraph, IsetSelectedCoreFeeder,IgetOcdSplitpanelStatus, IgetOcdSplitpanelDetail, IgetRegionList, IgetWitelList, IgetDatelList, IgetSTOList, IgetMerekList, IgetPublicViewODC, IaddODCData, IupdateODCData, IdeleteODCData, IsetTableRowsPerPage, IupsertODCFile, IupdateNotes, IupdateODCPort, IgetActivityLog, IchangeODCPage, ChangeOdcPageData, IgetDashCard, GetDashCardData, IsetTablePage, IsetTableSort, IexportODCData} from './types';
 import {changeODCPage} from './actions'
 // import firebase from '../../Firebase';
 /**
@@ -150,7 +153,7 @@ const getMerekListCall = (requestOptions) => fetch(`${(typeof window !== 'undefi
  * @param {*} requestOptions 
  * @returns 
  */
-const getOdcPageCall = (data: ChangeOdcPageData,requestOptions:any): Promise<any> => fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/api/odc-paginate?limit=${data.rowsPerPage}&offset=${data.page!==0?data.page:1}&region=${data.region || ""}&witel=${data.witel || ""}&datel=${data.datel || ""}&sto=${data.sto || ""}&sorting=${data.sortBy || ""}&direction=${data.sortOrder || ""}&name=${data.name || ""}`,requestOptions).then(res=>res.json())
+const getOdcPageCall = (data: ChangeOdcPageData,requestOptions:any): Promise<any> => fetch(`${(typeof window !== 'undefined')?"":process.env.NEXT_PUBLIC_API_HOST}/api/odc-paginate?limit=${data.rowsPerPage}&offset=${data.page!==0?data.page:1}&region=${data.region || ""}&witel=${data.witel || ""}&datel=${data.datel || ""}&sto=${data.sto || ""}&sorting=${data.sortBy || ""}&direction=${data.sortOrder || ""}&name=${data.name || ""}&filter_capacity=${(data?.filter || "") ? (data?.filter[6][0] || ""):""}&filter_port_feeder_terminasi=${(data?.filter || "") ? (data?.filter[7][0] || ""):""}`,requestOptions).then(res=>res.json())
 /**
  * 
  * @param {*} requestOptions 
@@ -210,7 +213,7 @@ const addActivityLogCall = (requestOptions) => fetch(`${typeof window !== 'undef
  * @param {*} requestOptions 
  * @returns 
  */
-const getActivityLogCall = (odcId,page,rowsPerPage,sortBy,sortOrder,email,requestOptions) => fetch(`${typeof window !== 'undefined' ? "" : process.env.NEXT_PUBLIC_API_HOST}/api/get-log?limit=${rowsPerPage}&offset=${page!==0?page:1}&odc_id=${odcId}&sorting=${sortBy || ""}&direction=${sortOrder || ""}&email=${email || ""}`,requestOptions).then(rest=>rest.json())
+const getActivityLogCall = (odcId,page,rowsPerPage,sortBy,sortOrder,email,filter,requestOptions) => fetch(`${typeof window !== 'undefined' ? "" : process.env.NEXT_PUBLIC_API_HOST}/api/get-log?limit=${rowsPerPage}&offset=${page!==0?page:1}&odc_id=${odcId}&sorting=${sortBy || ""}&direction=${sortOrder || ""}&email=${email || ""}&filter_role=${(filter[2]&&(filter[2][0]=="Admin"?1:2)) || ''}`,requestOptions).then(rest=>rest.json())
 /**
  * 
  * @param {region,witel,datel,sto} data 
@@ -218,6 +221,12 @@ const getActivityLogCall = (odcId,page,rowsPerPage,sortBy,sortOrder,email,reques
  * @returns 
  */
 const getDashCardCall = (data: GetDashCardData,requestOptions:any) => fetch(`${typeof window !== 'undefined' ? "" : process.env.NEXT_PUBLIC_API_HOST}/api/get-card?&region=${data.region || ""}&witel=${data.witel || ""}&datel=${data.datel || ""}&sto=${data.sto || ""}`,requestOptions).then(rest=>rest.json())
+/**
+ * 
+ * @param {*} requestOptions 
+ * @returns 
+ */
+ const exportODCDataCall = (odcId,requestOptions) => fetch(`${typeof window !== 'undefined' ? "" : process.env.NEXT_PUBLIC_API_HOST}/api/download-odc/${odcId}`,requestOptions).then(rest=>rest.blob())
 
 function* getSplitter() {
     try {
@@ -838,13 +847,13 @@ function* getODCPage(props) {
         },
         redirect: 'follow'
       };
-    //   console.log("on odc page change",data);
+      console.log("on odc page change",data);
     try {
         let res = yield getOdcPageCall(data,requestOptions)
         .then(result => {
             // console.log("result true", result.data)
             if(!result.success){
-                console.log("result false", result)
+                // console.log("result false", result)
                 put({type:GET_ODC_PAGE_FAILED,payload:result.msg})
                 toast.error(result.msg, {
                     position: "top-right",
@@ -863,7 +872,7 @@ function* getODCPage(props) {
             }
         });
         if(res.success){
-            console.log("get odc page",res)
+            // console.log("get odc page",res)
             yield put({type:GET_ODC_PAGE_SUCCESSFUL,payload:res})
         }
     } catch (error) {
@@ -1632,7 +1641,7 @@ function* addActivityLog(browse){
         
     }
 }
-function* getActivityLog({payload:{odcId,page,rowsPerPage,sortBy,sortOrder,token,email}}: IgetActivityLog){
+function* getActivityLog({payload:{odcId,page,rowsPerPage,sortBy,sortOrder,token,email,filter}}: IgetActivityLog){
     try {
         console.log("get activity log",odcId)
         var myHeaders = new Headers();
@@ -1645,7 +1654,7 @@ function* getActivityLog({payload:{odcId,page,rowsPerPage,sortBy,sortOrder,token
         redirect: 'follow'
         };
         // console.log("fetch url",`${typeof window !== 'undefined' ? "" : process.env.NEXT_PUBLIC_API_HOST}/api/get-log?limit=${rowsPerPage}&offset=${page!==0?page:1}&odc_id=${odcId}&sorting=${sortBy || ""}&direction=${sortOrder || ""}`)
-        var res = yield getActivityLogCall(odcId,page,rowsPerPage,sortBy,sortOrder,email,requestOptions)
+        var res = yield getActivityLogCall(odcId,page,rowsPerPage,sortBy,sortOrder,email,filter,requestOptions)
         .then(result=>{
 
             return {success:result.success,data:result.data,count:result.total_rows,sortOrder,page:page-1};
@@ -1659,6 +1668,43 @@ function* getActivityLog({payload:{odcId,page,rowsPerPage,sortBy,sortOrder,token
         }
     } catch (error) {
         console.log("get activity log error",error)
+    }
+}
+
+function* exportODCData({payload: {odc_name,odcId,token,toast}}: IexportODCData){
+  
+    
+    try {
+        var myHeaders = new Headers();
+        myHeaders.append("Authorization", "Bearer "+token);
+        myHeaders.append("Cookie","PHPSESSID=h9m2nju1qgp3oneuhbres6907h");
+        var requestOptions = {
+            method:'POST',
+            headers: myHeaders,
+            redirect: 'follow'
+        };
+    
+        yield exportODCDataCall(odcId,requestOptions).then(blob=>{
+            blob = blob.slice(0, blob.size, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+            var url = window.URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = odc_name+"_exported";
+            document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
+            a.click();    
+            a.remove();  
+        })
+    } catch (error) {
+        // console.log("error download saga",error)
+        toast.error("Maaf, ada kesalahan teknis", {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+        });
     }
 }
 
@@ -1703,6 +1749,8 @@ function* watchODCsData(){
     yield takeEvery(GET_ACTIVITYLOG,getActivityLog);
 
     yield takeEvery(GET_DASHBOARD_CARD,getDashCard);
+    
+    yield takeEvery(EXPORT_ODC,exportODCData);
 }
 
 function* odcsSaga() {
