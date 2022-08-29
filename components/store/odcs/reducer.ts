@@ -1,7 +1,8 @@
-import { GET_SPLITTER_DATA,
-  GET_CORE_FEEDER, 
+import {
+  GET_SPLITTER_DATA,
+  GET_CORE_FEEDER,
   UPDATE_CORE_FEEDER,
-  GET_ODCs, 
+  GET_ODCs,
   GET_SPLITTER_DATA_SUCCESSFUL,
   GET_CORE_FEEDER_INFO_SUCCESSFUL,
   GET_ODCs_SUCCESSFUL,
@@ -56,564 +57,564 @@ import { GET_SPLITTER_DATA,
 import { HYDRATE } from 'next-redux-wrapper';
 
 export const INIT_STATE = {
-    loading:{
-        get: false,
-        getOdc:false,
-        update:false,
-        getSplitter:false,
-        getOdcSplitpanelStatus:false,
-        deleteOdcSplitpanelStatus: false,
-        getRegionList:false,
-        getWitelList: false,
-        getDatelList: false,
-        getSTOList: false,
-        getMerekList: false,
-        getODCPage:false,
-        addODCData: false,
-        updateODCData: false,
-        deleteODCData: false,
-        upsertFile: false,
-        activityLog: false,
-        dashCard: false
-    },
-    dashboard_card_list:{},
-    activity_log_list:[],
-    tableRowsPerPage:0,
-    tablePage:0,
-    tableSort:{},
-    add_odc_list:"",
-    delete_odc_list:"",
-    odc_page:"",
-    merek_list:"",
-    sto_list:"",
-    datel_list:"",
-    region_list:"",
-    witel_list:"",
-    graph_feeder:"",
-    graph_distribution:"",
-    coreFeederData:"",
-    odcsBox:[],
-    splitterData:"",
-    selectedOdcSplitpanelStatus:"",
-    client: {
-      coreFeederData:'',
-      odcsBoxClient:'',
-      selectedCoreFeeder:'',
-    }
+  loading: {
+    get: false,
+    getOdc: false,
+    update: false,
+    getSplitter: false,
+    getOdcSplitpanelStatus: false,
+    deleteOdcSplitpanelStatus: false,
+    getRegionList: false,
+    getWitelList: false,
+    getDatelList: false,
+    getSTOList: false,
+    getMerekList: false,
+    getODCPage: false,
+    addODCData: false,
+    updateODCData: false,
+    deleteODCData: false,
+    upsertFile: false,
+    activityLog: false,
+    dashCard: false
+  },
+  dashboard_card_list: {},
+  activity_log_list: [],
+  tableRowsPerPage: 0,
+  tablePage: 0,
+  tableSort: {},
+  add_odc_list: "",
+  delete_odc_list: "",
+  odc_page: "",
+  merek_list: "",
+  sto_list: "",
+  datel_list: "",
+  region_list: "",
+  witel_list: "",
+  graph_feeder: "",
+  graph_distribution: "",
+  coreFeederData: "",
+  odcsBox: [],
+  splitterData: "",
+  selectedOdcSplitpanelStatus: "",
+  client: {
+    coreFeederData: '',
+    odcsBoxClient: '',
+    selectedCoreFeeder: '',
+  }
 }
 
-const odcs = (state=INIT_STATE,action) => {
+const odcs = (state = INIT_STATE, action) => {
   switch (action.type) {
     case HYDRATE:
-        // console.log("HYDRATE LOGIN",action.payload)
-        return {
-            ...state,
-            ...action.payload,
-            // token: action.payload.Login.token
-            // state:{
-            //     ...state,
-            //     Login:{
-            //         ...state.Login,
-            //         token: action.payload
-            //     }
-            // }
-        }
-      case GET_ODCs:
-          
-        return {
-            ...state,
-            loading:{
-                ...state.loading,
-                getOdc: true
-            }
-        };
-      case GET_SPLITTER_DATA:
-          
-        return {
-            ...state,
-            loading:{
-                ...state.loading,
-                getSplitter: true
-            }
-        };
-      case GET_CORE_FEEDER:
-          
-        return {
-            ...state,
-            loading:{
-                ...state.loading,
-                get: true
-            }
-        };
-      case UPDATE_CORE_FEEDER:
-          
-        return {
-            ...state,
-            loading:{
-                ...state.loading,
-                update: true
-            }
-        };
-      case GET_GRAPH_FEEDER:
-        return {
-          ...state,
-          loading:{
-            ...state.loading,
-            graph_feeder: true,
-          }
-        }
-      case GET_GRAPH_DISTRIBUTION:
-        return {
-          ...state,
-          loading:{
-            ...state.loading,
-            graph_distribution: true,
-          }
-        }
-      case GET_GRAPH_FEEDER_SUCCESSFUL:
-        console.log("reducer graph feeder",action.payload)
-        return {
-          ...state,
-          loading:{
-            ...state.loading,
-            graph_feeder: false,
-          },
-          graph_feeder: action.payload
-        }
-      case GET_GRAPH_DISTRIBUTION_SUCCESSFUL:
-        console.log("reducer graph feeder",action.payload)
-        return {
-          ...state,
-          loading:{
-            ...state.loading,
-            graph_distribution: false,
-          },
-          graph_distribution: action.payload
-        }
-      case GET_SPLITTER_DATA_SUCCESSFUL:
-          // console.log("reducer",action.payload)
-        return {
-            ...state,
-            splitterData: action.payload,
-            loading:{
-              ...state.loading,
-              getSplitter: false
-          }
-        };
-      case GET_CORE_FEEDER_INFO_SUCCESSFUL:
-          // console.log("reducer",action.payload)
-        return {
-            ...state,
-            coreFeederData: action.payload,
-            client:{
-              coreFeederData: action.payload
-            },
-            loading:{
-              ...state.loading,
-              get: false
-          }
-        };
-      case GET_ODCs_SUCCESSFUL:
-          // console.log("reducer",action.payload)
-        return {
-            ...state,
-            odcsBox: action.payload,
-            loading:{
-              ...state.loading,
-              getOdc: false
-          }
-        };
-      case GET_SELECTED_CORE_FEEDER:
+      // console.log("HYDRATE LOGIN",action.payload)
+      return {
+        ...state,
+        ...action.payload,
+        // token: action.payload.Login.token
+        // state:{
+        //     ...state,
+        //     Login:{
+        //         ...state.Login,
+        //         token: action.payload
+        //     }
+        // }
+      }
+    case GET_ODCs:
 
-        return {
-          ...state,
-          client:{
-            ...state.client,
-            selectedCoreFeeder: action.payload
-          }
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          getOdc: true
         }
+      };
+    case GET_SPLITTER_DATA:
 
-      case GET_ODC_SPLITPANEL_STATUS:
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          getSplitter: true
+        }
+      };
+    case GET_CORE_FEEDER:
 
-        return{
-          ...state,
-          loading:{
-            ...state.loading,
-            getOdcSplitpanelStatus: true,
-            getOdcSplitpanelDetail: true,
-          },
-          selectedOdcSplitpanelStatus: "",
-          selectedOdcSplitpanelDetail: ""
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          get: true
         }
-        
-        case GET_ODC_SPLITPANEL_STATUS_SUCCESSFUL:
-          
-        return{
-          ...state,
-          loading:{
-            ...state.loading,
-            getOdcSplitpanelStatus: false
-          },
-          selectedOdcSplitpanelStatus: action.payload
+      };
+    case UPDATE_CORE_FEEDER:
 
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          update: true
         }
-      case GET_PUBLIC_ODC_DETAIL:
+      };
+    case GET_GRAPH_FEEDER:
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          graph_feeder: true,
+        }
+      }
+    case GET_GRAPH_DISTRIBUTION:
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          graph_distribution: true,
+        }
+      }
+    case GET_GRAPH_FEEDER_SUCCESSFUL:
+      // console.log("reducer graph feeder",action.payload)
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          graph_feeder: false,
+        },
+        graph_feeder: action.payload
+      }
+    case GET_GRAPH_DISTRIBUTION_SUCCESSFUL:
+      // console.log("reducer graph feeder",action.payload)
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          graph_distribution: false,
+        },
+        graph_distribution: action.payload
+      }
+    case GET_SPLITTER_DATA_SUCCESSFUL:
+      // console.log("reducer",action.payload)
+      return {
+        ...state,
+        splitterData: action.payload,
+        loading: {
+          ...state.loading,
+          getSplitter: false
+        }
+      };
+    case GET_CORE_FEEDER_INFO_SUCCESSFUL:
+      // console.log("reducer",action.payload)
+      return {
+        ...state,
+        coreFeederData: action.payload,
+        client: {
+          coreFeederData: action.payload
+        },
+        loading: {
+          ...state.loading,
+          get: false
+        }
+      };
+    case GET_ODCs_SUCCESSFUL:
+      // console.log("reducer",action.payload)
+      return {
+        ...state,
+        odcsBox: action.payload,
+        loading: {
+          ...state.loading,
+          getOdc: false
+        }
+      };
+    case GET_SELECTED_CORE_FEEDER:
 
-        return{
-          ...state,
-          loading:{
-            ...state.loading,
-            getOdcSplitpanelStatus: true,
-            getOdcSplitpanelDetail: true,
-          },
-          selectedOdcSplitpanelStatus: "",
+      return {
+        ...state,
+        client: {
+          ...state.client,
+          selectedCoreFeeder: action.payload
         }
-        
-        case GET_PUBLIC_ODC_DETAIL_SUCCESSFUL:
-          
-        return{
-          ...state,
-          loading:{
-            ...state.loading,
-            getOdcSplitpanelStatus: false
-          },
-          selectedOdcSplitpanelStatus: action.payload
+      }
 
-        }
-        case GET_ODC_SPLITPANEL_DETAIL_SUCCESSFUL:
-          
-        return{
-          ...state,
-          loading:{
-            ...state.loading,
-            getOdcSplitpanelDetail: false
-          },
-          selectedOdcSplitpanelDetail: action.payload
+    case GET_ODC_SPLITPANEL_STATUS:
 
-        }
-      case DELETE_SELECTED_CORE_FEEDER:
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          getOdcSplitpanelStatus: true,
+          getOdcSplitpanelDetail: true,
+        },
+        selectedOdcSplitpanelStatus: "",
+        selectedOdcSplitpanelDetail: ""
+      }
 
-        return{
-          ...state,
-          loading:{
-            ...state.loading,
-            deleteOdcSplitpanelStatus: true
-          },
-          deleteOdcSplitpanelStatus: ""
-        }
-        
-        case DELETE_SELECTED_CORE_FEEDER_SUCCESSFUL:
-          
-        return{
-          ...state,
-          loading:{
-            ...state.loading,
-            deleteOdcSplitpanelStatus: false
-          },
+    case GET_ODC_SPLITPANEL_STATUS_SUCCESSFUL:
 
-        }
-  
-      case GET_REGION_LIST:
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          getOdcSplitpanelStatus: false
+        },
+        selectedOdcSplitpanelStatus: action.payload
 
-        return{
-          ...state,
-          loading:{
-            ...state.loading,
-            getRegionList: true
-          }
-        }
-        
-        case GET_REGION_LIST_SUCCESSFUL:
-          
-        return{
-          ...state,
-          loading:{
-            ...state.loading,
-            getRegionList: false
-          },
-          region_list: action.payload
+      }
+    case GET_PUBLIC_ODC_DETAIL:
 
-        }
-      case GET_WITEL_LIST:
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          getOdcSplitpanelStatus: true,
+          getOdcSplitpanelDetail: true,
+        },
+        selectedOdcSplitpanelStatus: "",
+      }
 
-        return{
-          ...state,
-          loading:{
-            ...state.loading,
-            getWitelList: true
-          }
-        }
-        
-        case GET_WITEL_LIST_SUCCESSFUL:
-          
-        return{
-          ...state,
-          loading:{
-            ...state.loading,
-            getWitelList: false
-          },
-          witel_list: action.payload
+    case GET_PUBLIC_ODC_DETAIL_SUCCESSFUL:
 
-        }
-      case GET_DATEL_LIST:
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          getOdcSplitpanelStatus: false
+        },
+        selectedOdcSplitpanelStatus: action.payload
 
-        return{
-          ...state,
-          loading:{
-            ...state.loading,
-            getDatelList: true
-          }
-        }
-        
-        case GET_DATEL_LIST_SUCCESSFUL:
-          
-        return{
-          ...state,
-          loading:{
-            ...state.loading,
-            getDatelList: false
-          },
-          datel_list: action.payload
+      }
+    case GET_ODC_SPLITPANEL_DETAIL_SUCCESSFUL:
 
-        }
-      case GET_STO_LIST:
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          getOdcSplitpanelDetail: false
+        },
+        selectedOdcSplitpanelDetail: action.payload
 
-        return{
-          ...state,
-          loading:{
-            ...state.loading,
-            getSTOList: true
-          }
-        }
-        
-        case GET_STO_LIST_SUCCESSFUL:
-          
-        return{
-          ...state,
-          loading:{
-            ...state.loading,
-            getSTOList: false
-          },
-          sto_list: action.payload
+      }
+    case DELETE_SELECTED_CORE_FEEDER:
 
-        }
-      case GET_MEREK_LIST:
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          deleteOdcSplitpanelStatus: true
+        },
+        deleteOdcSplitpanelStatus: ""
+      }
 
-        return{
-          ...state,
-          loading:{
-            ...state.loading,
-            getMerekList: true
-          }
-        }
-        
-        case GET_MEREK_LIST_SUCCESSFUL:
-          
-        return{
-          ...state,
-          loading:{
-            ...state.loading,
-            getMerekList: false
-          },
-          merek_list: action.payload
+    case DELETE_SELECTED_CORE_FEEDER_SUCCESSFUL:
 
-        }
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          deleteOdcSplitpanelStatus: false
+        },
 
-        case GET_ODC_PAGE:
-          
-        return{
-          ...state,
-          loading:{
-            ...state.loading,
-            getODCPage: true
-          },
-          odc_page:""
-        }
-        
-        case GET_ODC_PAGE_SUCCESSFUL:
-          console.log("odc page successful")
-        return{
-          ...state,
-          loading:{
-            ...state.loading,
-            getODCPage: false
-          },
-          odc_page: {...action.payload,loading:state.loading.getODCPage}
+      }
 
-        }
-        case GET_ODC_PAGE_FAILED:
-          console.log("odc page failed")
-        return{
-          ...state,
-          loading:{
-            ...state.loading,
-            getODCPage: false
-          },
+    case GET_REGION_LIST:
 
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          getRegionList: true
         }
-        case ADD_ODC_DATA:
-            
-          return {
-              ...state,
-              loading: {
-                  ...state.loading,
-                  addODCData:true
-              }
-          };
-        case ADD_ODC_DATA_SUCCESSFUL:
-          return {
-              ...state,
-              loading: {
-                  ...state.loading,
-                  addODCData:false
-              },
-          };
-        case ADD_ODC_DATA_FAILED:
-          return {
-              ...state,
-              loading: {
-                  ...state.loading,
-                  addODCData:false
-              },
-              add_odc_list: action.payload
-          };
-        case UPDATE_ODC_DATA:
-            
-          return {
-              ...state,
-              loading: {
-                  ...state.loading,
-                  updateODCData:true
-              }
-          };
-        case UPDATE_ODC_DATA_SUCCESSFUL:
-          return {
-              ...state,
-              loading: {
-                  ...state.loading,
-                  updateODCData:false
-              },
-          };
-        case UPDATE_ODC_DATA_FAILED:
-          return {
-              ...state,
-              loading: {
-                  ...state.loading,
-                  updateODCData:false
-              },
-          };
-          case DELETE_ODC_DATA:
-            
-            return {
-                ...state,
-                loading: {
-                    ...state.loading,
-                    deleteODCData:true
-                }
-            };
-        case DELETE_ODC_DATA_SUCCESSFUL:
-            return {
-                ...state,
-                loading: {
-                    ...state.loading,
-                    deleteODCData:false
-                }
-            };
-        case DELETE_ODC_DATA_FAILED:
-            return {
-                ...state,
-                loading: {
-                    ...state.loading,
-                    deleteODCData:false
-                },
-                delete_odc_list: action.payload
-            };
-      case SET_TABEL_ROWS_PER_PAGE_SUCCESSFUL:
-            return{
-              ...state,
-              tableRowsPerPage: action.payload
-            }
-      case SET_TABEL_PAGE_SUCCESSFUL:
-            return{
-              ...state,
-              tablePage: action.payload
-            }
-      case SET_TABEL_SORT_SUCCESSFUL:
-            return{
-              ...state,
-              tableSort: action.payload
-            }
-      case UPSERT_ODC_FILE:
-        return {
-          ...state,
-          loading:{
-            ...state.loading,
-            upsertFile:true
-          }
-        }
-      // case UPSERT_ODC_FILE_SUCCESSFUL:
-      //   return {
-      //     ...state,
-      //     loading:{
-      //       ...state.loading,
-      //       upsertFile:false
-      //     },
-      //   }
+      }
 
-      case GET_ACTIVITYLOG:
-        return {
-          ...state,
-          loading:{
-            ...state.loading,
-            activityLog:true
-          },
-          activity_log_list:""
+    case GET_REGION_LIST_SUCCESSFUL:
+
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          getRegionList: false
+        },
+        region_list: action.payload
+
+      }
+    case GET_WITEL_LIST:
+
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          getWitelList: true
         }
-      case GET_ACTIVITYLOG_SUCCESSFUL:
-        return {
-          ...state,
-          loading:{
-            ...state.loading,
-            activityLog:false
-          },
-          activity_log_list: action.payload
+      }
+
+    case GET_WITEL_LIST_SUCCESSFUL:
+
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          getWitelList: false
+        },
+        witel_list: action.payload
+
+      }
+    case GET_DATEL_LIST:
+
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          getDatelList: true
         }
-      case GET_ACTIVITYLOG_FAILED:
-        return {
-          ...state,
-          loading:{
-            ...state.loading,
-            activityLog:false
-          },
+      }
+
+    case GET_DATEL_LIST_SUCCESSFUL:
+
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          getDatelList: false
+        },
+        datel_list: action.payload
+
+      }
+    case GET_STO_LIST:
+
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          getSTOList: true
         }
-      case GET_DASHBOARD_CARD:
-        return {
-          ...state,
-          loading:{
-            ...state.loading,
-            dashCard:true
-          },
-          dashboard_card_list:""
+      }
+
+    case GET_STO_LIST_SUCCESSFUL:
+
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          getSTOList: false
+        },
+        sto_list: action.payload
+
+      }
+    case GET_MEREK_LIST:
+
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          getMerekList: true
         }
-      case GET_DASHBOARD_CARD_SUCCESSFUL:
-        return {
-          ...state,
-          loading:{
-            ...state.loading,
-            dashCard:false
-          },
-          dashboard_card_list: action.payload
+      }
+
+    case GET_MEREK_LIST_SUCCESSFUL:
+
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          getMerekList: false
+        },
+        merek_list: action.payload
+
+      }
+
+    case GET_ODC_PAGE:
+
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          getODCPage: true
+        },
+        odc_page: ""
+      }
+
+    case GET_ODC_PAGE_SUCCESSFUL:
+      // console.log("odc page successful")
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          getODCPage: false
+        },
+        odc_page: { ...action.payload, loading: state.loading.getODCPage }
+
+      }
+    case GET_ODC_PAGE_FAILED:
+      console.log("odc page failed")
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          getODCPage: false
+        },
+
+      }
+    case ADD_ODC_DATA:
+
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          addODCData: true
         }
-      case GET_DASHBOARD_CARD_FAILED:
-        return {
-          ...state,
-          loading:{
-            ...state.loading,
-            dashCard:false
-          },
+      };
+    case ADD_ODC_DATA_SUCCESSFUL:
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          addODCData: false
+        },
+      };
+    case ADD_ODC_DATA_FAILED:
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          addODCData: false
+        },
+        add_odc_list: action.payload
+      };
+    case UPDATE_ODC_DATA:
+
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          updateODCData: true
         }
-      default:
-          return state;
+      };
+    case UPDATE_ODC_DATA_SUCCESSFUL:
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          updateODCData: false
+        },
+      };
+    case UPDATE_ODC_DATA_FAILED:
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          updateODCData: false
+        },
+      };
+    case DELETE_ODC_DATA:
+
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          deleteODCData: true
+        }
+      };
+    case DELETE_ODC_DATA_SUCCESSFUL:
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          deleteODCData: false
+        }
+      };
+    case DELETE_ODC_DATA_FAILED:
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          deleteODCData: false
+        },
+        delete_odc_list: action.payload
+      };
+    case SET_TABEL_ROWS_PER_PAGE_SUCCESSFUL:
+      return {
+        ...state,
+        tableRowsPerPage: action.payload
+      }
+    case SET_TABEL_PAGE_SUCCESSFUL:
+      return {
+        ...state,
+        tablePage: action.payload
+      }
+    case SET_TABEL_SORT_SUCCESSFUL:
+      return {
+        ...state,
+        tableSort: action.payload
+      }
+    case UPSERT_ODC_FILE:
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          upsertFile: true
+        }
+      }
+    // case UPSERT_ODC_FILE_SUCCESSFUL:
+    //   return {
+    //     ...state,
+    //     loading:{
+    //       ...state.loading,
+    //       upsertFile:false
+    //     },
+    //   }
+
+    case GET_ACTIVITYLOG:
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          activityLog: true
+        },
+        activity_log_list: ""
+      }
+    case GET_ACTIVITYLOG_SUCCESSFUL:
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          activityLog: false
+        },
+        activity_log_list: action.payload
+      }
+    case GET_ACTIVITYLOG_FAILED:
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          activityLog: false
+        },
+      }
+    case GET_DASHBOARD_CARD:
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          dashCard: true
+        },
+        dashboard_card_list: ""
+      }
+    case GET_DASHBOARD_CARD_SUCCESSFUL:
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          dashCard: false
+        },
+        dashboard_card_list: action.payload
+      }
+    case GET_DASHBOARD_CARD_FAILED:
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          dashCard: false
+        },
+      }
+    default:
+      return state;
   }
 }
 

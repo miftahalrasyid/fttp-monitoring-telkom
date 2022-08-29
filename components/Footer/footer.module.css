@@ -1,6 +1,8 @@
 .footerContainer{
     /* box-shadow: 0px 2px 2px 1px black; */
-    position: relative;
+
+    position: absolute;
+    background: white;
     border-top: 1px solid rgba(0,0,0,0.1);
     bottom: 0;
     z-index: 1;
@@ -9,10 +11,16 @@
     left: 250px;
     text-align: center;
     background-color: #eeeeee;
-    background: transparent;
+    background: white;
 }
 .full_footer{
     width: 100%;
+}
+@media screen and (min-width: 1080) {
+    .footerContainer{
+        position: relative;
+        background: transparent;
+    }
 }
 @media screen and (max-width: 1080px){
     .footerContainer{

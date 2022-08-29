@@ -13,12 +13,14 @@ import {
   MdOutlineClose,
   MdDeleteForever
 } from 'react-icons/md';
+import {
+  CircularProgress,
+} from "@mui/material"
 import SimpleBar from 'simplebar-react';
 import 'simplebar/dist/simplebar.min.css';
 import jwt from 'jwt-decode'
 import { END } from 'redux-saga';
 import { wrapper, makeStore } from "../../components/store";
-import ReactLoading from 'react-loading';
 // import "../../assets/scss/custom/loading.scss";
 import {
   getODCsBox,
@@ -216,7 +218,8 @@ function ODC(props) {
     odc_page,
     odc_sort,
     gotopageClient,
-    gotopageLoading
+    gotopageLoading,
+    merekList
   } = props
   const { changePageTo }: { changePageTo: typeof IchangePageTo } = props;
   const { setTableRowsPerPage }: { setTableRowsPerPage: typeof IsetTableRowsPerPage } = props
@@ -309,7 +312,8 @@ function ODC(props) {
   const CustomButtonModal = styled(newButton)<ButtonProps>(({ theme, btntype }) => {
     // console.log("custom button modal", theme, etc)
     return {
-      background: btntype == 'submit' ? theme.status.success : theme.status.primary,
+      background: btntype == 'submit' ? theme.status.success : btntype == 'cancel' ? "gray !important" : theme.status.primary,
+      // background: btntype == 'submit' ? theme.status.success : theme.status.primary,
       color: "white!important",
     }
   });
@@ -560,7 +564,7 @@ function ODC(props) {
       ])))
   }, [odc_list_client])
   // },[rawData,open,value,openDeleteRowModal])
-  console.log("feederGraph", feederGraph)
+  // console.log("feederGraph", feederGraph)
   const graph = {
     feeder: {
       series: [{
@@ -714,7 +718,7 @@ function ODC(props) {
     setSelectedModalValue(selectedModalId)
     setSingleModalPopup(true);
   }
-  const [selectedModalValue, setSelectedModalValue] = useState({ odc_id: "", name: "", region_id: "", witel_id: "", datel_id: "", sto_id: "", deployment_date: "", rak_oa: "", panel: "", port: "", rowsPerPage: 0 });
+  const [selectedModalValue, setSelectedModalValue] = useState({ odc_id: "", name: "", merek: "", region_id: "", witel_id: "", datel_id: "", sto_id: "", deployment_date: "", rak_oa: "", panel: "", port: "", rowsPerPage: 0 });
   const singleModalPopupClose = () => {
     setSingleModalPopup(false)
   };
@@ -722,17 +726,17 @@ function ODC(props) {
   // console.log("selectedModalValue",selectedModalValue)
   const feederChartRef = useRef(null);
   const distribusiChartRef = useRef(null);
-  useEffect(() => {
-    console.log(feederChartName)
-    console.log("filter change", Object.entries(feederChartName).map(([key, value]) => {
-      if (key == "regional" && value != "0")
-        return key + " " + regionList?.data.filter(item => item.id.toString() == value)[0]?.name || ""
-      if (key == "witel" && value != "0")
-        return key + " " + witelList?.data.filter(item => item.id.toString() == value)[0]?.name || ""
-      if (key == "datel" && value != "0")
-        return key + " " + datelList?.data.filter(item => item.id.toString() == value)[0]?.name || ""
-    }))
-  }, [feederChartName, datelList, regionList, witelList])
+  // useEffect(() => {
+  // console.log(feederChartName)
+  // console.log("filter change", Object.entries(feederChartName).map(([key, value]) => {
+  //   if (key == "regional" && value != "0")
+  //     return key + " " + regionList?.data.filter(item => item.id.toString() == value)[0]?.name || ""
+  //   if (key == "witel" && value != "0")
+  //     return key + " " + witelList?.data.filter(item => item.id.toString() == value)[0]?.name || ""
+  //   if (key == "datel" && value != "0")
+  //     return key + " " + datelList?.data.filter(item => item.id.toString() == value)[0]?.name || ""
+  // }))
+  // }, [feederChartName, datelList, regionList, witelList])
   const customHandleChange = (inputid, value, values, setValues) => {
     // console.log(inputid,value)
     let dmp = { regional: values.regional?.toString(), witel: values.witel?.toString(), datel: values.datel?.toString(), sto: values.sto?.toString() };
@@ -742,23 +746,12 @@ function ODC(props) {
     switch (inputid) {
       case 'regional':
         dmp.regional = value;
-        if (dmp.regional == 0) {
-          newwitel = witelList?.data
-          setWitelListClient(newwitel);
-          newdatel = datelList?.data
-          setDatelListClient(newdatel)
-          newsto = stoList?.data
-          setSTOListClient(newsto)
-
-        }
-        else {
-          newwitel = witelList?.data?.filter(item => item.region_id.toString() == value)
-          setWitelListClient(newwitel);
-          newdatel = datelList?.data?.filter(item => item.region_id.toString() === value)
-          setDatelListClient(newdatel)
-          newsto = stoList?.data?.filter(item => item.region_id.toString() === value)
-          setSTOListClient(newsto)
-        }
+        newwitel = witelList?.data?.filter(item => item.region_id.toString() == value)
+        setWitelListClient(newwitel);
+        newdatel = datelList?.data?.filter(item => item.region_id.toString() === value)
+        setDatelListClient(newdatel)
+        newsto = stoList?.data?.filter(item => item.region_id.toString() === value)
+        setSTOListClient(newsto)
         dmp.witel = 0;
         dmp.datel = 0;
         dmp.sto = 0;
@@ -769,15 +762,14 @@ function ODC(props) {
         if (values.regional == 0) {
           setRegionListClient(regionList?.data?.filter(item => item.id == datelList?.data?.find(item => item.id == value).region_id));
           dmp.regional = regionList?.data?.find(item => item.id == witelList?.data?.find(item => item.id == value)?.region_id).id || '0';
-        }
-        else if (dmp.witel == 0) {
           setWitelListClient(witelList?.data?.filter(item => (item.region_id.toString() == dmp.regional)))
-          newdatel = datelList?.data?.filter(item => item.region_id.toString() === dmp.regional)
+          newdatel = datelList?.data?.filter(item => item.witel_id.toString() === dmp.witel)
           setDatelListClient(newdatel)
-          newsto = stoList?.data?.filter(item => item.region_id.toString() === dmp.regional)
+          newsto = stoList?.data?.filter(item => item.witel_id.toString() === dmp.witel)
           setSTOListClient(newsto)
         }
         else {
+          // console.log("witel", datelList?.data?.filter(item => (dmp.witel == "0") ? item.witel_id.toString() !== dmp.witel : item.witel_id.toString() === dmp.witel))
           setWitelListClient(witelList?.data?.filter(item => (item.region_id.toString() == dmp.regional)))
           newdatel = datelList?.data?.filter(item => (dmp.witel == "0") ? item.witel_id.toString() !== dmp.witel : item.witel_id.toString() === dmp.witel)
           setDatelListClient(newdatel)
@@ -795,7 +787,6 @@ function ODC(props) {
           dmp.regional = regionList?.data?.find(item => item.id == datelList?.data?.find(item => item.id == value)?.region_id).id || '0';
         }
         if (values.witel == 0) {
-
           newwitel = witelList?.data?.filter(item => item.region_id == datelList?.data?.find(item => item.id == value).region_id)
           setWitelListClient(newwitel);
           dmp.witel = witelList?.data?.find(item => item.id == datelList?.data?.find(item => item.id == value)?.witel_id).id || '0';
@@ -803,13 +794,6 @@ function ODC(props) {
           setDatelListClient(newdatel)
           newsto = stoList?.data?.filter(item => item.datel_id.toString() === dmp.datel)
           setSTOListClient(newsto)
-        }
-        else if (dmp.datel == 0) {
-          newsto = stoList?.data?.filter(item => item.witel_id.toString() === dmp.witel)
-          setSTOListClient(newsto)
-          setDatelListClient(datelList?.data?.filter(item => item.witel_id == dmp.witel))
-
-
         }
         else {
 
@@ -829,15 +813,19 @@ function ODC(props) {
           dmp.regional = regionList?.data?.find(item => item.id == stoList?.data?.find(item => item.id == value)?.region_id).id || '0';
         }
         if (values.witel == 0) {
-          setWitelListClient(witelList?.data?.filter(item => item.id == stoList?.data?.find(item => item.id == value).witel_id));
+          newwitel = witelList?.data?.filter(item => item.region_id == stoList?.data?.find(item => item.id == value).region_id)
+          setWitelListClient(newwitel);
           dmp.witel = witelList?.data?.find(item => item.id == stoList?.data?.find(item => item.id == value)?.witel_id).id || '0';
-          // dmp.witel =
-          // console.log("values witel",value,values,witelList?.data?.find(item=>item.id==datelList?.data?.find(item=>item.id==value)?.witel_id).id)
+          newdatel = datelList?.data?.filter(item => item.witel_id == dmp.witel)
+          setDatelListClient(newdatel)
+          newsto = stoList?.data?.filter(item => item.datel_id.toString() === dmp.datel)
+          setSTOListClient(newsto)
         }
         if (values.datel == 0) {
-          setDatelListClient(datelList?.data?.filter(item => item.id == stoList?.data?.find(item => item.id == value).datel_id));
+
+          setDatelListClient(datelList?.data?.filter(item => item.witel_id == stoList?.data?.find(item => item.id == value).witel_id));
           dmp.datel = datelList?.data?.find(item => item.id == stoList?.data?.find(item => item.id == value)?.datel_id).id || '0';
-          console.log("values witel", value, values, datelList?.data?.find(item => item.id == stoList?.data?.find(item => item.id == value)?.datel_id).id)
+          // console.log("values witel", value, values, datelList?.data?.find(item => item.id == stoList?.data?.find(item => item.id == value)?.datel_id).id)
         }
         setSTOListClient(stoList?.data?.filter(item => item.datel_id == dmp.datel))
         setValues(prev => ({ ...prev, ...dmp }))
@@ -849,7 +837,6 @@ function ODC(props) {
   }
   /** get dashboard deck card */
   // var loading = false;
-
   const handlePanelClick = (pathname) => {
     changePageTo(pathname)
   }
@@ -908,14 +895,14 @@ function ODC(props) {
           // return values
         }}
         validateOnChange={true}
-        onSubmit={(values) => {
+        onSubmit={(values, actions) => {
           // console.log("cookie",document.cookie.split(" "))
 
-          getFeederGraph(values || { regional: '', witel: '', datel: '', sto: '' }, token);
-          getDistributionGraph(values || { regional: '', witel: '', datel: '', sto: '' }, token);
+          getFeederGraph(values || { regional: '', witel: '', datel: '', sto: '' }, token, actions.setSubmitting);
+          getDistributionGraph(values || { regional: '', witel: '', datel: '', sto: '' }, token, actions.setSubmitting);
           changeODCPage({ page: 1, rowsPerPage: newTableState.rowsPerPage, region: values.regional, witel: values.witel, datel: values.datel, sto: values.sto, sortBy: null, sortOrder: null, name: null, filter: new Array(24) }, token, toast)
           // changeODCPage({page:1,rowsPerPage:odc_rowsPerPage, region:values.regional,witel:values.witel,datel:values.datel,sto:values.sto,sortBy:null,sortOrder:null,name:null},token,toast)
-          getDashCard({ region: values.regional, witel: values.witel, datel: values.datel, sto: values.sto }, token, toast)
+          getDashCard({ region: values.regional, witel: values.witel, datel: values.datel, sto: values.sto }, token, toast, actions.setSubmitting)
           setSubmittedFilter(values || { regional: '', witel: '', datel: '', sto: '' });
 
 
@@ -978,7 +965,10 @@ function ODC(props) {
               data={[{ label: "STO", value: 0 }].concat((stoListClient) ? stoListClient?.map(item => ({ label: item.name, value: item.id })) : stoList?.data?.map(item => ({ label: item.name, value: item.id }))) || []}
               name='sto'
             />
-            <CustomButton btntype={"green"} type="submit">Submit</CustomButton>
+            {isSubmitting ? <CircularProgress size={26} className={styles.loginLoader} /> :
+              <CustomButton btntype={"green"} type="submit">Submit</CustomButton>
+            }
+
             {/* <CustomButton className={classes.green} type="submit" disabled={isSubmitting}>Submit</CustomButton> */}
           </div>
         </form>
@@ -1251,6 +1241,17 @@ function ODC(props) {
                 filter: false
               }
             }, {
+              name: "merek",
+
+              options: {
+                customBodyRender: (value, tableMeta, update) => {
+                  let newValue = tableMeta.rowData[14]
+                  return (<span>{newValue}</span>)
+                },
+                filter: false,
+                display: false,
+              }
+            }, {
               name: "deployment_date",
 
               options: {
@@ -1366,6 +1367,7 @@ function ODC(props) {
                         {
                           odc_id: tableMeta.rowData[19],
                           name: tableMeta.rowData[1],
+                          merek: tableMeta.rowData[14],
                           region_id: tableMeta.rowData[20],
                           witel_id: tableMeta.rowData[21],
                           datel_id: tableMeta.rowData[22],
@@ -1439,6 +1441,7 @@ function ODC(props) {
                   tabs: 0,
                   notes: "",
                   odcId: selectedModalValue.odc_id,
+                  merek_id: merekList.data.find(item => item.name == selectedModalValue.merek)?.id || "",
                   nama_odc: selectedModalValue.name.toLocaleUpperCase(),
                   region_id: selectedModalValue.region_id,
                   witel_id: selectedModalValue.witel_id,
@@ -1458,19 +1461,23 @@ function ODC(props) {
                 }}
                 onSubmit={(values, { setSubmitting }) => {
                   console.log(values)
-                  // console.log(updateODCData)
-                  updateODCData(values.nama_odc,
-                    values.deployment_date,
-                    values.notes,
-                    values.panel,
-                    values.rak_oa,
-                    values.port,
-                    values.nama_odc,
-                    values.region_id,
-                    values.witel_id,
-                    values.datel_id,
-                    values.sto_id
-                    , values.odcId, token, setSubmitting, singleModalPopupClose, toast, values.page + 1, values.rowsPerPage, values.sort)
+
+                  updateODCData(
+                    {
+                      name: values.nama_odc,
+                      deployment_date: values.deployment_date,
+                      notes: values.notes,
+                      panel_oa: values.panel,
+                      rak_oa: values.rak_oa,
+                      port: values.port,
+                      odc_code: values.nama_odc,
+                      region_id: values.region_id,
+                      witel_id: values.witel_id,
+                      datel_id: values.datel_id,
+                      sto_id: values.sto_id,
+                      merek_id: values.merek_id,
+                      odc_id: values.odcId,
+                    }, token, setSubmitting, singleModalPopupClose, toast, values.page + 1, values.rowsPerPage, values.sort)
                 }}
               >
                 {({
@@ -1565,6 +1572,21 @@ function ODC(props) {
                                 panelOa
                                 port */}
                             <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
+                              <CustomFormControl key='merek' variant="standard" >
+                                <CustomInputLabel id="demo-simple-select-standard-label">Merek</CustomInputLabel>
+
+                                <NativeSelect value={values.merek_id} onChange={handleChange} onBlur={handleBlur} inputProps={{
+                                  name: 'merek_id',
+                                  id: 'uncontrolled-native',
+                                }}>
+                                  {(merekList.data || []).map(item => ({ label: item.name, value: item.id })).map(item => (
+                                    <option key={"merek-" + item.label} value={item.value}>{item.label}</option>
+                                  ))}
+                                </NativeSelect>
+                              </CustomFormControl>
+
+                            </div>
+                            <div className={`col-lg-6 col-md-12 ${styles.dFlex} ${styles.textFieldContainer}`}>
                               <CustomTextField id="standard-basic" label="Deployment Date" color='primary'
                                 variant="standard" onChange={handleChange} onBlur={handleBlur} defaultValue={values.deployment_date} />
                             </div>
@@ -1604,20 +1626,21 @@ function ODC(props) {
                         size="medium">
                         Prev
                       </CustomButtonModal>
-                      <div className='row'>
-                        <div className='col-md-12 col-lg-6'>
-                          {(values.tabs > 0) && <CustomButtonModal btntype={"submit"} type={"submit"} onClick={(ev) =>
-                            (values.tabs > 0) ? singleModalPopupOpen : setValues(prev => ({ ...prev, tabs: values.tabs + 1 }))} variant="contained" color='primary'
-                            size="medium">
-                            Submit
-                          </CustomButtonModal>}
-                        </div>
-                        <div className='col-md-12 col-lg-6'>
-                          {(values.tabs > 0) && <CustomButtonModal onClick={() => singleModalPopupClose()} variant="contained"
-                            color='primary' size="medium">
-                            Cancel
-                          </CustomButtonModal>}
-                        </div>
+                      <div style={{ display: 'flex', gap: "0.5rem" }}>
+                        {/* <div className='row'>
+                        <div className='col-md-12 col-lg-6'> */}
+                        {(values.tabs > 0) && <CustomButtonModal btntype={"submit"} type={"submit"} onClick={(ev) =>
+                          (values.tabs > 0) ? singleModalPopupOpen : setValues(prev => ({ ...prev, tabs: values.tabs + 1 }))} variant="contained" color='primary'
+                          size="medium">
+                          Submit
+                        </CustomButtonModal>}
+                        {/* </div>
+                        <div className='col-md-12 col-lg-6'> */}
+                        {(values.tabs > 0) && <CustomButtonModal btntype='cancel' onClick={() => singleModalPopupClose()} variant="contained"
+                          color='primary' size="medium">
+                          Cancel
+                        </CustomButtonModal>}
+                        {/* </div> */}
                       </div>
                       <CustomButtonModal style={{ visibility: (values.tabs > 0) ? "hidden" : "visible" }} onClick={(ev) => (values.tabs > 0) ? singleModalPopupOpen : setValues(prev => ({ ...prev, tabs: values.tabs + 1 }))} variant="contained" color='primary' size="medium">
                         {(values.tabs <= 0) ? "Next" : ""}
@@ -1722,10 +1745,10 @@ export const getServerSideProps = async (props) => wrapper.getServerSideProps(st
       notFound: true
     }
   store.dispatch(getODCsBox())
-  store.dispatch(getDashCard({ region: null, witel: null, datel: null, sto: null }, req.cookies.token, toast))
+  store.dispatch(getDashCard({ region: null, witel: null, datel: null, sto: null }, req.cookies.token, toast, null))
   store.dispatch(IchangeODCPage({ page: 1, rowsPerPage: 5, region: null, witel: null, datel: null, sto: null, sortBy: null, sortOrder: null, name: null, filter: new Array(24) }, req.cookies.token, toast))
-  store.dispatch(getFeederGraph({ regional: '', witel: '', datel: '', sto: '' }, req.cookies.token))
-  store.dispatch(getDistributionGraph({ regional: '', witel: '', datel: '', sto: '' }, req.cookies.token))
+  store.dispatch(getFeederGraph({ regional: '', witel: '', datel: '', sto: '' }, req.cookies.token, null))
+  store.dispatch(getDistributionGraph({ regional: '', witel: '', datel: '', sto: '' }, req.cookies.token, null))
   store.dispatch(getRegionList(req.cookies.token))
   store.dispatch(getWitelList(req.cookies.token))
   store.dispatch(getDatelList(req.cookies.token))

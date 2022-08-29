@@ -209,6 +209,7 @@
 }
 .actionContainer{
     position: relative;
+    gap:1rem;
     margin: 0 15px;
     padding: 35px 0.5rem 0px;
     display: flex;
@@ -282,7 +283,8 @@
 .charts > div {
     /* display:inline-block;
     max-width: 595px; */
-    width:fit-content;
+    width:100%;
+    padding: 1rem 1rem;
 }
 .charts > div h2{
     text-align: center;
@@ -305,6 +307,17 @@
 }
 .table{
     /* padding: 0 1rem; */
+}
+.loginLoader{
+    /* position:relative;
+    width: 90px; */
+    /* left:50%;
+    transform: translateX(50%); */
+    margin: auto 0;
+}
+.loginLoader svg{
+    /* left:50%; */
+    color: #009873!important
 }
 @media screen and (max-width: 1080px) {
     /* .odcBackdrop{

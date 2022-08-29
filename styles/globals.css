@@ -51,3 +51,32 @@ a {
   padding: 1rem 1rem;
   padding: 1rem 2rem;
 }
+.apexcharts-canvas{
+  margin:auto
+}
+
+.DraftEditor-editorContainer span{
+  font-family: Arial, Helvetica, sans-serif !important;
+}
+.MuiPaper-root [class*="MUIDataTable-responsiveBase"]::-webkit-scrollbar {
+  -webkit-appearance: none ;
+  height: 9px ;
+
+}
+
+.MuiPaper-root [class*="MUIDataTable-responsiveBase"]::-webkit-scrollbar-thumb {
+  border-radius: 4px ;
+  background-color: rgba(0,0,0,.4) ;
+  box-shadow: 0 0 1px rgba(255,255,255,.5) ;
+}
+[class*="odc_evolve_cardWrapper"]::-webkit-scrollbar {
+  -webkit-appearance: none ;
+  height: 9px ;
+
+}
+
+[class*="odc_evolve_cardWrapper"]::-webkit-scrollbar-thumb {
+  border-radius: 4px ;
+  background-color: rgba(0,0,0,.4) ;
+  box-shadow: 0 0 1px rgba(255,255,255,.5) ;
+}

@@ -1,13 +1,15 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useEffect, useRef, CSSProperties } from 'react';
 import { useRouter } from 'next/router';
 import withAuth from '../../components/Auth';
+import dynamic from 'next/dynamic'
 import Link from 'next/link';
 import { END } from 'redux-saga';
 import { connect, useDispatch } from 'react-redux';
-
+import draftToHtml from 'draftjs-to-html';
 // import Layout from '../../components/Layout';
 // import styles from '../../components/Distributor/distributor.module.css';
 import styles from './odc.module.css';
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import splitterStyle from '../../components/Splitter/splitter.module.css';
 // import styles from '../../components/Feeder/feeder.module.css'
 import Splitter from '../../components/Splitter';
@@ -21,6 +23,9 @@ import { ButtonProps, ThemeOptions } from '@mui/material'
 import Dropzone from 'react-dropzone';
 import { AiOutlineFile } from 'react-icons/ai';
 import { BsDownload } from 'react-icons/bs';
+import { EditorState, ContentState, convertToRaw } from 'draft-js';
+const Editor = dynamic(() => import("react-draft-wysiwyg").then(mod => mod.Editor), { ssr: false }) as any;
+
 // import panelStyles from '../../components/panel.module.css';
 // import Feeder from '../../components/Feeder';
 // import Distributor from '../../components/Distributor';
@@ -59,11 +64,18 @@ import { changePageTo as IchangePageTo } from '../../components/store/layouts/ac
 import { wrapper, makeStore } from "../../components/store";
 // import store from '../../components/store'
 import Modal from '../../components/Modal';
+import {
+  Modal as MuiModal,
+  Box
+} from '@mui/material';
+import {
+  MdOutlineClose,
+} from 'react-icons/md';
 import { Typography } from '@mui/material';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
-import dynamic from 'next/dynamic'
+
 import NativeSelect from '@mui/material/NativeSelect';
 import {
   styled as styledCustom
@@ -94,6 +106,9 @@ const CustomButton = styledCustom(Button)<ButtonProps>(({ itemType }) => ({
   backgroundColor: "#C7417F !important",
   color: "white !important"
 }))
+const CustomButtonModal = styledCustom(Button)<ButtonProps>(({ theme, btntype }) => ({
+  background: btntype == 'submit' ? theme.status.success : btntype == 'cancel' ? "gray !important" : theme.status.primary,
+}));
 // const getMuiTheme = () =>
 // createTheme({
 //   CustomButtonActivityLog: {
@@ -424,7 +439,7 @@ function Odc({
             item.childNodes[0].style.borderColor = item.childNodes[0].parentNode.getAttribute("data-from");
         })
       }
-      console.log("feederFocus", feederFocus)
+      // console.log("feederFocus", feederFocus)
       setFeederFocus(() => {
         const [{ data = [{
           id: "",
@@ -433,7 +448,7 @@ function Odc({
           status: "",
           passive_out: [],
         }], rak_index }] = panel.data.filter(pnl => pnl.rak_level.toString() == ev.target.parentNode.getAttribute('data-rak'));
-        console.log("feeder detail", data.filter(item => item.index == ev.target.parentNode.getAttribute('data-id')))
+        // console.log("feeder detail", data.filter(item => item.index == ev.target.parentNode.getAttribute('data-id')))
         const [{ id: feeder_id, index: feeder_index, rak_level: feeder_level }] = data.filter(item => item.index == ev.target.parentNode.getAttribute('data-id'))
         return {
           distribution: [
@@ -464,7 +479,8 @@ function Odc({
           feederElm: null,
           odpName: ['', '', '', ''],
           splitter: { splitter_id: '', splitter_index: null },
-          splitterElm: null
+          splitterElm: null,
+          portType: "idle"
         }
       })
     }
@@ -552,7 +568,7 @@ function Odc({
           if (currPa.distribution) {
             (distribution.childNodes[0] as HTMLElement).style.borderColor = "#ffda00";
           }
-          splitter.style.borderColor = "#ffda00";
+          // splitter.style.borderColor = "#ffda00";
           // console.log("ethstyles",ethStyles)
           ev.target.parentNode.classList.add(ethStyles.active)
           ev.target.style.borderColor = "#ffda00";
@@ -662,7 +678,7 @@ function Odc({
           if (currPa.distribution) {
             (distribution.childNodes[0] as HTMLElement).style.borderColor = "#ffda00";
           }
-          splitter.style.borderColor = "#ffda00";
+          // splitter.style.borderColor = "#ffda00";
           // console.log("ethstyles",ethStyles)
           ev.target.parentNode.classList.add(ethStyles.active)
           ev.target.style.borderColor = "#ffda00";
@@ -680,6 +696,7 @@ function Odc({
             splitter: currPa.splitter,
             feeder: currPa.feeder,
             distribution: [...prevPa.distribution, currPa.distribution],
+            portType: "used"
           }
         }, { splitterElm: null, feederElm: null, odpName: [], distributionElm: [], distribution: [] });
         /**
@@ -689,7 +706,7 @@ function Odc({
         // console.log("selected feeder",passive_out,splitter,document.querySelector(`[data-id="${splitter.splitter_index}"]`))
       });
       feederModal[1]({ type: "edit", status: true });
-      console.log("feederFocus", feederFocus, feederModal[0])
+      // console.log("feederFocus", feederFocus, feederModal[0])
     }
     else if (ev.target.style.borderColor != hexToRgb("#75767e") && ev.target.parentNode.getAttribute("data-type") == "distribution") {
 
@@ -703,10 +720,10 @@ function Odc({
       }] }] = panel.data.filter(pnl => pnl.rak_level.toString() === ev.target.parentNode.getAttribute('data-rak'));
       // console.log('data dist',dataDist.filter(dt=>dt.index.toString()==ev.target.parentNode.getAttribute('data-id')))
       if (dataDist.filter(dt => dt.index.toString() == ev.target.parentNode.getAttribute('data-id'))[0].passive_out || false) {
-        const [{ passive_out: [{ name, po_index, splitter: { splitter_index } }] }] = dataDist.filter(dt => dt.index.toString() == ev.target.parentNode.getAttribute('data-id'));
+        // const [{ passive_out: [{ name, po_index, splitter = { splitter_index: "" } }] }] = dataDist.filter(dt => dt.index.toString() == ev.target.parentNode.getAttribute('data-id'));
         // {name,po_index,splitter:{splitter_index}}
         // console.log("distribution port click data",passive_out);
-        alert("ODP Name: " + name + "\n" + "Splitter: " + splitter_index + "\nPassive Out: " + po_index)
+        // alert("ODP Name: " + name + "\n" + "Splitter: " + splitter_index + "\nPassive Out: " + po_index)
       }
     }
 
@@ -735,7 +752,7 @@ function Odc({
    */
   const [datatable, setDatatable] = useState([[]]);
   useEffect(() => {
-    setDatatable(activityLog.data.map(item => ([
+    setDatatable(activityLog?.data?.map(item => ([
       item.row_number,
       item.email,
       item.role_name,
@@ -768,7 +785,7 @@ function Odc({
   };
   const handleAcceptedMCFiles = files => {
     files.map((file, idx) => {
-      console.log("uploaded file", file, file.type, file.type.split("/")[1] !== ('png' || 'jpeg' || 'jpg'))
+      // console.log("uploaded file", file, file.type, file.type.split("/")[1] !== ('png' || 'jpeg' || 'jpg'))
       let metadata: any = {};
       metadata.idx = idx;
       if (file.type.split("/")[1] !== ('png' || 'jpeg' || 'jpg'))
@@ -793,9 +810,6 @@ function Odc({
         a.click();
         a.remove();  //afterwards we remove the element again         
       });
-  }
-  const updateMCFile = () => {
-
   }
   /** upload kml variables*/
   const [KMLSelectedFiles, setKMLSelectedFiles] = useState([])
@@ -829,9 +843,43 @@ function Odc({
         a.remove();  //afterwards we remove the element again         
       });
   }
-  const updateKMLFile = () => {
 
+  /**
+   * notes open
+   */
+  const [convertedContent, setConvertedContent] = useState(null);
+  const [editorState, setEditorState] = useState(
+    () => EditorState.createEmpty(),
+  );
+  const handleEditorChange = (state) => {
+    setEditorState(state);
+    convertContentToHTML();
   }
+  const convertContentToHTML = () => {
+    // console.log("editor state", draftToHtml(convertToRaw(editorState.getCurrentContent())));
+    // console.log("editor state", editorState.getCurrentContent());
+    // console.log("current context",convertToHTML(editorState.getCurrentContent()));
+    let currentContentAsHTML = draftToHtml(convertToRaw(editorState.getCurrentContent()));
+    // let currentContentAsHTML = convertToHTML(editorState.getCurrentContent());
+    setConvertedContent(currentContentAsHTML);
+  }
+  const [notesModal, setNotesModal] = useState(false);
+  const notesHandleClose = () => {
+    setNotesModal(false)
+  }
+  useEffect(() => {
+    const htmlToDraft = require('html-to-draftjs').default as any;
+    // console.log("html to draft", htmlToDraft(serverNotes || ""))
+    if (typeof window !== 'undefined') {
+
+      const contentBlock = htmlToDraft(serverNotes || "");
+      const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
+      setEditorState(EditorState.createWithContent(contentState))
+      setConvertedContent(serverNotes || "");
+    }
+  }, [serverNotes])
+
+
   /** display odc panel */
   if (odcId.length == 1) {
     return <div className={`wrapper ${styles.odcIdWrapper}`}>
@@ -899,7 +947,7 @@ function Odc({
             </div>
 
           </div>
-          <div className='odcpanel row'>
+          <div className={`${styles.odcpanel} row`}>
             <div className={styles.splitPanelWrapper}>
               {/* <div className={styles.splitPanelWrapper} style={{height:"1000px"}}> */}
               <div className={`${styles.grouper}`}>
@@ -1020,7 +1068,7 @@ function Odc({
                   return <Rak key={'r' + r_item.rak_level} distributor_level_id={r_item.rak_index} last_feeder={panel.data.filter(item => item.type === "feeder").length} level={r_item.rak_level} type={r_item.type} datalen={12}>
                     {r_item.data.map(p_item =>
                       /** odd even to define 13-24 */
-                      <Eth from={r_item.type} clickHandler={panelClickHandler} key={"port" + p_item.index} rak_level={r_item.rak_level} id={p_item.index} status={p_item.status}
+                      <Eth from={r_item.type} clickHandler={panelClickHandler} key={"port" + p_item.index} rak_level={r_item.rak_level} rak_index={r_item.rak_index} id={p_item.index} status={p_item.status} panel={panel}
                         // <Eth from={r_item.type} clickHandler={panelClickHandler} key={"port"+p_item.index} rak_level={r_item.rak_level} id={((idx+1)%2===0)?(p_item.index+12):p_item.index} status={p_item.status}
                         columns={r_item.data.length} />
                     )}
@@ -1180,9 +1228,79 @@ function Odc({
           <div className={`row`}>
             <div className={`${styles.notesContainer}`}>
               Notes:
-              <textarea ref={notes} name="" id="" cols={30} rows={10} defaultValue={serverNotes}></textarea>
-              <Button onClick={() => updateNotes_odcSaga(notes.current.value, odcId[0], token, toast)} variant={"outlined"}>Edit</Button>
+              {/* <textarea ref={notes} name="" id="" cols={30} rows={10} defaultValue={serverNotes}></textarea> */}
+              <Button onClick={() => setNotesModal(true)} style={{ top: '-9px' }} variant={"outlined"}>Buka</Button>
+              {/* <Button onClick={() => updateNotes_odcSaga(notes.current.value, odcId[0], token, toast)} variant={"outlined"}>Edit</Button> */}
+              <MuiModal open={notesModal} onClose={notesHandleClose} aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description">
+                <div >
+                  <div className={styles.closebtn}>
+                    <MdOutlineClose />
+                  </div>
+                  <Box itemRef='testing' sx={{
+                    position: "absolute",
+                    top: "48%",
+                    left: "50%",
+                    transition: 'all 0.3s ease-out',
+                    transform: "translate(-50%, -50%)",
+                    border: 0,
+                    borderRadius: "6px",
+                    color: "#333",
+                    width: "90%",
+                    maxWidth: "1000px",
+                    // boxShadow: "0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 20%), 0 1px 5px 0 rgb(0 0 0 / 12%)",
+                    // boxShadow: "0 1px 4px 0 rgb(0 0 0 / 14%)",
+                  }} >
+                    {/* }} className={` ${open && styles.modalActive}`}> */}
+                    <div className={`${styles.card}  ${styles.cardStats}`}>
+                      <div className={`${styles.cardHeader} ${styles.cardHeaderPrimary}`}>
+                        <h4 className={styles.cardTitle}>{'Notes'.toUpperCase()}</h4>
+                        <div className={styles.stats}>
+                          isi notes untuk melengkapi keterangan detil odc
+                        </div>
+                      </div>
+                      <div className={`${styles.cardBody} card-body row`} style={{ width: "100%" }}>
+                        <Editor
+                          editorStyle={{ height: "41vh", border: "1px solid #F1F1F1", maxWidth: "100%" } as any}
+                          defaultContentState={<h1>testing</h1>}
+                          editorState={editorState}
+                          onEditorStateChange={handleEditorChange}
+                          wrapperClassName="wrapper-class"
+                          editorClassName="editor-class"
+                          toolbarClassName="toolbar-class"
+                        />
+                      </div>
+                      <div className={styles.actionContainer}>
+                        <div className='row'>
+                          <div className='col-md-12 col-lg-6'>
+                            {
+                              // (isSubmitting ? <CustomCircularProgress size={24} style={{ position: 'relative', top: 4, display: "flex", margin: "auto" }} />
+                              // :
+                              <CustomButtonModal onClick={() => updateNotes_odcSaga(convertedContent, odcId[0], token, toast)} btntype={'submit'} type={"submit"} variant="contained" color='primary' size="medium">
+                                Submit
+                              </CustomButtonModal>
+                              // )
+                            }
 
+                          </div>
+                          <div className='col-md-12 col-lg-6'>
+                            {<CustomButtonModal btntype='cancel' onClick={() => notesHandleClose()} variant="contained" color='primary' size="medium">
+                              {/* {<CustomButtonModal onClick={() => handleClose()} variant="contained" color='primary' size="medium"> */}
+                              Cancel
+                            </CustomButtonModal>}
+                          </div>
+                        </div>
+                        <div>
+
+                          {/* <CustomButtonModal style={{visibility: (values.tabs>0)?"hidden":"visible"}} onClick={(ev)=>(values.tabs>0)?handleOpen:handleOnChange(ev,values.tabs+1,setValues)}  variant="contained" color='primary' size="medium">
+                   {(values.tabs<=0)? "Next":""}
+                  </CustomButtonModal> */}
+                        </div>
+                      </div>
+                    </div>
+                  </Box>
+                </div>
+              </MuiModal>
             </div>
           </div>
         </div>
@@ -1208,7 +1326,7 @@ function Odc({
                   {splitter.data.map((item, idx) => <FormControl key={"splitter" + item.id} variant="standard" sx={{ m: 1, minWidth: 132, marginTop: "0.5rem" }}>
                     <InputLabel id="demo-simple-select-standard-label">Splitter {item.index}</InputLabel>
 
-                    <NativeSelect defaultValue={item.status == "used" ? 10 : item.status == 'priority' ? 20 : item.status == "broken" ? 30 : 40} onChange={(ev) => { console.log(splitter, item, ev.target.options[ev.target.selectedIndex].text); return updateODCPort_odcSaga(odcId[0], item.id, 'splitter', ev.target.options[ev.target.selectedIndex].text, token, toast) }} inputProps={{
+                    <NativeSelect defaultValue={item.status == "used" ? 10 : item.status == 'priority' ? 20 : item.status == "broken" ? 30 : 40} onChange={(ev) => { /*console.log(splitter, item, ev.target.options[ev.target.selectedIndex].text); */return updateODCPort_odcSaga(odcId[0], item.id, 'splitter', ev.target.options[ev.target.selectedIndex].text, token, toast) }} inputProps={{
                       name: 'age',
                       id: 'uncontrolled-native',
                     }}>
@@ -1231,7 +1349,7 @@ function Odc({
                           {/* {ODCData.panel.data.length}
                         {item.data.length} */}
 
-                          <NativeSelect defaultValue={distFeed.status == "used" ? 10 : distFeed.status == 'priority' ? 20 : distFeed.status == "broken" ? 30 : 40} onChange={(ev) => { console.log(distFeed, item.type, ev.target.options[ev.target.selectedIndex].text); return updateODCPort_odcSaga(odcId[0], distFeed.id, item.type, ev.target.options[ev.target.selectedIndex].text, token, toast) }} inputProps={{
+                          <NativeSelect defaultValue={distFeed.status == "used" ? 10 : distFeed.status == 'priority' ? 20 : distFeed.status == "broken" ? 30 : 40} onChange={(ev) => {/* console.log(distFeed, item.type, ev.target.options[ev.target.selectedIndex].text); */return updateODCPort_odcSaga(odcId[0], distFeed.id, item.type, ev.target.options[ev.target.selectedIndex].text, token, toast) }} inputProps={{
                             name: 'age',
                             id: 'uncontrolled-native',
                           }}>
@@ -1458,16 +1576,16 @@ export const getServerSideProps = async (props) => wrapper.getServerSideProps(st
   store.dispatch(getMerekList(req.cookies.token, toast)),
     store.dispatch(END)
   await store.sagaTask.toPromise();
-  console.log("activity log", store.getState().ODCs.activity_log_list)
+  // console.log("activity log", store.getState().ODCs.activity_log_list)
   // console.log("req test:",req.url,res,etc)
   // console.log("store",store.getState().ODCs.selectedOdcSplitpanelStatus)
   const { ODCs: { selectedOdcSplitpanelStatus } } = store.getState();
   // const {ODCs:{odcsBox=[],splitterData=[],coreFeederData=[]}} = store.getState();
 
-  console.log("odc id", odcId, odcId.length)
+  // console.log("odc id", odcId, odcId.length)
   // if(odcId.length>1){
-  if (selectedOdcSplitpanelStatus === {} && (odcId[1] !== 'status' || odcId[1] !== 'activity log')) {
-    console.log("selected odc", selectedOdcSplitpanelStatus)
+  if ((!selectedOdcSplitpanelStatus.success && (odcId[1] !== 'status' || odcId[1] !== 'activity log')) || odcId.length > 2) {
+    // console.log("selected odc", selectedOdcSplitpanelStatus)
     // if(odcId.length!==0 && odcsBox.filter(item=>item?.odc?.id == odcId[0]).length==0){
     return {
       notFound: true

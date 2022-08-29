@@ -80,6 +80,7 @@ https://stackoverflow.com/questions/59615266/super-slow-docker-build
 
 login docker from terminal
 docker login 
+pull code from docker hub using portainer
 docker.io/miftahalrasyid/diginote-odc-telkom-docker:latest
 
 check docker storage space
@@ -130,3 +131,7 @@ folder yang diexecute di fpm
 
 setting client_max_body_size di segment http pada file nginx.conf
 service nginx restart
+
+
+## Nginx setting ssl
+

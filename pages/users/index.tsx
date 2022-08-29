@@ -324,18 +324,21 @@ function User({
       if (document.querySelector('[itemref="userDeleteModal"]'))
         (document.querySelector('[itemref="userDeleteModal"]') as HTMLElement).style.top = "50%";
     }, 50);
-    if (!user_list_client.success)
-      setDatatable(user_list?.data?.map((item, idx) => ([
-        item.row_number,
-        item.email,
-        item.role_name,
-        item.user_status,
-        item.role,
-        item.status,
-        item.id
-      ])))
 
-  }, [user_list?.data, open, openDeleteRowModal, user_list_client?.success])
+
+  }, [user_list, open, openDeleteRowModal])
+  useEffect(() => {
+    setDatatable(user_list?.data?.map((item, idx) => ([
+      item.row_number,
+      item.email,
+      item.role_name,
+      item.user_status,
+      item.role,
+      item.status,
+      item.id
+    ])))
+  }, [user_list])
+
   useEffect(() => {
     if (user_list_client.success) {
       // console.log("fetch new data", user_list_client)
@@ -432,7 +435,7 @@ function User({
             onTableInit: (test, tableState) => {
               // console.log("table init",tableState.rowsPerPage)
               setTableRowsPerPage(tableState.rowsPerPage)
-              // getUserData_userSaga({ page: tableState.page + 1, rowsPerPage: tableState.rowsPerPage, sortBy: null, sortOrder: null, email: null, filter: tableState.filterList }, token, null, toast)
+              getUserData_userSaga({ page: tableState.page + 1, rowsPerPage: tableState.rowsPerPage, sortBy: null, sortOrder: null, email: null, filter: tableState.filterList }, token, null, toast)
             },
             onTableChange: (action, tableState) => {
               // console.log(action, tableState);
@@ -452,7 +455,7 @@ function User({
                   // this.changePage(tableState.page, tableState.sortOrder);
                   break;
                 case "search":
-                  console.log("activate search", tableState.searchText)
+                  // console.log("activate search", tableState.searchText)
                   setNewTableState(prev => ({ ...prev, page: 0, search_text: tableState.searchText }))
                   clearTimeout(delay.current);
                   delay.current = setTimeout(() => {
@@ -493,7 +496,7 @@ function User({
                   // this.sort(tableState.page, tableState.sortOrder);
                   break;
                 case 'filterChange':
-                  console.log("user filter", tableState.filterList)
+                  // console.log("user filter", tableState.filterList)
                   setNewTableState(prev => ({ ...prev, page: 0, filter: tableState.filterList }))
                   getUserData_userSaga({ page: 0, rowsPerPage: newTableState.rowsPerPage, sortBy: newTableState.sort.orderBy, sortOrder: newTableState.sort.direction, email: newTableState.search_text, filter: tableState.filterList }, token, null, toast)
                   break;
@@ -535,7 +538,10 @@ function User({
                 return (<span>{newValue}</span>)
               },
               filter: true,
-              filterOptions: ['Admin', 'User']
+              // filterOptions: 'Admin User'
+              filterOptions: {
+                names: ['Admin', 'User']
+              }
             }
           }, {
             name: "Status",
@@ -545,7 +551,10 @@ function User({
                 return (<span>{newValue}</span>)
               },
               filter: true,
-              filterOptions: ['Active', 'Suspend']
+              filterOptions: {
+                names: ['Active', 'Suspend']
+              }
+              // filterOptions: 'Active Suspend'
             }
           }, {
             name: "Status Id",
@@ -664,7 +673,7 @@ function User({
                   return errors;
                 }}
                 onSubmit={(values, { setSubmitting }) => {
-                  console.log(values)
+                  // console.log(values)
                   updateUserData(
                     values.email,
                     values.password,
@@ -737,7 +746,7 @@ function User({
                           <CustomInputLabel id="demo-simple-select-standard-label">Role</CustomInputLabel>
                           <CustomNativeSelect onChange={handleChange} onBlur={handleBlur} value={values.role} inputProps={{
                             name: 'role',
-                            id: 'uncontrolled-native',
+                            id: 'uncontrolled-native-role',
                           }}>
                             <option key={"role-admin"} value="1"> Admin </option>
                             <option key={"role-user"} value="2"> User </option>
@@ -747,10 +756,10 @@ function User({
 
                       <div className={`col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
                         <FormControl key={"status"} variant="standard" sx={{ minWidth: 124 }}>
-                          <CustomInputLabel id="demo-simple-select-standard-label">Status</CustomInputLabel>
+                          <CustomInputLabel id="demo-simple-select-status-label">Status</CustomInputLabel>
                           <CustomNativeSelect onChange={handleChange} onBlur={handleBlur} defaultValue={values.status.toString()} inputProps={{
                             name: 'status',
-                            id: 'uncontrolled-native',
+                            id: 'uncontrolled-native-status',
                           }}>
                             <option key={"status-active"} value={"true"}> Active </option>
                             <option key={"status-suspend"} value={"false"}> Suspend </option>
