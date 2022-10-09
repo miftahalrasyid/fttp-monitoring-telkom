@@ -11,6 +11,7 @@
     /* margin:auto */
 }
 
+
 .portBorder{
     border: 4px solid black;
     /* padding: 13px; */
@@ -21,6 +22,24 @@
     align-items: center;
     height: 40px;
     margin: auto;
+}
+.bblack{
+    border-color: black;
+}
+.bblack:hover{
+    opacity: 1;
+}
+.bpriority{
+    border-color: #ee2d24;
+}
+.bblue{
+    border-color: blue;
+}
+.bgray{
+    border-color:#75767e;
+}
+.byellow{
+    border-color:#ffda00;
 }
 .distributionDetail{
     border-radius: 5px;
@@ -60,7 +79,7 @@
     opacity: 1;
     transition: 0.15s ease all;
 }
-.feederPorts:hover{
+.feederPorts:hover :not(.bblack):not(p) {
     opacity:0.5;
 }
 .active:hover{

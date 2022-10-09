@@ -50,12 +50,14 @@ function Eth({ id = "", rak_level = "", rak_index = "", columns = 0, clickHandle
       <div className={styles.list}>{"Passive Out: " + po_index}</div>
     </div>
   }
-  ethRef?.current?.setAttribute("data-from", status === 'used' ? 'blue' : status === "priority" ? "#ee2d24" : '#75767e')
+  ethRef?.current?.setAttribute("data-from", status === 'used' ? 'bblue' : status === "priority" ? "bpriority" : 'bgray')
+  // ethRef?.current?.setAttribute("data-from", status === 'used' ? 'blue' : status === "priority" ? "#ee2d24" : '#75767e')
   // return <div className={`${styles.ethContainer}`} >
   return <div ref={ethRef} onClick={clickHandler} className={`${styles.ethContainer} ${from == "feeder" ? styles.feederPorts : ""}`} style={columnStyle}>
     {/* <div className={`${styles.ethHotspot}`}>
       </div> */}
-    <div className={styles.portBorder} style={{ borderColor: status === 'used' ? 'blue' : status === "priority" ? "#ee2d24" : status === 'broken' ? 'black' : '#75767e' }}>
+    <div className={`${styles.portBorder} ${status === 'used' ? styles.bblue : status === "priority" ? styles.bpriority : status === 'broken' ? styles.bblack : styles.bgray}`} >
+      {/* <div className={`${styles.portBorder} ${status === 'used' ? styles.bblue : status === "priority" ? styles.bpriority : status === 'broken' ? styles.bblack : styles.bgray}`} style={{ borderColor: status === 'used' ? 'blue' : status === "priority" ? "#ee2d24" : status === 'broken' ? 'black' : '#75767e' }}> */}
       <p>{id}</p>
       {from === "distribution" && (status === 'used' || status === 'priority') && panel.data.filter(pnl => pnl.rak_level === rak_level) && <DistributionDetail props={panel.data.filter(pnl => pnl.rak_level === rak_level)[0]} />}
     </div>

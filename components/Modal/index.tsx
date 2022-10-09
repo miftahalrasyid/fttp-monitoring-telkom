@@ -648,7 +648,7 @@ function Modal(props) {
                                 <option value={""}>Empty</option>
                                 {
                                   feederFocus?.distribution[1]?.distribution_id &&
-                                  <option key={"dist_po2" + feederFocus.distribution[1].distribution_index} value={feederFocus?.distribution[1]?.distribution_id}>{(feederFocus?.distribution[1].distribution_level % 2 == 0) ? "D" + feederFocus?.distribution[1]?.distribution_level_id + "-" + (feederFocus.distribution[1].distribution_index + 12) : "D" + feederFocus?.distribution[1]?.distribution_level_id + "-" + feederFocus.distribution[1].distribution_index}</option>
+                                  <option key={"dist_po2" + feederFocus.distribution[1].distribution_index} value={feederFocus?.distribution[1]?.distribution_id}>{(feederFocus?.distribution[1].distribution_level % 2 == 0) ? "D" + feederFocus?.distribution[1]?.distribution_level_id + "-" + (feederFocus.distribution[1].distribution_index + 12) : "D" + feederFocus?.distribution[1]?.distribution_level_id + "-C" + feederFocus.distribution[1].distribution_index}</option>
                                 }
                                 {distributionOnChange[1].mapped.map((item, idx) => {
                                   // console.log("ds",item)
@@ -689,7 +689,7 @@ function Modal(props) {
                                 <option value={""}>Empty</option>
                                 {
                                   feederFocus?.distribution[2]?.distribution_id &&
-                                  <option key={"dist_po3" + feederFocus.distribution[2].distribution_index} value={feederFocus?.distribution[2]?.distribution_id}>{(feederFocus?.distribution[1].distribution_level % 2 == 0) ? "D" + feederFocus?.distribution[2]?.distribution_level_id + "-" + (feederFocus.distribution[2].distribution_index + 12) : "D" + feederFocus?.distribution[2]?.distribution_level_id + "-" + feederFocus.distribution[2].distribution_index}</option>
+                                  <option key={"dist_po3" + feederFocus.distribution[2].distribution_index} value={feederFocus?.distribution[2]?.distribution_id}>{(feederFocus?.distribution[1].distribution_level % 2 == 0) ? "D" + feederFocus?.distribution[2]?.distribution_level_id + "-" + (feederFocus.distribution[2].distribution_index + 12) : "D" + feederFocus?.distribution[2]?.distribution_level_id + "-C" + feederFocus.distribution[2].distribution_index}</option>
                                 }
                                 {distributionOnChange[2].mapped.map((item, idx) => {
                                   // console.log("ds",item)
@@ -729,7 +729,7 @@ function Modal(props) {
                                 <option value={""}>Empty</option>
                                 {
                                   feederFocus?.distribution[3]?.distribution_id &&
-                                  <option key={"dist_po4" + feederFocus.distribution[3].distribution_index} value={feederFocus?.distribution[3]?.distribution_id}>{(feederFocus?.distribution[1].distribution_level % 2 == 0) ? "D" + feederFocus?.distribution[3]?.distribution_level_id + "-" + (feederFocus.distribution[3].distribution_index + 12) : "D" + feederFocus?.distribution[3]?.distribution_level_id + "-" + feederFocus.distribution[3].distribution_index}</option>
+                                  <option key={"dist_po4" + feederFocus.distribution[3].distribution_index} value={feederFocus?.distribution[3]?.distribution_id}>{(feederFocus?.distribution[1].distribution_level % 2 == 0) ? "D" + feederFocus?.distribution[3]?.distribution_level_id + "-" + (feederFocus.distribution[3].distribution_index + 12) : "D" + feederFocus?.distribution[3]?.distribution_level_id + "-C" + feederFocus.distribution[3].distribution_index}</option>
                                 }
                                 {distributionOnChange[3].mapped.map((item, idx) => {
                                   // console.log("ds",item)

@@ -300,7 +300,7 @@ function Index_evolve({ odcProps, token, addODCData, ...etc }) {
             <a className={styles.logo}>
               <span className={styles.logoLg}>
                 <span className={styles.logoImg}>
-                  <Image src="/img/logo_paperless.png" alt="logo" width={156} height={110} />
+                  <Image src="/img/odc sakti.png" alt="logo" width={2247} height={1312} />
                   {/* <img src="/img/logo_paperless.png" alt="logo" width={156} height={110}/> */}
                 </span>
               </span>
@@ -308,42 +308,42 @@ function Index_evolve({ odcProps, token, addODCData, ...etc }) {
           </Link>
         </div>
       </div>
-      <SimpleBar className={styles.simplebar}>
-        {/* <SimpleBar className={styles.h100}> */}
+      {/* <SimpleBar className={styles.simplebar}> */}
+      {/* <SimpleBar className={styles.h100}> */}
 
-        <div id={styles.sidebarMenu}>
-          <ul>
-            <li>
-              <Link href={"/odc"}>
-                <a onClick={onODCsClick}>
-                  <div className={styles.menuList}>
-                    <div className={styles.menuIcon}>
-                      <Image src={home} width={27} height={27} alt={"home"} />
-                      {/* <img src={"/img/Home.png"} width={27} height={27} alt={"home"}/> */}
-                    </div>
-                    <p>Home</p>
+      <div id={styles.sidebarMenu}>
+        <ul>
+          <li>
+            <Link href={"/odc"}>
+              <a onClick={onODCsClick}>
+                <div className={styles.menuList}>
+                  <div className={styles.menuIcon}>
+                    <Image src={home} width={27} height={27} alt={"home"} />
+                    {/* <img src={"/img/Home.png"} width={27} height={27} alt={"home"}/> */}
                   </div>
-                  <div className={/\/odc/.test(router.asPath) ? styles.bullet : ""}></div>
-                </a>
-              </Link>
-            </li>
-            {(role_name === "Admin") && <li>
-              <Link href="/users" >
-                <a onClick={onUsersClick}>
-                  <div className={styles.menuList}>
-                    <div className={styles.menuIcon}>
-                      <IoPersonCircleOutline className={styles.sidebarSvg} />
-                    </div>
-                    <p>Users</p>
+                  <p>Home</p>
+                </div>
+                <div className={/\/odc/.test(router.asPath) ? styles.bullet : ""}></div>
+              </a>
+            </Link>
+          </li>
+          {(role_name === "Admin") && <li>
+            <Link href="/users" >
+              <a onClick={onUsersClick}>
+                <div className={styles.menuList}>
+                  <div className={styles.menuIcon}>
+                    <IoPersonCircleOutline className={styles.sidebarSvg} />
                   </div>
-                  <div className={/\/users/.test(router.asPath) ? styles.bullet : ""}></div>
-                </a>
-              </Link>
-            </li>}
+                  <p>Users</p>
+                </div>
+                <div className={/\/users/.test(router.asPath) ? styles.bullet : ""}></div>
+              </a>
+            </Link>
+          </li>}
 
-          </ul>
-        </div>
-      </SimpleBar>
+        </ul>
+      </div>
+      {/* </SimpleBar> */}
       <div className={styles.action}>
         <div className={styles.sidebarImage}>
           <Image src={sidebar_img} priority width={180} height={210} alt={'sidebar_img'} />

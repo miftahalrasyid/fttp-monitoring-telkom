@@ -630,14 +630,14 @@ function Navbar(props) {
                                 <CustomTextField id="standard-basic" label="Port Feeder Terminasi" variant="standard" defaultValue={odcData.core}/>
                               </div> */}
                                   <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
-                                    <CustomTextField id="standard-basic" label="Rak OA" variant="standard" defaultValue={odcData.rak_oa} />
+                                    <CustomTextField id="standard-basic" name='rak_oa' label="Rak OA" variant="standard" onChange={handleChange} onBlur={handleBlur} value={values.rak_oa} />
                                   </div>
                                   <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
-                                    <CustomTextField id="standard-basic" label="Panel" variant="standard" defaultValue={odcData.panel_oa} />
+                                    <CustomTextField id="standard-basic" name='panel_oa' label="Panel" variant="standard" onChange={handleChange} onBlur={handleBlur} value={values.panel_oa} />
                                   </div>
                                   <div className={`col-lg-6 col-md-12 ${odcStyles.dFlex} ${odcStyles.textFieldContainer}`}>
-                                    <CustomTextField id="standard-basic" label="Port" color='primary'
-                                      variant="standard" defaultValue={odcData.port} />
+                                    <CustomTextField id="standard-basic" name='port' label="Port" color='primary'
+                                      variant="standard" onChange={handleChange} onBlur={handleBlur} value={values.port} />
                                   </div>
                                 </div>
                               )}

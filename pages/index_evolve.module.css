@@ -42,7 +42,7 @@
     position:relative;
 }
 .logoContainer{
-    width: 18.57%;
+    width: 25.57%;
     position: absolute;
 }
 .primaryGroup{
@@ -344,7 +344,8 @@
         height: 85px;
     }
     .logoContainer_small{
-        width: 133px;
+        width: 45%;
+        max-width: 165px;
         left:0;
         right:0;
         margin:auto;

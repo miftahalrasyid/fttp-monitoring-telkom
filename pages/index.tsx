@@ -5,7 +5,7 @@ import Visibility from '@mui/icons-material/Visibility';
 import { MdOutlineVisibilityOff, MdOutlineVisibility } from 'react-icons/md'
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import teleLogo from '../public/img/telegram.svg';
-import logo_paperless from '../public/img/logo_paperless.png';
+import logo_paperless from '../public/img/odc sakti.png';
 import telkom_bg from "../public/img/telkom_bg.jpeg";
 import main_img from "../public/img/main_img.png";
 import styles from './index_evolve.module.css';
@@ -118,7 +118,7 @@ function Index(props) {
     <div className={`container ${styles.leftSide}`}>
       <div className={styles.logoWrapper}>
         <div className={` ${styles.logoContainer}`}>
-          <Image src={logo_paperless} width={230} height={162} alt={"background"} />
+          <Image src={logo_paperless} width={2247} height={1312} alt={"background"} />
         </div>
 
       </div>
@@ -151,7 +151,7 @@ function Index(props) {
       {/* {activeTabId === 0 && ( */}
       <div className={styles.logoWrapper_small}>
         <div className={` ${styles.logoContainer_small}`}>
-          <Image src={logo_paperless} width={230} height={162} alt={"background"} />
+          <Image src={logo_paperless} width={2247} height={1312} alt={"background"} />
         </div>
 
       </div>

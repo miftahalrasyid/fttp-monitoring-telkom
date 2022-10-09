@@ -132,6 +132,75 @@ folder yang diexecute di fpm
 setting client_max_body_size di segment http pada file nginx.conf
 service nginx restart
 
+to get docker image root document
+use:
+docker image inspect miftahalrasyid/diginote-odc-telkom-docker
+use "merged" label
+
+install ssl into portainer 
+sudo certbot -d portainer.odc-sakti.id
+
+portainer buffer
+"MergedDir": "/var/lib/docker/overlay2/6d38c7c8f3cc435e2ee097d4051e2cf87bb9d65fa001ad2e8fc42b4e900678d1/merged",
+
+diginote odc buffer 
+"MergedDir": "/var/lib/docker/overlay2/b3dd7ddd6839513cde899f27a529639b090f180f43ff8dacb721dd11a30cb8bf/merged",
+
+run portainer
+
+docker run -d -p 127.0.0.1:8000:8000 -p 127.0.0.1:9000:9000 --name=portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce
+
+normal
+docker run -d -p 8000:8000 -p 9000:9000 --name=portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce
+
+nginx configuration
+
+server {
+        root /var/lib/docker/overlay2/6d38c7c8f3cc435e2ee097d4051e2cf87bb9d65fa001ad2e8fc42b4e900678d1/merged;
+        server_name portainer.odc-sakti.id;
+        location / {
+                proxy_pass http://127.0.0.1:9000;
+        }
+
+}
+server {
+        root /var/lib/docker/overlay2/b3dd7ddd6839513cde899f27a529639b090f180f43ff8dacb721dd11a30cb8bf/merged;
+
+        server_name odc-sakti.id *.odc-sakti.id www.odc-sakti.id portainer.odc-sakti.id;
+
+        location /_next/static {
+                proxy_pass http://localhost:3000;
+                expires 30d;
+                access_log on;
+        }
+
+        location / {
+                if ( $host = www.odc-sakti.id ) {
+                        set $a 3000;
+                }
+
+                if ( $host = odc-sakti.id ) {
+                        set $a 3000;
+                }
+
+                if ( $host = portainer.odc-sakti.id ) {
+                        set $a 9000;
+                }
+                proxy_pass http://localhost:$a;
+                proxy_buffering off;
+                proxy_redirect off;
+                proxy_http_version 1.1;
+                proxy_set_header Upgrade $http_upgrade;
+                proxy_set_header Connection 'upgrade';
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-Host $server_name;
+                #proxy_set_header X-Forwarded-For $remote_addr;
+                #proxy_set_header X-Forwarded-Proto $scheme;
+                #proxy_cache_bypass $http_upgrade;
+                #rewrite ^/next$ / break;               
+        }
+}
 
 ## Nginx setting ssl
 

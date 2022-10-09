@@ -78,12 +78,13 @@
 .logoImg{
     position: relative;
     top: 8px;
-    width: 65%;
+    width: 80%;
     display: flex;
     justify-content: center;
     margin: 1rem auto;
 }
 #sidebarMenu{
+    flex-basis: 40%;
     padding: 10px 0 30px 0;
 }
 #sidebarMenu ul{
@@ -137,7 +138,7 @@
 .action{
     position:relative;
     bottom:0;
-    flex-basis: 37%;
+    flex-basis: 61%;
 }
 .action > p {
     font-family: 'GothamRounded-Medium';
