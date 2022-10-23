@@ -349,7 +349,12 @@
         left:0;
         right:0;
         margin:auto;
-        /* height: 100%; */
         position: absolute;
+    }
+}
+
+@media screen and (min-width: 1080px) {
+    .logoContainer_small{
+        display:none;
     }
 }

@@ -135,7 +135,7 @@ function Index(props) {
         </div>
       </div>
       <div className={styles.footer}>
-        <p>© 2022 Telkom Indonesia, Tbk. All rights reserved</p>
+        <p>Copyright ©️2022 ODC Sakti Team Novian - Hardiyan - Risal - Prasetyo - Rudy All Rights Reserved</p>
       </div>
     </div>
     <div className={`container ${styles.rightSide}`}>
@@ -418,7 +418,7 @@ function Index(props) {
         </div>
       </React.Fragment>
       <div className={styles.footer_small}>
-        <p>© 2022 Telkom Indonesia, Tbk. All rights reserved</p>
+        <p>Copyright ©️2022 ODC Sakti Team Novian - Hardiyan - Risal - Prasetyo - Rudy All Rights Reserved</p>
       </div>
     </div>
   </div>

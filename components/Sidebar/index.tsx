@@ -6,6 +6,7 @@ import SimpleBar from 'simplebar-react';
 import 'simplebar/dist/simplebar.min.css';
 import odcStyles from '../../pages/odc/odc.module.css';
 import home from '../../public/img/Home.png';
+import logo_paperless from '../../public/img/odc sakti.png';
 import { connect } from "react-redux";
 import { MdOutlineClose } from 'react-icons/md';
 import { IoPersonCircleOutline } from 'react-icons/io5';
@@ -300,7 +301,7 @@ function Index_evolve({ odcProps, token, addODCData, ...etc }) {
             <a className={styles.logo}>
               <span className={styles.logoLg}>
                 <span className={styles.logoImg}>
-                  <Image src="/img/odc sakti.png" alt="logo" width={2247} height={1312} />
+                  <Image src={logo_paperless} alt="logo" width={2247} height={1312} />
                   {/* <img src="/img/logo_paperless.png" alt="logo" width={156} height={110}/> */}
                 </span>
               </span>
